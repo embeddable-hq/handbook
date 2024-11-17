@@ -9,7 +9,13 @@ const config: DocsThemeConfig = {
   chat: {
     link: 'https://discord.com',
   },
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
+  docsRepositoryBase: 'https://github.com/embeddable-hq/handbook',
+  useNextSeoProps: () => {
+    return {
+      description: "Documentation for Embeddable.com",
+      titleTemplate: "%s | Embeddable Handbook"
+    };
+  },
   footer: {
     text: 'Embeddable Handbook',
   },
