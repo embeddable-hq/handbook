@@ -1,5 +1,5 @@
 {
-  "index": "Introduction",
+  "index": "Welcome",
   "another": "Another Page",
   "advanced": "Advanced (A Folder)",
   "about": {
@@ -7,9 +7,9 @@
     "type": "page"
   },
   "contact": {
-    "title": "Contact ↗",
+    "title": "Home ↗",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
+    "href": "https://embeddable.com/",
+    "newWindow": false
   }
 }
