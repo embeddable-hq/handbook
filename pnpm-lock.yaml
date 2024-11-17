@@ -10,13 +10,13 @@ importers:
     dependencies:
       next:
         specifier: ^13.0.6
-        version: 13.0.6(react-dom@18.2.0)(react@18.2.0)
+        version: 13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       nextra:
-        specifier: latest
-        version: 2.2.14(next@13.0.6)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^2.2.14
+        version: 2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       nextra-theme-docs:
-        specifier: latest
-        version: 2.2.14(next@13.0.6)(nextra@2.2.14)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^2.2.14
+        version: 2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(nextra@2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -897,7 +897,7 @@ packages:
     resolution: {integrity: sha512-EFmR5zppdBp0WQeDVZ/b66CWJipB2q2VLNFMabzDSGR66Z2fQii83G5gTBbgGEnEEA0QRussvrFHxk1HWGJskw==}
 
   remove-accents@0.4.2:
-    resolution: {integrity: sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=}
+    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
 
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
@@ -985,7 +985,7 @@ packages:
     hasBin: true
 
   titleize@1.0.0:
-    resolution: {integrity: sha1-fTUHIgYYMLpmF2MeDP0+oIOY2Vo=}
+    resolution: {integrity: sha512-TARUb7z1pGvlLxgPk++7wJ6aycXF3GJ0sNSBTAsTuJrQG5QuZlkUQP+zl+nbjAh4gMX9yDw9ZYklMd7vAfJKEw==}
     engines: {node: '>=0.10.0'}
 
   trim-lines@3.0.1:
@@ -1097,7 +1097,7 @@ snapshots:
     dependencies:
       regenerator-runtime: 0.13.11
 
-  '@headlessui/react@1.7.10(react-dom@18.2.0)(react@18.2.0)':
+  '@headlessui/react@1.7.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       client-only: 0.0.1
       react: 18.2.0
@@ -2005,7 +2005,7 @@ snapshots:
 
   nanoid@4.0.1: {}
 
-  next-mdx-remote@4.3.0(react-dom@18.2.0)(react@18.2.0):
+  next-mdx-remote@4.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@mdx-js/mdx': 2.2.1
       '@mdx-js/react': 2.2.1(react@18.2.0)
@@ -2016,19 +2016,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  next-seo@5.14.1(next@13.0.6)(react-dom@18.2.0)(react@18.2.0):
+  next-seo@5.14.1(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      next: 13.0.6(react-dom@18.2.0)(react@18.2.0)
+      next: 13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  next-themes@0.2.1(next@13.0.6)(react-dom@18.2.0)(react@18.2.0):
+  next-themes@0.2.1(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      next: 13.0.6(react-dom@18.2.0)(react@18.2.0)
+      next: 13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  next@13.0.6(react-dom@18.2.0)(react@18.2.0):
+  next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@next/env': 13.0.6
       '@swc/helpers': 0.4.14
@@ -2055,9 +2055,9 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextra-theme-docs@2.2.14(next@13.0.6)(nextra@2.2.14)(react-dom@18.2.0)(react@18.2.0):
+  nextra-theme-docs@2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(nextra@2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@headlessui/react': 1.7.10(react-dom@18.2.0)(react@18.2.0)
+      '@headlessui/react': 1.7.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@popperjs/core': 2.11.6
       clsx: 1.2.1
       flexsearch: 0.7.31
@@ -2065,16 +2065,16 @@ snapshots:
       git-url-parse: 13.1.0
       intersection-observer: 0.12.2
       match-sorter: 6.3.1
-      next: 13.0.6(react-dom@18.2.0)(react@18.2.0)
-      next-seo: 5.14.1(next@13.0.6)(react-dom@18.2.0)(react@18.2.0)
-      next-themes: 0.2.1(next@13.0.6)(react-dom@18.2.0)(react@18.2.0)
-      nextra: 2.2.14(next@13.0.6)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next-seo: 5.14.1(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next-themes: 0.2.1(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      nextra: 2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       scroll-into-view-if-needed: 3.0.4
       zod: 3.20.2
 
-  nextra@2.2.14(next@13.0.6)(react-dom@18.2.0)(react@18.2.0):
+  nextra@2.2.14(next@13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@mdx-js/mdx': 2.2.1
       '@mdx-js/react': 2.2.1(react@18.2.0)
@@ -2084,8 +2084,8 @@ snapshots:
       gray-matter: 4.0.3
       katex: 0.16.4
       lodash.get: 4.4.2
-      next: 13.0.6(react-dom@18.2.0)(react@18.2.0)
-      next-mdx-remote: 4.3.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.0.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next-mdx-remote: 4.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       p-limit: 3.1.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
