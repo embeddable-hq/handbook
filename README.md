@@ -2,7 +2,9 @@
 
 This is the repo for Embeddable's [Docs](https://docs.embeddable.com).
 
-It is deployed and managed using [**Vercel**](https://vercel.com/embeddable/handbook).
+It uses the [Nextra](https://nextra.site) site generation framework ([Documentation](https://nextra.site/docs/guide)).
+
+It is currently deployed and managed on [Vercel](https://vercel.com/embeddable/handbook).
 
 Any changes pushed to the main branch are automatically deployed to https://docs.embeddable.com.
 

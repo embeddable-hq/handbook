@@ -1,15 +1,28 @@
 {
   "index": "Welcome",
-  "another": "Another Page",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
-  },
+  "getting-started": "Getting started",
+  "data": "Data",
+  "components": "Components",
+  "deployment": "Deployment",
+  "apis": "APIs",
   "contact": {
     "title": "Home ↗",
     "type": "page",
     "href": "https://embeddable.com/",
-    "newWindow": false
+    "newWindow": true
+  },
+  "roadmap": {
+    "title": "Roadmap ↗",
+    "type": "page",
+    "href": "https://roadmap.embeddable.com/roadmap",
+    "newWindow": true
+  },
+  "faqs": {
+    "title": "FAQs",
+    "type": "page"
+  },
+  "sla": {
+    "title": "SLA",
+    "type": "page"
   }
 }
