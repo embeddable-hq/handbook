@@ -1,0 +1,58 @@
+# EU Deployment
+
+Once set up on an EU workspace, you'll log into Embeddable at `https://app.eu.embeddable.com`.
+
+### Update Your Configuration
+
+In your code repo, you'll need to update your `embeddable.config.js` file to look like this:
+
+```js
+import { defineConfig } from '@embeddable.com/sdk-core';
+import react from '@embeddable.com/sdk-react';
+
+export default defineConfig({
+  plugins: [react],
+  previewBaseUrl: 'https://app.eu.embeddable.com',
+  pushBaseUrl: 'https://api.eu.embeddable.com',
+  audienceUrl: 'https://auth.eu.embeddable.com',
+  authDomain: 'auth.eu.embeddable.com',
+  authClientId: '6OGPwIQsVmtrBKhNrwAaXhz4ePb0kBGV',
+});
+```
+
+### Embedding Script Tag
+
+When embedding, you’ll need the following `<script>` tag:
+
+```js
+<script 
+  type="module" 
+  src="https://api.eu.embeddable.com/js/v1/">
+</script>
+```
+
+### Web Component Example
+
+The Web Component should look like this:
+
+```js
+<em-beddable 
+  base-url="https://api.eu.embeddable.com/"
+  token="YOUR_TOKEN"
+/>
+```
+
+### US IPs to Whitelist
+
+```js
+98.82.255.116
+```
+
+### S3 Domains to Whitelist
+
+```js
+static-data.us.embeddable.com
+```
+```js
+bundles.us.embeddable.com
+```

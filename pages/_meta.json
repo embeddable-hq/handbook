@@ -1,10 +1,10 @@
 {
   "index": "Introduction",
   "getting-started": "Getting started",
-  "data": "Data",
-  "components": "Components",
+  "data-modeling": "Data modeling",
+  "development": "Development",
+  "dashboards": "Dashboards",
   "deployment": "Deployment",
-  "apis": "APIs",
   "contact": {
     "title": "Home ↗",
     "type": "page",
@@ -19,10 +19,6 @@
   },
   "faqs": {
     "title": "FAQs",
-    "type": "page"
-  },
-  "sla": {
-    "title": "SLA",
     "type": "page"
   }
 }

@@ -6,8 +6,8 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/embeddable-hq',
   },
-  chat: {
-    link: 'https://discord.com',
+  sidebar: {
+    defaultMenuCollapseLevel: 1,
   },
   docsRepositoryBase: 'https://github.com/embeddable-hq/handbook',
   useNextSeoProps: () => {
