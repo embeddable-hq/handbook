@@ -1,6 +1,6 @@
 {
-    "download-repo": "1: Set up the Starter Repo",
-    "set-up-your-workspace": "2: Set up your Workspace",
+    "download-repo": "1: Set up your repo",
+    "set-up-your-workspace": "2: Set up your workspace",
     "build-dashboard": "3: Build a dashboard",
     "connect-your-database": "4: Connect your database",
     "deployment-regions": "Deployment regions",
