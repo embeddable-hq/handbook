@@ -1,0 +1,91 @@
+# Introduction
+
+Embeddable uses a **semantic layer** to define and manage your data.
+
+## What is a Semantic Layer?
+
+A semantic layer is an abstraction layer that sits between raw data in databases and your analytics, defining data in clear, consistent terms that users understand.
+
+It's especially beneficial for customer-facing analytics because it ensures: 
+
+- **Consistency**: Unified metrics and definitions across all dashboards.
+- **Maintainability**: Centralized business logic, avoiding code duplication.
+- **Performance**: Query optimization and reduced load on databases.
+
+Embeddable leverages [Cube](https://cube.dev/) as its semantic layer. This means you can define, manage, and transform data in a standard format, making it easier to build and scale analytics experiences for your end-users.
+
+## Data Models
+
+Data models are the building blocks that power the semantic layer. 
+
+If you think of the semantic layer as the high-level framework for defining and interpreting data across your organization, data models spell out the actual **fields**, **relationships**, and **aggregations**.
+
+### A Basic Example
+
+Suppose you have a `customers` table:
+
+id | email                | signed_up_at | country
+---|----------------------|--------------|----------
+1  | strahar0@...        | 2023-09-04   | United States
+2  | smcpeake1@...       | 2021-09-06   | Iceland
+3  | jeffrey_b@...       | 2021-09-06   | Canada
+
+To model this in Embeddable you might create a file like so inside your repo:
+
+
+```yaml
+# src/models/customers.cube.yml
+cubes:
+  - name: customers
+    title: "My Customers"
+    sql_table: public.customers
+    # sql: >
+    #   select *
+    #   from public.customers
+
+    dimensions:
+      - name: country
+        title: "Country of origin"
+        sql: country
+        type: string
+
+      - name: signed_up_date
+        title: "Signed up date"
+        sql: signed_up_at
+        type: time
+
+    measures:
+      - name: count
+        type: count
+        title: "# of Customers"
+        
+```
+- `name`: A unique identifier (no spaces or special characters).
+- `title` (optional): A friendly name that appears in the UI.
+- `sql_table`: Points to the actual table or view in your database (you can also write SQL)
+- `dimensions`: Fields to filter or group by (think columns or derived fields).
+- `measures`: Aggregations (count, sum, avg, etc.).
+
+## Getting started
+
+Here are some practical tips to help you design clear and manageable data models, especially when starting with a large database.
+
+- **Start Small**: Identify just one or two key tables or entities from your database that support your main analytics use cases, and create simple models for those.
+
+- **Add Complexity Gradually**: Once you have the basics working, expand your models with additional tables or fields as new insights are needed.
+
+- **Keep Models Focused**: Keep each model mapped to a clear, logical part of your database to avoid confusion and make maintenance easier.
+
+- **Use Clear Naming**: Give each model and field descriptive names that reflect its purpose. This helps everyone on your team understand the data at a glance.
+
+- **Document as You Go**: Briefly note what each model represents and how it’s used, so new team members or future you can jump in without guesswork.
+
+
+
+ 
+
+
+
+
+
+

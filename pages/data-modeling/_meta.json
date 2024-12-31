@@ -1,5 +1,8 @@
 {
-    "building-models": "Building models",
+    "introduction": "Introduction",
+    "defining-models": "Defining models",
+    "dimensions-and-measures": "Dimensions and Measures",
+    "joins": "Joins",
     "row-level-security": "Row level security",
     "testing-models": "Testing your models",
     "pushing-models": "Pushing your models",

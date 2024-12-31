@@ -1,19 +1,19 @@
 import { Steps, Callout } from 'nextra/components'
 
-# Connecting Your Database
+# Connect Your Database
 
-You can connect one or multipe databases to Embeddable.
+You can connect one or multipe databases to Embeddable. We call these **Connections**. 
 
 - **Read-only access:** Embeddable only reads from your database - it never writes to it.
-- **Connection options:** Connect directly or via SSH for secure access.
+- **Connection options:** Connect directly or via SSH.
 - **IP whitelisting:** Restrict access to your database by allowing only Embeddable’s fixed IPs.
 
 
 ## Connections API
 
-Use our **Connections API** to link your database to your workspace. 
+Use our **Connections API** to connect your database.
 
-The below represents a `CREATE` action, but all `CRUD` operations are available, with sample scripts available in [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts).
+The below is a `CREATE` action, but all `CRUD` operations are available, with sample scripts in [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts).
 
 ```javascript
 const apiKey = '<your API Key>';
@@ -39,11 +39,12 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
     }),
 });
 ```
-- **API Key:** This is located on the homepage of your workspace.
-- **name:** Unique name for the database connection. Default models look for a connection named `default`.
-- **type:** Supported drivers include Postgres, BigQuery, MongoDB, etc. (See full list [here](https://cube.dev/docs/product/configuration/data-sources)).
-- **credentials:** A javascript object containing the necessary credentials expected by the driver.
-    * These are securely encrypted and only used to retrieve exactly the data you have described in your data models.
+- `API Key`: This is located on the homepage of your workspace.
+- `name`: Unique name for the database connection.
+- `type`: Which driver to use (Postgres, BigQuery, MongoDB, etc). See full list of support databases [here](https://cube.dev/docs/product/configuration/data-sources).
+- `credentials`: A javascript object containing the credentials expected by the driver.
+    * The necessary credentials for each database are available [here](/getting-started/connect-your-database). 
+    * Credentials are securely encrypted.
     * We strongly suggest creating a **read-only** database user for each connection.
 
 ## CRUD Operations

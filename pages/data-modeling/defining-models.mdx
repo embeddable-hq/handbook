@@ -1,0 +1,116 @@
+import { Callout } from 'nextra/components'
+
+# Defining models
+
+Each data model is defined in its own `.cube.yml` file.
+
+**Example**
+
+```yaml
+# src/models/customers.cube.yml
+cubes:
+  - name: customers
+    title: My customers
+    data_source: default
+    sql_table: public.customers
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: email
+        title: 'Email address'
+        sql: email
+        type: string
+
+      - name: country
+        title: 'Country of origin'
+        sql: country
+        type: string
+
+      - name: signed_up_at
+        sql: signed_up_at
+        type: time
+
+      - name: full_name
+        title: "Full name"
+        sql: CONCAT(first_name, ' ', last_name)
+        type: string
+
+
+    measures:
+      - name: count
+        type: count
+        title: "# of Customers"
+
+    joins:
+      - name: orders # the name of the data model to join to (not the table)
+        sql: '{CUBE}.id = {orders}.customer_id'
+        relationship: one_to_many
+
+```
+
+<Callout emoji="💬">
+  YAML is sensitive to indentation. Use an online YAML validator like yamllint to check your formatting.
+</Callout>
+
+## Core Parameters
+
+- `name`: A unique identifier for the model (no spaces or special characters). This name is used internally by Embeddable and Cube to reference the model.
+
+- `title`: An optional, human-readable name that appears in the UI. You can change it anytime without impacting the underlying logic.
+
+- `datasource`: Specifies which data source the model belongs to. This should match the connection name you defined when setting up the [connection to your database](/getting-started/connect-your-database).
+
+- `sql_table`: Points to the actual table or view in your database (e.g., `public.customers`). Use this for straightforward mappings.
+
+- `sql`: An alternative to `sql_table` if you need to define a custom query rather than referencing a single table/view. For example:
+  ```yaml
+  sql: >
+    SELECT
+      id,
+      name,
+      created_at
+    FROM public.customers
+    WHERE status = 'active'
+  ```
+
+Within each file, you can define the **base table**, **dimensions**, **measures**, **joins** between models, and **pre-aggregations** to optimize performance.
+
+---
+
+## Additional Parameters
+
+- **joins**  
+  Defines how this model connects to other models (cubes). For example:
+  ```yaml
+  joins:
+    - name: orders
+      sql: '{CUBE}.id = {orders}.customer_id'
+      relationship: one_to_many
+  ```
+  This tells Cube how to link data sets and handle join relationships.
+
+- **description**  
+  A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
+
+- **meta**  
+  A dictionary of custom metadata you can store for internal purposes. This won’t affect the model’s logic but can be useful for tagging, versioning, or other annotations in your build process.
+
+- **preAggregations**  
+  Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
+  ```yaml
+  preAggregations:
+    mainRollup:
+      type: rollup
+      measureReferences:
+        - count
+      dimensionReferences:
+        - country
+      timeDimensionReference: signed_up_date
+      granularity: day
+  ```
+
+These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.
