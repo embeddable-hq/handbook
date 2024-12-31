@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 # Dimensions and Measures
 
 **Dimensions** and **Measures** define how your data is segmented and summarized. For example:
@@ -106,6 +108,20 @@ Each measure has:
 - `title` (optional): A user-friendly name for display in the UI.
 - `type`: The measure type (e.g., `count`, `sum`, `avg`).
 - `sql`: Points to the column or expression you want to aggregate.
+- `meta` (optional): a parameter to store additional information for a measure. E.g. use `meta` to pass a `$` symbol for a currency column or any other custom info you want to access in your charting components.
+
+  ```yaml
+    measures:
+        - name: price
+          title: price in USD
+          type: sum
+          sql: price_usd
+          meta:
+            pretext: $
+  ```
+  <Callout emoji="⚡️">
+    Embeddable's Starter Components support `pretext` out of the box.
+  </Callout>
 
 ### Supported Measure Types
 

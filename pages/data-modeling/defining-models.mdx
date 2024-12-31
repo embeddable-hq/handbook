@@ -38,7 +38,6 @@ cubes:
         sql: CONCAT(first_name, ' ', last_name)
         type: string
 
-
     measures:
       - name: count
         type: count
@@ -53,7 +52,7 @@ cubes:
 
 You can see more data model examples inside [your repo](http://localhost:3000/getting-started/download-repo). 
 
-<Callout emoji="💬">
+<Callout emoji="⚡️">
   YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
 </Callout>
 
@@ -78,35 +77,17 @@ You can see more data model examples inside [your repo](http://localhost:3000/ge
     FROM public.customers
     WHERE status = 'active'
   ```
----
+    <Callout emoji="💡">
+    A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The semantic layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
+    </Callout>
 
-## Additional Parameters
+## Other Parameters
 
-Within each file, you can also define other parameters, including **joins** between models and **pre-aggregations** to optimize performance.
+You can also define other parameters, including **joins** between models and **pre-aggregations** to optimize performance.
 
-- `joins`: Defines how this model connects to other models (cubes). For example:
-  ```yaml
-  joins:
-    - name: orders
-      sql: '{CUBE}.id = {orders}.customer_id'
-      relationship: one_to_many
-  ```
-  This tells Cube how to link data sets and handle join relationships.
+- `joins`: Defines how to [link datasets](/data-modeling/joins) and handle join relationships.
 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
-
-- `meta`: Store additional info for a **measure** or **dimension**. For example, use `meta` to pass a `$` symbol for a currency column or any other custom data that you want to be available in your Embeddable components.
-  ```yaml
-    measures:
-        - name: price
-          type: sum
-          sql: price_usd
-          meta: null
-          pretext: $
-  ```
-<Callout emoji="💬">
-  Embeddable's Starter Components support `pretext` out of the box.
-</Callout>
 
 - `preAggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
   ```yaml
