@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 # Introduction
 
 Embeddable uses a **semantic layer** to define and manage your data.
@@ -12,7 +14,9 @@ It's especially beneficial for customer-facing analytics because it ensures:
 - **Maintainability**: Centralized business logic, avoiding code duplication.
 - **Performance**: Query optimization and reduced load on databases.
 
-Embeddable leverages [Cube](https://cube.dev/) as its semantic layer. This means you can define, manage, and transform data in a standard format, making it easier to build and scale analytics experiences for your end-users.
+<Callout emoji="💡">
+  Under the hood, Embeddable uses [Cube](https://cube.dev/) as its semantic layer. This means you can define, manage, and transform data in a standard format (access Cube's docs [here](https://cube.dev/docs/product/introduction)).
+</Callout>
 
 ## Data Models
 
@@ -62,9 +66,16 @@ cubes:
 ```
 - `name`: A unique identifier (no spaces or special characters).
 - `title` (optional): A friendly name that appears in the UI.
-- `sql_table`: Points to the actual table or view in your database (you can also write SQL)
+- `sql_table`: Points to the actual table or view in your database. 
+- `sql`: Rather than pointing to a table / view, you can write SQL. Any SQL you write should match your own database's dialect. 
 - `dimensions`: Fields to filter or group by (think columns or derived fields).
 - `measures`: Aggregations (count, sum, avg, etc.).
+
+### Using your models
+
+Once you've defined your data models, push them to your Embeddable workspace to make them available in the dashboard builder. 
+
+When you add a charting component (e.g. a pie chart or a dropdown) to a dashboard, you’ll be prompted to choose which dimensions and measures to use to populate the data. Behind the scenes, Embeddable automatically generates and sends the necessary SQL queries to your database.  
 
 ## Getting started
 

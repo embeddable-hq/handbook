@@ -2,12 +2,11 @@ import { Callout } from 'nextra/components'
 
 # Defining models
 
-Each data model is defined in its own `.cube.yml` file.
-
-**Example**
+Each data model is defined in its own `.cube.yml` file, and begins with the `cubes:` keyword:
 
 ```yaml
 # src/models/customers.cube.yml
+
 cubes:
   - name: customers
     title: My customers
@@ -52,9 +51,12 @@ cubes:
 
 ```
 
+You can see more data model examples inside [your repo](http://localhost:3000/getting-started/download-repo). 
+
 <Callout emoji="💬">
-  YAML is sensitive to indentation. Use an online YAML validator like yamllint to check your formatting.
+  YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
 </Callout>
+
 
 ## Core Parameters
 
@@ -62,7 +64,7 @@ cubes:
 
 - `title`: An optional, human-readable name that appears in the UI. You can change it anytime without impacting the underlying logic.
 
-- `datasource`: Specifies which data source the model belongs to. This should match the connection name you defined when setting up the [connection to your database](/getting-started/connect-your-database).
+- `datasource`: Specifies which data source the model belongs to. This should match the connection name you defined when [connecting your database](/getting-started/connect-your-database).
 
 - `sql_table`: Points to the actual table or view in your database (e.g., `public.customers`). Use this for straightforward mappings.
 
@@ -76,15 +78,13 @@ cubes:
     FROM public.customers
     WHERE status = 'active'
   ```
-
-Within each file, you can define the **base table**, **dimensions**, **measures**, **joins** between models, and **pre-aggregations** to optimize performance.
-
 ---
 
 ## Additional Parameters
 
-- **joins**  
-  Defines how this model connects to other models (cubes). For example:
+Within each file, you can also define other parameters, including **joins** between models and **pre-aggregations** to optimize performance.
+
+- `joins`: Defines how this model connects to other models (cubes). For example:
   ```yaml
   joins:
     - name: orders
@@ -93,14 +93,22 @@ Within each file, you can define the **base table**, **dimensions**, **measures*
   ```
   This tells Cube how to link data sets and handle join relationships.
 
-- **description**  
-  A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
+- `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 
-- **meta**  
-  A dictionary of custom metadata you can store for internal purposes. This won’t affect the model’s logic but can be useful for tagging, versioning, or other annotations in your build process.
+- `meta`: Store additional info for a **measure** or **dimension**. For example, use `meta` to pass a `$` symbol for a currency column or any other custom data that you want to be available in your Embeddable components.
+  ```yaml
+    measures:
+        - name: price
+          type: sum
+          sql: price_usd
+          meta: null
+          pretext: $
+  ```
+<Callout emoji="💬">
+  Embeddable's Starter Components support `pretext` out of the box.
+</Callout>
 
-- **preAggregations**  
-  Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
+- `preAggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
   ```yaml
   preAggregations:
     mainRollup:
@@ -112,5 +120,6 @@ Within each file, you can define the **base table**, **dimensions**, **measures*
       timeDimensionReference: signed_up_date
       granularity: day
   ```
+TODO -> Add link to relevant section to learn more. 
 
 These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.
