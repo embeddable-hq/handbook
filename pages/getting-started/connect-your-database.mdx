@@ -66,7 +66,7 @@ Or use tools like [Postman](https://www.postman.com/).
 
 ## Testing Your Connection
 
-To confirm your connection works, use the `/test` endpoint, which is also available as a script in your repo:
+To confirm your connection works, use the `/test` endpoint, which is also available as a [script](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts) in your repo. 
 
 ```javascript
 fetch(`${BASE_URL}/api/v1/connections/${connectionName}/test`, {
@@ -78,12 +78,9 @@ fetch(`${BASE_URL}/api/v1/connections/${connectionName}/test`, {
 });
 ```
 
-You can also use the [test script](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts) available in your repo for this purpose.
-
-
 ## Using Your Connection
 
-Reference your database connection by name in your data models:
+Reference your database connection by name in your [data models](/data-modeling/defining-models):
 
 ```yaml
 cubes:
@@ -96,7 +93,7 @@ cubes:
 
 ## IP Whitelisting
 
-Restrict database access by allowing only Embeddable’s IPs:
+You can restrict database access by allowing only Embeddable’s IPs:
 - **US:** [see here](getting-started/deployment-regions/us#ips-to-whitelist). 
 - **EU:** [see here](getting-started/deployment-regions/eu#ips-to-whitelist). 
 

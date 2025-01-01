@@ -23,7 +23,7 @@ There are two ways to approach combining these tables:
 
 ### 1. One Model for Multiple Tables
 
-You can use the `sql` parameter to combine tables, like so:
+You can use the `sql` parameter to combine tables. This approach is often very useful if multiple raw database tables need to be joined together to represent one ***clean*** **user-facing concept**.
 
 ```yaml
 cubes:
@@ -34,13 +34,12 @@ cubes:
       JOIN public.orders ON customers.id = orders.customer_id
       JOIN public.products ON products.id = orders.product_id
     ...
-```
+``` 
+### 2. Multiple Models with Joins
 
-- This approach is often very useful if multiple raw database tables need to be joined together to represent one ***clean*** **user-facing concept**. 
+The general rule of thumb is to try and have **one data model** for **each user-facing concept**. 
 
-- Following that, the general rule of thumb is to try and have **one data model** for **each user-facing concept**. 
-
-- E.g. **Spotify** would probably want a data model to represent each of the following concepts:
+E.g. **Spotify** would probably want a data model to represent each of the following concepts:
 
     - playlists
     - listeners
@@ -48,9 +47,7 @@ cubes:
     - tracks
     - etc.
 
-### Multiple Models with Joins
-
-Since `customers`, `orders`, and `products` are **user-facing concepts**, the common approach would be to give each table its own model and then link them:
+Since `customers`, `orders`, and `products` are **user-facing concepts**, the best approach is therefore to create separate models and then link them, like so:
 
 ```yaml
 cubes:
