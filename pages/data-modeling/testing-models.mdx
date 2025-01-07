@@ -1,0 +1,86 @@
+import { Callout, Steps } from 'nextra/components'
+
+# Testing your data models
+
+You can test your data models:
+- in a local Embeddable workspace. 
+- locally using Cube's data playground. 
+
+In early 2025, we'll be launching an in-platform model playground, eliminating the need to set up Cube locally.
+
+## Testing locally using a local Embeddable workspace 
+
+To try out your models in Embeddable's no-code dashboard builder, you can spin up a local workspace by running:
+
+```bash
+npm run embeddable:dev
+```
+
+## Testing locally with Cube's Data Playground
+
+<Callout emoji="">
+  This requires [Docker](https://www.docker.com/pricing/).
+</Callout>
+
+<Steps>
+
+### Create a `.env` file:  
+   Ensure your `.env` file is in the same directory as `cube-playground.yml`.
+
+### Populate the `.env` file: 
+   Populate the `.env` file with the correct database [credentials for your database](http://localhost:3000/getting-started/connect-your-database/credentials) as per the [Cube.js Environment Configuration](https://cube.dev/docs/reference/configuration/environment-variables).
+    ```env
+    CUBEJS_DB_TYPE=postgres
+    CUBEJS_DB_HOST=localhost
+    CUBEJS_DB_NAME=your_database
+    CUBEJS_DB_USER=your_username
+    CUBEJS_DB_PASS=your_password
+    ```
+
+    You may need to add:
+    ```env
+    CUBEJS_DB_SSL=true
+    ````
+
+    You can also add set the **desired level of logging detail**, which can be useful for debugging and monitoring:
+    ```env
+    CUBEJS_DB_SSL=warn 
+    ```
+    **Possible values**:  
+    `warn` *(default value)*: Logs warnings in addition to errors.  
+    Example: Deprecation warnings or configuration issues. 
+
+    `error`: Logs only critical errors that affect the application's functionality.  
+    Example: Database connection issues or critical service failures.
+
+    `info`: Logs general informational messages about the application's operations.  
+    Example: Application startup, health checks, or key lifecycle events. 
+
+    `trace`: Logs the most detailed information, primarily used for in-depth debugging.  
+    Example: Internal function calls and exhaustive execution details.
+
+
+### Run the Playground  
+   Execute the following command to start Cube's data playground:
+   ```bash
+   npm run cube:playground
+   ```
+
+   You can also use docker compose:
+   ```bash
+   docker compose -f ./src/cube-playground.yml up
+   ```
+
+### Access the Playground 
+   Open your browser and navigate to [localhost:4000](http://localhost:4000) to use Cube Playground.
+
+</Steps>
+
+## Upcoming: In-Platform Model Playground
+
+We're excited to announce that an **in-platform model playground** will be available soon. This feature will allow you to test and debug your data models directly within Embeddable's interface, streamlining your workflow and removing the need for local setups.
+
+
+### Still Need Help?
+
+If you encounter any issues while testing your data models, feel free to reach out to our [Embeddable Community](https://community.embeddable.com/) or contact our support team for assistance.

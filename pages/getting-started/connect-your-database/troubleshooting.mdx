@@ -24,7 +24,7 @@ Having trouble connecting Embeddable to your database? Below are common issues a
    - Check that the **user** you've used when connecting has the right **permissions** to access those tables.
 
 6. **Data Source Configuration**  
-   - In your model file (`<name>.cube.yml`), verify the `datasource` field references the correct connection in your settings (if nothing is specified, it will point at Embeddable's default demo database).
+   - In your model file (`<name>.cube.yml`), verify the `data_source` field references the correct connection in your settings (omitting the `data_source` field defaults to a demo connection named `default`).
    - If you have multiple connections, confirm you’re using the right one.
 
 7. **Security Context Settings**  
