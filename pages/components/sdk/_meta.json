@@ -1,5 +1,0 @@
-{
-    "load-data": "loadData(...)",
-    "define-component": "defineComponent(...)",
-    "native-types": "Native types"
-}

@@ -1,0 +1,66 @@
+# US Deployment
+
+Once set up on a US workspace, you'll log into Embeddable at `https://app.us.embeddable.com`.
+
+### Update Your Configuration
+
+In your code repo, you'll need to update your `embeddable.config.js` file to look like this:
+
+```js
+import { defineConfig } from '@embeddable.com/sdk-core';
+import react from '@embeddable.com/sdk-react';
+
+export default defineConfig({
+  plugins: [react],
+  previewBaseUrl: 'https://app.us.embeddable.com',
+  pushBaseUrl: 'https://api.us.embeddable.com',
+  audienceUrl: 'https://auth.us.embeddable.com',
+  authDomain: 'auth.us.embeddable.com',
+  authClientId: '6OGPwIQsVmtrBKhNrwAaXhz4ePb0kBGV',
+});
+```
+
+### Embedding Script Tag
+
+When embedding, you’ll need the following `<script>` tag:
+
+```js
+<script 
+  type="module" 
+  src="https://api.us.embeddable.com/js/v1/">
+</script>
+```
+
+### Web Component Example
+
+The Web Component should look like this:
+
+```js
+<em-beddable 
+  base-url="https://api.us.embeddable.com/"
+  token="YOUR_TOKEN"
+/>
+```
+
+### IPs to Whitelist
+
+For direct database connections:
+
+```js
+98.82.255.116
+```
+
+For connections via SSH:
+
+```js
+35.171.35.74
+```
+
+### S3 Domains to Whitelist
+
+```js
+static-data.us.embeddable.com
+```
+```js
+bundles.us.embeddable.com
+```

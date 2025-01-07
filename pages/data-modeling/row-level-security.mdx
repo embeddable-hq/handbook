@@ -1,0 +1,146 @@
+# Row-level security
+
+For **customer-facing analytics**, each **end-user** should only see the **data they’re allowed to see** and nothing more. That’s why row-level security is a **first-class citizen** in Embeddable.
+
+## Security Tokens and Security Context
+
+Embeddable dashboards are [embedded](TODO) in your site via an HTML web component:
+
+```html
+<em-beddable 
+  token="eyJhbGciOiJIUzI..."
+/>
+```
+
+- The `token` parameter (a **security token**) must be retrieved **server-side** from our [Tokens API](TODO) each time a user accesses your Embeddable dashboard.
+
+- When requesting this security token, you also send a **security context**. This is simply a **JSON object** containing *any fields* you need to pass to your data models:
+
+```javascript
+POST /api/v1/security-token
+securityContext: { 
+    userId: 45, 
+    orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
+    countries: ['us-east', 'eu-west']
+}
+
+Response:
+{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI..." }
+```
+
+### How to use the Security Context
+
+The security context is automatically available inside your data models, and is accessed like so:
+
+```yaml
+cubes:
+  - name: orders
+    title: "Orders"
+    sql: >
+      SELECT * FROM public.orders
+      WHERE org_id = '{ COMPILE_CONTEXT.securityContext.orgId }'
+      AND user_id = { COMPILE_CONTEXT.securityContext.userId }
+```
+
+Or, if your customer data is split by schema:
+
+```yaml
+cubes:
+  - name: orders
+    title: "Orders"
+    sql_table: "{ COMPILE_CONTEXT.securityContext.orgId }.orders"
+```
+
+If you’re unsure how best to approach data security, reach out to us—we’re here to help.
+
+## Using Jinja for Dynamic SQL
+
+Jinja ([docs](https://jinja.palletsprojects.com/en/3.1.x/templates/)) is used under the hood to compile SQL. The `{ ... }` notation in your model files is replaced **before** sending the query to your database. For example:
+
+```yaml
+cubes:
+  - name: customers
+    title: "My customers"
+    sql: >
+      SELECT * 
+      FROM public.customers 
+      WHERE orgId = '{ COMPILE_CONTEXT.securityContext.ordId }'
+```
+
+compiles to:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE ordId = 'abc123'
+```
+
+### Conditional SQL
+
+The nice thing about Jinja is that it also allows conditional logic for more advanced scenarios:
+
+```yaml
+cubes:
+  - name: customers
+    title: "My customers"
+    sql: >
+      SELECT * 
+      FROM public.customers
+      {% if COMPILE_CONTEXT.securityContext.superUser %}
+        WHERE 1 = 1
+      {% else %}
+        WHERE organisationId = '{ COMPILE_CONTEXT.securityContext.organisationId }'
+      {% endif %}
+```
+
+For users flagged as `superUser`, the compiled SQL becomes:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE 1 = 1
+```
+
+### Multiple Values
+
+When your security context contains an array (e.g. a list of allowed countries), use the `list` helper:
+
+```yaml
+cubes:
+  - name: customers
+    title: "My customers"
+    sql: >
+      SELECT *
+      FROM public.customers
+      WHERE country IN {{ list(COMPILE_CONTEXT.securityContext.countries) }}
+```
+
+If `countries` is `["United States", "Canada", "Mexico"]`, the resulting SQL looks like:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE country IN ('United States', 'Canada', 'Mexico')
+```
+
+## Testing Security Contexts in Embeddable
+
+To try out different security contexts in the no-code builder, define them in your repo at `src/presets/security-contexts.sc.yml`:
+
+```yaml
+- name: Nike
+  securityContext:
+    orgId: org5
+    userId: 23478
+
+- name: Adidas
+  securityContext:
+    orgId: 23
+    userId: cmlidXRlIjoiZ2VvaXBf9sZSJ9LHsiYXR0
+```
+
+Each entry appears under the **“View as”** dropdown in the builder:
+
+[Screenshot 2024-02-07 at 18.10.43.png](TODO)
+
+Switch between contexts to preview your dashboard as different users.

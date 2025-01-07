@@ -1,0 +1,40 @@
+import { Steps, Cards } from 'nextra/components'
+
+# Set up your Workspace
+
+<Steps>
+
+### Log in to Embeddable
+
+Remember to open your region:
+
+   - US: [https://app.us.embeddable.com](https://app.us.embeddable.com)
+   - EU: [https://app.eu.embeddable.com](https://app.eu.embeddable.com)
+
+### Retrieve your API Key
+
+This is located on the homepage of your workspace. 
+
+### Push the code bundle to your workspace
+
+Navigate to the directory where you cloned the [Starter Repo](/getting-started/download-repo) and run:
+
+```bash
+npm run embeddable:push -- --api-key <API Key> --email <Email>
+```
+
+### Refresh the page
+
+The components and data models in the Starter Repo are now available in your workspace to build dashboards with, and you should now see a **"Create new Embeddable"** button.
+
+</Steps>
+
+## Next steps
+
+<div style={{ marginTop: "2rem" }}>
+    <Cards.Card
+        title="Create your first dashboard"
+        href="/getting-started/build-dashboard"
+        arrow
+    />
+</div>

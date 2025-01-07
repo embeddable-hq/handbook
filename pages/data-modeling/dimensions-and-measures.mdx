@@ -1,0 +1,193 @@
+import { Callout } from 'nextra/components'
+
+# Dimensions and Measures
+
+**Dimensions** and **Measures** define how your data is segmented and summarized. For example:
+
+    ```yaml
+    dimensions:
+        - name: country
+          title: 'Country of origin'
+          sql: country
+          type: string 
+
+    measures:
+        - name: count
+          type: count
+          title: "# of Customers"
+    ```
+
+With a single `country` dimension and a `count` measure, the following queries can be generated:
+
+- **Total customers** (count of all rows).
+- **Customers by country** (grouped by the `country` column).
+- **Filtered counts** (e.g. customers in a specific country).
+
+## Dimensions
+
+**Dimensions** are the fields you want to **filter** or **group by**.
+
+- Dimensions must come from **columns in the base table** you define using `sql_table` or `sql`.
+
+- You can define a dimension for every column if you want all columns exposed, but you don't need to.
+
+### Basic Structure
+
+Each dimension has:
+- `name`: A unique identifier (no spaces or special characters).
+- `title` (optional): A user-friendly name for display in the UI.
+- `sql`: The column or SQL expression from your base table/query.
+- `type`: The data type (`string`, `number`, `time`, `geo`).
+- `primary_key` (optional): Set this to `true` if it uniquely identifies rows.
+
+### Examples
+
+- **A basic example**  
+
+    ```yaml
+    dimensions:
+    - name: email
+      title: "Email Address"
+      sql: email
+      type: string
+
+    - name: country
+      title: "Country"
+      sql: country
+      type: string
+    # ...etc.
+    ```
+
+- **Combining first and last names**  
+  Instead of defining separate dimensions for `first_name` and `last_name`, create a `full_name` dimension using an SQL expression:
+    ```yaml
+    dimensions:
+    - name: full_name
+      title: "Full Name"
+      type: string
+      sql: CONCAT(first_name, ' ', last_name)
+    ```
+
+- **Converting Unix timestamps**  
+  If your table stores timestamps in Unix time, convert them to a date/time:
+    ```yaml
+    dimensions:
+    - name: created_at
+      title: "Signed Up At"
+      type: time
+      sql: TO_TIMESTAMP(created_at)
+    ```
+
+- **Applying numeric conversions**  
+  For currency or other numeric transformations, use a calculated expression:
+    ```yaml
+    dimensions:
+    - name: price
+      title: "Price in Dollars"
+      type: number
+      sql: price_in_cents / 100.0
+    ```
+- **Anonymizing or Transforming Data**  
+  Use **SQL expressions** to mask or obfuscate sensitive columns before exposing them in the UI. For example, if you only want to show part of a user’s email:
+    ```yaml
+    dimensions:
+    - name: email_prefix
+      title: "Email Prefix"
+      type: string
+      sql: SUBSTRING(email, 1, POSITION('@' IN email) - 1)
+    ```
+
+## Measures
+
+**Measures** are the values you aggregate (such as a count of users or total revenue).
+
+### Basic Structure
+
+Each measure has:
+- `name`: A unique internal identifier.
+- `title` (optional): A user-friendly name for display in the UI.
+- `type`: The measure type (e.g., `count`, `sum`, `avg`).
+- `sql`: Points to the column or expression you want to aggregate.
+- `meta` (optional): a parameter to store additional information for a measure. E.g. use `meta` to pass a `$` symbol for a currency column or any other custom info you want to access in your charting components.
+
+  ```yaml
+    measures:
+        - name: price
+          title: price in USD
+          type: sum
+          sql: price_usd
+          meta:
+            pretext: $
+  ```
+  <Callout emoji="⚡️">
+    Embeddable's Starter Components support `pretext` out of the box.
+  </Callout>
+
+### Supported Measure Types
+
+Embeddable (via Cube) supports the following measure types:
+
+- [count](https://cube.dev/docs/reference/data-model/types-and-formats#count)
+- [count_distinct](https://cube.dev/docs/reference/data-model/types-and-formats#count_distinct)
+- [count_distinct_approx](https://cube.dev/docs/reference/data-model/types-and-formats#count_distinct_approx)
+- [sum](https://cube.dev/docs/reference/data-model/types-and-formats#sum)
+- [avg](https://cube.dev/docs/reference/data-model/types-and-formats#avg)
+- [min](https://cube.dev/docs/reference/data-model/types-and-formats#min)
+- [max](https://cube.dev/docs/reference/data-model/types-and-formats#max)
+
+### Examples
+
+- **Basic Count**
+
+  ```yaml
+  measures:
+    - name: total_customers
+      title: "Total Customers"
+      type: count
+      sql: id
+  ```
+
+- **Summing a Numeric Column**
+
+  ```yaml
+  measures:
+    - name: total_sales
+      title: "Total Sales"
+      type: sum
+      sql: amount
+  ```
+
+- **Average Order Value**
+
+  ```yaml
+  measures:
+    - name: average_order_value
+      title: "Average Order Value"
+      type: avg
+      sql: total_price
+  ```
+
+- **Count Distinct (e.g., unique emails)**
+
+  ```yaml
+  measures:
+    - name: unique_customers
+      title: "Unique Customers"
+      type: count_distinct
+      sql: email
+  ```
+
+- **Rolling Count**  
+  This measure counts orders over a rolling window, allowing you to track an ongoing total:
+
+    ```yaml
+    measures:
+        - name: rolling_count
+          type: count
+          title: "Rolling Orders"
+          description: "Cumulative count"
+          rolling_window:
+            trailing: unbounded
+    ```
+
+For more details, see the [Cube docs on rolling windows](https://cube.dev/docs/reference/data-model/rolling-window).

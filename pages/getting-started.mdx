@@ -1,31 +1,13 @@
-# Another Page
+# Getting Started with Embeddable
 
-```js filename="demo.js" {3} copy
-let a = 1;
+If you’re reading this, it means you have ***early access*** to [Embeddable](https://embeddable.com).
 
-console.log(a);
-```
+Follow this step-by-step guide to get set up.
 
-## Component
+## Before You Begin
 
-import { useState } from 'react'
+You'll need an Embeddable account to get started.
 
-{/* Import CSS modules */}
-import styles from '../components/counters.module.css'
+We offer two deployment regions: **US** and **EU**. 
 
-export const Counter = () => {
-  const [count, setCount] = useState(0);
-  return (
-    <div>
-      <button onClick={() => setCount(count + 1)} className={styles.counter}>Clicked {count} times</button>
-    </div>
-  );
-};
-
-<Counter/>
-
-## External Component
-
-import Counters from '../components/counters'
-
-<Counters />
+[Sign up or log in](https://embeddable.com/log-in) to create your account and select your preferred region.

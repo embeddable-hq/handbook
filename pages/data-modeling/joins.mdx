@@ -1,0 +1,131 @@
+import { Callout } from 'nextra/components'
+
+# Joins
+
+When your database tables relate to each other, you can represent those relationships directly in your data models. This allows you to build dashboards using data from multiple tables without writing manual JOIN statements.
+
+**Example**
+
+Imagine the following database:
+
+| **Table**    | **Key Relationships**                      |
+|--------------|--------------------------------------------|
+| **customers** | A **customer** can have many **orders**. |
+| **orders**    | Each **order** is linked to one **customer** and one **product**. |
+| **products**  | Each **product** can appear in many **orders**. |
+
+With these relationships, you can answer questions like:
+- "How many **orders** did a specific **customer** place last month?"
+- "What’s the most popular **product** in a specific **country** this week?"
+- "Which **customer** has spent the most money?"
+
+There are two ways to approach combining these tables:
+
+### 1. One Model for Multiple Tables
+
+You can use the `sql` parameter to combine tables. This approach is often very useful if multiple raw database tables need to be joined together to represent one ***clean*** **user-facing concept**.
+
+```yaml
+cubes:
+  - name: customers_and_orders_and_products
+    sql: > 
+      SELECT *
+      FROM public.customers
+      JOIN public.orders ON customers.id = orders.customer_id
+      JOIN public.products ON products.id = orders.product_id
+    ...
+``` 
+### 2. Multiple Models with Joins
+
+The general rule of thumb is to try and have **one data model** for **each user-facing concept**. 
+
+E.g. **Spotify** would probably want a data model to represent each of the following concepts:
+
+    - playlists
+    - listeners
+    - artists
+    - tracks
+    - etc.
+
+Since `customers`, `orders`, and `products` are **user-facing concepts**, the best approach is therefore to create separate models and then link them, like so:
+
+```yaml
+cubes:
+  - name: customers
+    sql_table: public.customers
+
+    joins:
+      - name: orders
+        sql: "{CUBE}.id = {orders}.customer_id"
+        relationship: one_to_many
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+    ...
+```
+
+```yaml
+cubes:
+  - name: orders
+    sql_table: public.orders
+
+    joins:
+      - name: products
+        sql: "{CUBE}.product_id = {products}.id"
+        relationship: many_to_one
+      - name: customers
+        sql: "{CUBE}.customer_id = {customers}.id"
+        relationship: many_to_one
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+    ...
+```
+
+```yaml
+cubes:
+  - name: products
+    sql_table: public.products
+
+    joins:
+      - name: orders
+        sql: "{CUBE}.id = {orders}.product_id"
+        relationship: one_to_many
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+    ...
+```
+
+### Key Points
+
+- **Primary Key**    
+  Each model should have a dimension marked `primary_key: true`. This ensures Cube can generate valid JOIN queries. By default, primary keys are hidden in the UI - use `public: true` if you want to expose them as dimensions.
+
+- **Name vs. Table**  
+  In a `joins` block, `name` refers to another **model** (cube), not the underlying database table.
+
+- **Relationship Types**  
+  Set `relationship` to [one_to_one](https://cube.dev/docs/reference/data-model/joins#one-to-one), [one_to_many](https://cube.dev/docs/reference/data-model/joins#one-to-many), or [many_to_one](https://cube.dev/docs/reference/data-model/joins#many-to-one) depending on your schema.
+
+- **Composite Keys**  
+  If no single column uniquely identifies rows, build a composite key with a custom SQL expression:
+  ```yaml
+  dimensions:
+    - name: id
+      sql: CONCAT_WS('|', tableA.id, tableB.id)
+      type: string
+      primary_key: true
+  ```
+
+- **Foreign Keys as Dimensions**  
+  Foreign keys (e.g., `customer_id`) don’t have to be exposed as visible dimensions. If needed, you can define them just like any other column.
