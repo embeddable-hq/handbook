@@ -1,7 +1,9 @@
 {
     "introduction": "Intro to development",
-    "defining-components": "Defining components",
-    "loading-data": "Loading data",
+    "local-environment": "Developing locally",
     "theming": "Theming",
-    "pushing-code": "Pushing components"    
+    "defining-components": "Defining components",
+    "input-types": "Defining input types",
+    "loading-data": "Loading data",    
+    "pushing-code": "Pushing components"
 }

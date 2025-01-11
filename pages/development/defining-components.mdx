@@ -26,9 +26,9 @@ export default ({ title, body }: Props) => {
 };
 ```
 
-There's nothing Embeddable-specific about this code—it's just standard React.
+There's nothing Embeddable-specific about this code - it's just standard React.
 
-To make it available in Embeddable’s **no-code builder**, you need a `.emb` file that defines **what inputs** to display. Note the inline comments describing the `meta` properties:
+To make it available in Embeddable’s **no-code builder**, you need a `.emb` file containing the configuration for the component, including **the inputs** to display:
 
 ```tsx
 // src/components/TextComponent/TextComponent.emb.ts
@@ -38,13 +38,13 @@ import Component from './index';
 import { Inputs } from '@embeddable.com/react';
 
 export const meta = {
-  name: 'TextComponent', // must match TextComponent.emb.ts
+  name: 'TextComponent', // a unique identifier that must match the file name (i.e. TextComponent.emb.ts)
   label: 'Text Component', // user-facing name in the builder
   inputs: [
     {
-      name: 'title',    // unique identifier for this input
-      type: 'string',   // determines the UI control (text field)
-      label: 'Title text', // label shown in the builder
+      name: 'title', // unique identifier for this input
+      type: 'string',  // determines the UI control to render (i.e. a text field in this case)
+      label: 'Title text', // the label shown in the builder
     },
     {
       name: 'body',
@@ -63,10 +63,7 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-- **`Component`**: The React component you defined (e.g., `TextComponent`).
-- **`defineComponent`**: Tells the SDK to include this component in the no-code builder.
-- **`meta`**: Describes which inputs appear in the builder.  
-- **`props`**: Maps inputs to props for your React component, passing user-entered values directly into the component.
+- **`defineComponent`**: A function that tells the SDK to include this component in the no-code builder, explained [below](/development/defining-components#the-definecomponent-function).
 
 When you run Embeddable’s CLI, it bundles this code, and your **Text Component** appears in Embeddable’s no-code builder for your team.
 
@@ -111,8 +108,8 @@ import { loadData } from '@embeddable.com/core';
 import Component from './index';
 
 export const meta = {
-  name: 'KPIChart', // must match KPIChart.emb.ts
-  label: 'KPI Chart',
+  name: 'KPIChart', // An identifier - must match KPIChart.emb.ts
+  label: 'KPI Chart', // user-facing name in the builder 
   inputs: [
     {
       name: 'title',
@@ -126,8 +123,9 @@ export const meta = {
     },
     {
       name: 'metric',
-      type: 'measure', // shows a dropdown of measures (defined in your data model)
+      type: 'measure', // shows a dropdown of measures (defined in your data models)
       label: 'KPI',
+      array: false, // specifies that users can select a single measure 
       config: {
         dataset: 'ds', // restrict measure options to the selected dataset
       }
@@ -144,7 +142,7 @@ export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
     return {
       ...inputs,
-      results: loadData({
+      results: loadData({ //Fetches data from your database
         from: inputs.ds,
         measures: [inputs.metric],
       })
@@ -153,23 +151,19 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-- **`type: dataset`**: Displays a dropdown of available datasets.
-- **`type: measure`**: Displays a dropdown of measures (as defined in your [data model](TODO)).
-- **`loadData`**: Fetches data from your database or [cache](/data-modeling/caching/in-memory).
-
----
-
 ## The `defineComponent` Function
 
-The `defineComponent` function is how you register and configure components in Embeddable, mapping user inputs to your React component’s props.
+The `defineComponent` function, used inside your `emb.ts` files, is how you register and configure components in Embeddable, mapping user inputs to your React component’s props.
 
 ### Parameters
 
 | **Param**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `component` | Component | ✅ Yes       |
-| `meta`      | Meta      | ✅ Yes       |
-| `config`    | Config    | ✅ Yes       |
+| `meta`      | [Meta](/development/defining-components#meta-definition)      | ✅ Yes       |
+| `config`    | [Config](/development/defining-components#config-definition)   | ✅ Yes       |
+
+TODO: Add Client Context
 
 - **`component`**: The React component that renders on the dashboard.
 - **`meta`**: Defines how the component appears and which inputs are available in the builder.
@@ -186,28 +180,26 @@ The `defineComponent` function is how you register and configure components in E
 | `name`          | string            | ✅ Yes       |
 | `label`         | string            | ✅ Yes       |
 | `classNames`    | string[]          | ❌ No        |
-| `inputs`        | `InputMeta[]`     | ❌ No        |
-| `events`        | `EventMeta[]`     | ❌ No        |
-| `variables`     | `VariableMeta[]`  | ❌ No        |
+| `inputs`        | [`InputMeta[]`](/development/defining-components#inputmeta-definition)     | ❌ No        |
+| `events`        | [`EventMeta[]`](/development/defining-components#eventmeta-definition)     | ❌ No        |
+| `variables`     | [`VariableMeta[]`](/development/defining-components#variablemeta-definition)  | ❌ No        |
 | `defaultWidth`  | number            | ❌ No        |
 | `defaultHeight` | number            | ❌ No        |
 
-- **`name`**: Must match the `.emb.ts` filename; changing it later can break references.
+- **`name`**: A unique identifier that must match the `.emb.ts` filename. Changing it later can break references.
 - **`label`**: A user-facing name shown in the builder.
 - **`classNames`**: CSS class names for styling the container.
-- **`inputs`**: Input fields users configure (e.g., strings, numbers, datasets).
-- **`events`**: Specifies events the component can trigger (e.g., `onChange`).
-- **`variables`**: Auto-creates variables when the component is added.
+- **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](TODO)).
+- **`events`**: Specifies [events](TODO) the component can trigger (e.g., `onChange`, `onClick`).
+- **`variables`**: Auto-creates [variables](TODO) when the component is added.
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
 
----
+### Dropdown Example
 
-## Dropdown Example
-
-Below is a dropdown component that uses many `Meta` options:
+Below is the `.emb.ts` file for a dropdown that displays a list of values (loaded from a dimension defined on your data model). It uses many `Meta` options:
 
 ```jsx
-import { defineComponent, EmbeddedComponentMeta } from '@embeddable.com/react';
+import { defineComponent, EmbeddedComponentMeta, Inputs } from '@embeddable.com/react';
 import { loadData, Value } from '@embeddable.com/core';
 import Component from './index';
 
@@ -265,13 +257,6 @@ export const meta: EmbeddedComponentMeta = {
   ],
 };
 
-type Inputs = {
-  title: string;
-  ds: any; // e.g., Dataset
-  values: any; // e.g., Dimension
-  defaultValue: string;
-};
-
 export default defineComponent<Inputs>(Component, meta, {
   props: (inputs) => {
     return {
@@ -288,41 +273,84 @@ export default defineComponent<Inputs>(Component, meta, {
 });
 ```
 
----
+When this component is [pushed](/development/pushing-code) to Embeddable:
 
-### `Config` Definition
-
-| **Param** | **Type**                              | **Required** |
-| --------- | ------------------------------------- | ------------ |
-| `props`   | `(inputs, [state, setState]) => props`| ✅ Yes       |
-| `events`  | `{ <string>: (obj) => obj, … }`       | ❌ No        |
-
-- **`props`**: Maps user inputs to your React component’s props.
-- **`events`**: Maps events fired by your component to `meta.events` definitions.
-
----
+1.	**Add Component**: A teammate adds this dropdown to the dashboard canvas in the no-code builder:
+    - Entering a title.
+    - Choosing a dataset.
+    - Choosing a Dimension from that dataset. 
+    - (Optional) Setting a default value.
+2. **Initial Size**: The dropdown appears at 320×80 px by default.
+3.	**Data Loading**: The selected dimension’s values are fetched and passed to the component.
+4.	**Auto-Created Variable**: A variable named “chosen value” is automatically added to the canvas.
+5.	**Interactivity**: When users select an option from the dropdown, “chosen value” updates accordingly, enabling [interactivity](TODO) (e.g. filtering by the chosen value).
 
 ### `InputMeta` Definition
 
-| **Param**     | **Type**                           | **Required** |
-| ------------- | ---------------------------------- | ------------ |
-| `name`        | string                             | ✅ Yes       |
-| `type`        | `CustomType` or `NativeType`       | ✅ Yes       |
-| `label`       | string                             | ✅ Yes       |
-| `description` | string                             | ❌ No        |
-| `defaultValue`| any                                | ❌ No        |
-| `config`      | object                             | ❌ No        |
+```ts
+export const meta: EmbeddedComponentMeta = {
+    name: 'BasicDropdownComponent',
+    label: 'Basic Dropdown',
+    inputs: [
+        {
+            name: 'ds',
+            type: 'dataset',
+            label: 'Dataset',
+            description: 'Dataset',
+            category: 'Dropdown values'
+        },
+        {
+            name: 'property',
+            type: 'dimension',
+            label: 'Property',
+            config: {
+                dataset: 'ds'
+            },
+            category: 'Dropdown values'
+        },
+        ...
+    ]
+}
+```
 
-- **`name`**: Unique identifier for this input (within the component).
-- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom).
+| **Param**     | **Type**                               | **Required** |
+| ------------- | -------------------------------------- | ------------ |
+| `name`        | string                                 | ✅ Yes       |
+| `type`        | `CustomType` or `NativeType`           | ✅ Yes       |
+| `label`       | string                                 | ✅ Yes       |
+| `description` | string                                 | ❌ No        |
+| `defaultValue`| any                                    | ❌ No        |
+| `config`      | object                                 | ❌ No        |
+| `array`       | boolean                                | ❌ No        |
+| `category`    | string                                 | ❌ No        |
+
+- **`name`**: A unique identifier for this input (within the component).
+- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [here](TODO).
 - **`label`**: User-facing label in the builder.
-- **`description`**: Optional tooltip or help text.
-- **`defaultValue`**: Initial value for the input.
-- **`config`**: Arbitrary config object (e.g., specifying which dataset a `dimension` belongs to).
-
----
+- **`description`**: A helpful reference, not currently displayed in the builder.
+- **`defaultValue`**: The initial value for the input.
+- **`category`**: Assigns an optional grouping for this input in the builder UI. Inputs sharing the same category appear together.
+- **`config`**: An arbitrary JS object that is type-specific. Each type has its own “editor,” which is the UI for that input type. For example: `string` has a text field editor. `dataset`, `dimension`, and `measure` use dropdown editors. When you define custom types, you can also define a custom editor (e.g., a color picker). The `config` object is passed to the editor to enable custom behavior. A common use case is specifying the dataset for `dimension` or `measure` inputs.
+- **`array`**: If set to `true` (for certain types like `dimension` or `measure`), the no-code builder displays a **multi-select** dropdown, letting users select **multiple values** instead of just one.
 
 ### `EventMeta` Definition
+
+```ts
+export const meta: EmbeddedComponentMeta = {
+    name: 'BasicDropdownComponent',
+    label: 'Basic Dropdown',
+    inputs: [],
+    events: [
+        {
+            name: 'onChange',
+            label: 'Change',
+            properties: [
+                { name: 'value', type: 'string' },
+            ],
+        },
+    ]
+}
+```
 
 | **Param**    | **Type**          | **Required** |
 | ------------ | ----------------- | ------------ |
@@ -330,27 +358,42 @@ export default defineComponent<Inputs>(Component, meta, {
 | `label`      | string            | ✅ Yes       |
 | `properties` | `EventProperty[]` | ❌ No        |
 
-- **`name`**: The event handler name in your React component (e.g., `onChange`).
+- **`name`**: The event handler name passed into your React component. E.g. setting it to `onBigClick` means that Embeddable will inject a function into your React component, via its props, called `onBigClick`. When called, the value you pass to this function will be passed to `events.onBigClick` inside `defineComponent` where you need to map the value onto an `object` that has the shape described in `events.properties` in your `meta`. This allows Embeddable to make your event available to use as an interaction in the no-code builder.
 - **`label`**: How this event is labeled in the builder.
 - **`properties`**: Describes data passed to Embeddable when the event fires.
 
----
 
-### `EventProperty` Definition
+    #### `EventProperty` Definition
 
-| **Param** | **Type**                       | **Required** |
-| --------- | ------------------------------ | ------------ |
-| `name`    | string                         | ✅ Yes       |
-| `type`    | `CustomType` or `NativeType`   | ✅ Yes       |
-| `label`   | string                         | ❌ No        |
+    | **Param** | **Type**                       | **Required** |
+    | --------- | ------------------------------ | ------------ |
+    | `name`    | string                         | ✅ Yes       |
+    | `type`    | `CustomType` or `NativeType`   | ✅ Yes       |
+    | `label`   | string                         | ❌ No        |
 
-- **`name`**: The property key in your `events` mapping (e.g., `value`).
-- **`type`**: The expected data type (e.g., `string`, `number`, `boolean`).
-- **`label`**: An optional label for this property in the builder.
-
----
+    - **`name`**: The property key in your `events` mapping (e.g. `value`).
+    - **`type`**: The expected data type (e.g. `string`, `number`, `boolean`).
+    - **`label`**: An optional label for this property in the builder.
 
 ### `VariableMeta` Definition
+
+```ts
+export const meta: EmbeddedComponentMeta = {
+    name: 'BasicDropdownComponent',
+    label: 'Basic Dropdown',
+    inputs: [],
+    events: [],
+    variables: [
+        {
+            name: 'chosen value',
+            type: 'string',
+            defaultValue: Value.noFilter(),
+            inputs: ['defaultValue'],
+            events: [{ name: 'onChange', property: 'value' }],
+        },
+    ]
+}
+```
 
 | **Param**      | **Type**                       | **Required** |
 | -------------- | ------------------------------ | ------------ |
@@ -363,19 +406,31 @@ export default defineComponent<Inputs>(Component, meta, {
 - **`name`**: The variable’s name when auto-created in the builder.
 - **`type`**: The variable type (`string`, `boolean`, etc.).
 - **`defaultValue`**: The initial value for the variable.
-- **`inputs`**: If you want certain inputs to link to this variable.
+- **`inputs`**: A list of inputs whose value should be linked to the variable. The names must match the name of an input defined in `inputs.name` in your `meta`.
 - **`events`**: If you want certain events to update this variable’s value.
+
+    #### `EventRef` Definition
+
+    | **Param**  | **Type** | **Required** |
+    | ---------- | -------- | ------------ |
+    | `name`     | string   | ✅ Yes       |
+    | `property` | string   | ✅ Yes       |
+
+    - **`name`**: References an event from `meta.events`.
+    - **`property`**: References a property in that event (e.g., `{ name: 'onChange', property: 'value' }`).
 
 ---
 
-### `EventRef` Definition
+### `Config` Definition
 
-| **Param**  | **Type** | **Required** |
-| ---------- | -------- | ------------ |
-| `name`     | string   | ✅ Yes       |
-| `property` | string   | ✅ Yes       |
+| **Param** | **Type**                              | **Required** |
+| --------- | ------------------------------------- | ------------ |
+| `props`   | `(inputs, [state, setState]) => props`| ✅ Yes       |
+| `events`  | `{ <string>: (obj) => obj, … }`       | ❌ No        |
 
-- **`name`**: References an event from `meta.events`.
-- **`property`**: References a property in that event (e.g., `{ name: 'onChange', property: 'value' }`).
+- **`props`**: Maps user inputs to your React component’s props.
+- **`events`**: Maps events fired by your component onto a JS object that matches the shape described in `events.properties` in `meta`.
+
+---
 
 With these definitions in place, your custom components can be fully integrated into Embeddable’s no-code builder, giving users a configurable UI and dynamic interactions without writing any extra code.
