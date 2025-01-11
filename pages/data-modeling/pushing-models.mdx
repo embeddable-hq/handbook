@@ -1,28 +1,11 @@
-# Pushing data models to your workspace
+# Pushing Data Models to Your Workspace
 
-After defining your data models and components, you need to push them to your Embeddable workspace to make them available in the dashboard builder.
+After defining your data models, you need to push them to your Embeddable workspace to make them available in the dashboard builder.
 
-### Push command
+Follow the [Pushing Models and Components](/development/pushing-code) instructions to push your models.
 
-Use the following command:
+**Note:** In early 2025, we plan to separate the pushing of models and components, allowing you to push models independently.
 
-```bash
-npm run embeddable:push
-```
+## Safe Publishing
 
-If you have multiple workspaces, you will be prompted to select which workspace you want to push to.
-
-
-### Pushing using your API Key
-
-You can also push your models and components using your API key, which is especially useful for integrating into your CI/CD pipeline:
-
-```bash
-npm run embeddable:push -- --api-key <API Key> --email <Email>
-```
-
-Replace `<API Key>` with your [actual API key](/getting-started/set-up-your-workspace#retrieve-your-api-key) and `<Email>` with your registered email address.
-
-## Safe publishing
-
-After pushing, your published dashboards, which your customers see, remain unaffected by the changes until you specifically click the publish button. This means you can view and test your changes in the builder experience before publishing them. 
+Once you push your changes, your published customer-facing dashboards remain unaffected until you specifically click the **Publish** button. This allows you to view and test your changes in the builder experience before making them live for your customers.

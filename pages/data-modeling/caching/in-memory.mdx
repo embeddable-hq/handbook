@@ -1,0 +1,11 @@
+# Level 1 cache: in-memory
+
+To deliver fast and responsive analytics, Embeddable leverages Cube's **Level 1 in-memory** cache.
+
+- This cache is **enabled by default**.
+- It can help **protect your database** from too much load.  
+- It **does not** speed up a dashboard's first load.
+
+You can tell Cube to evaluate and invalidate the Level 1 Cache using **Refresh Keys**. Learn more [here](https://cube.dev/docs/product/caching#refresh-keys). 
+
+Cube does not recommend changing the default in-memory caching configuration unless necessary. Instead, to speed up query performance, you should use [pre-aggregations](/data-modeling/caching/pre-aggregations).

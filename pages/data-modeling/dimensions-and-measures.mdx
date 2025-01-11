@@ -55,7 +55,11 @@ Each dimension has:
       title: "Country"
       sql: country
       type: string
-    # ...etc.
+
+    - name: created_at
+      title: "Created at"
+      sql: created_at
+      type: time
     ```
 
 - **Combining first and last names**  
@@ -108,6 +112,17 @@ Each measure has:
 - `title` (optional): A user-friendly name for display in the UI.
 - `type`: The measure type (e.g., `count`, `sum`, `avg`).
 - `sql`: Points to the column or expression you want to aggregate.
+- `filters` (optional): A condition for a metric's calculation.
+
+  ```yaml
+    measures:
+        - name: us_revenue
+          type: sum
+          sql: price_usd
+          filters: 
+            - sql: "{CUBE}.country = 'United States'"
+  ```
+
 - `meta` (optional): a parameter to store additional information for a measure. E.g. use `meta` to pass a `$` symbol for a currency column or any other custom info you want to access in your charting components.
 
   ```yaml
@@ -176,6 +191,31 @@ Embeddable (via Cube) supports the following measure types:
       type: count_distinct
       sql: email
   ```
+
+- **Calculated measures**
+
+This example demonstrates how to reference measures within other measure definitions.
+
+  ```yaml
+  measures:
+    - name: count
+      sql: id
+      type: count
+  
+    - name: paid_orders
+      title: "Paid Orders"
+      sql: id
+      type: count
+      filters:
+        - sql: "{CUBE}.status = 'paid'"
+    
+    - name: percentage_paid
+      sql: "100.0 * {paid_orders} / {count}"
+      type: number
+      format: percent
+       
+  ```
+
 
 - **Rolling Count**  
   This measure counts orders over a rolling window, allowing you to track an ongoing total:

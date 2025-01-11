@@ -1,0 +1,130 @@
+import { Callout } from 'nextra/components'
+
+# Level 2 Cache: pre-aggregations
+
+In addition to the Level 1 [in-memory cache](/data-modeling/caching/in-memory), Embeddable leverages Cube's Level 2 cache through **pre-aggregations** to enhance query performance and scalability.
+
+Pre-aggregations compute and store aggregations (like sums, averages, counts) in advance, rather than calculating them on-the-fly for each query. When a query matches the structure of a pre-aggregation, results are retrieved directly from the pre-aggregated table instead of scanning raw data, significantly speeding up response times.
+
+- Pre-aggregations need to be **configured** - they are **not enabled** by default.
+- They can significantly **speed up query responses**, including during a dashboard's **initial load**.
+- Pre-aggregations are **refreshed** using [Embeddable's Caching API](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
+
+<Callout emoji="💡">
+    If you're connecting to a Redshift database, please contact us to discuss setting up pre-aggregations, as the Redshift driver requires write-access to set up pre-aggregations.
+</Callout>
+
+## Defining Pre-Aggregations
+
+One or multiple pre-aggregations can be specified directly within your `.cube.yml` model files.
+
+### An example without a time dimension
+
+Suppose you want to display a list of countries across various dashboard components. You can define a pre-aggregation like so:
+
+```yaml
+cubes:
+  - name: customers
+    sql_table: public.customers
+
+    measures:
+      - name: count
+        type: count
+        title: "Number of Customers"
+
+    dimensions:
+      - name: country
+        sql: country
+        type: string
+
+    preAggregations:
+        - name: customer_countries
+        dimensions:
+          - country
+```
+- `name`: an identifier used by Cube and Embeddable.
+- `dimensions:` Specifies the dimensions to group by.
+
+When a dashboard query requests the number of customers per country, Cube retrieves the data from the `customer_countries` pre-aggregated table instead of scanning the entire `customers` table.
+
+### An example with a time dimension
+
+To handle time-based analytics, such as tracking daily sales, you can define a pre-aggregation like so:
+
+```yaml
+cubes:
+  - name: orders
+    sql_table: public.orders
+
+    dimensions:
+      - name: country
+        sql: country
+        type: string
+
+      - name: created_at
+        sql: created_at
+        type: time
+    
+    measures:
+      - name: total_sales
+        type: sum
+        sql: amount
+        title: "Total Sales"
+
+    preAggregations:
+      - name: daily_sales
+        measures:
+          - total_sales
+        time_dimension: created_at 
+        granularity: day
+```
+
+- `timeDimension:` Specifies the time dimension to handle time-based aggregations.
+- `granularity:` Defines the level of detail for the aggregation (`day` in this case).
+
+Learn more about defining pre-aggregations by visiting [Cube's documentation](https://cube.dev/docs/product/caching/getting-started-pre-aggregations).
+
+## Refreshing pre-aggregations
+
+Pre-aggregations in Cube need to be refreshed periodically to ensure they stay up to date with the latest data. This process involves recalculating the pre-computed summary tables based on your defined measures and dimensions. 
+
+By default, pre-aggregations are **not refreshed**. You must call Embeddable's Caching API at least once to set the refresh interval and the security contexts to refresh. 
+
+### Caching API
+
+Use Embeddable’s Caching API to tell us which security contexts to refresh and how often:
+   
+   ```javascript
+   fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Accept': 'application/json',
+       'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+     },
+     body: JSON.stringify({
+       refreshInterval: "30 minutes",
+       scheduledRefreshContexts: [
+         {
+           securityContext: {
+             userId: '9sZSJ9LHsiYXR0cmli',
+             regions: ['us-east', 'eu-west']
+           },
+           environment: 'default'
+         }
+       ]
+     })
+   });
+
+   Response:
+   Status 204 (No Content)
+   ```
+   - `region`: your deployment region. 
+   - `apiKey`: your API key (TODO)
+   - `refreshInterval`: the refresh interval, in `minutes`, `hours`, or `days`.
+   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
+   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](TODO).
+
+If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.
+
+Each time you call this it will **override** the previous settings. For example, if you want to stop a security context from refreshing, just call the API again without that security context.

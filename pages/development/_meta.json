@@ -1,5 +1,7 @@
 {
+    "introduction": "Intro to development",
+    "defining-components": "Defining components",
+    "loading-data": "Loading data",
     "theming": "Theming",
-    "building-components": "Building components",
-    "ci-cd": "Set up CI/CD"
+    "pushing-code": "Pushing components"    
 }
