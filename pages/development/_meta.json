@@ -1,5 +1,11 @@
 {
+    "introduction": "Intro to development",
+    "local-environment": "Developing locally",
     "theming": "Theming",
-    "building-components": "Building components",
-    "ci-cd": "Set up CI/CD"
+    "defining-components": "Defining components",
+    "loading-data": "Loading data",
+    "interactivity": "Adding interactivity", 
+    "client-context": "Adding client context", 
+    "input-types": "Defining input types",
+    "pushing-code": "Pushing components"
 }

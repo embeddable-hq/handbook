@@ -1,0 +1,31 @@
+# Pushing code to your workspace
+
+After defining your data models and components, you need to push them to your Embeddable workspace to make them available in the dashboard builder.
+
+### Push command
+
+Use the following commands:
+
+```bash
+npm run embeddable:login
+```
+
+```bash
+npm run embeddable:build
+```
+
+```bash
+npm run embeddable:push
+```
+
+If you have multiple workspaces, you will be prompted to select which workspace you want to push to.
+
+### Pushing using your API Key
+
+You can also push your models and components using your API key, which is especially useful for integrating into your **CI/CD pipeline**:
+
+```bash
+npm run embeddable:push -- --api-key <API Key> --email <Email>
+```
+
+Replace `<API Key>` with your [actual API key](/getting-started/set-up-your-workspace#retrieve-your-api-key) and `<Email>` with your registered email address.

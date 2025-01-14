@@ -67,11 +67,17 @@ cubes:
 - `name`: A unique identifier (no spaces or special characters).
 - `title` (optional): A friendly name that appears in the UI.
 - `sql_table`: Points to the actual table or view in your database. 
-- `sql`: Rather than pointing to a table / view, you can write SQL. Any SQL you write should match your own database's dialect. 
+- `sql`: Rather than pointing to a table / view, you can write SQL (matching your own database's dialect). 
 - `dimensions`: Fields to filter or group by (think columns or derived fields).
 - `measures`: Aggregations (count, sum, avg, etc.).
 
-When using Embeddable's no-code dashboard builder, you'll be able to **use your models to populate data for charts** and other components e.g. a pie chart that shows a count of customers grouped by country.  You don't need to worry about writing SQL - it gets generated behind the scenes automatically based on your models. 
+### Using your data models
+
+Once you've defined your data models, [push them to your Embeddable workspace](/data-modeling/pushing-models) to make them available in the no-code dashboard builder. 
+
+You'll be able to **use your models to populate data for charts** and other components e.g. a pie chart that shows a count of customers grouped by country.  You don't need to worry about writing SQL - it gets generated behind the scenes automatically based on your models.
+
+Importantly, Embeddable does not take a copy of your database. Instead, it runs the SQL generated from your models against your database, and securely retrieves only the returned results. To improve performance and also protect your database from too much load, you can [configure caching](/data-modeling/caching/in-memory). 
 
 ## Getting started
 
@@ -86,17 +92,3 @@ Here are some practical tips to help you design clear and manageable data models
 - **Use Clear Naming**: Give each model and field descriptive names that reflect its purpose. This helps everyone on your team understand the data at a glance.
 
 - **Document as You Go**: Briefly note what each model represents and how it’s used, so new team members or future you can jump in without guesswork.
-
-### Using your data models
-
-Once you've defined your data models, [push them to your Embeddable workspace](TODO) to make them available in the no-code dashboard builder. 
-
-When you add a charting component (e.g. a pie chart or a dropdown) to a dashboard, you’ll be prompted to choose which dimensions and measures to use to populate the data.  
-
- 
-
-
-
-
-
-
