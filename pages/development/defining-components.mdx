@@ -54,6 +54,7 @@ export const meta = {
   ]
 } as const satisfies EmbeddedComponentMeta;
 
+//a function that tells the SDK to include this component in the no-code builder.
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
     return {
@@ -63,15 +64,13 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-- **`defineComponent`**: A function that tells the SDK to include this component in the no-code builder, explained [below](/development/defining-components#the-definecomponent-function).
-
 When you run Embeddable’s CLI, it bundles this code, and your **Text Component** appears in Embeddable’s no-code builder for your team.
 
----
+## Examples With Data
 
-## An Example With Data
+### A KPI chart
 
-Below is a simple KPI chart component that loads and displays a single [metric](TODO) value:
+Below is a simple KPI chart component that loads and displays a **single [metric](TODO) value**:
 
 ```tsx
 // src/components/KPIChart/index.tsx

@@ -1,8 +1,480 @@
+# Loading Data with `loadData`
+
+The `loadData` function, called inside your `.emb.ts` files, is one of the most powerful parts of the Embeddable SDK. It allows you to **load data** needed by your components (charts, controls, etc.) while giving no-code users the freedom to **choose which data** to display. This is key to building **reusable** and **configurable** components.
+
+## A Basic Example
+
+```ts
+// src/components/SampleComponent/SampleComponent.emb.ts
+
+import { defineComponent } from '@embeddable.com/react';
+import { loadData } from '@embeddable.com/core';
+import Component from './index';
+
+export const meta = {
+  name: 'SampleComponent',
+  label: 'Sample Component',
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset', // displays a dropdown with available datasets
+      label: 'Dataset',
+    },
+    {
+      name: 'myDimension',
+      type: 'dimension', // displays a dropdown with available dimensions
+      array: false, // allows selection of a single dimension
+      label: 'Dimension',
+      config: { dataset: 'ds' } // Limits the dimensions to the selected dataset
+    },
+    {
+      name: 'myMeasures',
+      type: 'measure', // displays a dropdown with available measures
+      label: 'Measure',
+      array: true, // allows selection of multiple measures
+      config: { dataset: 'ds' } // Limits the measures to the selected dataset
+    }
+  ]
+} as const;
+
+export default defineComponent(Component, meta, {
+  props: (inputs) => {
+    return {
+      ...inputs,
+      results: loadData({ //loads data from your database or the cache
+        from: inputs.ds, // receives the selected dataset 
+        dimensions: [inputs.myDimension], // receives the selected dimension
+        measures: inputs.myMeasures // receives the selected measures
+      })
+    };
+  }
+});
+```
+
+In the no-code dashboard builder, when you pick a `dataset`, `dimension`, and `measure` in the no-code builder, data will be loaded from your database or the cache and your component will receive the following props, including a `results` object:
+
+```ts
+props:
+{
+    myDimension: {
+        "name": "customers.country",
+        "title": "Country",
+        ...
+    },
+    myMeasures: [{
+        "name": "customers.count", 
+        "title": "# of customers",
+        ...
+    }],
+    results: {
+        isLoading: false, // false until results have loaded
+        error: undefined, // will be a string message if there was a problem loading the data
+        data: [ // each row of data
+            {
+                "customers.country": "United States",
+                "customers.count": "9"
+            },
+            {
+                "customers.country": "United States",
+                "customers.count": "57"
+            },
+            {
+                "customers.country": "Spain",
+                "customers.count": "67"
+            },
+            {
+                "customers.country": "United Kingdom",
+                "customers.count": "49"
+            },
+            ...
+        ]
+    }
+}
+```
+
+## Parameters
+
+Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate inputs (e.g. `ds`, `myDimension`, `myMeasure`) in your `.emb.ts` file.
+
+| **Param**        | **Type**               | **Required**                                    | **Default Value** |
+| ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
+| `from`           | `Dataset`             | **Yes**                                         | —                 |
+| `dimensions`     | `Dimension[]`         | At least one dimension or measure is required   | `[]`              |
+| `measures`       | `Measure[]`           | At least one dimension or measure is required   | `[]`              |
+| `timeDimensions` | `TimeDimension[]`     | No                                              | `[]`              |
+| `orderBy`        | `OrderBy[]`           | No                                              | none              |
+| `limit`          | `number`              | No                                              | `100`             |
+| `offset`         | `number`              | No                                              | `0`               |
+| `filters`        | `QueryFilter[]`       | No                                              | `[]`      
+Effectively, `loadData` is like constructing an **SQL statement** under the hood using the above parameters:
+
+```sql
+SELECT <timeDimensions>, <dimensions>, <measures>
+FROM <dataset>
+WHERE <filters on dimensions>
+GROUP BY <timeDimensions>, <dimensions>
+HAVING <filters on measures>
+ORDER BY <orderBy>
+LIMIT <limit>
+OFFSET <offset>
+```
+
+### Types
+
+TODO update to the types i.e. what does dimension need to include
+
+- **`Dataset`** is defined in the no-code builder and is based on a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
+
+- **[`Dimension`](/data-modeling/dimensions-and-measures#dimensions)** is an array of Dimensions.
+
+- **[`Measure`](/data-modeling/dimensions-and-measures#dimensions)** is an array of Measures.
+
+- **`TimeDimensions`** is a time-based dimension, often combined with a **granularity** (day, week, month, etc.)
+    ```ts
+    timeDimensions: [
+        {
+            dimension: "customers.created_at",
+            granularity: "month"
+        }
+    ]
+    ```
+
+- **`OrderBy`** is an array of objects containing dimensions or measures, and either `asc` or `desc`. (natively available inside component)
+    ```ts
+    orderBy: [
+        {
+            property: inputs.myDimension,
+            direction: 'desc',
+        },
+    ]
+    ```
+
+- **`limit`** (natively available inside component)
+
+- **`offset`** TODO
+
+- **`filters`** TODO
+
+### Examples
+
+TODO
+
+- Pie chart
+- Multi-metric bar-chart
+- Stacked bar chart
+- Time series bar chart
+- Table with pagination
+
+To ask for these in your components, define [inputs](/development/defining-components#inputmeta-definition) like so:
+
+```js
+
+export const meta = {
+  name: 'SampleComponent',
+  label: 'Sample Component',
+  inputs: [
+    {
+        name: "ds",
+        type: "dataset",
+        label: "Dataset to display"
+    },
+    {
+        name: 'myDimension',
+        type: 'dimension', // displays a dropdown with available dimensions
+        array: false, // (optional) allows selection of a single dimension. The default when not included is false
+        label: 'Dimension',
+        config: { dataset: 'ds' } // Limits the dimensions to the selected dataset
+    },
+    {
+        name: 'myMeasures',
+        type: 'measure', // displays a dropdown with available measures
+        label: 'Measure',
+        array: true, // (optional) allows selection of multiple measures
+        config: { dataset: 'ds' } // limits the measures to the selected dataset
+    }
+  ]
+}
+
+export default defineComponent(Component, meta, {
+  props: (inputs) => {
+    return {
+      ...inputs,
+      results: loadData({ //loads data from your database or the cache
+        from: inputs.ds, // receives the selected dataset 
+        dimensions: [inputs.myDimension], // receives the selected dimension
+        measures: inputs.myMeasures // receives the selected measures
+      })
+    };
+  }
+});
+```
+
+
+```js
+{
+    name: "ds",
+    type: "dataset",
+    label: "Dataset to display"
+},
+{
+    name: 'yAxis',
+    type: 'measure',
+    label: 'Measure',
+    array: true,
+    config: { dataset: 'ds' }
+}
+{
+    name: "xAxis",
+    type: "dimension",
+    label: "X-axis values",
+    config: {
+        dataset: "ds",
+        supportedTypes: ["time"] // limits the options to just dimensions of type 'time'
+    }
+},
+{
+    name: "granularity",
+    type: "granularity", // e.g. day, week, month
+    label: "Granularity"
+}
+```
+  
+  
+  ```js
+  export default defineComponent(Component, meta, {
+    props: (inputs) => {
+      return {
+        ...inputs,
+        results: loadData({
+          from: inputs.ds,
+          timeDimensions: [
+            {
+              dimension: inputs.xAxis?.name,
+              granularity: inputs.granularity
+            }
+          ]
+        })
+      };
+    }
+  });
+  ```
+
+- **OrderBy**  
+  Sorting by a dimension or measure. For example:
+  ```js
+  {
+    name: "ds",
+    type: "dataset",
+    label: "Dataset to display"
+  },
+  {
+    name: "columnsToShow",
+    type: "dimensionOrMeasure",
+    array: true,
+    label: "Columns to show",
+    config: {
+      dataset: "ds"
+    },
+  },
+  {
+    name: "columnToSortBy",
+    type: "dimensionOrMeasure",
+    label: "Column to sort by",
+    config: {
+      dataset: "ds"
+    },
+  }
+  ```
+  Then:
+  ```js
+  export default defineComponent(Component, meta, {
+    props: (inputs) => {
+      return {
+        ...inputs,
+        results: loadData({
+          from: inputs.ds,
+          dimensions: inputs.columnsToShow.filter(isDimension),
+          measures: inputs.columnsToShow.filter(isMeasure),
+          orderBy: [{ property: inputs.columnToSortBy, direction: 'desc' }]
+        })
+      };
+    }
+  });
+  ```
+
+- **limit** and **offset**  
+  Classic pagination parameters. For instance:
+  ```js
+  {
+    name: "pageNumber",
+    type: "number",
+    label: "Page number"
+  },
+  {
+    name: "pageSize",
+    type: "number",
+    label: "Page size"
+  }
+  ```
+  Then in `loadData`:
+  ```js
+  results: loadData({
+    from: inputs.ds,
+    dimensions: inputs.columnsToShow.filter(isDimension),
+    measures: inputs.columnsToShow.filter(isMeasure),
+    limit: inputs.pageSize,
+    offset: inputs.pageNumber * inputs.pageSize
+  })
+  ```
+
+- **filters**  
+  Additional filters. If a `QueryFilter` is specified, it’s combined with any existing dataset filters. Filters on dimensions go into `WHERE`, while filters on measures go into `HAVING`. A `QueryFilter` looks like `{ property, operator, value }`.
+
+---
+
+## Full Example
+
+Below is a more comprehensive example that uses **all** the parameters of `loadData`:
+
+```ts
+import { loadData } from '@embeddable.com/core';
+import { defineComponent } from '@embeddable.com/react';
+
+import Component from './index';
+
+export const meta = {
+  name: 'LineChartWithDimension',
+  label: 'Line chart (time-series) with dimension',
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset',
+    },
+    {
+      name: 'xAxis',
+      type: 'dimension',
+      label: 'X-Axis',
+      config: {
+        dataset: 'ds',
+        supportedTypes: ['time'] // Only let user pick time dimensions
+      }
+    },
+    {
+      name: 'granularity',
+      type: 'granularity',
+      label: 'Granularity'
+    },
+    {
+      name: 'groupBy',
+      type: 'dimension',
+      label: 'Group by',
+      config: { dataset: 'ds' }
+    },
+    {
+      name: 'yAxis',
+      type: 'measure',
+      label: 'Y-Axis',
+      config: { dataset: 'ds' }
+    },
+  ],
+};
+
+export default defineComponent(Component, meta, {
+  props: (inputs) => {
+    return {
+      ...inputs,
+      results: loadData({
+        from: inputs.ds,
+        measures: [inputs.yAxis],
+        dimensions: [inputs.groupBy],
+        timeDimensions: [
+          {
+            dimension: inputs.xAxis?.name,
+            granularity: inputs.granularity
+          }
+        ],
+        orderBy: [{ property: inputs.yAxis, direction: 'desc' }],
+        limit: 500,
+        offset: 0
+      })
+    };
+  }
+});
+```
+
+### How `results` Looks
+
+Your React component will receive something like:
+
+```json
+{
+  "ds": { "datasetId": "...", "embeddableId": "..." },
+  "xAxis": {
+    "name": "orders.created_at",
+    "title": "Created at"
+  },
+  "granularity": "month",
+  "groupBy": {
+    "name": "customers.country",
+    "title": "Country of origin"
+  },
+  "yAxis": {
+    "name": "customers.count",
+    "title": "# of customers"
+  },
+  "results": {
+    "isLoading": false,
+    "error": undefined,
+    "data": [
+      {
+        "customers.country": "United States",
+        "orders.created_at": "2023-05-01T00:00:00.000",
+        "customers.count": "9"
+      },
+      {
+        "customers.country": "United States",
+        "orders.created_at": "2023-06-01T00:00:00.000",
+        "customers.count": "57"
+      },
+      ...
+    ]
+  }
+}
+```
+
+Inside your component, you might do:
+
+```tsx
+export default (props: Props) => {
+  const { xAxis, groupBy, yAxis, results } = props;
+  const { isLoading, error, data } = results;
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error msg={error} />;
+
+  const xValues = data.map((row) => new Date(row[xAxis.name]));
+  const groups = data.map((row) => row[groupBy.name]);
+  const yValues = data.map((row) => Number(row[yAxis.name]));
+
+  // Render your chart here...
+  return <MyLineChart x={xValues} y={yValues} groupBy={groups} />;
+};
+```
+
+This approach keeps your component logic **simple**, letting the no-code builder define **which** data to load and Embeddable handle the **SQL generation**, caching, and row-level security behind the scenes.
+
+
+
+
+
 # Loading Data
 
 - Creating a chart
 - Load Data function (including all properties like filters etc.)
 - Result structure
 - Loading data dynamically using Embeddable State
+- Can have multiple loadResults functions
+
 
 Source: https://trevorio.notion.site/loadData-88c50f21fe314e8086ea1a5bcaf8637a
