@@ -1,3 +1,21 @@
 # Theming
 
-TODO
+Embeddable lets you control the look and feel of your analytics without hacking at the CSS. Currently, we provide a **constants file** in the [Starter Components](/dashboards/starter-components) where you can tweak key styling properties such as:
+
+- **Fonts** (family, size, weight)  
+- **Chart Colors** (e.g., primary series, hover states)  
+- **Date display formats** (e.g. `month: 'MMM yy'`).
+
+Since you have access to the underlying code, you can also make any other styling changes you want directly within the components. 
+
+## Upcoming: Multiple Theme Support
+
+We’re soon introducing a more advanced theming system, allowing you to:
+
+- Create Multiple Themes (e.g., “Dark Mode”, “Corporate Brand”, “Holiday Special”, "Customer A Colors").
+
+- Granular Control over each element (beyond fonts and colors).
+
+- Switch Themes Dynamically via [clientContext](TODO), letting you pass in a theme name or user preference.
+
+With this enhancement, you’ll be able to swap themes on the fly—perfect for supporting dark mode or user-specific branding without redeploying or rebuilding. Stay tuned!

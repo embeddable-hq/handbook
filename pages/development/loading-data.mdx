@@ -1,38 +1,42 @@
+import { Callout } from 'nextra/components'
+
 # Loading Data with `loadData`
 
-The `loadData` function, called inside your `.emb.ts` files, is one of the most powerful parts of the Embeddable SDK. It allows you to **load data** needed by your components (charts, controls, etc.) while giving no-code users the freedom to **choose which data** to display. This is key to building **reusable** and **configurable** components.
+The `loadData` function, called inside your `.emb.ts` files, is a powerful part of the Embeddable SDK. It lets you **load data** for your components (charts, controls, etc.) while giving no-code users the flexibility to **choose which data** they want displayed. This is key to building **reusable** and **configurable** components.
 
 ## A Basic Example
 
+Below is an `.emb` file for a **bar chart** component that calls `loadData` inside the [`defineComponent`](/development/defining-components) function:
+
 ```ts
-// src/components/SampleComponent/SampleComponent.emb.ts
+// src/components/BarChart/BarChart.emb.ts
 
 import { defineComponent } from '@embeddable.com/react';
 import { loadData } from '@embeddable.com/core';
 import Component from './index';
 
 export const meta = {
-  name: 'SampleComponent',
-  label: 'Sample Component',
+  name: 'BarChart',
+  label: 'Bar Chart',
   inputs: [
     {
       name: 'ds',
-      type: 'dataset', // displays a dropdown with available datasets
+      type: 'dataset', // Renders a dropdown with available datasets in the builder
       label: 'Dataset',
     },
     {
       name: 'myDimension',
-      type: 'dimension', // displays a dropdown with available dimensions
-      array: false, // allows selection of a single dimension
+      type: 'dimension', // Renders a dropdown with dimensions
+      array: false,      // Enables selection of a single dimension
       label: 'Dimension',
-      config: { dataset: 'ds' } // Limits the dimensions to the selected dataset
+      config: { dataset: 'ds' } // Limit dimensions to the chosen dataset
     },
     {
       name: 'myMeasures',
-      type: 'measure', // displays a dropdown with available measures
+      type: 'measure',   // Renders a dropdown with measures
       label: 'Measure',
-      array: true, // allows selection of multiple measures
-      config: { dataset: 'ds' } // Limits the measures to the selected dataset
+      array: true,       // Enables selection of multiple measures
+      config: { dataset: 'ds' } // Limit measures to the chosen dataset
     }
   ]
 } as const;
@@ -41,60 +45,67 @@ export default defineComponent(Component, meta, {
   props: (inputs) => {
     return {
       ...inputs,
-      results: loadData({ //loads data from your database or the cache
-        from: inputs.ds, // receives the selected dataset 
-        dimensions: [inputs.myDimension], // receives the selected dimension
-        measures: inputs.myMeasures // receives the selected measures
+      results: loadData({
+        from: inputs.ds, // Receives the chosen dataset
+        dimensions: [inputs.myDimension], // Receives the chosen dimension
+        measures: inputs.myMeasures // Receives the chosen measures
       })
     };
   }
 });
 ```
 
-In the no-code dashboard builder, when you pick a `dataset`, `dimension`, and `measure` in the no-code builder, data will be loaded from your database or the cache and your component will receive the following props, including a `results` object:
+When users add this component in the no-code dashboard builder, they will:
+
+- **Pick a dataset** (e.g. `orders` or `customers`).
+- **Select a dimension** (e.g. `country`).
+- **Choose one or more measures** (e.g. `count`, `revenue`).
+
+Then `loadData` retrieves information from your **database or the cache**, and your component receives props like:
 
 ```ts
-props:
-{
-    myDimension: {
-        "name": "customers.country",
-        "title": "Country",
-        ...
-    },
-    myMeasures: [{
-        "name": "customers.count", 
-        "title": "# of customers",
-        ...
-    }],
-    results: {
-        isLoading: false, // false until results have loaded
-        error: undefined, // will be a string message if there was a problem loading the data
-        data: [ // each row of data
-            {
-                "customers.country": "United States",
-                "customers.count": "9"
-            },
-            {
-                "customers.country": "United States",
-                "customers.count": "57"
-            },
-            {
-                "customers.country": "Spain",
-                "customers.count": "67"
-            },
-            {
-                "customers.country": "United Kingdom",
-                "customers.count": "49"
-            },
-            ...
-        ]
+props: {
+  myDimension: {
+    name: "customers.country",
+    title: "Country",
+    ...
+  },
+  myMeasures: [
+    {
+      name: "customers.count",
+      title: "# of customers",
+      ...
     }
+  ],
+  results: {
+    isLoading: false, // false when data has loaded
+    error: undefined, // error message if there's a loading issue
+    data: [ // each row of data
+      {
+        "customers.country": "United States",
+        "customers.count": "9"
+      },
+      {
+        "customers.country": "Spain",
+        "customers.count": "67"
+      },
+      ...
+    ]
+  }
 }
 ```
 
+Your React component can:
+
+- Check `results.isLoading` or `results.error` to show spinners or errors.
+- Read `results.data` to render your chart or UI.
+- Use `myDimension` and `myMeasures` to label series or axes.
+
+This approach lets **no-code users** decide **which data to load**, while your code handles **how to display it**.
+
 ## Parameters
 
-Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate inputs (e.g. `ds`, `myDimension`, `myMeasure`) in your `.emb.ts` file.
+Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/development/defining-components#inputmeta-definition) in your `.emb.ts` file.
 
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
@@ -105,8 +116,9 @@ Below are the main parameters relevant to `loadData(...)`, with examples. For ea
 | `orderBy`        | `OrderBy[]`           | No                                              | none              |
 | `limit`          | `number`              | No                                              | `100`             |
 | `offset`         | `number`              | No                                              | `0`               |
-| `filters`        | `QueryFilter[]`       | No                                              | `[]`      
-Effectively, `loadData` is like constructing an **SQL statement** under the hood using the above parameters:
+| `filters`        | `QueryFilter[]`       | No                                              | `[]`              |
+
+`loadData` effectively builds an **SQL statement** under the hood, using the parameters above:
 
 ```sql
 SELECT <timeDimensions>, <dimensions>, <measures>
@@ -121,220 +133,77 @@ OFFSET <offset>
 
 ### Types
 
-TODO update to the types i.e. what does dimension need to include
+- `Dataset` is a defined dataset in the no-code builder, often linked to a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
 
-- **`Dataset`** is defined in the no-code builder and is based on a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
+- [`Dimension`](/data-modeling/dimensions-and-measures#dimensions) 
+  is an array of one or more dimensions.
 
-- **[`Dimension`](/data-modeling/dimensions-and-measures#dimensions)** is an array of Dimensions.
+- [`Measure`](/data-modeling/dimensions-and-measures#dimensions)  is an array of one or more measures  
 
-- **[`Measure`](/data-modeling/dimensions-and-measures#dimensions)** is an array of Measures.
+- `TimeDimensions` are time-based dimensions, often paired with a **granularity** (e.g. day, week, month).
 
-- **`TimeDimensions`** is a time-based dimension, often combined with a **granularity** (day, week, month, etc.)
-    ```ts
-    timeDimensions: [
-        {
-            dimension: "customers.created_at",
-            granularity: "month"
-        }
-    ]
-    ```
+- `OrderBy` is an array of sorting objects containing a `property` (`dimension` or `measure`) and a `direction` (`asc` or `desc`). This is also available as a native input in the no-code builder, but you can define it if your component needs custom sorting.
 
-- **`OrderBy`** is an array of objects containing dimensions or measures, and either `asc` or `desc`. (natively available inside component)
-    ```ts
-    orderBy: [
-        {
-            property: inputs.myDimension,
-            direction: 'desc',
-        },
-    ]
-    ```
+- `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. This is also available as a native input in the no-code builder.  
 
-- **`limit`** (natively available inside component)
+- `offset` is a number specifying how many rows to skip, e.g. for [pagination](/development/loading-data#1-pagination-example). Defaults to 0.
 
-- **`offset`** TODO
+- `filters` is an array of additional filters, applied on top of any filters in the dataset. Dimensions go into `WHERE`, measures go into `HAVING`.  
 
-- **`filters`** TODO
+#### Available Filter Operators
 
-### Examples
+Embeddable currently supports the following operators for dimension and measure filters:
 
-TODO
+- **`equals`**: Property equals the specified value.  
+- **`notEquals`**: Property does not equal the specified value.  
+- **`contains`**: String property contains the specified substring.  
+- **`notContains`**: String property does not contain the specified substring.  
+- **`startsWith`**: String property starts with the specified substring.  
+- **`endsWith`**: String property ends with the specified substring.  
+- **`gt`**: Property is greater than the specified value.  
+- **`gte`**: Property is greater than or equal to the specified value.  
+- **`lt`**: Property is less than the specified value.  
+- **`lte`**: Property is less than or equal to the specified value.  
+- **`set`**: Property is not null (i.e., it has a value).  
+- **`notSet`**: Property is null (no value).  
+- **`measureFilter`**: Used for advanced measure-based filtering logic (e.g., when combining multiple measures).
 
-- Pie chart
-- Multi-metric bar-chart
-- Stacked bar chart
-- Time series bar chart
-- Table with pagination
+Depending on whether a filter applies to a dimension or measure, Embeddable translates these operators into a `WHERE` or `HAVING` clause in the generated SQL.
 
-To ask for these in your components, define [inputs](/development/defining-components#inputmeta-definition) like so:
+**Date/Time-specific operators** (for fields of type `time`):
 
-```js
+- **`inDateRange`**: Property falls within a specified start and end date/time.  
+- **`notInDateRange`**: Property is outside the specified date range.
 
-export const meta = {
-  name: 'SampleComponent',
-  label: 'Sample Component',
-  inputs: [
-    {
-        name: "ds",
-        type: "dataset",
-        label: "Dataset to display"
+  ```ts
+  {
+    property: inputs.timeDimension,
+    operator: 'inDateRange',
+    value: {
+      from: inputs.timeFilter.from,
+      relativeTimeString: '', 
+      to: inputs.timeFilter.to,
     },
-    {
-        name: 'myDimension',
-        type: 'dimension', // displays a dropdown with available dimensions
-        array: false, // (optional) allows selection of a single dimension. The default when not included is false
-        label: 'Dimension',
-        config: { dataset: 'ds' } // Limits the dimensions to the selected dataset
-    },
-    {
-        name: 'myMeasures',
-        type: 'measure', // displays a dropdown with available measures
-        label: 'Measure',
-        array: true, // (optional) allows selection of multiple measures
-        config: { dataset: 'ds' } // limits the measures to the selected dataset
-    }
-  ]
-}
-
-export default defineComponent(Component, meta, {
-  props: (inputs) => {
-    return {
-      ...inputs,
-      results: loadData({ //loads data from your database or the cache
-        from: inputs.ds, // receives the selected dataset 
-        dimensions: [inputs.myDimension], // receives the selected dimension
-        measures: inputs.myMeasures // receives the selected measures
-      })
-    };
   }
-});
-```
-
-
-```js
-{
-    name: "ds",
-    type: "dataset",
-    label: "Dataset to display"
-},
-{
-    name: 'yAxis',
-    type: 'measure',
-    label: 'Measure',
-    array: true,
-    config: { dataset: 'ds' }
-}
-{
-    name: "xAxis",
-    type: "dimension",
-    label: "X-axis values",
-    config: {
-        dataset: "ds",
-        supportedTypes: ["time"] // limits the options to just dimensions of type 'time'
-    }
-},
-{
-    name: "granularity",
-    type: "granularity", // e.g. day, week, month
-    label: "Granularity"
-}
-```
+  ```
+  <Callout emoji="💡">
+  You can also specify a wide range of relative time strings e.g. yesterday, last week etc. Behind the scenes, Cube uses [Chrono](https://github.com/wanasit/chrono) to parse these.
+  </Callout>  
   
-  
-  ```js
-  export default defineComponent(Component, meta, {
-    props: (inputs) => {
-      return {
-        ...inputs,
-        results: loadData({
-          from: inputs.ds,
-          timeDimensions: [
-            {
-              dimension: inputs.xAxis?.name,
-              granularity: inputs.granularity
-            }
-          ]
-        })
-      };
-    }
-  });
-  ```
+- **`beforeDate`**: Property is strictly before a specified date/time.  
+- **`afterDate`**: Property is strictly after a specified date/time.
 
-- **OrderBy**  
-  Sorting by a dimension or measure. For example:
-  ```js
+```ts
   {
-    name: "ds",
-    type: "dataset",
-    label: "Dataset to display"
-  },
-  {
-    name: "columnsToShow",
-    type: "dimensionOrMeasure",
-    array: true,
-    label: "Columns to show",
-    config: {
-      dataset: "ds"
-    },
-  },
-  {
-    name: "columnToSortBy",
-    type: "dimensionOrMeasure",
-    label: "Column to sort by",
-    config: {
-      dataset: "ds"
-    },
+    property: inputs.timeDimension,
+    operator: 'beforeData',
+    value: ["2025-01-01"] // an array of one element in YYYY-MM-DD format
   }
   ```
-  Then:
-  ```js
-  export default defineComponent(Component, meta, {
-    props: (inputs) => {
-      return {
-        ...inputs,
-        results: loadData({
-          from: inputs.ds,
-          dimensions: inputs.columnsToShow.filter(isDimension),
-          measures: inputs.columnsToShow.filter(isMeasure),
-          orderBy: [{ property: inputs.columnToSortBy, direction: 'desc' }]
-        })
-      };
-    }
-  });
-  ```
 
-- **limit** and **offset**  
-  Classic pagination parameters. For instance:
-  ```js
-  {
-    name: "pageNumber",
-    type: "number",
-    label: "Page number"
-  },
-  {
-    name: "pageSize",
-    type: "number",
-    label: "Page size"
-  }
-  ```
-  Then in `loadData`:
-  ```js
-  results: loadData({
-    from: inputs.ds,
-    dimensions: inputs.columnsToShow.filter(isDimension),
-    measures: inputs.columnsToShow.filter(isMeasure),
-    limit: inputs.pageSize,
-    offset: inputs.pageNumber * inputs.pageSize
-  })
-  ```
+## A Full Example
 
-- **filters**  
-  Additional filters. If a `QueryFilter` is specified, it’s combined with any existing dataset filters. Filters on dimensions go into `WHERE`, while filters on measures go into `HAVING`. A `QueryFilter` looks like `{ property, operator, value }`.
-
----
-
-## Full Example
-
-Below is a more comprehensive example that uses **all** the parameters of `loadData`:
+Below is a comprehensive example that uses **all** the parameters of `loadData`:
 
 ```ts
 import { loadData } from '@embeddable.com/core';
@@ -343,8 +212,8 @@ import { defineComponent } from '@embeddable.com/react';
 import Component from './index';
 
 export const meta = {
-  name: 'LineChartWithDimension',
-  label: 'Line chart (time-series) with dimension',
+  name: 'GroupedLineChart',
+  label: 'Grouped Line chart',
   inputs: [
     {
       name: 'ds',
@@ -394,6 +263,13 @@ export default defineComponent(Component, meta, {
             granularity: inputs.granularity
           }
         ],
+        filters: [
+          {
+            property: inputs.yAxis,
+            operator: 'gt', //see below for available operators
+            value: 0
+          }
+        ],
         orderBy: [{ property: inputs.yAxis, direction: 'desc' }],
         limit: 500,
         offset: 0
@@ -403,9 +279,9 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-### How `results` Looks
+## Working With The `results` Object
 
-Your React component will receive something like:
+After `loadData` fetches data, your React component receives a `results` object (along with any other inputs the user selected). Using the example above, your component might get props like this:
 
 ```json
 {
@@ -443,10 +319,10 @@ Your React component will receive something like:
 }
 ```
 
-Inside your component, you might do:
+### Example Usage in Your Component
 
 ```tsx
-export default (props: Props) => {
+export default function MyLineChart(props: Props) {
   const { xAxis, groupBy, yAxis, results } = props;
   const { isLoading, error, data } = results;
 
@@ -454,27 +330,222 @@ export default (props: Props) => {
   if (error) return <Error msg={error} />;
 
   const xValues = data.map((row) => new Date(row[xAxis.name]));
-  const groups = data.map((row) => row[groupBy.name]);
+  const groups  = data.map((row) => row[groupBy.name]);
   const yValues = data.map((row) => Number(row[yAxis.name]));
 
-  // Render your chart here...
-  return <MyLineChart x={xValues} y={yValues} groupBy={groups} />;
-};
+  // Render your chart (e.g., axis labels, legends, grouping)
+  return <LineChart x={xValues} y={yValues} groupBy={groups} />;
+}
 ```
 
-This approach keeps your component logic **simple**, letting the no-code builder define **which** data to load and Embeddable handle the **SQL generation**, caching, and row-level security behind the scenes.
+- **`results.isLoading` and `results.error`** let you handle loading states or errors.
+- **`results.data`** is an array of rows, indexed by each dimension/measure `name`.
+- **`xAxis`, `yAxis`, and `groupBy`** objects show which dimension/measure the user chose in the builder.
 
+This pattern lets **no-code users** pick **what** data to load, while you focus on **how** to display it.
 
+## Making Multiple `loadData` Requests
 
+Sometimes your component needs more than one data set. For example, you might display a main chart and a secondary chart, each requiring different dimensions or measures. Simply call `loadData` multiple times under different prop names:
 
+```ts
+export default defineComponent(Component, meta, {
+  props: (inputs) => {
+    return {
+      ...inputs,
+      // First request
+      mainResults: loadData({
+        from: inputs.mainDataset,
+        dimensions: [inputs.mainDimension],
+        measures: [inputs.mainMeasure]
+      }),
+      // Second request
+      secondaryResults: loadData({
+        from: inputs.secondaryDataset,
+        measures: [inputs.secondaryMeasure]
+      })
+    };
+  }
+});
+```
 
-# Loading Data
+Here, `mainResults` and `secondaryResults` each return their own `isLoading`, `error`, and `data` properties—letting you manage multiple data sets without extra complexity.
 
-- Creating a chart
-- Load Data function (including all properties like filters etc.)
-- Result structure
-- Loading data dynamically using Embeddable State
-- Can have multiple loadResults functions
+## Loading Data Dynamically
 
+Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/development/defining-components#definecomponent-config-reference). 
 
-Source: https://trevorio.notion.site/loadData-88c50f21fe314e8086ea1a5bcaf8637a
+### 1. Pagination Example
+
+A common scenario is incrementing `offset` or changing `limit` when a user clicks “Next Page” on a table component. You can hold these values in Embeddable State, then pass them to `loadData` each time they change:
+
+```ts
+// MyPaginatedTable.emb.ts
+
+import { defineComponent } from '@embeddable.com/react';
+import { loadData } from '@embeddable.com/core';
+import TableComponent from './index';
+
+export const meta = {
+  name: 'MyPaginatedTable',
+  label: 'My Paginated Table',
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset'
+    },
+    {
+      name: 'columns',
+      type: 'dimension',
+      label: 'Columns',
+      array: true,
+      config: {
+        dataset: 'ds'
+      }
+    },
+  ]
+} as const;
+
+export default defineComponent(TableComponent, meta, {
+  props: (inputs, [state, setState]) => {
+    // Default pagination to page=0, limit=10
+    const page = state?.page ?? 0;
+    const limit = 10;
+
+    return {
+      ...inputs,
+      page,
+      setPage: (newPage) => setState({ page: newPage }), // So the React component can update page
+      results: loadData({
+        from: inputs.ds,
+        dimensions: inputs.columns,
+        limit,
+        offset: page * limit
+      })
+    };
+  }
+});
+```
+
+Inside your React component:
+
+```tsx
+import { useEmbeddableState } from '@embeddable.com/react';
+
+export default function TableComponent(props) {
+  const { page, setPage, results } = props;
+  const { isLoading, error, data } = results;
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error msg={error} />;
+
+  const handleNext = () => setPage(page + 1);
+  const handlePrev = () => setPage(Math.max(0, page - 1));
+
+  return (
+    <div>
+      <Table data={data} />
+      <button onClick={handlePrev} disabled={page === 0}>Prev</button>
+      <button onClick={handleNext}>Next</button>
+      <p>Current Page: {page}</p>
+    </div>
+  );
+}
+```
+
+Every time you click Next or Prev, **Embeddable State** updates `page`, triggers a re-render, and runs `loadData` with the new offset.
+
+### 2. Filtering Example
+
+For more advanced scenarios, such as applying filters dynamically:
+
+```ts
+// DynamicLoader.emb.ts
+
+import { defineComponent } from '@embeddable.com/react';
+import { loadData } from '@embeddable.com/core';
+import Component from './index';
+
+export const meta = {
+  name: 'DynamicLoader',
+  label: 'Dynamic Loader',
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset'
+    },
+    {
+      name: 'columns',
+      type: 'dimensionOrMeasure',
+      label: 'Columns',
+      array: true,
+      config: {
+        dataset: 'ds',
+      },
+      category: 'Chart data',
+    }
+  ]
+} as const;
+
+export default defineComponent(Component, meta, {
+  props: (inputs, [state, setState]) => {
+    const currentFilter = state?.filter;
+
+    return {
+      ...inputs,
+      currentFilter,
+      results: loadData({
+        from: inputs.ds,
+        dimensions: inputs.columns,
+        filters: currentFilter ? [currentFilter] : undefined
+      })
+    };
+  }
+});
+```
+
+Then in your React component:
+
+```tsx
+import { useEmbeddableState } from '@embeddable.com/react';
+
+export default function DynamicLoader(props) {
+  const [localState, setLocalState] = useEmbeddableState({ filter: {} });
+  
+  const applyFilter = (value) => {
+    setLocalState((prev) => ({
+      ...prev,
+      filter: {
+        property: { name: customers.country }, // some dimension, hard-coded or dynamically passed in via props
+        operator: 'equals',
+        value
+      }
+    }));
+  };
+
+  // props.results automatically updates when Embeddable State changes.
+
+  return (
+    <div>
+      <Table data={data} />
+      <button onClick={() => applyFilter('United States')}>
+        Filter to US
+      </button>
+    </div>
+  );
+}
+```
+
+**How it works**:
+1. **User Interaction**: Clicking the button modifies Embeddable State (`filter`).
+2. **Rerun `loadData`**: When state changes, the `.emb.ts` file sees the new filter and calls `loadData` again.
+3. **Refresh Component**: Your component receives fresh results reflecting the updated filter.
+
+This pattern lets you **dynamically reload data** based on user-driven state changes while still leveraging the no-code builder for broader configuration.
+
+<Callout emoji="💡">
+Importantly, these code-driven techniques are useful for **component-specific** actions, such as pagination or custom filters controlled entirely inside the component. For broader **dashboard-level** filters, the no-code builder already provides a visual interface—using **variables** and **filters** to reload component data without writing extra code. This gives you the best of both worlds: a powerful no-code approach for general filtering, and full control for specialized component logic.
+</Callout> 
+

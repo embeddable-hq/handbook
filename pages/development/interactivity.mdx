@@ -2,3 +2,95 @@ Adding interactivity
 
 - Variables + events etc. 
 - Embeddable State
+
+
+### Dropdown Example
+
+Below is the `.emb.ts` file for a dropdown that displays a list of values (loaded from a dimension defined on your data model). It uses many `Meta` options:
+
+```jsx
+import { defineComponent, EmbeddedComponentMeta, Inputs } from '@embeddable.com/react';
+import { loadData, Value } from '@embeddable.com/core';
+import Component from './index';
+
+export const meta: EmbeddedComponentMeta = {
+  name: 'BasicDropdownComponent',
+  label: 'Basic Dropdown',
+  classNames: ['add-border'],
+  defaultWidth: 320,
+  defaultHeight: 80,
+  inputs: [
+    {
+      name: 'title',
+      type: 'string',
+      label: 'Title',
+      description: 'Text next to the dropdown',
+      defaultValue: 'My title',
+    },
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset to display',
+    },
+    {
+      name: 'values',
+      type: 'dimension',
+      label: 'Values',
+      config: {
+        dataset: 'ds',
+      },
+    },
+    {
+      name: 'defaultValue',
+      type: 'string',
+      label: 'Default value',
+      description: 'Initial value',
+    },
+  ],
+  events: [
+    {
+      name: 'onChange',
+      label: 'Change',
+      properties: [
+        { name: 'value', type: 'string' },
+      ],
+    },
+  ],
+  variables: [
+    {
+      name: 'chosen value',
+      type: 'string',
+      defaultValue: Value.noFilter(),
+      inputs: ['defaultValue'],
+      events: [{ name: 'onChange', property: 'value' }],
+    },
+  ],
+};
+
+export default defineComponent<Inputs>(Component, meta, {
+  props: (inputs) => {
+    return {
+      ...inputs,
+      results: loadData({
+        from: inputs.ds,
+        dimensions: [inputs.values],
+      }),
+    };
+  },
+  events: {
+    onChange: (value) => ({ value: value || Value.noFilter() }),
+  },
+});
+```
+
+When this component is [pushed](/development/pushing-code) to Embeddable:
+
+1.	**Add Component**: A teammate adds this dropdown to the dashboard canvas in the no-code builder:
+    - Entering a title.
+    - Choosing a dataset.
+    - Choosing a Dimension from that dataset. 
+    - (Optional) Setting a default value.
+2. **Initial Size**: The dropdown appears at 320×80 px by default.
+3.	**Data Loading**: The selected dimension’s values are fetched and passed to the component.
+4.	**Auto-Created Variable**: A variable named “chosen value” is automatically added to the canvas.
+5.	**Interactivity**: When users select an option from the dropdown, “chosen value” updates accordingly, enabling [interactivity](TODO) (e.g. filtering by the chosen value).
