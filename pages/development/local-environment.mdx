@@ -1,1 +1,19 @@
-Developing locally (i.e. dev mode)
+import { Callout } from 'nextra/components'
+
+# Developing Locally
+
+You can spin up a **local workspace** for building and testing purposes. Simply run:
+
+```bash
+npm run embeddable:dev
+```
+
+- The local workspace uses the same [**data connections**](/getting-started/connect-your-database) as your online workspace.
+- Dashboards created locally **cannot be published**.
+- Changes made locally **do not sync** to your online workspace - they remain local.
+
+To push components or data models to your online workspace, [follow the instructions here](/development/pushing-code). 
+
+<Callout emoji="💡">
+The local dev environment does not currently work in Safari due to Safari’s unique security restrictions.
+</Callout>

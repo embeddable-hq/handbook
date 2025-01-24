@@ -1,10 +1,25 @@
 # Defining Components
 
-You can **create your own components** in React using any JS libraries you like. By defining the **inputs** each component needs (e.g., data or styling options), you can make them available in Embeddable’s **no-code dashboard builder**, allowing your team to configure and use these components without writing code.
+You can create **custom React components** in Embeddable using any JS libraries you like. 
 
-## A Basic Example
+Key capabilities include:
 
-This simple component displays a title and body:
+- **Define Inputs**: Make your components re-usable by defining inputs your team can customize inside the builder - styling, formatting, and lots more.
+- **Load Data**: Dynamically fetch data from your database via Embeddable's [`loadData`](/development/loading-data) function.
+- **Pass Events**: Capture user actions (e.g. button clicks) and send them back to Embeddable for interactive features like filtering. 
+
+## Basic set up
+
+Each component requires two files:
+
+- A `.tsx` file containing the **React component**.
+- A `.emb.ts` file defining **inputs** and other configuration, enabling Embeddable to include it in the **no-code builder**, allowing your team to use it without writing any code.
+
+Here are two examples:
+
+### A simple static component
+
+This simple **text component** displays a title and body:
 
 ```tsx
 // src/components/TextComponent/index.tsx
@@ -26,7 +41,7 @@ export default ({ title, body }: Props) => {
 };
 ```
 
-There's nothing Embeddable-specific about this code - it's just standard React.
+There's nothing Embeddable-specific about this code - it's just standard React. 
 
 To make it available in Embeddable’s **no-code builder**, you need a `.emb` file containing the configuration for the component, including **the inputs** to display:
 
@@ -47,18 +62,18 @@ export const meta = {
       label: 'Title text', // the label shown in the builder
     },
     {
-      name: 'body',
-      type: 'string',
-      label: 'Body text',
+      name: 'body', // unique identifier for this input
+      type: 'string', // renders a second text field. 
+      label: 'Body text', // the label shown in the builder
     }
   ]
 } as const satisfies EmbeddedComponentMeta;
 
-//a function that tells the SDK to include this component in the no-code builder.
+//The function that tells the SDK to include this component in the no-code builder.
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
     return {
-      ...inputs
+      ...inputs // the inputs are passed through to the component as props
     };
   }
 });
@@ -66,38 +81,48 @@ export default defineComponent(Component, meta, {
 
 When you run Embeddable’s CLI, it bundles this code, and your **Text Component** appears in Embeddable’s no-code builder for your team.
 
-## Examples With Data
+### A simple data component
 
-### A KPI chart
-
-Below is a simple KPI chart component that loads and displays a **single [metric](TODO) value**:
+Below is a simple **KPI chart** component that loads data from your database:
 
 ```tsx
 // src/components/KPIChart/index.tsx
 
 import React from 'react';
 import { DataResponse, Measure } from '@embeddable.com/core';
+import Loading from '../util/Loading'
+import Error from '../util/Error'
 
 type Props = {
   title?: string;
-  metric?: Measure;
-  results: DataResponse;
-  prefix?: string;
+  metric?: Measure; // { name, title }
+  results: DataResponse; // { isLoading, error, data: [{ <name>: <value>, ... }]
 };
 
-export default ({ title, metric, results, prefix }: Props) => {
-  const value = results?.data?.[0]?.[metric.name] ?? 'No data';
+export default ({ title, metric, results }: Props) => {
+
+  const { isLoading, data, error } = results;
+
+  if(isLoading) {
+    return <Loading />
+  }
+
+  if(error) {
+    return <Error msg={error}/>;
+  }
+
+  const value = results.data?.[0]?.[metric.name] ?? 'No data';
 
   return (
     <div>
       {title && <h1>{title}</h1>}
-      <p>{`${prefix ?? ''}${value}`}</p>
+      <p>{value}</p>
     </div>
   );
 };
 ```
 
-And its `.emb` file with inline comments describing the `meta`:
+And its `.emb` file, defining the **inputs** and **configuration**:
 
 ```tsx
 // src/components/KPIChart/KPIChart.emb.ts
@@ -107,7 +132,7 @@ import { loadData } from '@embeddable.com/core';
 import Component from './index';
 
 export const meta = {
-  name: 'KPIChart', // An identifier - must match KPIChart.emb.ts
+  name: 'KPIChart', // an identifier - must match KPIChart.emb.ts
   label: 'KPI Chart', // user-facing name in the builder 
   inputs: [
     {
@@ -117,7 +142,7 @@ export const meta = {
     },
     {
       name: 'ds',
-      type: 'dataset', // shows a dropdown of available datasets in the builder
+      type: 'dataset', // shows a dropdown of available datasets. These are created directly in the Builder.
       label: 'Dataset',
     },
     {
@@ -126,41 +151,53 @@ export const meta = {
       label: 'KPI',
       array: false, // specifies that users can select a single measure 
       config: {
-        dataset: 'ds', // restrict measure options to the selected dataset
+        dataset: 'ds', // restricts measure options to the selected dataset
       }
-    },
-    {
-      name: 'prefix',
-      type: 'string',
-      label: 'Optional prefix',
     },
   ]
 } as const satisfies EmbeddedComponentMeta;
 
+//The function that tells the SDK to include this component in the no-code builder.
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
     return {
-      ...inputs,
-      results: loadData({ //Fetches data from your database
+      ...inputs, // the inputs are passed through to the component as props
+      results: loadData({ // fetches data from your database and passes it to your component
         from: inputs.ds,
-        measures: [inputs.metric],
+        measures: [inputs.metric], 
       })
     };
   }
 });
 ```
 
+The `loadData` function used above is one of the **most powerful** parts of the Embeddable SDK. You can learn more about it [here](/development/loading-data).
+
 ## The `defineComponent` Function
 
 The `defineComponent` function, used inside your `emb.ts` files, is how you register and configure components in Embeddable, mapping user inputs to your React component’s props.
 
-### Parameters
+```ts
+export default defineComponent(Component, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    return {
+      ...inputs, // the inputs are passed through to the component as props
+      results: loadData({ ... }), // fetches data from your database and passes it to your component
+    };
+  },
+  events: { // maps events fired by your component onto a JS object defined in events.properties in meta
+    onChange: (v) => ({ value: v }), 
+  },
+});
+```
+
+## Parameters
 
 | **Param**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `component` | Component | ✅ Yes       |
-| `meta`      | [Meta](/development/defining-components#meta-definition)      | ✅ Yes       |
-| `config`    | [Config](/development/defining-components#config-definition)   | ✅ Yes       |
+| `meta`      | [Meta](/development/defining-components#definecomponent-meta-reference)      | ✅ Yes       |
+| `config`    | [Config](/development/defining-components#definecomponent-config-reference)   | ✅ Yes       |
 
 TODO: Add Client Context
 
@@ -170,9 +207,38 @@ TODO: Add Client Context
 
 ---
 
-### `Meta` Definition
+### `defineComponent` Component Reference
 
-`meta` governs how a component is displayed and configured in the builder:
+`component` is simply your React component:
+
+```ts
+import Component from './index';
+```
+
+
+### `defineComponent` Meta Reference
+
+**`meta`** is the second argument to `defineComponent`. It governs how a component is displayed and configured in the builder, including the inputs it needs. 
+
+```ts
+  import { EmbeddedComponentMeta } from '@embeddable.com/react';
+
+  export const meta = {
+    name: 'MyComponent', 
+    label: 'My Component', 
+    classNames: ['container'],
+    defaultWidth: 200,
+    defaultHeight: 100,
+    inputs: [
+      {
+        name: 'title',
+        type: 'string',
+        label: 'Title text',
+      },
+      ...
+    ]
+  } as const satisfies EmbeddedComponentMeta;
+```
 
 | **Param**       | **Type**          | **Required** |
 | --------------- | ----------------- | ------------ |
@@ -189,102 +255,11 @@ TODO: Add Client Context
 - **`label`**: A user-facing name shown in the builder.
 - **`classNames`**: CSS class names for styling the container.
 - **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](TODO)).
-- **`events`**: Specifies [events](TODO) the component can trigger (e.g., `onChange`, `onClick`).
-- **`variables`**: Auto-creates [variables](TODO) when the component is added.
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
+- **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](). 
+- **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/development/interactivity).
 
-### Dropdown Example
-
-Below is the `.emb.ts` file for a dropdown that displays a list of values (loaded from a dimension defined on your data model). It uses many `Meta` options:
-
-```jsx
-import { defineComponent, EmbeddedComponentMeta, Inputs } from '@embeddable.com/react';
-import { loadData, Value } from '@embeddable.com/core';
-import Component from './index';
-
-export const meta: EmbeddedComponentMeta = {
-  name: 'BasicDropdownComponent',
-  label: 'Basic Dropdown',
-  classNames: ['add-border'],
-  defaultWidth: 320,
-  defaultHeight: 80,
-  inputs: [
-    {
-      name: 'title',
-      type: 'string',
-      label: 'Title',
-      description: 'Text next to the dropdown',
-      defaultValue: 'My title',
-    },
-    {
-      name: 'ds',
-      type: 'dataset',
-      label: 'Dataset to display',
-    },
-    {
-      name: 'values',
-      type: 'dimension',
-      label: 'Values',
-      config: {
-        dataset: 'ds',
-      },
-    },
-    {
-      name: 'defaultValue',
-      type: 'string',
-      label: 'Default value',
-      description: 'Initial value',
-    },
-  ],
-  events: [
-    {
-      name: 'onChange',
-      label: 'Change',
-      properties: [
-        { name: 'value', type: 'string' },
-      ],
-    },
-  ],
-  variables: [
-    {
-      name: 'chosen value',
-      type: 'string',
-      defaultValue: Value.noFilter(),
-      inputs: ['defaultValue'],
-      events: [{ name: 'onChange', property: 'value' }],
-    },
-  ],
-};
-
-export default defineComponent<Inputs>(Component, meta, {
-  props: (inputs) => {
-    return {
-      ...inputs,
-      results: loadData({
-        from: inputs.ds,
-        dimensions: [inputs.values],
-      }),
-    };
-  },
-  events: {
-    onChange: (value) => ({ value: value || Value.noFilter() }),
-  },
-});
-```
-
-When this component is [pushed](/development/pushing-code) to Embeddable:
-
-1.	**Add Component**: A teammate adds this dropdown to the dashboard canvas in the no-code builder:
-    - Entering a title.
-    - Choosing a dataset.
-    - Choosing a Dimension from that dataset. 
-    - (Optional) Setting a default value.
-2. **Initial Size**: The dropdown appears at 320×80 px by default.
-3.	**Data Loading**: The selected dimension’s values are fetched and passed to the component.
-4.	**Auto-Created Variable**: A variable named “chosen value” is automatically added to the canvas.
-5.	**Interactivity**: When users select an option from the dropdown, “chosen value” updates accordingly, enabling [interactivity](TODO) (e.g. filtering by the chosen value).
-
-### `InputMeta` Definition
+#### `InputMeta` Definition
 
 ```ts
 export const meta: EmbeddedComponentMeta = {
@@ -329,10 +304,12 @@ export const meta: EmbeddedComponentMeta = {
 - **`description`**: A helpful reference, not currently displayed in the builder.
 - **`defaultValue`**: The initial value for the input.
 - **`category`**: Assigns an optional grouping for this input in the builder UI. Inputs sharing the same category appear together.
-- **`config`**: An arbitrary JS object that is type-specific. Each type has its own “editor,” which is the UI for that input type. For example: `string` has a text field editor. `dataset`, `dimension`, and `measure` use dropdown editors. When you define custom types, you can also define a custom editor (e.g., a color picker). The `config` object is passed to the editor to enable custom behavior. A common use case is specifying the dataset for `dimension` or `measure` inputs.
-- **`array`**: If set to `true` (for certain types like `dimension` or `measure`), the no-code builder displays a **multi-select** dropdown, letting users select **multiple values** instead of just one.
+- **`config`**: An arbitrary JS object that is type-specific. Each type has its own “editor,” which is the UI for that input type. For example: `string` has a text field editor. `dataset`, `dimension`, and `measure` use dropdown editors. When you define custom types, you can also define a custom editor (e.g., a color picker). The `config` object is passed to the editor to enable custom behavior. A common use case is specifying the dataset for `dimension` or `measure` inputs. TODO - this needs more examples. 
+- **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
 
-### `EventMeta` Definition
+#### `EventMeta` Definition
+
+Events are used to create [interactive components](/development/interactivity). For example, a dropdown containing a list of countries that, when clicked, filters the data. Or a set of buttons showing 'day', 'week', and 'month' that, when clicked, update the x-axis granularity on a time-series chart. 
 
 ```ts
 export const meta: EmbeddedComponentMeta = {
@@ -344,7 +321,7 @@ export const meta: EmbeddedComponentMeta = {
             name: 'onChange',
             label: 'Change',
             properties: [
-                { name: 'value', type: 'string' },
+                { name: 'value', type: 'string', label: 'Clicked Dimension' },
             ],
         },
     ]
@@ -374,7 +351,11 @@ export const meta: EmbeddedComponentMeta = {
     - **`type`**: The expected data type (e.g. `string`, `number`, `boolean`).
     - **`label`**: An optional label for this property in the builder.
 
-### `VariableMeta` Definition
+#### `VariableMeta` Definition
+
+Variables are a core-concept in Embeddable. They are used mainly to store the values passed to Embeddable from events fired by [interactive components](/development/interactivity). 
+
+Variables can be created manually in the no-code builder or they can be defined in code and then created automatically. Defining them in code is preferable because it contributes to a faster, more intuitive experience within the builder - especially for non-technical users.
 
 ```ts
 export const meta: EmbeddedComponentMeta = {
@@ -420,16 +401,98 @@ export const meta: EmbeddedComponentMeta = {
 
 ---
 
-### `Config` Definition
+### `defineComponent` Config Reference
 
-| **Param** | **Type**                              | **Required** |
-| --------- | ------------------------------------- | ------------ |
-| `props`   | `(inputs, [state, setState]) => props`| ✅ Yes       |
-| `events`  | `{ <string>: (obj) => obj, … }`       | ❌ No        |
+**`config`** is the third argument to `defineComponent`. It controls how inputs become props and how local `.emb` state (Embeddable State) is managed.
 
-- **`props`**: Maps user inputs to your React component’s props.
-- **`events`**: Maps events fired by your component onto a JS object that matches the shape described in `events.properties` in `meta`.
+| **Param** | **Type**                                              | **Required** |
+| --------- | ----------------------------------------------------- | ------------ |
+| `props`   | `(inputs: Inputs<typeof meta>, [state, setState]) => any` | ✅ Yes       |
+| `events`  | `{ [eventName: string]: (payload: any) => any }`      | ❌ No        |
+
+- **`props`** receives `(inputs, [state, setState])`, where:
+  - **`inputs`** are the values entered by the user in the no-code builder.
+  - **`state`** and **`setState`** are state local to the `.emb` file, enabling you to pass state from your react component back to the `.emb.` file. The most common use-case is to [load data dynamically](/development/loading-data#loading-data-dynamically) from within the component.  
+- **`events`** describes how events your component triggers are transformed into a data object that Embeddable can use, as described in `events.properties` in `meta`.
 
 ---
 
-With these definitions in place, your custom components can be fully integrated into Embeddable’s no-code builder, giving users a configurable UI and dynamic interactions without writing any extra code.
+## A Detailed Example
+
+```ts
+// src/components/Buttons/Buttons.emb.ts
+
+import { Value } from '@embeddable.com/core';
+import { EmbeddedComponentMeta, Inputs, defineComponent } from '@embeddable.com/react';
+
+import Component from './index';
+
+export const meta = {
+  name: 'Buttons', // Must match the .emb.ts filename; unique ID for this component
+  label: 'Button List', // User-facing name in the builder UI
+  defaultWidth: 400, // Initial width in pixels when dropped on the canvas
+  defaultHeight: 80, // Initial height in pixels when dropped on the canvas
+  category: 'Controls: buttons', // Optional grouping/category in the builder
+  
+  inputs: [
+    {
+      name: 'values',
+      type: 'string',
+      array: true, // Allows multiple string values (multi-select)
+      label: 'Values',
+      category: 'Button values' // Groups these inputs in the builder UI
+    },
+    {
+      name: 'title',
+      type: 'string',
+      label: 'Title',
+      category: 'Settings' // Another input category for organizational purposes
+    },
+    {
+      name: 'selectedValues',
+      type: 'string',
+      array: true,
+      label: 'Default value',
+      category: 'Pre-configured variables'
+    }
+  ],
+
+  events: [
+    {
+      name: 'onChange', // Event name your React component expects as a prop
+      label: 'Change', // How this event appears in the builder UI when defining interactions
+      properties: [
+        {
+          name: 'value', // The property name to be passed back
+          type: 'string',
+          array: true // Indicates multiple string values can be returned
+        }
+      ]
+    }
+  ],
+
+  variables: [
+    {
+      name: 'chosen value', // Variable created automatically when this component is added
+      type: 'string',
+      array: true,
+      defaultValue: Value.noFilter(), // Initial variable value (if none provided)
+      inputs: ['selectedValues'], // Connects the variable to the 'selectedValues' input
+      events: [{ name: 'onChange', property: 'value' }] // On the 'onChange' event, update the 'chosen value' variable with the 'value' property from the event
+    }
+  ]
+} as const satisfies EmbeddedComponentMeta;
+
+export default defineComponent(Component, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    // Maps the inputs defined in meta to the props of your React component
+    return {
+      ...inputs
+    };
+  },
+  events: {
+    // Maps the 'onChange' event from your React component to an event described in meta
+    onChange: (v) => ({ value: v || Value.noFilter() })
+  }
+});
+```
