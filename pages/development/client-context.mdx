@@ -1,3 +1,141 @@
-TODO
+import { Steps, Callout } from 'nextra/components'
 
-https://trevorio.notion.site/Client-Context-152726382bcf806abe32dacd2da5a297
+# Client Context
+
+**Client Context** lets you pass **dynamic values** into your embedded dashboards at runtime—directly from the web component. 
+
+You can use it for lots of tasks, but common use-cases include:
+
+- **Client-specific theming** (e.g. color schemes)
+- **Localization** (e.g. language, date/number/currency formats)
+- **Dark/Light mode** (e.g. switching between night and day themes)
+- Passing in any other **custom** data you want to expose to your React components.
+
+## How It Works
+
+<Steps>
+
+### **Pass an Object via the Web Component**  
+    
+    You include a `clientContext` attribute on your `<em-beddable>` or similar web component. For example:
+
+    ```tsx
+    <Embeddable
+        clientContext={{
+        currency: 'dollar',
+        currencySymbol: '$',
+        flag: '🇺🇸',
+        language: 'english',
+        name: 'United States'
+        }}
+    />
+    ```
+    You’re not limited to strings - you can pass numbers, booleans, arrays or objects, too.
+
+### **Receive it in `defineComponent`**  
+    
+    In your `.emb.ts` file, the third argument of the `props` function within [`config`](/development/defining-components#3-config) is `clientContext`:
+   
+   ```ts
+   props: (inputs, [state, setState], clientContext) => ({
+        ...inputs,
+        clientContext // e.g. { currency: 'dollar', ... }
+   })
+   ```
+
+### **Use it in Your React Component**  
+   
+   Your component sees the `clientContext` in its props, so you can handle theming, localization, or any other logic:
+
+   ```tsx
+   // index.ts
+   export default function DisplayContext(props) {
+     const { title, body, clientContext } = props;
+     const { currency, currencySymbol, flag, language, name } = clientContext;
+     return (
+       <div>
+         <h1>{title}</h1>
+         <p>{body}</p>
+         <ul>
+           <li>Country: {name} {flag}</li>
+           <li>Language: {language}</li>
+           <li>Currency: {currency}</li>
+           <li>Symbol: {currencySymbol}</li>
+         </ul>
+       </div>
+     );
+   }
+   ```
+</Steps>
+
+<Callout emoji="💡">
+Client Context **isn’t** available in your data models or server-side security checks. It’s front-facing data only - avoid passing sensitive information. For that, see [Security context](/data-modeling/row-level-security#security-tokens-and-security-context).
+</Callout>
+
+
+---
+
+## Testing Client Context
+
+You can create presets to switch between different context objects in the no-code builder during development. For instance:
+
+```yaml
+# src/embeddable/presets/client-contexts.cc.yml
+- name: United States
+  clientContext:
+    currency: 'dollar'
+    currencySymbol: '$'
+    flag: '🇺🇸'
+    language: 'english'
+    name: 'United States'
+
+- name: France
+  clientContext:
+    currency: 'euro'
+    currencySymbol: '€'
+    flag: '🇫🇷'
+    language: 'français'
+    name: 'France'
+```
+
+Each entry shows up as a selectable context in your dashboards in your Embeddable workspace. Switching contexts updates your components’ `clientContext` prop immediately.
+
+---
+
+## Example Use Case: Localization
+
+A common scenario is **localizing** dashboards based on user language or region. For instance, you might pass `clientContext.language` and then load or map text accordingly:
+
+```ts
+// A simple dictionary for three languages
+const dict = {
+  english: { helloText: 'hello', goodbyeText: 'goodbye' },
+  french:  { helloText: 'bonjour', goodbyeText: 'au revoir' },
+  spanish: { helloText: 'hola', goodbyeText: 'adiós' }
+};
+
+function getText(key: string, lang: string) {
+  return dict[lang]?.[key] || key;
+}
+```
+
+In your component:
+
+```tsx
+export default function Localized(props) {
+  const { clientContext } = props;
+  const { language } = clientContext;
+
+  return (
+    <>
+      <p>{getText('helloText', language)}</p>
+      <p>{getText('goodbyeText', language)}</p>
+    </>
+  );
+}
+```
+
+- If `clientContext.language` is `english`, the dashboard displays “hello” and “goodbye.”
+- If it’s `french`, the user sees “bonjour” and “au revoir.”
+
+For larger, more complex localization needs, consider libraries like **react-intl** or **i18next**, but the basic concept remains the same: pass a language key, load the right translations, and render accordingly.

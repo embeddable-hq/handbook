@@ -397,17 +397,29 @@ export const meta: EmbeddedComponentMeta = {
 
 ### 3. `config`
 
-**`config`** is the third argument to `defineComponent`. It controls how inputs become props and how local `.emb` state (Embeddable State) is managed.
+**`config`** is the third argument to `defineComponent`. It controls what's passed to your component as props and how local `.emb` state (Embeddable State) is managed.
 
-| **Param** | **Type**                                              | **Required** |
-| --------- | ----------------------------------------------------- | ------------ |
-| `props`   | `(inputs: Inputs<typeof meta>, [state, setState]) => any` | ✅ Yes       |
-| `events`  | `{ [eventName: string]: (payload: any) => any }`      | ❌ No        |
+| **Param** | **Type**                                                       | **Required** |
+| --------- | -------------------------------------------------------------- | ------------ |
+| `props`   | `(inputs: Inputs<typeof meta>, [state, setState], clientCtx) => any` | ✅ Yes       |
+| `events`  | `{ [eventName: string]: (payload: any) => any }`               | ❌ No        |
 
-- **`props`** receives `(inputs, [state, setState])`, where:
-  - **`inputs`** are the values entered by the user in the no-code builder.
-  - **`state`** and **`setState`** are state local to the `.emb` file, enabling you to pass state from your react component back to the `.emb.` file. The most common use-case is to [load data dynamically](/development/loading-data#loading-data-dynamically) from within the component.  
-- **`events`** describes how events your component triggers are transformed into a data object that Embeddable can use, as described in `events.properties` in `meta`.
+- **`props(inputs, [state, setState], clientContext)`**  
+  - **`inputs`**: Values entered by the user in the no-code builder.  
+  - **`state`** and **`setState`** are state local to the `.emb` file, enabling you to pass state from your react component back to the `.emb.` file. The most common use-case is to [load data dynamically](/development/loading-data#loading-data-dynamically) from within the component.
+  - **`clientContext`**: Any [additional data](/development/client-context) passed in from the web component at embed time (e.g. theming, environment info).  
+    
+    ```ts
+    export default defineComponent(MyComponent, meta, {
+      props: (inputs, [state, setState], clientContext) => {
+        return {
+          ...inputs,
+          clientContext, // e.g. { theme: 'dark', locale: 'en-US' }
+        };
+      }
+    });
+    ```
+- **`events`** describes how events your component triggers are transformed into a data object that Embeddable can use for [interactivity](/development/interactivity), as described in `events.properties` in `meta`.
 
 ---
 
@@ -478,10 +490,11 @@ export const meta = {
 } as const satisfies EmbeddedComponentMeta;
 
 export default defineComponent(Component, meta, {
-  props: (inputs: Inputs<typeof meta>) => {
+  props: (inputs: Inputs<typeof meta>, [state], clientContext) => {
     // Maps the inputs defined in meta to the props of your React component
     return {
-      ...inputs
+      ...inputs,
+      clientContext // e.g. { theme: 'dark', locale: 'en-US' }
     };
   },
   events: {
