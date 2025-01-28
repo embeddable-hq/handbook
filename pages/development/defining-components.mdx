@@ -175,7 +175,7 @@ The `loadData` function used above is one of the **most powerful** parts of the 
 
 ## The `defineComponent` Function
 
-The `defineComponent` function, used inside your `emb.ts` files, is how you register and configure components in Embeddable, mapping user inputs to your React component’s props.
+The `defineComponent` function, used inside your `emb.ts` files, is how you register and configure components in Embeddable.
 
 ```ts
 export default defineComponent(Component, meta, {
@@ -185,29 +185,27 @@ export default defineComponent(Component, meta, {
       results: loadData({ ... }), // fetches data from your database and passes it to your component
     };
   },
-  events: { // maps events fired by your component onto a JS object defined in events.properties in meta
-    onChange: (v) => ({ value: v }), 
-  },
 });
 ```
 
 ## Parameters
 
+When you call `defineComponent` in your `.emb.ts` file, you pass in three arguments: 
+
 | **Param**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `component` | Component | ✅ Yes       |
-| `meta`      | [Meta](/development/defining-components#definecomponent-meta-reference)      | ✅ Yes       |
-| `config`    | [Config](/development/defining-components#definecomponent-config-reference)   | ✅ Yes       |
+| `meta`      | [Meta](/development/defining-components#2-meta)      | ✅ Yes       |
+| `config`    | [Config](/development/defining-components#3-config)   | ✅ Yes       |
 
-TODO: Add Client Context
 
-- **`component`**: The React component that renders on the dashboard.
-- **`meta`**: Defines how the component appears and which inputs are available in the builder.
-- **`config`**: Maps user inputs to props and handles events.
+- **`component`**: your React component.
+- **`meta`**: an object defining how the component appears and which inputs are available in the builder.
+- **`config`**: an object specifying how user inputs map to props, how local state is managed, and how events are handled.
 
 ---
 
-### `defineComponent` Component Reference
+### 1. `component`
 
 `component` is simply your React component:
 
@@ -215,8 +213,7 @@ TODO: Add Client Context
 import Component from './index';
 ```
 
-
-### `defineComponent` Meta Reference
+### 2. `meta`
 
 **`meta`** is the second argument to `defineComponent`. It governs how a component is displayed and configured in the builder, including the inputs it needs. 
 
@@ -226,17 +223,13 @@ import Component from './index';
   export const meta = {
     name: 'MyComponent', 
     label: 'My Component', 
+    category: 'Charts',
     classNames: ['container'],
     defaultWidth: 200,
     defaultHeight: 100,
-    inputs: [
-      {
-        name: 'title',
-        type: 'string',
-        label: 'Title text',
-      },
-      ...
-    ]
+    inputs: [...],
+    events: [...],
+    variables [...],
   } as const satisfies EmbeddedComponentMeta;
 ```
 
@@ -245,11 +238,12 @@ import Component from './index';
 | `name`          | string            | ✅ Yes       |
 | `label`         | string            | ✅ Yes       |
 | `classNames`    | string[]          | ❌ No        |
+| `defaultWidth`  | number            | ❌ No        |
+| `defaultHeight` | number            | ❌ No        |
 | `inputs`        | [`InputMeta[]`](/development/defining-components#inputmeta-definition)     | ❌ No        |
 | `events`        | [`EventMeta[]`](/development/defining-components#eventmeta-definition)     | ❌ No        |
 | `variables`     | [`VariableMeta[]`](/development/defining-components#variablemeta-definition)  | ❌ No        |
-| `defaultWidth`  | number            | ❌ No        |
-| `defaultHeight` | number            | ❌ No        |
+
 
 - **`name`**: A unique identifier that must match the `.emb.ts` filename. Changing it later can break references.
 - **`label`**: A user-facing name shown in the builder.
@@ -332,7 +326,7 @@ export const meta: EmbeddedComponentMeta = {
 | ------------ | ----------------- | ------------ |
 | `name`       | string            | ✅ Yes       |
 | `label`      | string            | ✅ Yes       |
-| `properties` | `EventProperty[]` | ❌ No        |
+| `properties` | [`EventProperty[]`](/development/defining-components#eventproperty-definition) | ❌ No        |
 
 - **`name`**: The event handler name passed into your React component. E.g. setting it to `onBigClick` means that Embeddable will inject a function into your React component, via its props, called `onBigClick`. When called, the value you pass to this function will be passed to `events.onBigClick` inside `defineComponent` where you need to map the value onto an `object` that has the shape described in `events.properties` in your `meta`. This allows Embeddable to make your event available to use as an interaction in the no-code builder.
 - **`label`**: How this event is labeled in the builder.
@@ -349,7 +343,7 @@ export const meta: EmbeddedComponentMeta = {
 
     - **`name`**: The property key in your `events` mapping (e.g. `value`).
     - **`type`**: The expected data type (e.g. `string`, `number`, `boolean`).
-    - **`label`**: An optional label for this property in the builder.
+    - **`label`**: An optional label for this property in the builder. TODO - array: true?
 
 #### `VariableMeta` Definition
 
@@ -381,7 +375,7 @@ export const meta: EmbeddedComponentMeta = {
 | `type`         | `CustomType` or `NativeType`   | ✅ Yes       |
 | `defaultValue` | any                            | ❌ No        |
 | `inputs`       | string[]                       | ❌ No        |
-| `events`       | `EventRef[]`                   | ❌ No        |
+| `events`       | [`EventRef[]`](/development/defining-components#eventref-definition)               | ❌ No        |
 
 - **`name`**: The variable’s name when auto-created in the builder.
 - **`type`**: The variable type (`string`, `boolean`, etc.).
@@ -401,7 +395,7 @@ export const meta: EmbeddedComponentMeta = {
 
 ---
 
-### `defineComponent` Config Reference
+### 3. `config`
 
 **`config`** is the third argument to `defineComponent`. It controls how inputs become props and how local `.emb` state (Embeddable State) is managed.
 
