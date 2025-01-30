@@ -1,0 +1,48 @@
+import ImageGrid from '/components/ImageGrid'
+ 
+# Introduction to Dashboards
+
+Embeddable provides a **no-code builder** that lets non-technical users create, edit, and organize analytics dashboards without writing SQL or code. 
+
+It brings together your **data models** (defined in code) and your **components** (written in React), giving end users an intuitive, drag-and-drop environment to configure visuals, filters, interactivity, and more.
+
+<ImageGrid images={["/img/builder-ui.png"]}/>
+
+## Why a No-Code Builder?
+
+- **Empower Non-Tech Users**: Allow product managers, analysts, or support teams to build dashboards themselves.  
+- **Faster Iterations**: Dashboards can be designed and tested on the fly. No need to wait for dev cycles to adjust charts or filters.  
+- **Reuse & Scale**: Your code-defined models and components are made available in one place. Embeddable handles the plumbing—so a single chart component can be reused by multiple teams or use cases.
+
+## High-Level Workflow
+
+1. **Define Components & Models in Code**  
+   You build React components (e.g., charts, controls) and data models (`.cube.yml` or `.cube.ts`), then push them to Embeddable.  
+
+2. **Open the No-Code Builder**  
+   Users log into Embeddable’s web UI and see all **published** components and data models.  
+
+3. **Drag & Drop**  
+   - **Add** a component (like a line chart or dropdown) onto the canvas.  
+   - **Choose** data (dataset, dimension, measure) from the dropdowns.  
+   - **Customize** formatting or styling (e.g., chart color, display as percentage).  
+
+4. **Preview & Interact**  
+   Users can **preview** the dashboard right there, seeing live data. They can also set variables or triggers (e.g., “onChange” from a dropdown) to drive interactivity.  
+
+5. **Test Security Contexts**  
+   Switch between different contexts (e.g., “User A,” “User B,” or “Environment: staging”), ensuring row-level security or environment-based data sources behave as expected.
+
+6. **Publish & Embed**  
+   - Once satisfied, click **Publish** to finalize.  
+   - Embed the resulting dashboard on any site or app via the `<em-beddable>` web component.
+
+## Tips & Best Practices
+
+- **Organize Components**: Use tags or descriptive names so non-devs quickly find the right chart or widget.
+
+- **Leverage Presets**: Set up `environment` or `security context` presets to easily test staging vs. production data. 
+
+- **Keep Models Clean**: The fewer, more focused data models you have, the easier the builder is to navigate.
+
+With the **no-code builder**, everyone in your organization—devs and non-devs alike—can collaborate on analytics dashboards. Devs define the underlying data logic and React components; end users assemble, configure, and publish dashboards, all in a **self-service** fashion.

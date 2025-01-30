@@ -1,0 +1,36 @@
+import { Steps } from 'nextra/components'
+import VideoComponent from '/components/Video'
+
+# Interactivity with Variables
+
+Embeddable’s **variables** make dashboards interactive - so when you change something in one part of the dashboard, it can automatically update another.
+
+## How it works:
+
+<Steps>
+
+### **A user performs an action**  
+   - For instance, you type in a text box, click a button, or select a value from a dropdown.
+
+### **A Variable gets updated**  
+   - The dashboard saves what you typed or clicked inside a variable. 
+   - Some components [create variables automatically](/development/interactivity#usage-flow-1) when you add them to the Canvas, but you can also create variables manually. 
+
+### **Any connected components and datasets update too**  
+   - If a variable is connected to a dataset filter, or an input within a component, it will update, causing the data to reload or the component to change in some way. 
+
+</Steps>
+
+It’s like magic, but actually just smart automation behind the scenes! 🚀
+
+## Examples
+
+### A simple search input
+
+Here's how to create a simple search input that filters a dataset, like so:
+
+<VideoComponent
+    src="/video/simple-text-filter.mp4"
+    width="1780"
+    height="998"
+/>

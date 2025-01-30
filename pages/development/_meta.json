@@ -5,7 +5,6 @@
     "defining-components": "Defining components",
     "loading-data": "Loading data",
     "interactivity": "Adding interactivity", 
-    "client-context": "Adding client context", 
-    "input-types": "Defining input types",
+    "client-context": "Adding client context",
     "pushing-code": "Pushing components"
 }
