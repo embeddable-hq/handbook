@@ -6,43 +6,32 @@ Embeddable provides a **no-code builder** that lets non-technical users create, 
 
 It brings together your **data models** (defined in code) and your **components** (written in React), giving end users an intuitive, drag-and-drop environment to configure visuals, filters, interactivity, and more.
 
-<ImageGrid images={["/img/builder-ui.png"]}/>
-
 ## Why a No-Code Builder?
 
 - **Empower Non-Tech Users**: Allow product managers, analysts, or support teams to build dashboards themselves.  
 - **Faster Iterations**: Dashboards can be designed and tested on the fly. No need to wait for dev cycles to adjust charts or filters.  
-- **Reuse & Scale**: Your code-defined models and components are made available in one place. Embeddable handles the plumbing—so a single chart component can be reused by multiple teams or use cases.
+- **Reuse & Scale**: Your code-defined models and components are made available in one place. Embeddable handles the plumbing - so a single chart component can be reused by multiple teams or use cases.
+
+<ImageGrid images={["/img/builder-ui.png"]}/>
 
 ## High-Level Workflow
 
 1. **Define Components & Models in Code**  
-   You build React components (e.g., charts, controls) and data models (`.cube.yml` or `.cube.ts`), then push them to Embeddable.  
+   Your technical teams build [React components](/development/defining-components) (e.g. charts, controls) and [data models](/data-modeling/defining-models), then [push them](/development/pushing-code) to Embeddable.  
 
-2. **Open the No-Code Builder**  
-   Users log into Embeddable’s web UI and see all **published** components and data models.  
-
-3. **Drag & Drop**  
+2. **Build Dashboards with Drag & Drop**  
    - **Add** a component (like a line chart or dropdown) onto the canvas.  
-   - **Choose** data (dataset, dimension, measure) from the dropdowns.  
-   - **Customize** formatting or styling (e.g., chart color, display as percentage).  
+   - **Customize** it using the [inputs](/development/defining-components#configure-in-embts) available - your team have full control over these.
 
 4. **Preview & Interact**  
-   Users can **preview** the dashboard right there, seeing live data. They can also set variables or triggers (e.g., “onChange” from a dropdown) to drive interactivity.  
+   - **Preview** the dashboard right there, with live data. 
+   - Build in [interactivity](/dashboards/interactivity) to create dynamic, engaging experiences.   
 
 5. **Test Security Contexts**  
-   Switch between different contexts (e.g., “User A,” “User B,” or “Environment: staging”), ensuring row-level security or environment-based data sources behave as expected.
+   - Switch between different [security-contexts](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) (e.g. “User A” or “User B”) and [environments](/deployment/environments-api#testing-in-the-no-code-builder), seeing the exact data and set up your users see. 
 
 6. **Publish & Embed**  
-   - Once satisfied, click **Publish** to finalize.  
-   - Embed the resulting dashboard on any site or app via the `<em-beddable>` web component.
+   - Once satisfied, click [Publish](/dashboards/publishing). 
+   - [Embed](/deployment/embedding) the resulting dashboard on your website or app using a web-component (not an iFrame).
 
-## Tips & Best Practices
-
-- **Organize Components**: Use tags or descriptive names so non-devs quickly find the right chart or widget.
-
-- **Leverage Presets**: Set up `environment` or `security context` presets to easily test staging vs. production data. 
-
-- **Keep Models Clean**: The fewer, more focused data models you have, the easier the builder is to navigate.
-
-With the **no-code builder**, everyone in your organization—devs and non-devs alike—can collaborate on analytics dashboards. Devs define the underlying data logic and React components; end users assemble, configure, and publish dashboards, all in a **self-service** fashion.
+With the **no-code builder**, everyone in your organization - devs and non-devs alike - can collaborate on analytics dashboards. Devs define the underlying data logic and React components; end users assemble, configure, and publish dashboards. 
