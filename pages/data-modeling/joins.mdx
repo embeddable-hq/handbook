@@ -55,8 +55,8 @@ cubes:
     sql_table: public.customers
 
     joins:
-      - name: orders
-        sql: "{CUBE}.id = {orders}.customer_id"
+      - name: orders # the name of the model you're joining to
+        sql: "{CUBE}.id = {orders}.customer_id" # {orders} is another model, not the underlying database table.
         relationship: one_to_many
 
     dimensions:
@@ -73,11 +73,11 @@ cubes:
     sql_table: public.orders
 
     joins:
-      - name: products
-        sql: "{CUBE}.product_id = {products}.id"
+      - name: products # the name of the model you're joining to
+        sql: "{CUBE}.product_id = {products}.id" # {products} another model, not the underlying database table.
         relationship: many_to_one
-      - name: customers
-        sql: "{CUBE}.customer_id = {customers}.id"
+      - name: customers # the name of the model you're joining to
+        sql: "{CUBE}.customer_id = {customers}.id" #{customers} is another model, not the underlying database table.
         relationship: many_to_one
 
     dimensions:
@@ -106,19 +106,13 @@ cubes:
     ...
 ```
 
-### Key Points
+- **Primary Key** - each model should have a dimension marked `primary_key: true`. This ensures Cube can generate valid JOIN queries. By default, primary keys are hidden in the UI - use `public: true` if you want to expose them as dimensions.
 
-- **Primary Key**    
-  Each model should have a dimension marked `primary_key: true`. This ensures Cube can generate valid JOIN queries. By default, primary keys are hidden in the UI - use `public: true` if you want to expose them as dimensions.
+- **Name vs. Table** - in a `joins` block, `name` refers to another **model** (cube), not the underlying database table.
 
-- **Name vs. Table**  
-  In a `joins` block, `name` refers to another **model** (cube), not the underlying database table.
+- **Relationship Types**  - set `relationship` to [one_to_one](https://cube.dev/docs/reference/data-model/joins#one-to-one), [one_to_many](https://cube.dev/docs/reference/data-model/joins#one-to-many), or [many_to_one](https://cube.dev/docs/reference/data-model/joins#many-to-one) depending on your schema.
 
-- **Relationship Types**  
-  Set `relationship` to [one_to_one](https://cube.dev/docs/reference/data-model/joins#one-to-one), [one_to_many](https://cube.dev/docs/reference/data-model/joins#one-to-many), or [many_to_one](https://cube.dev/docs/reference/data-model/joins#many-to-one) depending on your schema.
-
-- **Composite Keys**  
-  If no single column uniquely identifies rows, build a composite key with a custom SQL expression:
+- **Composite Keys** - if no single column uniquely identifies rows, build a composite key with a custom SQL expression:
   ```yaml
   dimensions:
     - name: id

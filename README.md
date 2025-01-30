@@ -21,7 +21,7 @@ Then, run `pnpm dev` to start the development server and visit localhost:3000.
 
 **To resize videos:**
 
-1. Convert file to .mp4: https://www.freefileconvert.com/file/aB-6BQmj6-k6
+1. Convert file to .mp4: https://www.freefileconvert.com/
 2. Resize it: https://ezgif.com/resize-video/ezgif-6-478b77626d11.mp4
 
 **To resize images**

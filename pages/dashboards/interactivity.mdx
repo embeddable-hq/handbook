@@ -10,7 +10,7 @@ Embeddable’s **variables** make dashboards interactive - so when you change so
 <Steps>
 
 ### **A user performs an action**  
-   - For instance, you type in a text box, click a button, or select a value from a dropdown.
+   - e.g. type in a text box, click a button, or select a value from a dropdown.
 
 ### **A Variable gets updated**  
    - The dashboard saves what you typed or clicked inside a variable. 
@@ -23,14 +23,162 @@ Embeddable’s **variables** make dashboards interactive - so when you change so
 
 It’s like magic, but actually just smart automation behind the scenes! 🚀
 
-## Examples
+## Example: A simple search input
 
-### A simple search input
-
-Here's how to create a simple search input that filters a dataset, like so:
+Here's how to create a simple search input that filters a dataset like so:
 
 <VideoComponent
     src="/video/simple-text-filter.mp4"
     width="1780"
     height="998"
 />
+
+<Steps>
+
+### Add a Text Input component
+
+- Optionally, in the Text Input's Edit panel, set a **placeholder** text like “Type here to search.”
+
+### A "Text Value" variable is created automatically
+
+- Each time the user types, the component fires an event that updates this variable.
+
+### Connect the variable to the dataset
+
+1. Open the settings of the **dataset** you wish to filter (in the bottom right).
+2. Click **Add filter**.  
+3. Select the dimension or field you want to filter on (e.g. “Country”).  
+4. Choose **“equals”** or **“contains”** and link it to the variable by clicking the **link** icon on the right.
+
+<VideoComponent
+    src="/video/how-to-add-simple-filter.mp4"
+    width="1780"
+    height="998"
+/>
+
+### See It in Action
+
+- Switch to **Preview** mode by switching the preview toggle in the top menu.  
+- Type a **keyword** into the text input.  
+- Embeddable **updates the variable**, which automatically **refreshes the dataset**, showing only matching rows.  
+- Any chart or table connected to that dataset now displays filtered data in real time!
+
+</Steps>
+
+**Result**: A quick, code-free **search** feature across your dashboard, powered by a single text input and a variable-based filter.
+
+## Example: Click a pie chart 'segment' to filter data
+
+Here's how to filter data when a user clicks the segment of a pie chart.
+
+<VideoComponent
+    src="/video/4-preview-interaction.mp4"
+    width="1250"
+    height="846"
+/>
+
+<Steps>
+
+### **Create a Variable**  
+   - Since adding the pie chart doesn’t automatically generate a variable for this type of interaction, you’ll add one yourself. 
+   - Click the **+ icon** on the right, give your variable a **name** (e.g. **country**), and select a **type** (simply `text` in this case). 
+
+<VideoComponent
+    src="/video/1-create-variable.mp4"
+    width="1250"
+    height="846"
+/>
+
+### **Set Up the Pie Chart Interaction**  
+   - Click edit on the pie chart.  
+   - Under **Interactions**, connect the click event to your new variable and then click Done.
+   - Now, whenever someone clicks a slice, the chart fires an event, and Embeddable updates the **country** variable. 
+
+<VideoComponent
+    src="/video/2-create-interaction.mp4"
+    width="1250"
+    height="846"
+/>
+
+### **Apply the Variable to a Dataset Filter**  
+   - In your dataset settings, add a new filter:  
+     - Choose the dimension (e.g., Country) you want to match.  
+     - Set it to “equals” (or “contains,” depending on your need).  
+     - Link it to the **country** variable.  
+   - This way, the dataset only loads rows that match the user’s chosen slice.
+
+<VideoComponent
+    src="/video/3-link-dataset-filter.mp4"
+    width="1250"
+    height="846"
+/>
+
+### **Test the Flow**  
+   - Switch to **Preview** mode.  
+   - Click any pie slice: **country** updates, causing the dataset to reload with that slice’s data.  
+   - Any chart or table using this dataset also updates automatically.
+
+</Steps>
+
+## Example: Switch Date Grouping with a Granularity Picker
+
+Here's how to let viewers toggle a chart between **daily**, **weekly**, or **monthly** views.
+
+<VideoComponent
+    src="/video/granularity-preview.mp4"
+    width="1250"
+    height="788"
+/>
+
+<Steps>
+
+### **Add a Granularity Picker Component**
+
+    - Drop the **Daterange Picker** onto your canvas. You could also add the **Granularity Picker**.
+    - A "granularity" variable is created automatically. Each time the user selects a granularity, it will update the **granularity** variable. 
+
+<VideoComponent
+    src="/video/add-granularity-picker.mp4"
+    width="1250"
+    height="938"
+/>
+
+### Link the variable to the granularity input in your chart
+
+- In your time-series chart, you'll find a **granularity** input.  
+- This should already have a value selected in the dropdown (e.g. "week").
+- Click the link icon on the right, select your **granularity** variable, and click **Done**. 
+
+<VideoComponent
+    src="/video/hook-up-granularity.mp4"
+    width="1250"
+    height="938"
+/>
+
+### **Preview**
+
+- Switch to **Preview** mode and click different granularity options.
+- Watch your chart instantly switch between day, week, or month grouping.
+
+</Steps>
+
+## Setting Default Values
+
+You can set a default variable value that applies when the dashboard first loads. Simple:
+
+1. **Open the Variable Builder**  
+   - In the right-hand panel of the builder, select (or create) a variable.
+2. **Assign a Default**  
+   - In the “Value” field, pick or type the initial value (e.g., “USA” for a Country variable, or “week” for a granularity).
+
+### Passing Variables via Code
+
+If certain values are **customer-specific** (like “United States” for one client and “Germany” for another), you can also [**provide variables programmatically**](/deployment/embedding#interacting-with-your-embeddable) when embedding the dashboard in your site. This ensures each user sees the right default context without manually picking it.
+
+## Variable types
+
+Each variable is defined with a **type** - like `text`, `time`, or `number`. When you link a variable to an input or dataset filter, both sides must share a **matching type**. For instance, you can’t connect a **number** input to a **text** variable.
+
+**Note**: In the future, we plan to offer more flexibility around how different types can interact.
+
+
