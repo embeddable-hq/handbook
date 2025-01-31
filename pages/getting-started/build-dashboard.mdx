@@ -1,62 +1,78 @@
 import { Steps, Cards, Callout } from 'nextra/components'
+import VideoComponent from '/components/Video'
+import ExternalVideo from '/components/ExternalVideo'
+import ImageGrid from '/components/ImageGrid'
 
-# Build your first dashboard
+# Build Your First Dashboard
 
-Let's build your first dashboard. 
+You're ready to start building! Let’s walk through creating a **basic dashboard** in Embeddable - from adding your first component to embedding the result.
 
 <Steps>
 
-### Click 'Create new Embeddable'
+### **Create a New Embeddable**
+- On your workspace homepage, click **Create new Embeddable** to create a fresh dashboard.
 
-On your Workspace homepage, click the 'Create new Embeddable' button. This will create a new dashboard and open the dashboard editor. 
+### **Add a Text Component**
+1. Click **Add component** (top right).
+2. Scroll down and choose **Text component**.
+3. Fill in **Title** and **Body**, then hit **Save**.
 
-### Add a text component to the canvas
-
-1. Click the **'Add component'** button in the top right.
-
-2. **Scroll to the bottom** of the list and click to add **'Text component'**.
+<VideoComponent
+    src="/video/add-text-component.mp4"
+    width="1250"
+    height="872"
+/>
 
 <Callout emoji="💡">
-  The components listed here are the ones defined in your repo.
+  The available components come from your code repository.
 </Callout>
 
-3. Provide values for Title and Body.
+### **Add a Dataset**
+1. In the **Datasets** panel (bottom right), click the **+** icon.
+2. Name your dataset, select **My customers** (or any other sample data model), then **Save**.
 
-4. Click Save and position it on your dashboard. 
+<VideoComponent
+    src="/video/add-dataset.mp4"
+    width="1250"
+    height="872"
+/>
 
-### Next, add a data component to the canvas
+### **Add a Pie Chart**
+1. Click **Add component** again. Pick **Pie Chart**.
+2. In the edit panel, set **Dataset to display** to the dataset you just created.
+3. Select your preferred **Slice** and **Metric**.
+4. **Save** and position your pie chart on the canvas.
 
-1. In the **Datasets** section in the bottom right of the screen, click the **plus** icon.
+<VideoComponent
+    src="/video/add-pie-chart.mp4"
+    width="1250"
+    height="872"
+/>
 
-2. Give your dataset a **name**, and choose the **Customers** data model as the source for this dataset. 
+### **Add Interactivity**
 
-3. Click **Save**.
+Let's add a **search input** that filters the data. Watch and follow this quick video:
 
-4. Now, click the **"Add component"** button again and select **Pie Chart**.
+<ExternalVideo src="https://www.loom.com/embed/041f9947644245d5bed940a2d46bc6ca?sid=b3d41e99-9f69-440c-8e93-4174e95c0f60"/>
 
-6. Choose your newly created dataset as the **Dataset to display**.
+### **Embed Your Dashboard**
+1. Click **Publish** at the top of your dashboard.
+2. In the pop-up, copy your **API Key** and **Embeddable ID**.
 
-7. Choose an appropriate **Slice** and **Metric**.
+<ImageGrid images={["/img/api-key.png"]} />
 
-8. Click **Save**. 
-
-9. **Position your Pie Chart** as you wish on the canvas. 
-
-### Let's add some interactivity.
-- TODO 
-
-### Let's theme our components
-- TODO - perhaps add as optional next step via callout
-
-
-
-
-
-
-
-
-
-
-
+3. In your code repo, open `embedding-preview.cjs` (inside `scripts`).  
+4. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard.  
+5. Run:
+   ```bash
+   node src/embeddable.com/scripts/embedding-preview.cjs
+   ```
+6. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action!
 
 </Steps>
+
+---
+
+## Next Steps
+- **Try More Components**: Explore different charts, text blocks, or interactive controls.
+- **Connect your data**: Securely [connect your database](/getting-started/connect-your-database).

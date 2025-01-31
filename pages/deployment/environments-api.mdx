@@ -1,0 +1,96 @@
+import { Steps } from 'nextra/components'
+
+# Environments API
+
+**Environments** let you map **data models** to different **database connections**, making it easy to:
+
+- Use one **environment** per database (e.g. prod, QA, staging).
+- Implement **single-tenancy** (database-level security) by assigning each customer a different DB.
+- Connect multiple microservices by mapping specific data models to specific DB connections.
+
+## How It Works
+
+<Steps>
+
+### **Define Connections**  
+   Use the [Connections API](/getting-started/connect-your-database#connections-api) to create named database connections (e.g. `"prod-postgres"`, `"staging-postgres"`). Each connection includes the **credentials** (host, port, user, etc.) for a particular database.
+
+### **Assign `data_source` in Your Models**  
+   In your `.cube.yml` (or `.cube.ts`) files, specify `data_source` for each model. If omitted, it defaults to `"default"`:
+   ```yaml
+   cubes:
+     - name: orders
+       sql_table: public.orders
+       data_source: primary_db
+   ```
+   This tells Embeddable that the “orders” model should look for a connection named `"primary_db"` in the chosen environment.
+
+### **Create an Environment**  
+   Define an **environment** that maps each `data_source` to a corresponding **connection**:
+   ```ts
+   // for security reasons, this must *never* be called from your client-side
+   fetch('https://api.<your-region>.embeddable.com/api/v1/environments', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Authorization': `Bearer ${apiKey}`
+     },
+     body: JSON.stringify({
+       name: 'prod',
+       datasources: [
+         { data_source: 'primary_db', connection: 'prod-postgres' },
+         { data_source: 'warehouse', connection: 'prod-bigquery' }
+       ]
+     })
+   });
+   ```
+   - **`name`** is a unique ID for the environment (e.g. `"prod"`).  
+   - **`datasources`** is a list mapping each model’s `data_source` to a named **connection**.
+
+### **Use the Environment via Token API**  
+   When requesting a [**security token**](/deployment/tokens-api), supply the `environment` field:
+   ```ts
+   {
+     embeddableId: "<dashboard-id>",
+     environment: "prod",
+     // ...
+   }
+   ```
+   - Embeddable automatically routes each model’s `data_source` to the connections defined in your `"prod"` environment.  
+   - If `environment` is omitted, it uses `"default"`.
+
+</Steps>
+
+### CRUD Operations
+
+The flow above represents a `CREATE` action, but all `CRUD` operations are available. 
+
+- **POST** `/api/v1/environments`  
+  Create a new environment.  
+- **GET** `/api/v1/environments`  
+  List all environments.  
+- **PUT** `/api/v1/environments/{name}`  
+  Update an existing environment.  
+- **GET** `/api/v1/environments/{name}`  
+  Retrieve a specific environment’s details.  
+- **DELETE** `/api/v1/environments/{name}`  
+  Delete the named environment.
+
+## Testing in the No-Code Builder
+
+To preview environments before **before** publishing, you can create or update your `src/presets/security-contexts.sc.yml` with entries specifying `environment`:
+   ```yaml
+   - name: Example customer 1
+     environment: production
+     securityContext:
+       country: United States
+
+   - name: Example customer 2
+     environment: staging
+     securityContext:
+       country: Germany
+   ```
+
+In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **production** data.
+
+**Advanced use-case**: If you have multiple data models each with unique `data_source` values, you can define an environment that includes only the data sources you want for a particular user—offering fine-grained control over which models (and thus which databases) are active for that environment.

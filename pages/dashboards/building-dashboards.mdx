@@ -1,0 +1,56 @@
+import LinkCard from '/components/LinkCard'
+import ImageGrid from '/components/ImageGrid'
+import { Callout } from 'nextra-theme-docs'
+
+# Building Dashboards
+
+<LinkCard
+   title="Follow a walkthough to create your first dashboard"
+   href="/getting-started/build-dashboard"
+   arrow
+/>
+
+
+In Embeddable’s no-code builder, **two primary building blocks** form the basis of every dashboard: 
+- **Datasets**: the data you want to show. 
+- **Components**: your charting visualizations.   
+
+By mixing and matching them on the canvas you can quickly create powerful, reusable dashboards.
+
+## Datasets
+
+**Datasets** are simply a named **data model** with optional **filters** applied. For example, you might have:
+- A **Customers** dataset based on your `customers` data model.
+- A **High-Spend Customers** dataset that applies a filter on the `customers` model.
+- An **Orders** dataset based on an `orders` data model. 
+
+You **define a dataset** in the Embeddable no-code builder by clicking the [+] in the Datasets section in the bottom right.
+
+<ImageGrid images={["/img/dataset-builder-min.png"]}/>
+
+<Callout emoji="💡">
+  Because data models include row-level security rules and transformations, everyone sees the right data automatically, so this **isn't something you need to consider** in the no-code builder. 
+</Callout>
+
+## Components
+
+Components are **visual or interactive elements** - charts, tables, dropdowns, text blocks, etc. - that your dev team has pushed to Embeddable. For each component, the builder will:
+
+- **Prompt for Inputs**: Such as which dimension to use along the x-axis, or the title.
+- **No-code**: No code is needed in the builder. You just fill in the fields.
+
+<ImageGrid images={["/img/add-components-min.png"]}/>
+
+## The Canvas
+
+When you add or reposition components, Embeddable’s **canvas** automatically arranges them based on a **grid layout** with a few key properties:
+
+- **Drag-and-Drop**: Move any component around, and the canvas will slot it into the nearest open space.
+- **Upwards Gravity**: If there’s empty space above a component, it will shift upward automatically.
+- **Responsive Breakpoints**: The canvas adapts for mobile or smaller screens. These breakpoints currently **can’t** be edited. 
+- **No CSS Overrides**: The layout engine isn’t controlled by your CSS. Instead, it’s managed within Embeddable to ensure consistent placement across devices.
+
+This lets you focus on **what** goes into your dashboard rather than fussing with positioning details or media queries.
+
+<ImageGrid images={["/img/canvas-drag-min.png"]}/>
+

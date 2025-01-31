@@ -4,8 +4,6 @@ import { Callout } from 'nextra/components'
 
 When your database tables relate to each other, you can represent those relationships directly in your data models. This allows you to build dashboards using data from multiple tables without writing manual JOIN statements.
 
-**Example**
-
 Imagine the following database:
 
 | **Table**    | **Key Relationships**                      |
@@ -39,13 +37,7 @@ cubes:
 
 The general rule of thumb is to try and have **one data model** for **each user-facing concept**. 
 
-E.g. **Spotify** would probably want a data model to represent each of the following concepts:
-
-    - playlists
-    - listeners
-    - artists
-    - tracks
-    - etc.
+E.g. **Spotify** would probably want a data model to represent each of the following concepts: `playlists`, `listeners`, `artists`, `tracks`, etc.
 
 Since `customers`, `orders`, and `products` are **user-facing concepts**, the best approach is therefore to create separate models and then link them, like so:
 
@@ -55,8 +47,8 @@ cubes:
     sql_table: public.customers
 
     joins:
-      - name: orders
-        sql: "{CUBE}.id = {orders}.customer_id"
+      - name: orders # the name of the model you're joining to
+        sql: "{CUBE}.id = {orders}.customer_id" # references the customer_id *column* in the orders model, but you can also reference dimensions (learn more below)
         relationship: one_to_many
 
     dimensions:
@@ -73,11 +65,11 @@ cubes:
     sql_table: public.orders
 
     joins:
-      - name: products
-        sql: "{CUBE}.product_id = {products}.id"
+      - name: products # the name of the model you're joining to
+        sql: "{CUBE}.product_id = {products}.id" # references the id column in the products model, but you can also reference dimensions (learn more below)
         relationship: many_to_one
-      - name: customers
-        sql: "{CUBE}.customer_id = {customers}.id"
+      - name: customers # the name of the model you're joining to
+        sql: "{CUBE}.customer_id = {customers}.id" # references the id column in the customers model, but you can also reference dimensions (learn more below)
         relationship: many_to_one
 
     dimensions:
@@ -95,7 +87,7 @@ cubes:
 
     joins:
       - name: orders
-        sql: "{CUBE}.id = {orders}.product_id"
+        sql: "{CUBE}.id = {orders}.product_id" # references the product_id column in the orders model, but you can also reference dimensions (learn more below)
         relationship: one_to_many
 
     dimensions:
@@ -106,19 +98,16 @@ cubes:
     ...
 ```
 
-### Key Points
+- **`name`**: In a `joins` block, `name` refers to another **model** (cube), not the underlying database table.
 
-- **Primary Key**    
-  Each model should have a dimension marked `primary_key: true`. This ensures Cube can generate valid JOIN queries. By default, primary keys are hidden in the UI - use `public: true` if you want to expose them as dimensions.
+- **`sql`**: Specifies the SQL condition that defines how two models are related. You can reference either columns or dimensions:
+  - `{products}.some_column` points to the **some_column** field in the **database table** associated with the **products** model.  
+  - `{products.some_dimension}` refers to the **some_dimension** **dimension** that’s defined inside the **products** model.  
+  - `my_products.some_column` accesses the **some_column** in the actual **my_products** table in your database (i.e. the raw table name).
 
-- **Name vs. Table**  
-  In a `joins` block, `name` refers to another **model** (cube), not the underlying database table.
+- **`relationship`**:  Set `relationship` to [one_to_one](https://cube.dev/docs/reference/data-model/joins#one-to-one), [one_to_many](https://cube.dev/docs/reference/data-model/joins#one-to-many), or [many_to_one](https://cube.dev/docs/reference/data-model/joins#many-to-one) depending on your schema.
 
-- **Relationship Types**  
-  Set `relationship` to [one_to_one](https://cube.dev/docs/reference/data-model/joins#one-to-one), [one_to_many](https://cube.dev/docs/reference/data-model/joins#one-to-many), or [many_to_one](https://cube.dev/docs/reference/data-model/joins#many-to-one) depending on your schema.
-
-- **Composite Keys**  
-  If no single column uniquely identifies rows, build a composite key with a custom SQL expression:
+- **`primary_key`**: Each model should have a dimension marked `primary_key: true`. This ensures Cube can generate valid JOIN queries. By default, primary keys are hidden in the UI - use `public: true` if you want to expose them as dimensions. If no single column uniquely identifies rows, build a composite key with a custom SQL expression:
   ```yaml
   dimensions:
     - name: id
@@ -126,9 +115,6 @@ cubes:
       type: string
       primary_key: true
   ```
-
-- **Foreign Keys as Dimensions**  
-  Foreign keys (e.g., `customer_id`) don’t have to be exposed as visible dimensions. If needed, you can define them just like any other column.
 
 ## Joining data from multiple data sources
 

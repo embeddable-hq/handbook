@@ -1,0 +1,45 @@
+# Retrieving Your Embeddables
+
+The **Embeddables API** lets you programmatically list all **dashboards** in your workspace. This is useful for dynamically displaying available dashboards or automating certain management tasks.
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<your-region>.embeddable.com/api/v1/embeddables', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+**Example Response**:
+
+```json
+{
+  "embeddables": [
+    {
+      "id": "1e01b46f-809c-45d5-8c33-2b5f5d7502bc",
+      "name": "Marketing dash",
+      "tags": ["Marketing"],
+      "lastPublishedAt": {
+        "default": "2024-02-11T18:53:03.527633Z"
+      }
+    },
+    {
+      "id": "d36785d6-6ef2-4d8a-bfce-ad09fbb97064",
+      "name": "Product KPIs",
+      "tags": ["OKRs", "Product"],
+      "lastPublishedAt": {} //this hasn't been published
+    }
+  ]
+}
+```
+
+- **`id`**: A unique identifier for the Embeddable (a dashboard).  
+- **`name`**: The display name your team set in the no-code builder.  
+- **`tags`**: Optional labels for categorization or searching (support for `tags` is coming shortly).
+- **`lastPublishedAt`**: Shows timestamps for each environment (e.g. `default`) indicating when the dashboard was last published. If empty, it hasn’t been published in that environment yet.

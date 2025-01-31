@@ -1,6 +1,6 @@
 {
     "introduction": "Intro to modeling",
-    "defining-models": "Defining models",
+    "defining-models": "Defining data models",
     "dimensions-and-measures": "Dimensions and Measures",
     "joins": "Joins",
     "row-level-security": "Row level security",

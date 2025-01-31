@@ -1,1 +1,221 @@
-Explain web component
+import { Steps } from 'nextra/components'
+
+# Embedding Dashboards
+
+Once you’ve **published** your dashboard in Embeddable, you can embed it in **any** website or web app - simply load our web component and pass in a security token. 
+
+## How it works
+
+<Steps>
+
+### Publish Your Dashboard
+
+In the Embeddable builder, click **Publish**. This prepares the dashboard for embedding.
+
+### Insert Our Web Component
+
+Add a `<script>` tag to your page to load the Embeddable custom element:
+
+```html
+<script 
+  type="module"
+  src="https://api.<your-region>.embeddable.com/js/v1/">
+</script>
+```
+
+This makes the `<em-beddable>` tag available anywhere on your page.
+
+### Place the `<em-beddable>` Element
+
+Anywhere in your HTML, include:
+
+```html
+<em-beddable
+  base-url="https://api.<your-region>.embeddable.com/"
+  token="eyJhbGciOiJIUzI1NiJ9..."
+></em-beddable>
+```
+
+- **`base-url`**: The Embeddable API base. Make sure it includes a trailing slash (i.e. `https://api.embeddable.com/`), or you might see data-loading issues.
+- **`token`**: A **security token** from our [Tokens API](/deployment/tokens-api), which is used for row-level security and more.
+
+</Steps>
+
+### Example: In a Plain HTML Page
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script 
+      type="module"
+      src="https://api.embeddable.com/js/v1/">
+    </script>
+  </head>
+  <body>
+    <em-beddable 
+      base-url="https://api.embeddable.com/"
+      token="eyJhbGciOiJI..."
+    ></em-beddable>
+  </body>
+</html>
+```
+
+---
+
+## Embedding in a React App
+
+If you’re using React, treat `<em-beddable>` like any other custom element. For example:
+
+```tsx
+function Embeddable({ token }: { token: string }) {
+  // Return a custom element
+  return React.createElement('em-beddable', { token, 'base-url': 'https://api.embeddable.com/' });
+}
+
+export default function DashboardPage() {
+  const securityToken = 'eyJhbGciOiJI...'; 
+  return <Embeddable token={securityToken} />;
+}
+```
+
+Or using JSX directly:
+
+```tsx
+export default function DashboardPage() {
+  return (
+    <>
+      <script
+        type="module"
+        src="https://api.embeddable.com/js/v1/"
+      />
+      <em-beddable
+        token="eyJhbGciOiJI..."
+        base-url="https://api.embeddable.com/"
+      />
+    </>
+  );
+}
+```
+
+---
+
+## Embedding in a Vue App
+
+In Vue, you can place `<em-beddable>` in your templates. For instance:
+
+```html
+<template>
+  <em-beddable
+    :token="token"
+    base-url="https://api.embeddable.com/"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+const token = ref('eyJhbGciOiJI...');
+
+onMounted(() => {
+  // Load the web component script if needed, or include in index.html
+});
+</script>
+```
+
+Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+
+```html
+<script 
+  type="module"
+  src="https://api.embeddable.com/js/v1/">
+</script>
+```
+
+---
+
+## Interacting with Your Embeddable
+
+You can pass **variables**, listen for events, and track loading states by programmatically interacting with the custom `<em-beddable>` element. Here’s an example in **React**:
+
+```tsx
+const Dashboard = ({ securityToken }) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [variables, setVariables] = React.useState({
+    'Country': 'Germany',
+    'Date range': { from: new Date(2024, 1, 12), to: new Date() }
+  });
+
+  return (
+    <Embeddable
+      token={securityToken}
+      variables={variables}
+      onVariablesChange={setVariables}
+      onComponentsLoad={() => setIsLoading(false)}
+      onEmbeddableError={(e) => {
+        console.log(`${e.errorMessage} : ${e.errorDetail}`);
+      }}
+      base-url="https://api.embeddable.com/"
+    />
+  );
+};
+```
+
+Below is the **Embeddable** component, which wraps `<em-beddable>` and wires up event listeners:
+
+```tsx
+function Embeddable({
+  token,
+  onComponentsLoad,
+  variables,
+  onVariablesChange,
+  onEmbeddableError
+}) {
+  const ref = React.useRef(null);
+
+  function handleVariableChange(e) {
+    if (onVariablesChange) {
+      onVariablesChange(
+        Object.fromEntries(e.detail.map((c) => [c.variableName, c.newValue]))
+      );
+    }
+  }
+
+  function handleEmbeddableError(e) {
+    onEmbeddableError(e.detail);
+  }
+
+  React.useEffect(() => {
+    ref.current.addEventListener('variablesChange', handleVariableChange);
+    ref.current.addEventListener('componentsLoad', onComponentsLoad);
+    ref.current.addEventListener('embeddableError', handleEmbeddableError);
+
+    return () => {
+      ref.current.removeEventListener('variablesChange', handleVariableChange);
+      ref.current.removeEventListener('componentsLoad', onComponentsLoad);
+      ref.current.removeEventListener('embeddableError', handleEmbeddableError);
+    };
+  }, []);
+
+  return React.createElement('em-beddable', {
+    ref,
+    token,
+    variables: JSON.stringify(variables)
+  });
+}
+```
+
+**How This Helps**:
+
+- **Track variable changes**: Each time variables inside your Embeddable update (e.g., user selects a new country), the `variablesChange` event fires, and you can respond in your app.
+- **Control filters/state**: By calling `onVariablesChange`, you can update local React state and trigger data refreshes or other UI logic.
+- **Handle load states & errors**: The `onComponentsLoad` event indicates Embeddable has finished loading components, and `onEmbeddableError` captures issues like network problems or invalid tokens.
+
+## Common Pitfalls
+
+- **Trailing Slash**: Ensure `base-url="https://api.embeddable.com/"` ends with a slash. Missing it can cause silent data-loading issues.  
+- **Security Token**: Must be retrieved server-side to avoid exposing secrets. See our [Tokens API](/deployment/tokens-api) docs.  
+
+## Complete Working Example
+
+See our [web-component-example repo](https://github.com/embeddable-hq/web-component-example/tree/main/client) for a live demonstration, including how to fetch a security token from the Tokens API and embed it in a fully functional page or app.

@@ -133,7 +133,7 @@ OFFSET <offset>
 
 ### Types
 
-- `Dataset` is a defined dataset in the no-code builder, often linked to a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
+- `Dataset` is a defined dataset in the no-code builder that's based on a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
 
 - [`Dimension`](/data-modeling/dimensions-and-measures#dimensions) 
   is an array of one or more dimensions.
@@ -141,14 +141,39 @@ OFFSET <offset>
 - [`Measure`](/data-modeling/dimensions-and-measures#dimensions)  is an array of one or more measures  
 
 - `TimeDimensions` are time-based dimensions, often paired with a **granularity** (e.g. day, week, month).
-
+  ```ts
+  timeDimensions: [
+    {
+      dimension: inputs.xAxis?.name, //pass just the dimension name
+      granularity: inputs.granularity
+    }
+  ]
+  ```
 - `OrderBy` is an array of sorting objects containing a `property` (`dimension` or `measure`) and a `direction` (`asc` or `desc`). This is also available as a native input in the no-code builder, but you can define it if your component needs custom sorting.
 
+  ```ts
+  orderBy: [
+    { 
+      property: inputs.yAxis, 
+      direction: 'desc' 
+    }
+  ]
+  ```
 - `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. This is also available as a native input in the no-code builder.  
 
 - `offset` is a number specifying how many rows to skip, e.g. for [pagination](/development/loading-data#1-pagination-example). Defaults to 0.
 
 - `filters` is an array of additional filters, applied on top of any filters in the dataset. Dimensions go into `WHERE`, measures go into `HAVING`.  
+
+  ```ts
+  filters: [
+    {
+      property: inputs.yAxis, // Dimension | Measure | DimensionOrMeasure
+      operator: 'gt', // see below for available operators
+      value: 0 // string | boolean | number | Date | Time | TimeRange | Array<string | boolean | number | Date>;
+    }
+  ],
+  ```
 
 #### Available Filter Operators
 
@@ -179,10 +204,10 @@ Depending on whether a filter applies to a dimension or measure, Embeddable tran
   {
     property: inputs.timeDimension,
     operator: 'inDateRange',
-    value: {
-      from: inputs.timeFilter.from,
-      relativeTimeString: '', 
-      to: inputs.timeFilter.to,
+    value: { // TimeRange value
+      from: inputs.timeFilter.from, // string | Date
+      relativeTimeString: '', // string
+      to: inputs.timeFilter.to, // string | Date
     },
   }
   ```
@@ -195,7 +220,7 @@ Depending on whether a filter applies to a dimension or measure, Embeddable tran
 
 ```ts
   {
-    property: inputs.timeDimension,
+    property: inputs.timeDimension, 
     operator: 'beforeData',
     value: ["2025-01-01"] // an array of one element in YYYY-MM-DD format
   }
@@ -266,7 +291,7 @@ export default defineComponent(Component, meta, {
         filters: [
           {
             property: inputs.yAxis,
-            operator: 'gt', //see below for available operators
+            operator: 'gt',
             value: 0
           }
         ],
@@ -300,8 +325,8 @@ After `loadData` fetches data, your React component receives a `results` object 
     "title": "# of customers"
   },
   "results": {
-    "isLoading": false,
-    "error": undefined,
+    "isLoading": false, // true while data is loading
+    "error": undefined, // an error message, returned as a string
     "data": [
       {
         "customers.country": "United States",
@@ -319,7 +344,11 @@ After `loadData` fetches data, your React component receives a `results` object 
 }
 ```
 
-### Example Usage in Your Component
+- **`results.isLoading` and `results.error`** let you handle loading states or errors.
+- **`results.data`** is an array of rows, indexed by each dimension/measure `name`.
+- **`xAxis`, `yAxis`, and `groupBy`** objects show which dimension/measure the user chose in the builder.
+
+#### Example Usage in Your Component
 
 ```tsx
 export default function MyLineChart(props: Props) {
@@ -337,10 +366,6 @@ export default function MyLineChart(props: Props) {
   return <LineChart x={xValues} y={yValues} groupBy={groups} />;
 }
 ```
-
-- **`results.isLoading` and `results.error`** let you handle loading states or errors.
-- **`results.data`** is an array of rows, indexed by each dimension/measure `name`.
-- **`xAxis`, `yAxis`, and `groupBy`** objects show which dimension/measure the user chose in the builder.
 
 This pattern lets **no-code users** pick **what** data to load, while you focus on **how** to display it.
 

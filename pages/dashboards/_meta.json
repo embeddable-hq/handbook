@@ -1,6 +1,9 @@
 {
+    "introduction": "Intro to dashboards",
+    "building-dashboards": "Building dashboards",
+    "interactivity": "Adding interactivity",
     "starter-components": "Starter components",
-    "interactivity": "Interactivity",
-    "custom-canvas": "Custom Canvas",
-    "publishing": "Publishing"
+    "publishing": "Publishing",
+    "custom-canvas": "Using Custom Canvas",
+    "developer-console": "Debugging dashboards"
 }

@@ -1,34 +1,67 @@
-# Embeddable Handbook
+import LinkCard from '/components/LinkCard'
+import CardGrid from '/components/CardGrid'
+import { Steps } from 'nextra/components'
 
-import { Callout } from 'nextra-theme-docs'
- 
-<Callout emoji="💡">
-  **Embeddable** *noun*<br/>
-  &nbsp;&nbsp;an interactive dashboard that you embed in your web application
-</Callout>
+# Embeddable Documentation
 
-[Embeddable](http://Embeddable.com) is a **developer toolkit** for building fast, interactive, fully-custom **analytics experiences** directly into your app.
+Embeddable is a developer toolkit to build fast, fully-custom analytics experiences into your app.
 
-![image info](/img/embeddable-logo.jpg)
+<CardGrid>
+  <LinkCard title="Quick-start guide" href="/getting-started/download-repo" icon="⚡"/> 
+  <LinkCard title="Defining data models" href="/data-modeling/introduction" icon="📊"/> 
+  <LinkCard title="Building components" href="/development/introduction" icon="🛠️" marginTop="0.5rem"/> 
+  <LinkCard title="Crafting dashboards" href="/dashboards/introduction" icon="📈" marginTop="0.5rem"/> 
+</CardGrid>
 
-In Embeddable you define **Data Models** and **Components** in code (stored in your own code repository) and use our **SDK** to make these available for your team in the powerful Embeddable **no-code builder.** 
+## Why Embeddable?
 
-The end result is the ability to deliver fast, interactive **customer-facing analytics** directly in your product; designed by your product team; built by your engineering team; maintained by your customer-facing and data teams.  Exactly the way it should be.
+Embeddable helps you build **remarkable analytics experiences** in your product - no clunky iFrames in sight.
 
-Built-in **row-level security** means that every user only ever sees **exactly** the data they’re allowed to see.  And two levels of fully-configurable **caching** mean you can deliver fast, realtime analytics at scale.
+Define **Data Models** and **Components** in your codebase, then use our SDK to expose them in a **powerful no-code builder** for your team. The result is the ability to **build**, **edit**, **deploy**, and **scale customer-facing data experiences** — designed by your product team, built by engineering, and maintained by customer-facing and data teams. Exactly as it should be.
+
+- **Native Feel** - Drop a simple web component (`<em-beddable>`) into your site or app, and let Embeddable handle the rest. No iframes or unstyled add-ons - your dashboards adopt the look and feel of your product.
+
+- **No-Code + Full-Code** - Non-technical users drag and drop charts, filters, and controls, while developers retain control over React components, data models, and row-level security.
+
+- **Secure & Row-Level Aware** - Generate security tokens to **strictly** control which data each user sees. Filter out sensitive rows, apply schema-level security, or switch entire databases per user if needed.
+
+- **Model Data Once** - Define your metrics, dimensions, and transformations in code. The no-code builder then exposes these for easy selection - no repeated SQL queries or one-off scripts.
+
+- **Performance & Scalability** - Leverage caching and advanced pre-aggregations to keep your data fast, even at scale.
+
+## How It Works
+
+<Steps>
+
+### **Define Data Models** 
+   In code, describe where your data comes from and how it's organised (e.g. "orders", "revenue", or "customers").  
+### **Build or Use Starter Components**
+   Pick from Embeddable’s growing **starter library**, or define your own React components, pushing them to Embeddable using the SDK.   
+### **No-Code Assembly**
+   Team members use Embeddable’s **dashboard builder** to craft and iterate on interactive dashboards, without code.  
+### **Publish & Embed**
+   With a single `token` from Embeddable’s API, you can embed each published dashboard anywhere.
+
+</Steps>
+
+## Join the Community
+
+- **Explore** how leading teams unify data from multiple services using Embeddable.
+- **Discuss** tips, best practices, and advanced scenarios (like single-tenancy) in our forums.
+- **Contribute** to our starter components or build your own custom components.
 
 
-## Walkthrough Video
+## Walkthrough Video 
 
-<iframe src="https://www.youtube.com/embed/6b-lzaKbXT4?rel=0" frameBorder="0" sandbox="allow-scripts allow-popups allow-top-navigation-by-user-activation allow-forms allow-same-origin allow-storage-access-by-user-activation allow-popups-to-escape-sandbox" allowFullScreen={true} style={{ 
-    width: '100%', 
-    height: '500px', 
-    borderRadius: '1px', 
-    pointerEvents: 'auto', 
-    backgroundColor: 'white'
-}}></iframe>
-
-**Video:**
+<div style={{ marginTop: "20px" }}>
+  <iframe src="https://www.youtube.com/embed/6b-lzaKbXT4?rel=0" frameBorder="0" sandbox="allow-scripts allow-popups allow-top-navigation-by-user-activation allow-forms allow-same-origin allow-storage-access-by-user-activation allow-popups-to-escape-sandbox" allowFullScreen={true} style={{ 
+      width: '100%', 
+      height: '500px', 
+      borderRadius: '1px', 
+      pointerEvents: 'auto', 
+      backgroundColor: 'white'
+  }}></iframe>
+</div>
 
 - [00:00](https://youtu.be/6b-lzaKbXT4?si=8FXqFmISlw73cifJ&t=0s) What is Embeddable?
 - [00:39](https://youtu.be/6b-lzaKbXT4?si=8FXqFmISlw73cifJ&t=39s) Getting started with the SDK

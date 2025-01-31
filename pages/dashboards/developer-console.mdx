@@ -1,0 +1,21 @@
+import ImageGrid from '/components/ImageGrid'
+
+# Developer Console
+
+Embeddable provides a **developer console** that logs the key events and requests occurring inside your dashboard, making it easier to debug or optimize. In this console, you’ll see,
+
+### 1. **Info**:
+  - **`loadData` Request**: For each component, shows the parameters passed (dimensions, measures, timeDimensions, etc.).
+  - **Generated SQL**: The actual query Embeddable forms behind the scenes.
+  - **`loadData` Response**: For each component, the results returned.  
+  - **Variable Changes**: Whenever a variable updates (e.g. from an event), you’ll see the old value and the new value.
+
+### 2. **Warnings**:
+  - Any caution messages about potential issues—like missing trailing slashes in base URLs or unsupported operators.
+
+### 3. **Errors**:
+  - Detailed logs of failures (e.g., invalid tokens, network errors, or filter misconfigurations).
+
+<ImageGrid images={["/img/developer-console-min.png"]}/>
+
+The Console is also available when [developing locally](/development/local-environment). 
