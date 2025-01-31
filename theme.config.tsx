@@ -2,7 +2,7 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
-  logo: <span>Embeddable Handbook</span>,
+  logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
   project: {
     link: 'https://github.com/embeddable-hq',
   },
@@ -17,7 +17,7 @@ const config: DocsThemeConfig = {
     };
   },
   footer: {
-    text: 'Embeddable Handbook',
+    text: 'Embeddable Docs, 2025',
   },
 }
 

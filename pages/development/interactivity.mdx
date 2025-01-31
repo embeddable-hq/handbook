@@ -1,4 +1,5 @@
 import { Steps } from 'nextra/components'
+import ExternalVideo from '/components/ExternalVideo'
 
 # Interactivity in Embeddable
 
@@ -30,8 +31,7 @@ By combining **events** and **variables**, you can build **interactive** compone
 
 </Steps>
 
-
-TODO -> VIDEO
+<ExternalVideo src="https://www.loom.com/embed/041f9947644245d5bed940a2d46bc6ca?sid=b3d41e99-9f69-440c-8e93-4174e95c0f60"/>
 
 ## Examples
 
@@ -266,7 +266,7 @@ export default defineComponent(PieChartComponent, meta, {
 
 3. **Rendering**: The Pie Chart component receives `props.results.data`, along with any other inputs (`title`, `showLegend`). It contains the logic to render the pie chart (perhaps using a charting library like ChartJS or HighCharts).
 
-4. **Variable creation**: No variables are configured in the code, so the user needs to [configure one manually](TODO) in the builder, or two to capture both the dimension and metric. They might call these `clickedDimension` and `clickedMetric`. 
+4. **Variable creation**: No variables are configured in the code, so the user needs to [configure one manually](/dashboards/interactivity) in the builder, or two to capture both the dimension and metric. They might call these `clickedDimension` and `clickedMetric`. 
 
 4. **Interactivity**: When a user **clicks** on a slice, the React component calls `props.onClick({ slice, metric })`. Embeddable translates this into an event described in the `.emb.ts` file, updating the created variable in the builder with the dimension name (e.g. `"Europe"`) and the measure (e.g. `12345`).
 

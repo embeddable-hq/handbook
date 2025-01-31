@@ -1,3 +1,39 @@
-TO DO:
+import { Steps } from 'nextra/components'
+import ExternalVideo from '/components/ExternalVideo'
+import ImageGrid from '/components/ImageGrid'
 
-https://notion.embeddable.com/Connecting-Embeddable-to-Cube-Cloud-119726382bcf800682f9c9352f21d36b
+# Connecting Embeddable to Cube Cloud
+
+Embeddable works seamlessly with [**Cube Cloud**](https://cube.dev/product/why-cube-cloud), letting you pick and visualize your **Cube models** right in Embeddable’s no-code builder. 
+
+The recommended way to connect Embeddable to Cube is via the REST API. To connect, you’ll need to provide your `API Secret` and `Endpoint` to Embeddable.
+
+<Steps>
+
+### Find Your Cube Credentials
+
+1. **REST API Endpoint**  
+    - You can find your endpoint in the Integrations tab in the Cube Cloud platform, accessible from the left side menu. Once you’re there, select the tab ‘REST API’ and copy your credentials.
+
+    <ImageGrid images={["/img/cube-api-credentials-min.png"]}/>
+
+2. **API Secret**  
+   - Under **Settings** → **Configuration** in Cube Cloud, look for **Cube Environment Variables**.  
+   - Copy your API Secret.
+
+   <ImageGrid images={["/img/cube-env-min.png"]}/>
+
+### Share Credentials with Embeddable
+
+Depending on your setup, either:
+- Enter these **endpoint** and **secret** values directly into Embeddable’s **Integrations** section.  
+- Or provide them securely to the Embeddable implementation team.  
+
+### Use Your Cube Models in Embeddable
+
+Watch this short video demonstrating Cube Cloud and Embeddable in action:
+
+<ExternalVideo src="https://www.loom.com/embed/824de8d3e4344dc5aefa7cbfb7c7ed92?sid=b46b4327-bd92-4ac3-891e-fd689c3ecc0e"/>
+
+</Steps>
+

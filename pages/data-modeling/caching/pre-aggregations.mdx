@@ -120,10 +120,10 @@ Use Embeddable’s Caching API to tell us which security contexts to refresh and
    Status 204 (No Content)
    ```
    - `region`: your deployment region. 
-   - `apiKey`: your API key (TODO)
+   - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
    - `refreshInterval`: the refresh interval, in `minutes`, `hours`, or `days`.
    - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
-   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](TODO).
+   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/deployment/environments-api).
 
 If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.
 

@@ -2,9 +2,9 @@ import { Callout } from 'nextra/components'
 
 # Defining Data Models
 
-TODO: optionally, you can also define models in javascript - define within .cube.js files + link to Cube's docs.
+You can define data models using either yaml or javascript. Generally, yaml is recommended due to its simplicity and readability. On this page, we focus exclusively on yaml. 
 
-Each data model is defined in its own `.cube.yml` file, and begins with the `cubes:` keyword:
+Each data model is defined in its own `.cube.yml` file, and begins with the `cubes:` keyword. 
 
 ```yaml
 # src/models/customers.cube.yml
@@ -89,7 +89,7 @@ You can also define other parameters, including **joins** between models and **p
 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 
-- `preAggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
+- [`preAggregations`](/data-modeling/caching/pre-aggregations): Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations. For instance:
   ```yaml
   preAggregations:
     mainRollup:
@@ -101,6 +101,5 @@ You can also define other parameters, including **joins** between models and **p
       timeDimensionReference: signed_up_date
       granularity: day
   ```
-TODO -> Add link to relevant section to learn more. 
 
 These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.

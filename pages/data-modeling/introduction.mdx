@@ -42,10 +42,9 @@ To model this in Embeddable you might create a file like so inside your repo:
 cubes:
   - name: customers
     title: "My Customers"
-    sql_table: public.customers
-    # sql: >
-    #   select *
-    #   from public.customers
+    sql: >
+      select *
+      from public.customers
 
     dimensions:
       - name: country

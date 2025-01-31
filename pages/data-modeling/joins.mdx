@@ -124,6 +124,16 @@ cubes:
 - **Foreign Keys as Dimensions**  
   Foreign keys (e.g., `customer_id`) don’t have to be exposed as visible dimensions. If needed, you can define them just like any other column.
 
+## Joins Syntax
+
+When writing a join in your data model, you might see references like `{products}.some_column` or `{products.some_dimension}`. Here’s how to read them:
+
+- **`{products}.some_column`** points to the **some_column** field in the **database table** associated with the **products** model.  
+- **`{products.some_dimension}`** refers to the **some_dimension** **dimension** that’s defined inside the **products** model.  
+- **`my_products.some_column`** accesses the **some_column** in the actual **my_products** table in your database (i.e. the raw table name).
+
+It's important to get this right to ensure your joins work as expected. 
+
 ## Joining data from multiple data sources
 
 You can also join data stored in different data sources. Visit [Cube's documentation](https://cube.dev/docs/guides/recipes/query-acceleration/joining-multiple-data-sources) to learn more. 

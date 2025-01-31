@@ -253,7 +253,7 @@ import Component from './index';
 - **`name`**: A unique identifier that must match the `.emb.ts` filename. Changing it later can break references.
 - **`label`**: A user-facing name shown in the builder.
 - **`classNames`**: CSS class names for styling the container.
-- **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](TODO)).
+- **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/development/custom-types)).
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
 - **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](). 
 - **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/development/interactivity).
@@ -299,7 +299,7 @@ export const meta: EmbeddedComponentMeta = {
 | `category`    | string                                 | ❌ No        |
 
 - **`name`**: A unique identifier for this input (within the component).
-- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [here](TODO).
+- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](/development/defining-components#native-input-types).
 - **`label`**: User-facing label in the builder.
 - **`description`**: A helpful reference, not currently displayed in the builder.
 - **`defaultValue`**: The initial value for the input.
@@ -376,15 +376,19 @@ export const meta: EmbeddedComponentMeta = {
 
     #### `EventProperty` Definition
 
-    | **Param** | **Type**                       | **Required** |
-    | --------- | ------------------------------ | ------------ |
-    | `name`    | string                         | ✅ Yes       |
-    | `type`    | `CustomType` or `NativeType`   | ✅ Yes       |
-    | `label`   | string                         | ❌ No        |
+  
+| **Param** | **Type**                     | **Required** |
+|-----------|------------------------------|--------------|
+| `name`    | string                       | ✅ Yes       |
+| `type`    | `CustomType` or `NativeType` | ✅ Yes       |
+| `label`   | string                       | ❌ No        |
+| `array`   | boolean                      | ❌ No        |
 
     - **`name`**: The property key in your `events` mapping (e.g. `value`).
-    - **`type`**: The expected data type (e.g. `string`, `number`, `boolean`).
-    - **`label`**: An optional label for this property in the builder. TODO - array: true?
+    - **`type`**: The expected data type (e.g. `string`, `number`, `boolean`). 
+    - **`label`**: An optional label for this property in the builder.
+    - **`array`**: Allows multiple values if set to `true`.
+
 
 #### `VariableMeta` Definition
 

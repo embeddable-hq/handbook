@@ -6,19 +6,15 @@
   "dashboards": "Dashboards",
   "deployment": "Deployment",
   "contact": {
-    "title": "Home ↗",
+    "title": "Home",
     "type": "page",
     "href": "https://embeddable.com/",
     "newWindow": true
   },
   "roadmap": {
-    "title": "Roadmap ↗",
+    "title": "Roadmap",
     "type": "page",
     "href": "https://roadmap.embeddable.com/roadmap",
     "newWindow": true
-  },
-  "faqs": {
-    "title": "FAQs",
-    "type": "page"
   }
 }
