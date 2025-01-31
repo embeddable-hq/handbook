@@ -11,14 +11,14 @@ Pre-aggregations compute and store aggregations (like sums, averages, counts) in
 - Pre-aggregations are **refreshed** using [Embeddable's Caching API](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
 
 <Callout emoji="💡">
-    If you're connecting to a Redshift database, please contact us to discuss setting up pre-aggregations, as the Redshift driver requires write-access to set up pre-aggregations.
+    If you're connecting to a Redshift database, please contact us to discuss setting up pre-aggregations, as the Redshift driver requires write-access.
 </Callout>
 
 ## Defining Pre-Aggregations
 
 One or multiple pre-aggregations can be specified directly within your `.cube.yml` model files.
 
-### An example without a time dimension
+### A simple example
 
 Suppose you want to display a list of countries across various dashboard components. You can define a pre-aggregation like so:
 

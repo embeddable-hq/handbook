@@ -16,6 +16,12 @@ const config: DocsThemeConfig = {
       titleTemplate: "%s | Embeddable Handbook"
     };
   },
+  head: (
+    <>
+      <link rel="icon" href="/img/favicon.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.png" />
+    </>
+  ),
   footer: {
     text: 'Embeddable Docs, 2025',
   },

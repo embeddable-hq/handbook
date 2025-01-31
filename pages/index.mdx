@@ -1,9 +1,10 @@
 import LinkCard from '/components/LinkCard'
 import CardGrid from '/components/CardGrid'
+import { Steps } from 'nextra/components'
 
 # Embeddable Documentation
 
-Embeddable is a developer toolkit to build fast, interactive, fully-custom analytics experiences directly into your app.
+Embeddable is a developer toolkit to build fast, fully-custom analytics experiences into your app.
 
 <CardGrid>
   <LinkCard title="Quick-start guide" href="/getting-started/download-repo" icon="⚡"/> 
@@ -18,38 +19,36 @@ Embeddable helps you build **remarkable analytics experiences** in your product 
 
 Define **Data Models** and **Components** in your codebase, then use our SDK to expose them in a **powerful no-code builder** for your team. The result is the ability to **build**, **edit**, **deploy**, and **scale customer-facing data experiences** — designed by your product team, built by engineering, and maintained by customer-facing and data teams. Exactly as it should be.
 
-1. **Native Feel**  
-   Drop a simple web component (`<em-beddable>`) into your site or app, and let Embeddable handle the rest. No iframes or unstyled add-ons - your dashboards adopt the look and feel of your product.
+- **Native Feel** - Drop a simple web component (`<em-beddable>`) into your site or app, and let Embeddable handle the rest. No iframes or unstyled add-ons - your dashboards adopt the look and feel of your product.
 
-2. **No-Code + Full-Code**  
-   Non-technical users drag and drop charts, filters, and controls, while developers retain control over React components, data models, and row-level security.
+- **No-Code + Full-Code** - Non-technical users drag and drop charts, filters, and controls, while developers retain control over React components, data models, and row-level security.
 
-3. **Secure & Row-Level Aware**  
-   Generate security tokens to **strictly** control which data each user sees. Filter out sensitive rows, apply schema-level security, or switch entire databases per user if needed.
+- **Secure & Row-Level Aware** - Generate security tokens to **strictly** control which data each user sees. Filter out sensitive rows, apply schema-level security, or switch entire databases per user if needed.
 
-4. **Model Data Once**  
-   Define your metrics, dimensions, and transformations in code. The no-code builder then exposes these for easy selection - no repeated SQL queries or one-off scripts.
+- **Model Data Once** - Define your metrics, dimensions, and transformations in code. The no-code builder then exposes these for easy selection - no repeated SQL queries or one-off scripts.
 
-5. **Performance & Scalability**  
-   Leverage caching, pre-aggregations, and advanced queries automatically. Keep your data fast, even at scale.
+- **Performance & Scalability** - Leverage caching and advanced pre-aggregations to keep your data fast, even at scale.
 
 ## How It Works
 
-1. **Define Data Models**  
-   In code, describe where your data comes from and how it’s aggregated (e.g., “orders,” “revenue,” or “customers”).  
-2. **Build or Use Starter Components**  
-   Push your React components—or pick from Embeddable’s growing **starter library**.  
-3. **No-Code Assembly**  
-   Team members open Embeddable’s **dashboard builder** to drag components, pick datasets, link variables, and fine-tune filters.  
-4. **Publish & Embed**  
-   With a single `token` from Embeddable’s API, you can embed each published dashboard anywhere. Changes remain easy to track, test, and redeploy.
+<Steps>
 
+### **Define Data Models** 
+   In code, describe where your data comes from and how it's organised (e.g. "orders", "revenue", or "customers").  
+### **Build or Use Starter Components**
+   Pick from Embeddable’s growing **starter library**, or define your own React components, pushing them to Embeddable using the SDK.   
+### **No-Code Assembly**
+   Team members use Embeddable’s **dashboard builder** to craft and iterate on interactive dashboards, without code.  
+### **Publish & Embed**
+   With a single `token` from Embeddable’s API, you can embed each published dashboard anywhere.
+
+</Steps>
 
 ## Join the Community
 
 - **Explore** how leading teams unify data from multiple services using Embeddable.
 - **Discuss** tips, best practices, and advanced scenarios (like single-tenancy) in our forums.
-- **Contribute** to our starter packs or build your own custom components for the community.
+- **Contribute** to our starter components or build your own custom components.
 
 
 ## Walkthrough Video 

@@ -28,6 +28,7 @@ import { Steps } from 'nextra/components'
 ### **Create an Environment**  
    Define an **environment** that maps each `data_source` to a corresponding **connection**:
    ```ts
+   // for security reasons, this must *never* be called from your client-side
    fetch('https://api.<your-region>.embeddable.com/api/v1/environments', {
      method: 'POST',
      headers: {
