@@ -1,0 +1,7 @@
+{
+    "tokens-api": "Tokens API",
+    "connections-api": "Connections API",
+    "environments-api": "Environments API",
+    "embeddables-api": "Embeddables API",
+    "caching-api": "Caching API"
+}

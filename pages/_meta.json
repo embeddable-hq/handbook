@@ -2,9 +2,10 @@
   "index": "Introduction",
   "getting-started": "Getting started",
   "data-modeling": "Data modeling",
-  "development": "Development",
+  "development": "Building components",
   "dashboards": "Dashboards",
   "deployment": "Deployment",
+  "apis": "APIs",
   "contact": {
     "title": "Home",
     "type": "page",
