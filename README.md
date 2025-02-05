@@ -17,6 +17,21 @@ Run `pnpm i` to install the dependencies.
 
 Then, run `pnpm dev` to start the development server and visit localhost:3000.
 
+## Deploying
+
+Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
+
+Explanation: Nextra generates a static JSON file for the sidebar. Ensure there’s no residual .next folder persisting across builds.
+
+Before pushing:
+
+```bash
+rm -rf .next node_modules pnpm-lock.yaml
+pnpm install
+pnpm run build
+pnpm run start
+```
+
 ## Prepping media
 
 **To resize videos:**

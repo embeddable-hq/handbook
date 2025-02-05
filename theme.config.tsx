@@ -12,8 +12,8 @@ const config: DocsThemeConfig = {
   docsRepositoryBase: 'https://github.com/embeddable-hq/handbook',
   useNextSeoProps: () => {
     return {
-      description: "Documentation for Embeddable.com",
-      titleTemplate: "%s | Embeddable Handbook"
+      // description: "Documentation for Embeddable.com",
+      titleTemplate: "%s | Embeddable Documentation"
     };
   },
   head: (
