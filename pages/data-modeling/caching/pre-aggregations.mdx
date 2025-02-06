@@ -10,9 +10,14 @@ Pre-aggregations compute and store aggregations (like sums, averages, counts) in
 - They can significantly **speed up query responses**, including during a dashboard's **initial load**.
 - Pre-aggregations are **refreshed** using [Embeddable's Caching API](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
 
-<Callout emoji="💡">
-    If you're connecting to a Redshift database, please contact us to discuss setting up pre-aggregations, as the Redshift driver requires write-access.
-</Callout>
+### Requirements
+
+Database write-access is required for pre-aggregations for the following databases:
+- Amazon Adthena
+- Redshift
+- BigQuery
+- DuckDB
+- Snowflake
 
 ## Defining Pre-Aggregations
 
