@@ -1,4 +1,7 @@
 import { Steps, Cards } from 'nextra/components'
+import LinkCard from '/components/LinkCard'
+import CardGrid from '/components/CardGrid'
+
 
 # Set up your Workspace
 
@@ -41,10 +44,6 @@ After the push succeeds:
 
 ## Next Steps
 
-<div style={{ marginTop: "2rem" }}>
-    <Cards.Card
-        title="Build Your First Embeddable"
-        href="/getting-started/first-embeddable"
-        arrow
-    />
-</div>
+<CardGrid>
+  <LinkCard title="Build your first Embeddable" href="/getting-started/first-embeddable" icon=""/> 
+</CardGrid>
