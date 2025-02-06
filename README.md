@@ -27,14 +27,14 @@ Run `pnpm run start` to preview the built app
 
 Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
 
-Before pushing, please run:
-
-```bash
-rm -rf .next node_modules pnpm-lock.yaml
-pnpm install
-pnpm run build
-pnpm run start
-```
+When deploying:
+- Go to Vercel.
+- You'll see your branch. 
+- Click three dots. 
+- Select latest deployment. 
+- In the top right, click the three dots. 
+- Click Redeploy. 
+- Make sure 'use existing build cache' is unticked. 
 
 ## Prepping media
 
