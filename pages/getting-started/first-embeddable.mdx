@@ -1,11 +1,17 @@
 import { Steps, Cards, Callout } from 'nextra/components'
+import LinkCard from '/components/LinkCard'
+import CardGrid from '/components/CardGrid'
 import VideoComponent from '/components/Video'
 import ExternalVideo from '/components/ExternalVideo'
 import ImageGrid from '/components/ImageGrid'
 
-# Build Your First Dashboard
+# Build your first Embeddable
 
 You're ready to start building! Let’s walk through creating a **basic dashboard** in Embeddable - from adding your first component to embedding the result.
+
+<Callout emoji="💡">
+  An **Embeddable** is an interactive dashboard that you embed in your web application.
+</Callout>
 
 <Steps>
 
@@ -24,12 +30,13 @@ You're ready to start building! Let’s walk through creating a **basic dashboar
 />
 
 <Callout emoji="💡">
-  The available components come from your code repository.
+  The available components come from [your code repository](https://github.com/embeddable-hq/vanilla-components/tree/main/src/components/vanilla/charts).
 </Callout>
 
 ### **Add a Dataset**
 1. In the **Datasets** panel (bottom right), click the **+** icon.
-2. Name your dataset, select **My customers** (or any other sample data model), then **Save**.
+2. Name your dataset.
+3. Select **My customers** (or any other sample data model), then **Save**.
 
 <VideoComponent
     src="/video/add-dataset.mp4"
@@ -61,18 +68,20 @@ Let's add a **search input** that filters the data. Watch and follow this quick 
 
 <ImageGrid images={["/img/api-key.png"]} />
 
-3. In your code repo, open `embedding-preview.cjs` (inside `scripts`).  
+3. In your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/vanilla-components/blob/main/src/scripts/embedding-preview.cjs)).  
 4. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard.  
 5. Run:
    ```bash
    node src/embeddable.com/scripts/embedding-preview.cjs
    ```
-6. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action!
+6. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
 
 </Steps>
 
 ---
 
 ## Next Steps
-- **Try More Components**: Explore different charts, text blocks, or interactive controls.
-- **Connect your data**: Securely [connect your database](/getting-started/connect-your-database).
+<CardGrid>
+  <LinkCard title="Connect your own database" href="/data/connect-your-database" icon=""/> 
+  <LinkCard title="Build your first data models" href="/data-modeling/introduction" icon=""/> 
+</CardGrid>

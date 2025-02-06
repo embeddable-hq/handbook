@@ -17,6 +17,12 @@ Run `pnpm i` to install the dependencies.
 
 Then, run `pnpm dev` to start the development server and visit localhost:3000.
 
+## Testing final app
+
+Run `pnpm build` to build the app
+
+Run `pnpm run start` to preview the built app
+
 ## Prepping media
 
 **To resize videos:**

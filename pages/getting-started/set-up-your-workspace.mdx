@@ -1,4 +1,7 @@
 import { Steps, Cards } from 'nextra/components'
+import LinkCard from '/components/LinkCard'
+import CardGrid from '/components/CardGrid'
+
 
 # Set up your Workspace
 
@@ -8,14 +11,14 @@ Let’s get your workspace configured in just a few steps.
 
 ### Log in to Embeddable
 
-Remember to open your region:
+Depending on which region your deployment is in, login to the appropriate workspace:
 
    - US: [https://app.us.embeddable.com](https://app.us.embeddable.com)
    - EU: [https://app.eu.embeddable.com](https://app.eu.embeddable.com)
 
 ### Retrieve Your API Key
 
-On your workspace homepage, look for your **API Key**. You’ll need this shortly to push code from your local machine.
+On your workspace homepage, look for your **API Key**. You’ll need this shortly to push code from your local machine to your workspace.
 
 ### Push the Code Bundle
 
@@ -24,23 +27,24 @@ Open a terminal in the directory of your [Starter Repo](/getting-started/downloa
 ```bash
 npm run embeddable:push -- --api-key <API Key> --email <Email>
 ```
+e.g:
+```bash
+npm run embeddable:push -- --api-key abc --email my@email.com --message "My first components"
+```
 
-This uploads your **data models** and **components** so you can use them in Embeddable.
+This uploads your **data models** and **components** so you can use them in the Embeddable platform.
 
 ### Refresh Your Workspace
 
 After the push succeeds:
 - Go back to your workspace page.
+- Refresh the page.
 - You should see a **Create new Embeddable** button, which means your workspace is now set up.
 
 </Steps>
 
 ## Next Steps
 
-<div style={{ marginTop: "2rem" }}>
-    <Cards.Card
-        title="Create Your First Dashboard"
-        href="/getting-started/build-dashboard"
-        arrow
-    />
-</div>
+<CardGrid>
+  <LinkCard title="Build your first Embeddable" href="/getting-started/first-embeddable" icon=""/> 
+</CardGrid>

@@ -8,15 +8,15 @@ Having trouble connecting Embeddable to your database? Below are common issues a
     - Sometimes, if your database password contains special characters such as backslashes (`\`), you may need to escape them properly. For instance, a password like `J\c\X` should be written as `J\\c\\X`.
 
 2. **Firewall or Network Restrictions** 
-    - Ensure your database server allows incoming connections from Embeddable’s [IP addresses](/getting-started/connect-your-database#ip-whitelisting).  
+    - Ensure your database server allows incoming connections from Embeddable’s IP addresses ([EU](/getting-started/deployment-regions/us#ips-to-whitelist), [US](/getting-started/deployment-regions/eu#ips-to-whitelist)).  
     - If you’re hosting on-prem or behind a VPN, confirm that Embeddable can reach the server.
 
 3. **SSL or TLS Requirements**  
-   - Some databases require SSL. Confirm that you’ve enabled `ssl: true` (or relevant SSL parameters) [in your credentials](/getting-started/connect-your-database/credentials) if needed.  
+   - Some databases require SSL. Confirm that you’ve enabled `ssl: true` (or relevant SSL parameters) [in your credentials](./credentials) if needed.  
    - Check your certificates and ensure the SSL configuration matches your DB server’s setup.
 
 4. **Version Mismatch**  
-   - Make sure your database version is supported by [Cube](https://cube.dev/docs). 
+   - Make sure your database version is supported by [Cube](https://cube.dev/docs/product/configuration/data-sources). 
    - Older versions of certain databases may have quirks or missing features that affect connecting to Embeddable.
 
 5. **Missing Tables or Schemas**  
