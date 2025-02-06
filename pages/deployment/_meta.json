@@ -1,6 +1,5 @@
 {
     "embedding": "Embedding dashboards",
     "tokens-api": "Retrieving security tokens",
-    "environments-api": "Configuring environments",
     "embeddables-api": "Retrieve your dashboards"
 }
