@@ -23,7 +23,22 @@ Run `pnpm build` to build the app
 
 Run `pnpm run start` to preview the built app
 
+## Deploying
+
+Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
+
+When deploying:
+- Go to Vercel.
+- You'll see your branch. 
+- Click three dots. 
+- Select latest deployment. 
+- In the top right, click the three dots. 
+- Click Redeploy. 
+- Make sure 'use existing build cache' is unticked. 
+
 ## Prepping media
+
+- Resize to max 1250px width for videos and images.
 
 **To resize videos:**
 

@@ -1,5 +1,5 @@
 {
     "embedding": "Embedding dashboards",
     "tokens-api": "Retrieving security tokens",
-    "embeddables-api": "Retrieve your dashboards"
+    "embeddables-api": "List your Embeddables"
 }

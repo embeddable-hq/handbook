@@ -1,6 +1,10 @@
-import React from "react";
+import React, { Children } from "react";
 
 const CardGrid = ({ children, className }) => {
+
+  const childrenLength = Children.toArray(children).length;
+  const columns = childrenLength === 1 ? "1fr" : "repeat(2, 1fr)";
+
   return (
     <>
       <div className={className ? className : "card-grid"}>
@@ -10,7 +14,7 @@ const CardGrid = ({ children, className }) => {
       <style jsx>{`
         .card-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: ${columns};
           gap: 0.5rem;
         }
 
