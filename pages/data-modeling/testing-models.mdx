@@ -19,16 +19,16 @@ npm run embeddable:dev
 ## Testing locally with Cube's Data Playground
 
 <Callout emoji="">
-  This requires [Docker](https://www.docker.com/pricing/).
+  This relies on you having [Docker](https://www.docker.com/products/docker-desktop/) installed on your local machine.
 </Callout>
 
 <Steps>
 
 ### Create a `.env` file:  
-   Ensure your `.env` file is in the same directory as `cube-playground.yml`.
+   Ensure your `.env` file is in the same directory as `cube-playground.yml` ([this directory](https://github.com/embeddable-hq/vanilla-components/tree/main/src)).
 
 ### Populate the `.env` file: 
-   Populate the `.env` file with the correct database [credentials for your database](http://localhost:3000/getting-started/connect-your-database/credentials) as per the [Cube.js Environment Configuration](https://cube.dev/docs/reference/configuration/environment-variables).
+   Populate the `.env` file with the correct database credentials for your database as per the [Cube's documentation](https://cube.dev/docs/product/configuration/data-sources).
     ```env
     CUBEJS_DB_TYPE=postgres
     CUBEJS_DB_HOST=localhost
@@ -83,4 +83,4 @@ We're excited to announce that an **in-platform model playground** will be avail
 
 ### Still Need Help?
 
-If you encounter any issues while testing your data models, feel free to reach out to our [Embeddable Community](https://community.embeddable.com/) or contact our support team for assistance.
+If you encounter any issues while testing your data models, feel free to reach out to our [**Slack community**](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) or contact our support team for assistance.

@@ -44,7 +44,7 @@ cubes:
       AND user_id = { COMPILE_CONTEXT.securityContext.userId }
 ```
 
-Or, if your customer data is split by schema:
+Or, if your customer data is, for example, split by database schema:
 
 ```yaml
 cubes:
@@ -57,7 +57,7 @@ If you’re unsure how best to approach data security, reach out to us—we’re
 
 ## Using Jinja for Dynamic SQL
 
-Jinja ([docs](https://jinja.palletsprojects.com/en/3.1.x/templates/)) is used under the hood to compile SQL. The `{ ... }` notation in your model files is replaced **before** sending the query to your database. For example:
+Jinja ([docs](https://jinja.palletsprojects.com/en/3.1.x/templates/)) is used under the hood to compile the models into SQL (given a particular `securityContext`). The `{ ... }` notation in your model files is replaced **before** sending the query to your database. For example:
 
 ```yaml
 cubes:
@@ -67,6 +67,11 @@ cubes:
       SELECT * 
       FROM public.customers 
       WHERE orgId = '{ COMPILE_CONTEXT.securityContext.ordId }'
+```
+with the following `securityContext`:
+```yaml
+securityContext:
+  orgId: abc123
 ```
 
 compiles to:
@@ -127,7 +132,7 @@ WHERE country IN ('United States', 'Canada', 'Mexico')
 
 ## Testing Security Contexts in Embeddable
 
-To try out different security contexts in the no-code builder, define them in your repo at `src/presets/security-contexts.sc.yml`:
+To try out different security contexts in the no-code builder, define them in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/vanilla-components/blob/main/src/presets/security-contexts.sc.yml)):
 
 ```yaml
 - name: Nike

@@ -6,7 +6,7 @@ Embeddable uses a **semantic layer** to define and manage your data.
 
 ## What is a Semantic Layer?
 
-A semantic layer is an abstraction layer that sits between raw data in databases and your analytics, defining data in clear, consistent terms that users understand.
+A semantic layer is an abstraction layer that sits between raw data in databases and your analytics, defining data in clear, consistent terms that users understand. It is effectively a **single source of truth** for your data and metrics.
 
 It's especially beneficial for customer-facing analytics because it ensures: 
 
@@ -15,7 +15,7 @@ It's especially beneficial for customer-facing analytics because it ensures:
 - **Performance**: Query optimization and reduced load on databases.
 
 <Callout emoji="💡">
-  Under the hood, Embeddable uses [Cube](https://cube.dev/) as its semantic layer. This means you can define, manage, and transform data in a standard format (access Cube's docs [here](https://cube.dev/docs/product/introduction)).
+  Under the hood, Embeddable uses an open-source library called [Cube](https://cube.dev/docs/product/introduction) as its semantic layer. This means you can define, manage, and transform data in a mature, standard and widely-used format.
 </Callout>
 
 ## Data Models
@@ -42,14 +42,20 @@ To model this in Embeddable you might create a file like so inside your repo:
 cubes:
   - name: customers
     title: "My Customers"
+    # sql_table: public.customers
     sql: >
       select *
       from public.customers
 
     dimensions:
-      - name: country
-        title: "Country of origin"
-        sql: country
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: email
+        title: "Email address"
+        sql: email
         type: string
 
       - name: signed_up_date
@@ -57,26 +63,32 @@ cubes:
         sql: signed_up_at
         type: time
 
+      - name: country
+        title: "Country of origin"
+        sql: country
+        type: string
+
     measures:
       - name: count
         type: count
         title: "# of Customers"
         
 ```
+- `cubes`: Each data model is defined as a cube
 - `name`: A unique identifier (no spaces or special characters).
 - `title` (optional): A friendly name that appears in the UI.
 - `sql_table`: Points to the actual table or view in your database. 
 - `sql`: Rather than pointing to a table / view, you can write SQL (matching your own database's dialect). 
 - `dimensions`: Fields to filter or group by (think columns or derived fields).
-- `measures`: Aggregations (count, sum, avg, etc.).
+- `measures`: These are your metrics (count, sum, avg, etc.).
 
 ### Using your data models
 
 Once you've defined your data models, [push them to your Embeddable workspace](/data-modeling/pushing-models) to make them available in the no-code dashboard builder. 
 
-You'll be able to **use your models to populate data for charts** and other components e.g. a pie chart that shows a count of customers grouped by country.  You don't need to worry about writing SQL - it gets generated behind the scenes automatically based on your models.
+You'll be able to use your models to populate data for charts and other components e.g. a pie chart that shows a count of customers grouped by country.  You don't need to worry about writing SQL - it gets generated behind the scenes automatically based on your models.
 
-Importantly, Embeddable does not take a copy of your database. Instead, it runs the SQL generated from your models against your database, and securely retrieves only the returned results. To improve performance and also protect your database from too much load, you can [configure caching](/data-modeling/caching/in-memory). 
+Importantly, Embeddable does not take a copy of your database. Instead, it runs the SQL generated from your models against your database, and securely retrieves only the returned results. To improve performance and also protect your database from too much load, you can [configure caching](/data-modeling/caching/pre-aggregations). 
 
 ## Getting started
 
