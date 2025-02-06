@@ -1,5 +1,7 @@
 import { Steps, Cards } from 'nextra/components'
 import { Callout } from 'nextra-theme-docs'
+import LinkCard from '/components/LinkCard'
+import CardGrid from '/components/CardGrid'
 
 # Set up your Repo
 
@@ -15,7 +17,7 @@ Follow this **step-by-step guide** to get set up in just 5–10 minutes. You’l
 
 ### Download our Starter Repo
 
-This includes your starter charting components as well as sample data models.
+Download or clone our starter pack [here](https://github.com/embeddable-hq/vanilla-components). This includes your starter charting components as well as sample data models.
 
 ```bash
 git clone https://github.com/embeddable-hq/vanilla-components
@@ -29,12 +31,12 @@ npm i
 ```
 ### Set Your Location
 
-Update your repo according to your location:
+Update your repo according to your region:
 
 - [EU deployment details](/getting-started/deployment-regions/eu)
 - [US deployment details](/getting-started/deployment-regions/us)
 
-If you’re unsure which deployment you’re using, please reach out to us. 
+If you’re unsure which region you’re using, please reach out to us. 
 
 ### Build the Code Bundle
 
@@ -49,10 +51,6 @@ npm run embeddable:build
 
 You're now ready to set up your workspace and push your first code bundle. 
 
-<div style={{ marginTop: "2rem" }}>
-    <Cards.Card
-        title="Set up your Workspace"
-        href="/getting-started/set-up-your-workspace"
-        arrow
-    />
-</div>
+<CardGrid>
+  <LinkCard title="Set up your Workspace" href="/getting-started/set-up-your-workspace" icon=""/> 
+</CardGrid>

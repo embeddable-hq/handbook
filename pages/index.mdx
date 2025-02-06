@@ -5,10 +5,11 @@ title: Home
 import LinkCard from '/components/LinkCard'
 import CardGrid from '/components/CardGrid'
 import { Steps } from 'nextra/components'
+import ExternalVideo from '/components/ExternalVideo'
 
 # Embeddable Documentation
 
-Embeddable is a developer toolkit to build fast, fully-custom analytics experiences into your app.
+Embeddable is a **developer toolkit** to build fast, fully-custom **analytics experiences** directly into your app.
 
 <CardGrid>
   <LinkCard title="Quick-start guide" href="/getting-started/download-repo" icon="⚡"/> 
@@ -19,7 +20,7 @@ Embeddable is a developer toolkit to build fast, fully-custom analytics experien
 
 ## Why Embeddable?
 
-Embeddable helps you build **remarkable analytics experiences** in your product - no clunky iFrames in sight.
+Embeddable helps you build **remarkable analytics experiences** into your product - no clunky iFrames in sight.
 
 Define **Data Models** and **Components** in your codebase, then use our SDK to expose them in a **powerful no-code builder** for your team. The result is the ability to **build**, **edit**, **deploy**, and **scale customer-facing data experiences** — designed by your product team, built by engineering, and maintained by customer-facing and data teams. Exactly as it should be.
 
@@ -29,7 +30,7 @@ Define **Data Models** and **Components** in your codebase, then use our SDK to 
 
 - **Secure & Row-Level Aware** - Generate security tokens to **strictly** control which data each user sees. Filter out sensitive rows, apply schema-level security, or switch entire databases per user if needed.
 
-- **Model Data Once** - Define your metrics, dimensions, and transformations in code. The no-code builder then exposes these for easy selection - no repeated SQL queries or one-off scripts.
+- **Single Source of Truth** - Define your metrics, dimensions, and transformations in code. The no-code builder then exposes these for easy selection - no need for repeated SQL queries or one-off scripts.
 
 - **Performance & Scalability** - Leverage caching and advanced pre-aggregations to keep your data fast, even at scale.
 
@@ -38,13 +39,13 @@ Define **Data Models** and **Components** in your codebase, then use our SDK to 
 <Steps>
 
 ### **Define Data Models** 
-   In code, describe where your data comes from and how it's organised (e.g. "orders", "revenue", or "customers").  
+   In code, [describe your data](/data-modeling/introduction) and how it's organised (e.g. "orders", "revenue", or "customers").  
 ### **Build or Use Starter Components**
-   Pick from Embeddable’s growing **starter library**, or define your own React components, pushing them to Embeddable using the SDK.   
+   Pick from Embeddable’s growing [starter library](/dashboards/starter-components), or [define your own React components](/development/introduction), pushing them to Embeddable using the SDK.   
 ### **No-Code Assembly**
-   Team members use Embeddable’s **dashboard builder** to craft and iterate on interactive dashboards, without code.  
+   Team members use Embeddable’s [dashboard builder](/dashboards/introduction) to craft and iterate on interactive dashboards, without code.  
 ### **Publish & Embed**
-   With a single `token` from Embeddable’s API, you can embed each published dashboard anywhere.
+   With a single `token` from [Embeddable’s Token API](/deployment/tokens-api), you can [embed](/deployment/embedding) each published dashboard anywhere.
 
 </Steps>
 
@@ -54,18 +55,12 @@ Define **Data Models** and **Components** in your codebase, then use our SDK to 
 - **Discuss** tips, best practices, and advanced scenarios (like single-tenancy) in our forums.
 - **Contribute** to our starter components or build your own custom components.
 
+[**Join the slack community**](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA)
+
 
 ## Walkthrough Video 
 
-<div style={{ marginTop: "20px" }}>
-  <iframe src="https://www.youtube.com/embed/6b-lzaKbXT4?rel=0" frameBorder="0" sandbox="allow-scripts allow-popups allow-top-navigation-by-user-activation allow-forms allow-same-origin allow-storage-access-by-user-activation allow-popups-to-escape-sandbox" allowFullScreen={true} style={{ 
-      width: '100%', 
-      height: '500px', 
-      borderRadius: '1px', 
-      pointerEvents: 'auto', 
-      backgroundColor: 'white'
-  }}></iframe>
-</div>
+<ExternalVideo src="https://www.youtube.com/embed/6b-lzaKbXT4?rel=0"/>
 
 - [00:00](https://youtu.be/6b-lzaKbXT4?si=8FXqFmISlw73cifJ&t=0s) What is Embeddable?
 - [00:39](https://youtu.be/6b-lzaKbXT4?si=8FXqFmISlw73cifJ&t=39s) Getting started with the SDK

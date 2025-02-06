@@ -2,15 +2,15 @@ import { Steps, Callout } from 'nextra/components'
 
 # Connect Your Database
 
-You can connect one or multipe databases to Embeddable. We call these **Connections**. 
+You can connect one or more databases to Embeddable. We call these **Connections**. 
 
 - **Read-only access:** Embeddable only reads from your database - it never writes to it.
 - **Connection options:** Connect directly or via SSH.
-- **IP whitelisting:** Restrict access to your database by allowing only Embeddable’s fixed IPs.
+- **IP whitelisting:** Restrict access to your database by allowing only Embeddable’s fixed IPs ([EU](/getting-started/deployment-regions/us#ips-to-whitelist), [US](/getting-started/deployment-regions/eu#ips-to-whitelist)).
 
 ## Connections API
 
-Use our **Connections API** to connect your database.
+Use our **Connections API** to connect Embeddable to your database(s).
 
 The below is a `CREATE` action, but all `CRUD` operations are available, with sample scripts in [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts).
 
@@ -38,11 +38,11 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
     }),
 });
 ```
-- `API Key`: This is located on the homepage of your workspace.
-- `name`: Unique name for the database connection.
-- `type`: Which driver to use (Postgres, BigQuery, MongoDB, etc). See full list of support databases [here](https://cube.dev/docs/product/configuration/data-sources).
-- `credentials`: A javascript object containing the credentials expected by the driver.
-    * The necessary credentials for each database are available [here](/getting-started/connect-your-database/credentials). 
+- `apiKey`: This is located on the homepage of your workspace.
+- `connectionName`: Unique name for the database connection within your workspace.
+- `type`: Which driver to use (postgres, bigquery, etc). Find your database [here](./credentials).
+- `credentials`: A javascript object containing the credentials expected by the driver:
+    * The necessary credentials for each database are available [here](./credentials). 
     * Credentials are securely encrypted.
     * We strongly suggest creating a **read-only** database user for each connection.
 
@@ -68,6 +68,11 @@ Or use tools like [Postman](https://www.postman.com/).
 To confirm your connection works, use the `/test` endpoint, which is also available as a [script](https://github.com/embeddable-hq/vanilla-components/tree/main/src/scripts) in your repo. 
 
 ```javascript
+const apiKey = '<your API Key>';
+const connectionName = '<some unique name>';
+const BASE_URL = 'https://api.us.embeddable.com'; // US API
+// const BASE_URL = 'https://api.eu.embeddable.com'; // EU API
+
 fetch(`${BASE_URL}/api/v1/connections/${connectionName}/test`, {
     method: 'POST',
     headers: {
@@ -88,7 +93,20 @@ cubes:
 ```
 
 - Omitting the `data_source` field defaults to a demo connection named `default`.
-- To use different databases for environments (e.g., production, QA, test) or customers, configure connections with the [Environments API](/deployment/environments-api).
+
+## Multiple databases
+
+Embeddable supports connecting to **multiple databases** out-of-the-box.  
+
+To do so, simply: 
+- create a separate **connection** for each database (see "Connections API" above)
+- then point each of your **models** at the appropriate **connection** (see "Using your connection" above).
+
+Sometimes, however, you'll want to point a model at different databases, e.g:
+ - to run against prod vs qa vs test databases.
+ - to connect to different databases depending on the customer.
+
+In those cases you'll need use what we call **Environments**.  Learn more [here](./environments).
 
 ## IP Whitelisting
 
@@ -108,8 +126,8 @@ Embeddable also supports connecting to your database via SSH connection. The pro
 
 ### Whitelist Embeddable's SSH-specific IP's:
 
-- **US:** [see here](getting-started/deployment-regions/us#ips-to-whitelist). 
-- **EU:** [see here](getting-started/deployment-regions/eu#ips-to-whitelist). 
+- **US:** [see here](/getting-started/deployment-regions/us#ips-to-whitelist). 
+- **EU:** [see here](/getting-started/deployment-regions/eu#ips-to-whitelist). 
 
 ### Add public key to bastion user
 

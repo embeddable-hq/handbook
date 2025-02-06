@@ -17,11 +17,15 @@ Run `pnpm i` to install the dependencies.
 
 Then, run `pnpm dev` to start the development server and visit localhost:3000.
 
+## Testing final app
+
+Run `pnpm build` to build the app
+
+Run `pnpm run start` to preview the built app
+
 ## Deploying
 
 Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
-
-Explanation: Nextra generates a static JSON file for the sidebar. Ensure there’s no residual .next folder persisting across builds.
 
 Before pushing:
 
@@ -33,6 +37,8 @@ pnpm run start
 ```
 
 ## Prepping media
+
+- Resize to max 1250px width for videos and images.
 
 **To resize videos:**
 

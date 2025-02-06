@@ -1,22 +1,21 @@
 import { Steps } from 'nextra/components'
 
-# Environments API
+# Environments
 
-**Environments** let you map **data models** to different **database connections**, making it easy to:
+**Environments** let you map **data models** to different sets of **database connections**, depending on the **user**.  This makes it easy to:
 
-- Use one **environment** per database (e.g. prod, QA, staging).
-- Implement **single-tenancy** (database-level security) by assigning each customer a different DB.
-- Connect multiple microservices by mapping specific data models to specific DB connections.
+- Test embeddable against different **environments** (e.g. prod, QA, staging).
+- Implement **single-tenancy** (database-level security) where each customer has their own database (or set of databases).
 
 ## How It Works
 
 <Steps>
 
 ### **Define Connections**  
-   Use the [Connections API](/getting-started/connect-your-database/connections-api#connections-api) to create named database connections (e.g. `"prod-postgres"`, `"staging-postgres"`). Each connection includes the **credentials** (host, port, user, etc.) for a particular database.
+   Use the [Connections API](./connect-your-database) to create named database connections (e.g. `"prod-postgres"`, `"staging-postgres"`). Each connection includes the **credentials** (host, port, user, etc.) for a particular database.
 
 ### **Assign `data_source` in Your Models**  
-   In your `.cube.yml` (or `.cube.ts`) files, specify `data_source` for each model. If omitted, it defaults to `"default"`:
+   In your `.cube.yml` (or `.cube.js`) files, specify `data_source` for each model. If omitted, it defaults to `"default"`:
    ```yaml
    cubes:
      - name: orders
@@ -44,8 +43,8 @@ import { Steps } from 'nextra/components'
      })
    });
    ```
-   - **`name`** is a unique ID for the environment (e.g. `"prod"`).  
-   - **`datasources`** is a list mapping each model’s `data_source` to a named **connection**.
+   - **`name`** is a unique ID for the environment (e.g. `"prod"` or `"microsoft"`).  
+   - **`datasources`** is a list mapping each model’s `data_source` to a named **connection** (e.g. in the above example, all models whose `data_source` is set to `"primary_db"` will use the connection named `"prod-postgres"`).
 
 ### **Use the Environment via Token API**  
    When requesting a [**security token**](/deployment/tokens-api), supply the `environment` field:
@@ -57,13 +56,13 @@ import { Steps } from 'nextra/components'
    }
    ```
    - Embeddable automatically routes each model’s `data_source` to the connections defined in your `"prod"` environment.  
-   - If `environment` is omitted, it uses `"default"`.
+   - If `environment` is omitted, it uses the `"default"` environment (which is a special environment that always maps `data_source` names onto a `connection` of the same name).
 
 </Steps>
 
 ### CRUD Operations
 
-The flow above represents a `CREATE` action, but all `CRUD` operations are available. 
+The `POST` request above represents a `CREATE` action, but all `CRUD` operations are available. 
 
 - **POST** `/api/v1/environments`  
   Create a new environment.  
@@ -78,7 +77,7 @@ The flow above represents a `CREATE` action, but all `CRUD` operations are avail
 
 ## Testing in the No-Code Builder
 
-To preview environments before **before** publishing, you can create or update your `src/presets/security-contexts.sc.yml` with entries specifying `environment`:
+To preview environments **before** publishing, you can create or update your `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/vanilla-components/blob/main/src/presets/security-contexts.sc.yml)) with entries specifying the `environment`:
    ```yaml
    - name: Example customer 1
      environment: production

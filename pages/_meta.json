@@ -1,8 +1,9 @@
 {
   "index": "Introduction",
   "getting-started": "Getting started",
+  "data": "Connect your data",
   "data-modeling": "Data modeling",
-  "development": "Development",
+  "development": "Building components",
   "dashboards": "Dashboards",
   "deployment": "Deployment",
   "contact": {
