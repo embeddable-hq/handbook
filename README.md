@@ -27,7 +27,7 @@ Run `pnpm run start` to preview the built app
 
 Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
 
-Before pushing:
+Before pushing, please run:
 
 ```bash
 rm -rf .next node_modules pnpm-lock.yaml
