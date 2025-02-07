@@ -29,7 +29,7 @@ You **define a dataset** in the Embeddable no-code builder by clicking the [+] i
 <ImageGrid images={["/img/dataset-builder-min.png"]}/>
 
 <Callout emoji="💡">
-  Because data models include row-level security rules and transformations, everyone sees the right data automatically, so this **isn't something you need to consider** in the no-code builder. 
+  Because data models include [row-level security rules](/data-modeling/row-level-security) and transformations, everyone sees the right data automatically, so this **isn't something you need to consider** in the no-code builder. 
 </Callout>
 
 ## Components
@@ -43,11 +43,11 @@ Components are **visual or interactive elements** - charts, tables, dropdowns, t
 
 ## The Canvas
 
-When you add or reposition components, Embeddable’s **canvas** automatically arranges them based on a **grid layout** with a few key properties:
+When you add or reposition components, Embeddable’s **canvas** automatically arranges them based on a *12-column grid layout** with a few key properties:
 
 - **Drag-and-Drop**: Move any component around, and the canvas will slot it into the nearest open space.
 - **Upwards Gravity**: If there’s empty space above a component, it will shift upward automatically.
-- **Responsive Breakpoints**: The canvas adapts for mobile or smaller screens. These breakpoints currently **can’t** be edited. 
+- **Responsive Breakpoints**: The canvas adapts for mobile or smaller screens: 12 columns on desktop and 1 column on mobile (these breakpoints currently **can’t** be edited).
 - **No CSS Overrides**: The layout engine isn’t controlled by your CSS. Instead, it’s managed within Embeddable to ensure consistent placement across devices.
 
 This lets you focus on **what** goes into your dashboard rather than fussing with positioning details or media queries.
