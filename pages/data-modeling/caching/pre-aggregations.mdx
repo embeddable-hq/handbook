@@ -128,7 +128,7 @@ Use Embeddable’s Caching API to tell us which security contexts to refresh and
    - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
    - `refreshInterval`: the refresh interval, in `minutes`, `hours`, or `days` (must be `30 minutes` or larger, currently).
    - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
-   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/deployment/environments-api).
+   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
 
 If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.
 
