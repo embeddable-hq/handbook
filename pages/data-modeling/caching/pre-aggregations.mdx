@@ -42,8 +42,8 @@ cubes:
         sql: country
         type: string
 
-    preAggregations:
-        - name: customer_countries
+    pre_aggregations:
+      - name: customer_countries
         dimensions:
           - country
 ```
@@ -76,7 +76,7 @@ cubes:
         sql: amount
         title: "Total Sales"
 
-    preAggregations:
+    pre_aggregations:
       - name: daily_sales
         measures:
           - total_sales
@@ -93,7 +93,7 @@ Learn more about defining pre-aggregations by visiting [Cube's documentation](ht
 
 Pre-aggregations in Cube need to be refreshed periodically to ensure they stay up to date with the latest data. This process involves recalculating the pre-computed summary tables based on your defined measures and dimensions. 
 
-By default, pre-aggregations are **not refreshed**. You must call Embeddable's Caching API at least once to set the refresh interval and the security contexts to refresh. 
+By default, pre-aggregations are **only refreshed upon dashboard load**. You must call Embeddable's Caching API at least once to set the refresh interval and the security contexts to refresh if you want the pre-aggregations to be fresh and ready **before** an end-user visits the dashboard. 
 
 ### Caching API
 
@@ -126,7 +126,7 @@ Use Embeddable’s Caching API to tell us which security contexts to refresh and
    ```
    - `region`: your deployment region. 
    - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
-   - `refreshInterval`: the refresh interval, in `minutes`, `hours`, or `days`.
+   - `refreshInterval`: the refresh interval, in `minutes`, `hours`, or `days` (must be `30 minutes` or larger, currently).
    - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
    - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/deployment/environments-api).
 

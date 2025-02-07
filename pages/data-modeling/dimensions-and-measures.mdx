@@ -54,10 +54,12 @@ Each dimension has:
 - `name`: A unique identifier (no spaces or special characters).
 - `title` (optional): A user-friendly name for display in the UI.
 - `sql`: The column or SQL expression from your base table/query.
-- `type`: The data type (`string`, `number`, `time`, `geo`).
-- `primary_key` (optional): Set this to `true` if it uniquely identifies rows.
+- `type`: The data type (`string`, `number`, `time`, etc.).
+- `primary_key` (optional): Set this to `true` if this dimension makes up part of (or the whole) primary key for this model.
 
 ### Examples
+
+Note that what you put in the `sql` field much match exactly to the syntax for your database (e.g. postgres syntax may differ slightly from snowflake syntax).
 
 - **Combining first and last names**  
   Instead of defining separate dimensions for `first_name` and `last_name`, create a `full_name` dimension using an SQL expression:
@@ -234,4 +236,4 @@ This example demonstrates how to reference measures within other measure definit
             trailing: unbounded
     ```
 
-For more details, see the [Cube docs on rolling windows](https://cube.dev/docs/reference/data-model/rolling-window).
+For more details, see the [Cube docs on rolling windows](https://cube.dev/docs/reference/data-model/measures#rolling_window).

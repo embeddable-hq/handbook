@@ -1,7 +1,7 @@
 {
     "connect-your-database": "Connect your database",
     "credentials": "Database credentials",
-    "environments": "Configuring environments",
+    "environments": "Environments",
     "troubleshooting": "Troubleshooting",
     "integrations": "Integrations"
 }

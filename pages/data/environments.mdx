@@ -1,4 +1,5 @@
 import { Steps } from 'nextra/components'
+import ImageGrid from '/components/ImageGrid'
 
 # Environments
 
@@ -91,5 +92,7 @@ To preview environments **before** publishing, you can create or update your `sr
    ```
 
 In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **production** data.
+
+<ImageGrid images={["/img/security-context-preset.png"]}/>
 
 **Advanced use-case**: If you have multiple data models each with unique `data_source` values, you can define an environment that includes only the data sources you want for a particular user—offering fine-grained control over which models (and thus which databases) are active for that environment.
