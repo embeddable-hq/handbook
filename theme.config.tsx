@@ -9,7 +9,7 @@ const config: DocsThemeConfig = {
   sidebar: {
     defaultMenuCollapseLevel: 1,
   },
-  docsRepositoryBase: 'https://github.com/embeddable-hq/handbook',
+  docsRepositoryBase: 'https://github.com/embeddable-hq/handbook/blob/main',
   useNextSeoProps: () => {
     return {
       // description: "Documentation for Embeddable.com",
