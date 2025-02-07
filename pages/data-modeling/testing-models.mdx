@@ -1,4 +1,5 @@
 import { Callout, Steps } from 'nextra/components'
+import VideoComponent from '/components/Video'
 
 # Testing your data models
 
@@ -8,15 +9,26 @@ You can test your data models:
 
 In early 2025, we'll be launching an [in-platform model playground](/data-modeling/testing-models#upcoming-in-platform-model-playground), eliminating the need to set up Cube locally.
 
-## Testing locally using a local Embeddable workspace 
+## Testing using the Data Playground
 
-To try out your models in Embeddable's no-code dashboard builder, you can spin up a local workspace by running:
+You can test your models in Embeddable’s **Data Playground**, available both in your **online workspace** and **locally** by running:
 
 ```bash
 npm run embeddable:dev
 ```
 
-## Testing locally with Cube's Data Playground
+- Simply click the Data Playground tab in the left sidebar. 
+- You’ll then be able to test each element of your models, view the generated SQL, and inspect the results. 
+
+<VideoComponent
+    src="/video/data-playground.mp4"
+    width="1250"
+    height="854"
+/>
+
+## Testing using Cube's Data Playground
+
+You can also use Cube's local Data Playground to test and debug your models.
 
 <Callout emoji="">
   This relies on you having [Docker](https://www.docker.com/products/docker-desktop/) installed on your local machine.
@@ -78,11 +90,6 @@ npm run embeddable:dev
    Open your browser and navigate to [localhost:4000](http://localhost:4000) to use Cube Playground.
 
 </Steps>
-
-## Upcoming: In-Platform Model Playground
-
-We're excited to announce that an **in-platform model playground** will be available soon. This feature will allow you to test and debug your data models directly within Embeddable's interface, streamlining your workflow and removing the need for local setups.
-
 
 ### Still Need Help?
 
