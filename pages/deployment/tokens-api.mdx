@@ -64,7 +64,7 @@ You would then use this `token` in your `<em-beddable>` element, as explained in
 
 - **`dashboardState`** holds the state of the dashboard based on the end-user’s interactions within Embeddable’s [Custom Canvas](/dashboards/custom-canvas). 
 
-- **`environment`** optionally specifies which which [environment](/deployment/environments-api) to retrieve data from. By default, “default” is used. This lets you achieve things like:
+- **`environment`** optionally specifies which [environment](/data/environments) to retrieve data from. By default, “default” is used. This lets you achieve things like:
     - **single-tenancy** (AKA **database-level security**), where each of your customers has their data in a different database.
     - different database connections for **prod**, **qa**, **testing**, etc. 
     - **micro service architecture**, where your data is spread across multiple databases. 
