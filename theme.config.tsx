@@ -1,5 +1,6 @@
 import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
+import ImageGrid from './components/ImageGrid'
 
 const config: DocsThemeConfig = {
   logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
@@ -10,6 +11,9 @@ const config: DocsThemeConfig = {
     defaultMenuCollapseLevel: 1,
   },
   docsRepositoryBase: 'https://github.com/embeddable-hq/handbook/blob/main',
+  components: {
+    'ImageGrid': ImageGrid
+  },
   useNextSeoProps: () => {
     return {
       // description: "Documentation for Embeddable.com",

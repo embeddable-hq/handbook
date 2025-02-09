@@ -19,11 +19,13 @@ Add a `<script>` tag to your page to load the Embeddable custom element:
 ```html
 <script 
   type="module"
-  src="https://api.<your-region>.embeddable.com/js/v1/">
+  src="https://api.<region>.embeddable.com/js/v1/">
 </script>
 ```
 
 This makes the `<em-beddable>` tag available anywhere on your page.
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 ### Place the `<em-beddable>` Element
 
@@ -31,12 +33,10 @@ Anywhere in your HTML, include:
 
 ```html
 <em-beddable
-  base-url="https://api.<your-region>.embeddable.com/"
   token="eyJhbGciOiJIUzI1NiJ9..."
 ></em-beddable>
 ```
 
-- **`base-url`**: The Embeddable API base. Make sure it includes a trailing slash (i.e. `https://api.embeddable.com/`), or you might see data-loading issues.
 - **`token`**: A **security token** from our [Tokens API](/deployment/tokens-api), which is used for row-level security and more.
 
 </Steps>
@@ -49,17 +49,18 @@ Anywhere in your HTML, include:
   <head>
     <script 
       type="module"
-      src="https://api.embeddable.com/js/v1/">
+      src="https://api.<region>.embeddable.com/js/v1/">
     </script>
   </head>
   <body>
     <em-beddable 
-      base-url="https://api.embeddable.com/"
       token="eyJhbGciOiJI..."
     ></em-beddable>
   </body>
 </html>
 ```
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 ---
 
@@ -70,7 +71,7 @@ If you’re using React, treat `<em-beddable>` like any other custom element. Fo
 ```tsx
 function Embeddable({ token }: { token: string }) {
   // Return a custom element
-  return React.createElement('em-beddable', { token, 'base-url': 'https://api.embeddable.com/' });
+  return React.createElement('em-beddable', { token });
 }
 
 export default function DashboardPage() {
@@ -87,16 +88,17 @@ export default function DashboardPage() {
     <>
       <script
         type="module"
-        src="https://api.embeddable.com/js/v1/"
+        src="https://api.<region>.embeddable.com/js/v1/"
       />
       <em-beddable
         token="eyJhbGciOiJI..."
-        base-url="https://api.embeddable.com/"
       />
     </>
   );
 }
 ```
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 ---
 
@@ -108,7 +110,6 @@ In Vue, you can place `<em-beddable>` in your templates. For instance:
 <template>
   <em-beddable
     :token="token"
-    base-url="https://api.embeddable.com/"
   />
 </template>
 
@@ -128,9 +129,11 @@ Make sure you’ve loaded the script in your `index.html` (or another entry poin
 ```html
 <script 
   type="module"
-  src="https://api.embeddable.com/js/v1/">
+  src="https://api.<region>.embeddable.com/js/v1/">
 </script>
 ```
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 ---
 
@@ -155,7 +158,6 @@ const Dashboard = ({ securityToken }) => {
       onEmbeddableError={(e) => {
         console.log(`${e.errorMessage} : ${e.errorDetail}`);
       }}
-      base-url="https://api.embeddable.com/"
     />
   );
 };
@@ -213,7 +215,6 @@ function Embeddable({
 
 ## Common Pitfalls
 
-- **Trailing Slash**: Ensure `base-url="https://api.embeddable.com/"` ends with a slash. Missing it can cause silent data-loading issues.  
 - **Security Token**: Must be retrieved server-side to avoid exposing secrets. See our [Tokens API](/deployment/tokens-api) docs.  
 
 ## Complete Working Example

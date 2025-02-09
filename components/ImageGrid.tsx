@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ImageGrid = ({ images, className }) => {
+const ImageGrid = ({ images, className, width }) => {
   const [openImg, setOpenImg] = useState(null);
   const handleClick = (src) => setOpenImg(src);
   const handleClose = () => setOpenImg(null);
@@ -17,7 +17,7 @@ const ImageGrid = ({ images, className }) => {
             src={src}
             alt={`Image ${index}`}
             style={{
-              width: "100%",
+              width: width || "100%",
               height: "auto",
               border: "1px solid #eee",
               borderRadius: "8px",
