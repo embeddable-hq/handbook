@@ -1,6 +1,6 @@
 # Client Context
 
-**Client Context** lets you pass **dynamic values** into your embedded dashboards at runtime - directly from the web component. 
+**Client Context** lets you pass **dynamic values** into your embedded components at runtime - directly from the web component. 
 
 You can use it for lots of tasks, but common use-cases include:
 
@@ -15,20 +15,35 @@ You can use it for lots of tasks, but common use-cases include:
 
 ### **Pass an Object via the Web Component**  
     
-    You include a `clientContext` attribute on your `<em-beddable>` or similar web component. For example:
+You include a `client-context` attribute on your `<em-beddable>` web component. For example:
 
-    ```tsx
-    <Embeddable
-        clientContext={{
-          currency: 'dollar',
-          currencySymbol: '$',
-          flag: '🇺🇸',
-          language: 'english',
-          name: 'United States'
-        }}
-    />
+    ```js
+    <em-beddable
+      token="${json.token}"
+      client-context="${JSON.stringify({ 
+        currency: 'dollar',
+        currencySymbol: '$',
+        flag: '🇺🇸',
+        language: 'english',
+        name: 'United States'
+      })}"
+    ></em-beddable>
     ```
-    You’re not limited to strings - you can pass numbers, booleans, arrays or objects, too.
+
+You’re not limited to strings - you can pass numbers, booleans, arrays or objects, too.  Any JSON.
+
+You can also use it in your React code like so ([learn more](/deployment/interactivity)):
+
+```tsx
+return (
+    <Embeddable
+      token={securityToken}
+      clientContext={{ locale: ['en-US'], language: 'en', darkMode: false }}
+    />
+  );
+```
+
+Learn how to generate a `securityToken` [here](/deployment/tokens-api).
 
 ### **Receive it in `defineComponent`**  
     

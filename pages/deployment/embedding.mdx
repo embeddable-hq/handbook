@@ -35,7 +35,7 @@ Anywhere in your HTML, include:
 ></em-beddable>
 ```
 
-- **`token`**: A **security token** from our [Tokens API](/deployment/tokens-api), which is used for row-level security and more.
+**`token`** is a **security token** from our [Tokens API](/deployment/tokens-api), which is used for row-level security and more.
 
 </Steps>
 
@@ -59,6 +59,8 @@ Anywhere in your HTML, include:
 ```
 
 Learn more about `region` [here](/deployment/deployment-regions).
+
+Learn how to retrieve a `token` [here](/deployment/tokens-api).
 
 ---
 
@@ -98,6 +100,8 @@ export default function DashboardPage() {
 
 Learn more about `region` [here](/deployment/deployment-regions).
 
+Learn how to retrieve a `token` [here](/deployment/tokens-api).
+
 ---
 
 ## Embedding in a Vue App
@@ -133,83 +137,9 @@ Make sure you’ve loaded the script in your `index.html` (or another entry poin
 
 Learn more about `region` [here](/deployment/deployment-regions).
 
+Learn how to generate a `token` [here](/deployment/tokens-api).
+
 ---
-
-## Interacting with Your Embeddable
-
-You can pass **variables**, listen for events, and track loading states by programmatically interacting with the custom `<em-beddable>` element. Here’s an example in **React**:
-
-```tsx
-const Dashboard = ({ securityToken }) => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [variables, setVariables] = React.useState({
-    'Country': 'Germany',
-    'Date range': { from: new Date(2024, 1, 12), to: new Date() }
-  });
-
-  return (
-    <Embeddable
-      token={securityToken}
-      variables={variables}
-      onVariablesChange={setVariables}
-      onComponentsLoad={() => setIsLoading(false)}
-      onEmbeddableError={(e) => {
-        console.log(`${e.errorMessage} : ${e.errorDetail}`);
-      }}
-    />
-  );
-};
-```
-
-Below is the **Embeddable** component, which wraps `<em-beddable>` and wires up event listeners:
-
-```tsx
-function Embeddable({
-  token,
-  onComponentsLoad,
-  variables,
-  onVariablesChange,
-  onEmbeddableError
-}) {
-  const ref = React.useRef(null);
-
-  function handleVariableChange(e) {
-    if (onVariablesChange) {
-      onVariablesChange(
-        Object.fromEntries(e.detail.map((c) => [c.variableName, c.newValue]))
-      );
-    }
-  }
-
-  function handleEmbeddableError(e) {
-    onEmbeddableError(e.detail);
-  }
-
-  React.useEffect(() => {
-    ref.current.addEventListener('variablesChange', handleVariableChange);
-    ref.current.addEventListener('componentsLoad', onComponentsLoad);
-    ref.current.addEventListener('embeddableError', handleEmbeddableError);
-
-    return () => {
-      ref.current.removeEventListener('variablesChange', handleVariableChange);
-      ref.current.removeEventListener('componentsLoad', onComponentsLoad);
-      ref.current.removeEventListener('embeddableError', handleEmbeddableError);
-    };
-  }, []);
-
-  return React.createElement('em-beddable', {
-    ref,
-    token,
-    variables: JSON.stringify(variables)
-  });
-}
-```
-
-**How This Helps**:
-
-- **Track variable changes**: Each time variables inside your Embeddable update (e.g., user selects a new country), the `variablesChange` event fires, and you can respond in your app.
-- **Control filters/state**: By calling `onVariablesChange`, you can update local React state and trigger data refreshes or other UI logic.
-- **Handle load states & errors**: The `onComponentsLoad` event indicates Embeddable has finished loading components, and `onEmbeddableError` captures issues like network problems or invalid tokens.
 
 ## Common Pitfalls
 
