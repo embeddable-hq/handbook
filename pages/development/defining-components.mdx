@@ -271,7 +271,8 @@ export const meta: EmbeddedComponentMeta = {
             type: 'dataset',
             label: 'Dataset',
             description: 'Dataset',
-            category: 'Dropdown values'
+            category: 'Dropdown values',
+            required: true
         },
         {
             name: 'property',
@@ -298,6 +299,7 @@ export const meta: EmbeddedComponentMeta = {
 | `config`      | object                                 | ❌ No        |
 | `array`       | boolean                                | ❌ No        |
 | `category`    | string                                 | ❌ No        |
+| `required`    | boolean                                | ❌ No        |
 
 - **`name`**: A unique identifier for this input (within the component).
 - **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](/development/defining-components#native-input-types).
@@ -305,6 +307,7 @@ export const meta: EmbeddedComponentMeta = {
 - **`description`**: A helpful reference, not currently displayed in the builder.
 - **`defaultValue`**: The initial value for the input.
 - **`category`**: Assigns an optional grouping for this input in the builder UI. Inputs sharing the same category appear together.
+- **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. A common use-case includes specifying the dataset for `dimension` or `measure` inputs and limiting the options that display based on their type.
 - **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
 
