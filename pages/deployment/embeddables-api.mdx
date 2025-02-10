@@ -4,7 +4,7 @@ The **Embeddables API** lets you programmatically list all **Embeddables** in yo
 
 ```ts
 // Important: Always call this server-side, never from client-side code
-fetch('https://api.<your-region>.embeddable.com/api/v1/embeddables', {
+fetch('https://api.<region>.embeddable.com/api/v1/embeddables', {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json',
@@ -15,6 +15,8 @@ fetch('https://api.<your-region>.embeddable.com/api/v1/embeddables', {
   .then((res) => res.json())
   .then(console.log);
 ```
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 **Example Response**:
 

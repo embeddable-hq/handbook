@@ -7,7 +7,7 @@ Whenever a user accesses an Embeddable dashboard in your app, you should fetch a
 **Important**: Always call this **server-side**—never from client code, to avoid exposing your API key.
 
 ```ts
-fetch('https://api.<your-region>.embeddable.com/api/v1/security-token', {
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -42,6 +42,8 @@ fetch('https://api.<your-region>.embeddable.com/api/v1/security-token', {
 ```
 
 You would then use this `token` in your `<em-beddable>` element, as explained in [Embedding an Embeddable](/deployment/embedding#how-it-works).
+
+Learn more about `region` [here](/deployment/deployment-regions).
 
 
 ### Parameters

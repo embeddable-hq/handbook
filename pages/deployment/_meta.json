@@ -1,5 +1,6 @@
 {
     "embedding": "Embedding dashboards",
     "tokens-api": "Retrieving security tokens",
-    "embeddables-api": "List your Embeddables"
+    "embeddables-api": "List your Embeddables",
+    "deployment-regions": "Deployment Regions"
 }

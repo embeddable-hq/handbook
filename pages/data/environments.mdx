@@ -1,6 +1,3 @@
-import { Steps } from 'nextra/components'
-import ImageGrid from '/components/ImageGrid'
-
 # Environments
 
 **Environments** let you map **data models** to different sets of **database connections**, depending on the **user**.  This makes it easy to:
@@ -29,7 +26,7 @@ import ImageGrid from '/components/ImageGrid'
    Define an **environment** that maps each `data_source` to a corresponding **connection**:
    ```ts
    // for security reasons, this must *never* be called from your client-side
-   fetch('https://api.<your-region>.embeddable.com/api/v1/environments', {
+   fetch('https://api.<region>.embeddable.com/api/v1/environments', {
      method: 'POST',
      headers: {
        'Content-Type': 'application/json',
@@ -46,6 +43,7 @@ import ImageGrid from '/components/ImageGrid'
    ```
    - **`name`** is a unique ID for the environment (e.g. `"prod"` or `"microsoft"`).  
    - **`datasources`** is a list mapping each model’s `data_source` to a named **connection** (e.g. in the above example, all models whose `data_source` is set to `"primary_db"` will use the connection named `"prod-postgres"`).
+   - Learn more about `region` [here](/deployment/deployment-regions).
 
 ### **Use the Environment via Token API**  
    When requesting a [**security token**](/deployment/tokens-api), supply the `environment` field:
