@@ -24,15 +24,17 @@ const VideoComponent = ({ src, width = 16, height = 9, className }) => {
         <video
             src={src}
             autoPlay
+            playsinline
+            webkit-playsinline
             muted
             loop
             style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
             }}
         />
         </div>
