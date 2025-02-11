@@ -50,6 +50,12 @@ When deploying:
 1. https://www.iloveimg.com/resize-image
 2. https://compresspng.com/
 
+## To avoid caching issues in Vercel
+
+We have set this environment variable in the Vercel platform:
+
+VERCEL_FORCE_NO_BUILD_CACHE to true
+
 ## License
 
 This project is licensed under the MIT License.
