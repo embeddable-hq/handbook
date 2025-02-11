@@ -1,10 +1,10 @@
 {
     "introduction": "Intro to modeling",
+    "testing-models": "Testing your models",
     "defining-models": "Defining data models",
     "dimensions-and-measures": "Dimensions and Measures",
     "joins": "Joins",
     "row-level-security": "Row level security",
-    "testing-models": "Debugging your models",
     "pushing-models": "Pushing your models",
     "caching": "Caching"
   }
