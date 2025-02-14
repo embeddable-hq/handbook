@@ -8,6 +8,18 @@ It is currently deployed and managed on [Vercel](https://vercel.com/embeddable/h
 
 Any changes pushed to the main branch are automatically deployed to https://docs.embeddable.com.
 
+## Documentation Guidelines
+
+These guidelines help keep our docs easy to navigate and consistent, as we scale.
+
+### Structure
+
+- Keep nesting no more than two levels deep (e.g. Connect your data > Integrations > Cube Cloud).
+- Avoid using dropdowns as pages. They can be tricky to navigate, especially on mobile.
+
+### Writing
+- For consistency in writing style and tone, refer to the principles here: https://www.notion.so/trevorio/Documentation-Principles-19a726382bcf8008a1eed5ca537b086a?pvs=4
+
 
 ## Local Development
 
