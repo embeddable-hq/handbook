@@ -5,7 +5,7 @@
     "defining-components": "Defining components",
     "loading-data": "Loading data",
     "interactivity": "Adding interactivity", 
-    "client-context": "Client Context",
+    "client-context": "Passing Client Context",
     "custom-types": "Defining custom types",
     "pushing-code": "Pushing components"
 }
