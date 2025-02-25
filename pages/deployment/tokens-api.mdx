@@ -53,13 +53,13 @@ Learn more about `region` [here](/deployment/deployment-regions).
     ```sql
     name: Orders
     sql: >
-    SELECT user_id, created_at
-    FROM public.orders
-    WHERE user_id = '{ COMPILE_CONTEXT.securityContext.userId }'
-    
-    {% if COMPILE_CONTEXT.securityContext.regions %}
-        AND region IN {{ list(COMPILE_CONTEXT.securityContext.regions) }}
-    {% endif %}
+        SELECT user_id, created_at
+        FROM public.orders
+        WHERE user_id = '{ COMPILE_CONTEXT.securityContext.userId }'
+        
+        {% if COMPILE_CONTEXT.securityContext.regions %}
+            AND region IN {{ list(COMPILE_CONTEXT.securityContext.regions) }}
+        {% endif %}
     ```
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
