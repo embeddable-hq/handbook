@@ -155,12 +155,12 @@ cubes:
     sql_table: public.orders
 
     dimensions:
-	  - name: id
+      - name: id
         sql: id
         type: number
         primary_key: true
         public: false
-	    
+
       - name: product_name
         title: 'Product'
         sql: product
@@ -171,7 +171,7 @@ cubes:
         type: string
         
       - name: created_at
-	    title: "Purchase time"
+        title: "Purchase time"
         sql: created_at
         type: time
 
