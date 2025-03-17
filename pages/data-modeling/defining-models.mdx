@@ -83,7 +83,7 @@ You can see more data model examples inside [your repo](https://github.com/embed
     FROM public.customers
     WHERE status = 'active'
   ```
-  A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The semantic layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
+  A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The data modeling layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
 
 - `dimensions`: There are all the "virtual columns" that you want to expose in your model (learn more [here](./dimensions-and-measures)).
 

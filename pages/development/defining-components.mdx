@@ -70,7 +70,9 @@ Key capabilities include:
   export default defineComponent(Component, meta, {
     props: (inputs: Inputs<typeof meta>) => {
       return {
-        ...inputs // the inputs are passed through to the component as props
+        // the inputs are passed through to the React component as props
+        title: inputs.title,
+        body: inputs.body
       };
     }
   });
