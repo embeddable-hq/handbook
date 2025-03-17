@@ -197,7 +197,7 @@ It may seem complicated at first, but there’s just a few simple concepts to un
 - The `sql_table` tells our data modeling layer (Cube) which table to use in the `FROM` clause when generating the SQL, e.g. `SELECT ... FROM public.orders ...`.
 - The `dimensions` are just the **virtual columns** that we want to expose to the Embeddable dashboard builder
     - e.g. the **product_name** `dimension` has its `sql` parameter defined as `product` which simply means that if the **product_name** is requested by a chart, then that `sql` will be used in the generated SQL, e.g. `SELECT product FROM public.orders` .
-    - whereas the **location** `dimension` has its `sql` defined as `CONCAT(city, ‘, ‘, country)` .  This means exactly the same.  If **location** is requested, then that `sql` will be used in the generated SQL, e.g. `SELECT CONCAT(city, ', ', country) from public.orders)` .
+    - whereas the **location** `dimension` has its `sql` defined as `CONCAT(city, ‘, ‘, country)` .  This means exactly the same.  If **location** is requested, then that `sql` will be used in the generated SQL, e.g. `SELECT CONCAT(city, ', ', country) from public.orders` .
     - You can also expect to see these dimensions appear in the `GROUP BY` and `WHERE` clauses of the generated SQL, e.g. `GROUP BY CONCAT(city, ', ', country)` or `WHERE product = 'Ice cream'`
 - The `measures` are the metrics we want to be able to calculate (`count`, `sum`, `count_distinct`, `max`, `min` etc.).   You can expect to see these in the `SELECT` and `HAVING` clauses of the generated SQL. E.g. `SELECT sum(price_in_cents / 100.0)`
 
