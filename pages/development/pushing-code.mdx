@@ -1,8 +1,37 @@
 # Pushing code to your workspace
 
-After defining your data models and components, you need to push them to your Embeddable workspace to make them available in the dashboard builder.
+To make your [data models](/data-modeling/defining-models) and [components](/development/defining-components) available in the dashboard builder, you need to push them to your Embeddable Workspace.
 
-### Push command
+## Controlling what gets pushed
+
+By default, running the [**push command**](/development/pushing-code#push-command) will push both data models and components. 
+
+But, you can also push them separately. To do this, in your `embeddable.config` file, simply set:
+
+```tsx
+pushModels: true, // default: true
+pushComponents: true, // default: true
+```
+During a push:
+
+- If **`pushModels`** is true, model files (including `security-context.sc.yml`) are pushed.
+- If **`pushComponents`** is true, all other component files (including `client-contexts.cc.yml`, custom types, and editors) are pushed.
+
+### Running embeddable:dev
+
+When building locally using [`embeddable:dev`](/development/local-environment): 
+
+- If **`pushModels`** is false, local development uses models from your online workspace.
+- If **`pushComponents`** is false, it uses components from your online workspace.
+- A rebuild only occurs when files in the relevant set change (for faster iteration).
+
+## Code version pickers in the builder
+
+Two version pickers appear in the top menu in the dashboard builder to choose the **models version** and **components version**. Publishing a dashboard uses whichever models and components versions are currently selected. A version is only live **once published**.
+
+<ImageGrid images={["/img/pushCode-min.png"]}/>
+
+## Push command
 
 Use the following commands:
 
@@ -20,7 +49,7 @@ npm run embeddable:push
 
 If you have multiple workspaces, you will be prompted to select which workspace you want to push to.
 
-### Pushing using your API Key
+## Pushing using your API Key
 
 You can also push your models and components using your API key, which is especially useful for integrating into your **CI/CD pipeline**:
 
@@ -36,4 +65,4 @@ Optionally, you can add a `message`, like so:
 npm run embeddable:push -- --api-key <API Key> --email <Email> --message <Message>
 ```
 
-This will appear in the **code version** dropdown in the no-code builder. 
+This will appear in the **code version** picker in the no-code builder. 
