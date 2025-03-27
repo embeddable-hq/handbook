@@ -1,25 +1,27 @@
 # Defining Data Models
 
-You can define data models using either yaml or javascript. Generally, yaml is recommended due to its simplicity and readability. On this page, we focus exclusively on yaml (see [Cube’s documentation](https://cube.dev/docs/product/data-modeling/overview) for more information on using JavaScript-based models)
+You can define your models using YAML or JavaScript. In most cases, YAML is recommended for its simplicity and readability. (See [Cube’s documentation](https://cube.dev/docs/product/data-modeling/overview) if you prefer JavaScript-based models.)
 
-In Embeddable, each data model is defined in its own `.cube.yml` file, and begins with the `cubes:` keyword. 
+You can store your model files either alongside your charting components in the [same repository](/getting-started/download-starter-repo), or separately in their own repository. Embeddable supports both structures. Since models and components have independent versioning, you can also [push updates to each separately](/development/pushing-code), giving you full flexibility.
 
-<Callout emoji="💡">
-  Embeddable **only** picks up on model files that end in `.cube.yml` or `.cube.js`. 
-</Callout>
+### File Format
+- Embeddable recognizes any file ending in `.cube.yml` or `.cube.js`.
+- Each model file begins with the `cubes:` keyword.
+
+Here's a simple example:
 
 ```yaml
 # src/models/customers.cube.yml
 
 cubes:
-  - name: customers
-    title: My customers
-    data_source: default
-    sql: >
+  - name: customers # A unique identifier
+    title: My customers # A display-friendly title
+    data_source: default  # The data source connection to use
+    sql: >  # Defines the underlying query
       select *
       from public.customers
 
-    dimensions:
+    dimensions: # 'dimensions' define fields for filtering or grouping data
       - name: id
         sql: id
         type: number
@@ -44,12 +46,12 @@ cubes:
         sql: CONCAT(first_name, ' ', last_name)
         type: string
 
-    measures:
+    measures: # 'measures' define aggregated values (e.g. counts, sums)
       - name: count
         type: count
         title: "# of Customers"
 
-    joins:
+    joins: # 'joins' define relationships between this model and others
       - name: orders # the name of the data model to join to (not the table)
         sql: '{CUBE}.id = {orders}.customer_id'
         relationship: one_to_many
@@ -83,7 +85,10 @@ You can see more data model examples inside [your repo](https://github.com/embed
     FROM public.customers
     WHERE status = 'active'
   ```
-  A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The data modeling layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
+
+<Callout emoji="💡">
+   A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The data modeling layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
+</Callout>
 
 - `dimensions`: There are all the "virtual columns" that you want to expose in your model (learn more [here](./dimensions-and-measures)).
 
