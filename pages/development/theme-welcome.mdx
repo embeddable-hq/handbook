@@ -1,0 +1,79 @@
+# Vanilla Components v1 - Intro for Existing Users
+
+Hi there, thanks for being an awesome Embeddable user! As you probably know, since you’re reading this document, we’ve released a major upgrade to our Vanilla Components repository. 
+
+## TL;DR:
+
+- You can now import vanilla components as an NPM dependency **instead** of keeping a fork of it and merging in changes (like you currently do).
+    - This means you can benefit from the latest vanilla components changes by simply updating the package version (instead of having a worry about merge conflicts)
+
+```json
+"dependencies": {
+    "vanilla-components": "^1.0.0"
+    ...
+```
+
+- We have also introduced **theming** so you can apply color, font and other styles to **all** your vanilla components in just a few lines of code.
+    - E.g. you can change all the colours and fonts in all your components with just a couple of lines of code:
+
+```jsx
+{
+  charts: {
+    colors: ["#c5fae2", "#7ef2be", "#2ce391", "#00cc70"],
+  },
+  font: {
+    family: "Inter",
+  },
+}
+```
+
+- If you want to benefit from either of the above, there are some **migration steps** you'll need to perform. Please read on for more info.
+
+## Things to Know
+
+These two features are being released together, and to use one you’ll need to use the other. Also, while awesome, these features come with a couple of significant caveats that we want folks to be aware of. Here they are:
+
+1. If you have made changes to your existing vanilla components, switching to V1 will involve some changes to your repo. **Fear not!** This guide is here to help you navigate them.
+2. If you choose to use Vanilla Components as a package, you do lose the opportunity to customize their code. **Fear not!** This guide will help you assess that choice *and* explain how you can put together a best-of-both-worlds scenario.
+3. This change marks the end of *major* development on Vanilla Components from our side. **Fear not!** We’re not even close to slowing down - we’ve got big component plans underway and will announce more as they get further along.
+
+One final thing we want to be very clear: <span className="highlight">**you do not have to make this upgrade**</span>. If you’re happy with your current setup and are not worried about potentially missing out on a few upcoming charts … keep what you have! We will continue to put out small bug fixes as patch releases, but we’ll do that for both the `v0` and `v1` versions of Vanilla Components. 
+
+## What to Expect
+
+- `v0` - continued bug fixes if/when any bugs are identified
+- `v1` - Some small chart improvements, possibly a handful of new charts, continued bug fixes
+- The Future - A core rewrite of all charts, many new charts, even better theming, more customization options
+
+## Should We Switch to Packaged Components / Themes?
+
+There are a handful of questions you need to answer! Here’s a handy choose your own adventure scenario that should help:
+
+<Steps>
+### Have you already made changes to the existing Vanilla Components?
+**No**  - Go to #4
+
+**Yes** - Go to #2
+
+### Have you changed most/all of the components, or just a handful?
+**Handful** - Go to #4
+
+**Most/All** - Go to #3
+
+### Are you absolutely dying to use themes and don’t want to code them in yourself?
+**Yes** - Go to #4
+
+**No** - Go to #5
+
+### <span className="green">Use Packaged Components</span>
+
+### <span className="red">Stick With What You Have</span>
+</Steps>
+
+## What Should We Do If We’re Not Switching To v1?
+
+TL/DR: **nothing! 🎉**
+
+If you’ve already made significant changes to your components, or just don’t need themes/packaging and don’t want your engineers to have to deal with the upgrade, you can stay on our `v0` release. 
+
+As mentioned above, we *will* be fixing bugs in both `v0` and `v1`. Just keep pulling from the `main` branch of the `vanilla-components` repo to get our incoming fixes and merge them into your codebase.

@@ -1,5 +1,11 @@
 {
     "introduction": "Intro to development",
+    "theme-welcome":{
+        "display": "hidden"
+    },
+    "theme-upgrading": {
+        "display": "hidden"
+    },
     "local-environment": "Developing locally",
     "theming": "Theming",
     "defining-components": "Defining components",
