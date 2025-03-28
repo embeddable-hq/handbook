@@ -1,0 +1,40 @@
+# Getting Set Up for Data Modeling
+
+You can define your data models in individual files using **YAML** or **JavaScript**. Generally, YAML is recommended for its simplicity and readability. (See [Cube’s documentation](https://cube.dev/docs) if you prefer JavaScript-based models.)
+
+Embeddable supports two options for storing your models:
+1. **In the same repository** as your [charting components](/getting-started/download-starter-repo).
+2. **In a separate repository** on its own.
+
+## 1. Storing Models with Your Components
+
+If you prefer an all-in-one approach, you can keep both your models and charting components in a single repository. This is ideal if a single team manages everything or you want an easy, consolidated project structure.
+
+For a reference setup, take a look at our [starter repo](/getting-started/download-starter-repo). It demonstrates a typical way to organize your files. 
+
+This is the default and requires no extra set up.
+
+## 2. Storing Models Separately
+
+For teams that handle data modeling independently or need tighter control over versioning, storing models in a separate repository can be beneficial. By splitting models away from the charting components:
+
+- You can version and push each set of files independently.
+- Data teams can work on model updates without interfering with UI components, and vice versa.
+
+You can see an example of a [dedicated models repo here](https://github.com/embeddable-hq/only-models/tree/main).
+
+Importantly, you'll need to update `embeddable.config.ts` to include:
+```tsx
+pushModels: true,
+pushComponents: false
+```
+- This ensures that, when you [push your models](/development/pushing-code) to your Embeddable workspace, only relevant model files are sent. 
+
+- Importantly, this also includes any [security context presets](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) you've created to test row-level security.
+
+
+
+
+
+
+
