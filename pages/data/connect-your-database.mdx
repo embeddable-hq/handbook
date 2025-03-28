@@ -32,6 +32,8 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
             database: '...',
             user: '...',
             password: '...',
+            port: ..., // optional, number
+            ssl: true, // optional, boolean
         },
     }),
 });
