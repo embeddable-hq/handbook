@@ -8,22 +8,23 @@ You can do this by running the [**push command**](/development/pushing-code#push
 
 If you store your models and components in [separate repos](/data-modeling/getting-setup#2-storing-models-separately), you can push them independently. 
 
-To push components, in your `embeddable.config` file, simply set:
+In your component repo, in `embeddable.config`, simply set the following:
 
 ```tsx
-pushModels: false, // default: true
-pushComponents: true, // default: true
+pushModels: false,
+pushComponents: true,
 ```
 
-To push models, set the opposite:
+And, in your models repo, set the opposite:
 
 ```tsx
-pushModels: true, // default: true
-pushComponents: false, // default: true
+pushModels: true,
+pushComponents: false,
 ```
 
 During a push:
 
+- Both values default to true if not set.
 - If **`pushModels`** is true, model files (including `security-context.sc.yml`) are pushed.
 - If **`pushComponents`** is true, all other component files (including `client-contexts.cc.yml`, custom types, and editors) are pushed.
 
