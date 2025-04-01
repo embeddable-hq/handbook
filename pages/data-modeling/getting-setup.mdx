@@ -1,6 +1,6 @@
 # Getting Set Up for Data Modeling
 
-You can define your data models in individual files using **YAML** or **JavaScript**. Generally, YAML is recommended for its simplicity and readability. (See [Cube’s documentation](https://cube.dev/docs) if you prefer JavaScript-based models.)
+You can define your data models in individual files using **YAML** or **JavaScript**. Generally, YAML is recommended for its simplicity and readability. (See [Cube’s documentation](https://cube.dev/docs/product/data-modeling/overview) if you prefer JavaScript-based models.)
 
 Embeddable supports two options for storing your models:
 1. **In the same repository** as your [charting components](/getting-started/download-starter-repo).
@@ -16,10 +16,10 @@ This is the default and requires no extra set up.
 
 ## 2. Storing Models Separately
 
-For teams that handle data modeling independently or need tighter control over versioning, storing models in a separate repository can be beneficial. By splitting models away from the charting components:
+If the team who will be creating the data models is a separate team to the team maintaining the javascript components, then it can be beneficial to store your models and components in separate code repositories. By separating them:
 
 - You can version and push each set of files independently.
-- Data teams can work on model updates without interfering with UI components, and vice versa.
+- You can work on model updates without interfering with UI components, and vice versa.
 
 You can see an example of a [dedicated models repo here](https://github.com/embeddable-hq/only-models/tree/main).
 
