@@ -8,7 +8,7 @@ To use theming, you must upgrade to Vanilla Components v1. Full information on h
 
 ### The Basics
 
-If you use Vanilla Components, you will be provided with a complete default theme under the hood (the same colors and appearance you can see on our example components page), and can then override as many or as few values as you want, within what the theme supports. This is a much larger variety of values than was previously available to change, and we’ll list them all in an appendix to this document, but if all you want to do is change a few chart colors and the font, your theme object could look like this:
+If you use Vanilla Components, you will be provided with a complete default theme under the hood (the same colors and appearance you can see on [our example components page](https://embeddable.com/components)), and can then override as many or as few values as you want, within what the theme supports. This is a much larger variety of values than was previously available to change, and we’ll list them all in an appendix to this document, but if all you want to do is change a few chart colors and the font, your theme object could look like this:
 
 ```tsx
 {
@@ -25,7 +25,7 @@ That would apply the Inter font across the entire site and change all of the cha
 
 ### Single Theme
 
-If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the Boilerplate Repo. Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
+If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate). Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
 
 ```tsx
 import { Theme, defineTheme } from 'vanilla-components';
@@ -57,9 +57,9 @@ export default themeProvider;
 
 ```
 
-Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in `Theme` which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
+Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in [`Theme`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts) which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
 
-Once you’ve changed `embeddable.theme.ts`, save it, and you should be set. Your theme changes will show up across all of the Vanilla Components.
+Once you’ve changed `embeddable.theme.ts`, save it, and you should be set. Your theme changes will show up across all of the Vanilla Components. [Try it out](/development/defining-components#push-to-embeddable) using `npm run embeddable:dev`!
 
 ### Multiple Themes With Client Context
 
@@ -181,7 +181,7 @@ This approach would support as many themes as you’d like, and the theme object
 
 ### A Note About Custom Fonts
 
-Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via Google Fonts. If they support it, we can load it. If you’re trying to use another font provider, please contact our Customer Success team for further information.
+Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via [Google Fonts](https://fonts.google.com/). If they support it, we can load it. If you’re trying to use another font provider, please contact our Customer Success team for further information.
 
 ### Using Themes In Your Own Components
 
