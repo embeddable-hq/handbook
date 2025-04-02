@@ -30,7 +30,7 @@ That would apply the Inter font across the entire site and change all of the cha
 If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate). Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
 
 ```tsx
-import { Theme, defineTheme } from 'vanilla-components';
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme =>
 	defineTheme(parentTheme, {
@@ -123,7 +123,7 @@ export default darkTheme;
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from 'vanilla-components';
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
 import lightTheme from './src/themes/light.theme';
 import darkTheme from './src/themes/dark.theme';
 
@@ -169,7 +169,7 @@ If you’re going to support more than a handful of themes, for example, if you 
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from 'vanilla-components';
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const { theme } = clientContext;
