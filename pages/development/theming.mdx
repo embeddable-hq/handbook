@@ -230,7 +230,7 @@ export default (props: Props) => {
   }
   
   const options = getChartOptions(updatedProps);
-  const data = formatChartData(updatedProps); // uses updatedProps.theme to set color per slice
+  const data = formatChartData(updatedProps, chartColors);
   
   return (
     <Pie
