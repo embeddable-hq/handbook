@@ -5,9 +5,9 @@ You can test your models in Embeddable’s **Data Playground**, available both i
 ```bash
 npm run embeddable:dev
 ```
-
+- The local workspace uses the same data connections as your online workspace.
 - Simply click the Data Playground tab in the left sidebar. 
-- You’ll then be able to test each element of your models, view the generated SQL, and inspect the results. 
+- You’ll then be able to test each element of your models, view the generated SQL, and inspect the results.  
 
 <VideoComponent
     src="/video/data-playground.mp4"
@@ -15,8 +15,11 @@ npm run embeddable:dev
     height="854"
 />
 
+- You can also build dashboards locally to test your models. 
+- If your models are in a [separate repo](/data-modeling/getting-setup#2-storing-models-separately) to your components then, when running `embeddable:dev`, you'll have access to the components available in your online workspace. 
+
 <CardGrid>
-  <LinkCard title="Your first data models" href="/data-modeling/defining-models" icon=""/> 
+  <LinkCard title="Defining your first data models" href="/data-modeling/defining-models" icon=""/> 
 </CardGrid>
 
 ## Testing using Cube's Data Playground
