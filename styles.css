@@ -1,9 +1,19 @@
-
 body {
-    font-family: 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica',
-      'Arial', sans-serif;
-  }
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica",
+    "Arial", sans-serif;
+}
 
-ol > li.nx-my-2 { /*apply top margin to top-level ordered list items*/
-    margin-top: 1.5rem;
+ol > li.nx-my-2 {
+  /*apply top margin to top-level ordered list items*/
+  margin-top: 1.5rem;
+}
+
+.green {
+  color: limegreen;
+}
+.red {
+  color: red;
+}
+.highlight {
+  background-color: lightgoldenrodyellow;
 }

@@ -1,11 +1,17 @@
 {
     "introduction": "Intro to development",
     "local-environment": "Developing locally",
-    "theming": "Theming",
     "defining-components": "Defining components",
     "loading-data": "Loading data",
     "interactivity": "Adding interactivity", 
+    "theme-welcome":{
+        "display": "hidden"
+    },
+    "theme-upgrading": {
+        "display": "hidden"
+    },
     "client-context": "Passing Client Context",
+    "theming": "Theming",
     "custom-types": "Defining custom types",
     "pushing-code": "Pushing code"
 }
