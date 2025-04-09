@@ -1,0 +1,32 @@
+# Set up our full Starter Kit
+
+Now that you've finished the homework and have a good idea of how Embeddable components work, you're all set to build whatever components you want. That said, you can also make use of our existing library of charts and controls instead of having to reinvent the wheel. This starter library comes as a single NPM package (it's already in the boilerplate you downloaded earlier) and has full support for everything Embeddable does, including [using themes](/development/theming).
+
+Here's what you need to do to get set up:
+
+<Steps>
+### Delete the Example components
+
+You probably don't need a "Hello World" component or a "TextInput" component, and our starter kit includes a more robust Pie chart. So go ahead and delete the entire `example` directory in the `src/embeddable.com/components` directory.
+
+### Uncomment the starter kit
+
+Open `embeddable.config.ts` and uncomment the `componentLibraries` line (typically [line 14](https://github.com/embeddable-hq/embeddable-boilerplate/blob/eaa160b10f0199febcb70f0c251a94e303782b55/embeddable.config.ts#L14) if you haven't changed anything else). Save that file.
+
+### Re-build or re-run the dev server
+
+If you were running [the dev server](/development/local-environment), stop it and re-run it. If you were building the code, run `embeddable:build` and `embeddable:push` again (see [Building and Pushing](https://docs.embeddable.com/development/pushing-code#push-command) if you need a refresher).
+</Steps>
+
+That's it! You now have access to a full suite of components, including charts, tables, and controls. You can see these by clicking "Add Component" in your Embeddable Dashboard. You're now fully prepared to move forward with Embeddable.
+
+<Callout emoji="⚡️">
+  When defining your [data models](/data-modeling/introduction), you can store these in the same repo, or [create a separate one](/data-modeling/getting-setup#2-storing-models-separately). 
+</Callout>
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard title="Connect your own database" href="/data/connect-your-database" icon=""/> 
+  <LinkCard title="Build your first data models" href="/data-modeling/introduction" icon=""/> 
+</CardGrid>

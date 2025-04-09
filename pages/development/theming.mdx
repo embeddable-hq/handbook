@@ -8,6 +8,10 @@ Embeddable theming is a straightforward approach to styling your dashboard that 
     height="450"
 />
 
+<Callout emoji="⚠️">
+  Were you working with the previous version of Vanilla components that required you to clone that entire repo? [Go here for full instructions on switching!](/development/theme-welcome.mdx)
+</Callout>
+
 ### The Basics
 
 If you use Vanilla Components, you will be provided with a complete default theme under the hood (the same colors and appearance you can see on [our example components page](https://embeddable.com/components)), and can then override as many or as few values as you want, within what the theme supports. It doesn't have to be complicated, though! If all you want to do is change a few chart colors and the font, your theme object could look like this:
@@ -65,7 +69,7 @@ Once you’ve changed `embeddable.theme.ts`, save it, and you should be set. You
 
 ### Multiple Themes With Client Context
 
-If you’re looking to support multiple themes, there are two separate approaches you can take: create multiple theme files, import them, and switch between them based on client context, or pass the theme values directly in client context.
+If you’re looking to support multiple themes, there are two separate approaches you can take: create multiple theme files, import them, and switch between them based on [client context](/development/client-context), or pass the theme values directly in client context.
 
 **Using Theme File Imports**
 
@@ -150,7 +154,7 @@ We encourage you to adjust the `ClientContext` interface to include any other va
 
 **Sending Theme Objects Via Client Context**
 
-If you’re going to support more than a handful of themes, for example, if you want to have a theme for each of your own clients, it will likely be a lot of work to create and support a large number of theme files. You may also already have theme data for clients stored in a database, or other location, and want to repurpose that data rather than manually crafting themes. In either case, the great thing about Client Context is it’s just arbitrary JSON, and our theme files are just a JavaScript object, so it’s very straightforward to combine the two. Here’s what it might look like:
+If you’re going to support more than a handful of themes, for example, if you want to have a theme for each of your own clients, it will likely be a lot of work to create and support a large number of theme files. You may also already have theme data for clients stored in a database, or other location, and want to repurpose that data rather than manually crafting themes. In either case, the great thing about [Client Context](/development/client-context) is it’s just arbitrary JSON, and our theme files are just a JavaScript object, so it’s very straightforward to combine the two. Here’s what it might look like:
 
 ```tsx
 // your front-end code
