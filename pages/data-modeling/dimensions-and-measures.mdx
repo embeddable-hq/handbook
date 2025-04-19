@@ -52,7 +52,7 @@ Each dimension has:
 - `name`: A unique identifier (no spaces or special characters).
 - `title` (optional): A user-friendly name for display in the UI.
 - `sql`: The column or SQL expression from your base table/query.
-- `type`: The data type (`string`, `number`, `time`, etc.).
+- `type`: The data type (`string`, `number`, `time`, [etc.](https://cube.dev/docs/reference/data-model/types-and-formats#dimension-types)).
 - `primary_key` (optional): Set this to `true` if this dimension makes up part of (or the whole) primary key for this model.
 
 ### Examples
@@ -144,7 +144,7 @@ Each measure has:
 
 ### Supported Measure Types
 
-Embeddable (via Cube) supports the following measure types:
+Embeddable (via Cube) supports **all** of the [Cube measure types](https://cube.dev/docs/reference/data-model/types-and-formats#measure-types), including:
 
 - [count](https://cube.dev/docs/reference/data-model/types-and-formats#count)
 - [count_distinct](https://cube.dev/docs/reference/data-model/types-and-formats#count_distinct)
