@@ -1,0 +1,45 @@
+# Caching API
+
+Use Embeddable’s Caching API to tell Embeddable which security contexts and pre-aggregations to refresh and how often:
+   
+   ```javascript
+   fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Accept': 'application/json',
+       'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+     },
+     body: JSON.stringify({
+       refreshInterval: "30 minutes",
+        embeddableIds: ['5f311740-d144-412e-aab8-3d9e632aba2f', '20e19de8-0C12-4c80-9ae9-db062c418f76'],
+       scheduledRefreshContexts: [
+         {
+           securityContext: {
+             userId: '9sZSJ9LHsiYXR0cmli'
+           },
+           environment: 'default'
+         },
+         {
+           securityContext: {
+             userId: 'HsiYXR0cmli9sZSJ9L'
+           },
+           environment: 'prod'
+         }
+       ]
+     })
+   });
+
+   Response:
+   Status 204 (No Content)
+   ```
+   - `region`: your deployment region ([learn more](/deployment/deployment-regions)). 
+   - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
+   - `refreshInterval`: (required) the refresh interval, in `minutes`, `hours`, or `days` (must be `30 minutes` or larger, currently).
+   - `embeddableIds`: (required) the ids of Embeddables that you whose pre-aggregations you want refreshed 
+   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
+   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
+
+If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.  Cube will therefore build the requested pre-aggregation on-demand, which may take some time.
+
+Each time you call this it will **override** the previous settings. For example, if you want to stop a security context from refreshing, just call the API again with all security contexts except the one you want to stop.
