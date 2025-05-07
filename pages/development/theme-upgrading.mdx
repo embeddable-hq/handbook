@@ -28,7 +28,7 @@ Test your setup using `npm run embeddable:dev` to make sure your models and comp
 
 ### Change Theme
 
-Adjust `embeddable.theme.ts` to reflect the colors/fonts/etc that you want. This **replaces** `constants.ts` which, you may notice, no longer exists. [See **Using Themes** for full details](themes).
+Adjust `embeddable.theme.ts` to reflect the colors/fonts/etc that you want. This **replaces** `constants.ts` which, you may notice, no longer exists. [See **Using Themes** for full details](theming).
 </Steps>
 
 Build and push, and you’re now using the packaged version of Vanilla Components, which means you’re also using themes!
@@ -37,7 +37,7 @@ Build and push, and you’re now using the packaged version of Vanilla Component
 
 (other than `constants.ts`)
 
-You’re pretty much in the clear, however if you have custom components you wrote yourself, you’ll want to bring them over to your new repository. This works the same as it did before: you can just add them to `/src/components`. Added major bonus: you can now use Embeddable theme values in your component code! [See **Using Themes** for full details](themes).
+You’re pretty much in the clear, however if you have custom components you wrote yourself, you’ll want to bring them over to your new repository. This works the same as it did before: you can just add them to `/src/components`. Added major bonus: you can now use Embeddable theme values in your component code! [See **Using Themes** for full details](theming).
 
 ### If you have modified any Vanilla Components code
 
@@ -57,7 +57,7 @@ export default defineConfig({
   }],
 ```
 
-With these components excluded, you can copy your components over to the new folder and they’ll work in Embeddable as expected. Note: these components will *not* be using themes … yet. You can adjust them to do so. [See **Using Themes** for full details](themes).
+With these components excluded, you can copy your components over to the new folder and they’ll work in Embeddable as expected. Note: these components will *not* be using themes … yet. You can adjust them to do so. [See **Using Themes** for full details](theming).
 
 **2. Rename Your Components**
 
@@ -70,6 +70,6 @@ Copy all of that over from your original repo to the boilerplate repo, and now y
 There are two **extremely important** things to understand about this approach.
 
 1. Any dashboards you built before this change will have no knowledge of your new components - if your component was named “BarChart,” your new one is “CloseBraceBarChart,” and your dashboard was built with “BarChart” … then it’s still going to use “BarChart” (from the Vanilla Components package). This likely means **you will need to rebuild some or all of your dashboards** in order to use your newly renamed custom components.
-2. Your custom components will *not* be using themes … yet. You can adjust them to do so. [See **Using Themes** for full details](themes).
+2. Your custom components will *not* be using themes … yet. You can adjust them to do so. [See **Using Themes** for full details](theming).
 
 Because of the first issue, we strongly recommend using the override approach above unless there is a significant reason you need access to all of the default charts from Vanilla Components AND all of your customized components.
