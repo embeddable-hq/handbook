@@ -7,6 +7,7 @@ import { Steps } from 'nextra/components'
 import { Callout } from 'nextra-theme-docs'
 import CardGrid from './components/CardGrid'
 import ExternalVideo from './components/ExternalVideo'
+import { InkeepChat } from './components/InkeepChatButton'
 
 const config: DocsThemeConfig = {
   logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
@@ -40,6 +41,7 @@ const config: DocsThemeConfig = {
   ),
   footer: {
     text: 'Embeddable Docs, 2025',
+    component: () => <InkeepChat />
   },
 }
 
