@@ -19,15 +19,16 @@
   },
   "homepage": "https://github.com/embeddable-hq/handbook#readme",
   "dependencies": {
-    "next": "^13.0.6",
+    "@inkeep/cxkit-react": "^0.5.76",
+    "next": "^13.5.11",
     "next-sitemap": "^4.2.3",
-    "nextra": "^2.2.14",
+    "nextra": "^2.13.4",
     "nextra-theme-docs": "^2.13.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/node": "18.11.10",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.5"
   }
 }

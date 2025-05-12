@@ -3,3 +3,4 @@ node_modules
 sitemap.xml
 sitemap-*.xml
 robots.txt
+.env
