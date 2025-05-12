@@ -35,7 +35,7 @@ const cfg: InkeepChatButtonProps = {
   },
   aiChatSettings: { aiAssistantName: 'Embeddabot' },
   label: 'Ask AI',
-  avatar: '/img/embeddable_icon.png'
+  avatar: '/img/embeddable_icon_svg.svg'
 };
 
 export const InkeepChat = () => <InkeepChatButton {...cfg} />;
