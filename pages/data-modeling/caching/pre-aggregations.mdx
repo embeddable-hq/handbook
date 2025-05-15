@@ -4,7 +4,7 @@ In addition to the Level 1 [in-memory cache](/data-modeling/caching/in-memory),
 
 ## What are pre-aggregations?
 
-Pre-aggregations allow you to compute and store aggregations (like sums, averages, and counts) in advance rather than calculating them on the fly for each query. When a query matches the structure of a pre-aggregation, results are retrieved directly from the pre-aggregated table instead of scanning raw data, significantly speeding up response times (and reducing cost and load on your databases).
+Pre-aggregations allow you to compute and store aggregations (like sums, averages, and counts, but also a set of dimensions) in advance rather than calculating them on the fly for each query. When a query can be fully answered from a pre-aggregation, results are retrieved directly from the pre-aggregated table instead of scanning raw data, significantly speeding up response times (and reducing cost and load on your databases).  This also means that multiple components + charts on your dashboard can retrieve data from just one or a few pre-aggregations (meaning fewer queries).
 
 > **Pre-aggregations**: You can think of a pre-aggregation as a simple **temporary table** (or **materialized view**) but managed and stored automatically by Embeddable, rather than in your database.  You control how often each pre-aggregation is refreshed using the [Caching API](/data-modeling/caching/caching-api)
 > 
