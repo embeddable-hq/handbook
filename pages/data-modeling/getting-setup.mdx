@@ -1,12 +1,34 @@
 # Getting Set Up for Data Modeling
 
+Embeddable supports defining your models either:
+
+1. **in-platform**, in Embeddable's low-code **Data Model Editor**, or
+2. **in code**, directly in your code repository.
+
+## Defining models in the Data Model Editor
+
+To start using the data model editor simply make sure that you've [set up your workspace](/getting-started/set-up-your-workspace) and then head to the **Data Model Editor** tab:
+
+<ImageGrid width='90%' images={["/img/data-model-editor.png"]}/>
+
+Your first data model:
+
+1. Click the **+ button** in the top left section to create your first data model, 
+1. Give your model a **name** 
+1. Enter the name of a **SQL table** in your database or provide a starting SQL **SELECT statement**.
+1. Learn more [here](/data-modeling/defining-models).
+1. Learn how to connect your database [here](/data/connect-your-database).
+
+
+## Defining models in code
+
 You can define your data models in individual files using **YAML** or **JavaScript**. Generally, YAML is recommended for its simplicity and readability. (See [Cube’s documentation](https://cube.dev/docs/product/data-modeling/overview) if you prefer JavaScript-based models.)
 
-Embeddable supports two options for storing your models:
+Embeddable supports two options for storing your models in code:
 1. **In the same repository** as your charting components (like [this](https://github.com/embeddable-hq/embeddable-boilerplate/tree/main/src/embeddable.com/models)).
 2. **In a separate repository** on its own (like [this](https://github.com/embeddable-hq/only-models)).
 
-## 1. Storing Models with Your Components
+### 1. Storing Models with Your Components
 
 If you prefer an all-in-one approach, you can keep both your models and charting components in a single repository. This is ideal if a single team manages everything or you want an easy, consolidated project structure.
 
@@ -14,7 +36,7 @@ For a reference setup, take a look at our [starter repo](/getting-started/downlo
 
 This is the default and requires no extra set up.
 
-## 2. Storing Models Separately
+### 2. Storing Models Separately
 
 If the team who will be creating the data models is a separate team to the team maintaining the javascript components, then it can be beneficial to store your models and components in separate code repositories. By separating them:
 
