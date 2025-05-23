@@ -25,9 +25,14 @@ As an example, users may want to see their data by month or week.  Going through
 
 ## How do you define a pre-aggregation?
 
+<Callout emoji="💡">
+Pre-aggregations can currently only be defined in code, not in the in-platform **Data Model Editor**.  To add pre-aggregations, please export it from the Data Model Editor and add it to your code repository instead (learn how [here](/data-modeling/getting-setup#defining-models-in-code)).
+</Callout>
+
 To set up a pre-aggregation you need to do two simple steps:
 
 1. define any pre-aggegregations directly in your model files (see example below)
+
 2. define a refresh schedule using the [Caching API](/data-modeling/caching/caching-api).  
 
 Each pre-aggregation is a list of dimensions and measures that you want to pre-aggregate.  E.g. see the `pre_aggregation` defined at the bottom of this model file:

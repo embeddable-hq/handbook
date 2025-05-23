@@ -1,12 +1,18 @@
 # Defining Data Models
 
-You can define your models using YAML or JavaScript. In most cases, YAML is recommended for its simplicity and readability, and that's what we focus on in this guide. 
+In Embeddable you define your data models using a data modeling language called [Cube](https://cube.dev/docs/product/data-modeling/overview). You can define your models using YAML or JavaScript syntax. In most cases, YAML is recommended for its simplicity and readability, and that's what we focus on in this guide. 
 
-### File Format
-- Embeddable recognizes any file ending in `.cube.yml` or `.cube.js`.
-- Each model file begins with the `cubes:` keyword.
+The easiest way to get started is to create your models directly in Embeddable's Data Model Editor:
 
-Here's a simple example:
+<ImageGrid width='90%' images={["/img/data-model-editor.png"]}/>
+
+or you can create the models as files directly in your code repository ([learn how](/data-modeling/getting-setup#defining-models-in-code)).  
+
+<Callout emoji="💡">
+If you start in the **Data Model Editor**, you can always export them as YAML to your code repository later.
+</Callout>
+
+Whether you're defining your models in the **Data Model Editor** or directly **in code**, in the end you're creating a model file that looks something like this:
 
 ```yaml
 # src/models/customers.cube.yml
@@ -56,11 +62,13 @@ cubes:
 
 ```
 
-You can see more data model examples inside [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/models/cubes). 
+Important:
+- Embeddable **only** recognizes files ending in `.cube.yml` or `.cube.js`.
+- Each model file begins with the `cubes:` keyword.
+- YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
+- If you use the Data Model Editor, you need not worry about any of this, as the Editor handles that all for you 😎
 
-<Callout emoji="⚡️">
-  YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
-</Callout>
+You can see more data model examples inside [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/models/cubes). 
 
 
 ## Core Parameters
@@ -100,6 +108,6 @@ You can also define other parameters, including [joins](./joins) between models 
 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 
-- `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/pre-aggregations). 
+- `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/pre-aggregations). Note that pre-aggregations are **not** currently supported in the **Data Model Editor**.  To use them, please export your data models and add them to your code repository (learn more [here](/data-modeling/getting-setup#defining-models-in-code)).
 
 These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.
