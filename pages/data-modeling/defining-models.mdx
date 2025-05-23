@@ -12,7 +12,7 @@ or you can create the models as files directly in your code repository ([learn h
 If you start in the **Data Model Editor**, you can always export them as YAML to your code repository later.
 </Callout>
 
-Whether you're defining your models in the **Data Model Editor** or directly **in code**, in the end you're creating a model file that looks something like this:
+Whether you're defining your models in the **Data Model Editor** or directly **in code**, in the end you're effectively creating a model file that looks something like this:
 
 ```yaml
 # src/models/customers.cube.yml
@@ -68,7 +68,7 @@ Important:
 - YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
 - If you use the Data Model Editor, you need not worry about any of this, as the Editor handles that all for you 😎
 
-You can see more data model examples inside [your repo](https://github.com/embeddable-hq/vanilla-components/tree/main/src/models/cubes). 
+You can see more data model examples inside [your repo](https://github.com/embeddable-hq/embeddable-boilerplate/tree/main/src/embeddable.com/models). 
 
 
 ## Core Parameters
@@ -109,5 +109,7 @@ You can also define other parameters, including [joins](./joins) between models 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 
 - `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/pre-aggregations). Note that pre-aggregations are **not** currently supported in the **Data Model Editor**.  To use them, please export your data models and add them to your code repository (learn more [here](/data-modeling/getting-setup#defining-models-in-code)).
+
+ - `views`: Views are very useful if you want to create different subsets of your cube models for different use-cases, or if you want fine-grained control of which join path should be used when.  Learn more [here](https://cube.dev/docs/product/data-modeling/concepts#views).
 
 These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.
