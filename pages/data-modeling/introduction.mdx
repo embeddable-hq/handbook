@@ -3,9 +3,9 @@
 Embeddable uses a **data modeling layer** to define and manage access to your data.
 
 **TL;DR**
- - A **data modeling layer** takes data **requests** from charts and components on your dashboard and turns them into **SQL** that is run against your database(s).
- - It decides what SQL to generate based on the **database type**, **data models** and **security context** you provide it.
- - Defining **data models** is simple once you get your head around a few fundamental concepts.
+ - A **data modeling layer** takes **data requests** from charts and components on your dashboard and turns them into **SQL** that is run against your database(s).
+ - It decides [what SQL to generate](/data-modeling/introduction#how-does-it-generate-sql) based on the **database type**, **data models** and **security context** you provide it.
+ - Defining **data models** is simple once you get your head around [a few fundamental concepts](/data-modeling/introduction#data-models).
 
 ## What is a data modeling layer?
 
@@ -157,27 +157,6 @@ cubes:
   - name: orders
     sql_table: public.orders
 
-    dimensions:
-      - name: id
-        sql: id
-        type: number
-        primary_key: true
-        public: false
-
-      - name: product_name
-        title: 'Product'
-        sql: product
-        type: string
-
-      - name: location
-        sql: CONCAT(city, ', ', country)
-        type: string
-        
-      - name: created_at
-        title: "Purchase time"
-        sql: created_at
-        type: time
-
     measures:
       - name: count
         type: count
@@ -187,27 +166,104 @@ cubes:
         title: "Total USD"
         type: sum
         sql: price_in_cents / 100.0
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+        public: false
+
+      - name: created_at
+        title: "Purchase time"
+        sql: created_at
+        type: time
+
+      - name: product_name
+        title: 'Product'
+        sql: product
+        type: string
+
+      - name: location
+        sql: CONCAT(city, ', ', country)
+        type: string
 ```
 
-It may seem complicated at first, but there’s just a few simple concepts to understand and then you know everything you need to know.
+Data modeling may seem slightly daunting at first, but there’s just a few simple concepts to understand and then you know everything you need to know.
 
 **Things to notice:**
 
 - The `name` of the cube is just a unique name we want to give to our **model** (doesn’t need to match the name of the table).
+  ```yml
+  cubes:
+    - name: orders
+  ```
 - The `sql_table` tells our data modeling layer (Cube) which table to use in the `FROM` clause when generating the SQL, e.g. `SELECT ... FROM public.orders ...`.
-- The `dimensions` are just the **virtual columns** that we want to expose to the Embeddable dashboard builder
-    - e.g. the **product_name** `dimension` has its `sql` parameter defined as `product` which simply means that if the **product_name** is requested by a chart, then that `sql` will be used in the generated SQL, e.g. `SELECT product FROM public.orders` .
-    - whereas the **location** `dimension` has its `sql` defined as `CONCAT(city, ‘, ‘, country)` .  This means exactly the same.  If **location** is requested, then that `sql` will be used in the generated SQL, e.g. `SELECT CONCAT(city, ', ', country) from public.orders` .
-    - You can also expect to see these dimensions appear in the `GROUP BY` and `WHERE` clauses of the generated SQL, e.g. `GROUP BY CONCAT(city, ', ', country)` or `WHERE product = 'Ice cream'`
+  ```yml
+      sql_table: public.orders
+  ```
 - The `measures` are the metrics we want to be able to calculate (`count`, `sum`, `count_distinct`, `max`, `min` etc.).   You can expect to see these in the `SELECT` and `HAVING` clauses of the generated SQL. E.g. `SELECT sum(price_in_cents / 100.0)`
+  ```yml
+      measures:
+      - name: count
+        type: count
+        title: '# of orders'
+
+      - name: total_price
+        title: "Total USD"
+        type: sum
+        sql: price_in_cents / 100.0
+  ```
+- The `dimensions` are the **virtual columns** that we want to expose to the Embeddable dashboard builder
+  ```yml
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+        public: false
+      
+      - name: created_at
+        title: "Purchase time"
+        sql: created_at
+        type: time
+  ```
+- E.g. the **product_name** dimension has its `sql` parameter defined as `product` which simply means that if the **product_name** is requested by a chart, then that `sql` will be used in the generated SQL, e.g. `SELECT product FROM public.orders` .
+  ```yml
+      - name: product_name
+        title: 'Product'
+        sql: product
+        type: string
+  ```
+- Whereas the **location** dimension has its `sql` defined as `CONCAT(city, ‘, ‘, country)` .  This means exactly the same.  If **location** is requested, then that `sql` will be used in the generated SQL, e.g. `SELECT CONCAT(city, ', ', country) from public.orders`.
+  ```yml
+      - name: location
+        sql: CONCAT(city, ', ', country)
+        type: string
+  ```
+- You can also expect to see these dimensions appear in the `GROUP BY` and `WHERE` clauses of the generated SQL, e.g. `GROUP BY CONCAT(city, ', ', country)` or `WHERE product = 'Ice cream'`
+
+The easiest way to get started with data modeling is to use Embeddable's in-platform [Data Model Editor](/data-modeling/getting-setup) which guides you through creating your models in a step-by-step UI:
+
+<ImageGrid width='90%' images={["/img/data-model-editor.png"]}/>
+
+And then test your models using Embeddable's [Data Playground](/data-modeling/testing-models):
+
+<VideoComponent
+    src="/video/data-playground.mp4"
+    width="1250"
+    height="854"
+/>
+
+### How it all fits together
 
 Let’s go back to our Pie Chart configuration screen from earlier.  The reason `Product`, `Location` and `Purchase time` are even available inside Embeddable to choose from is because you’ve defined them in the data model:
 
 <ImageGrid width='75%' images={["/img/pie_config_open.png"]}/>
 
-Once you’ve defined your first data model, you just need to [push it to your Embeddable workspace](/data-modeling/pushing-models).  As soon as you’ve done that you will now automatically be able to [build dashboards and charts](/dashboards/building-dashboards) using any combination of your defined **dimensions** ( `Product`, `Location`, `Purchase time` ) and **measures** (`# of orders` and `Total USD`).
+Once you’ve defined your first data model, you just need to push it to your Embeddable workspace ([learn how](/data-modeling/pushing-models)).  As soon as you’ve done that you will now automatically be able to build dashboards and charts using any combination of your defined **dimensions** ( `Product`, `Location`, `Purchase time` ) and **measures** (`# of orders` and `Total USD`).
 
-Notice that the **request** that is sent to our servers, that we looked at earlier, is just a combination of the `name` of the cube (`orders`) and the `name`s of the `dimensions` and `measures` from your model (`location`, `count` and `created_at`):
+Notice that the **request** that is sent to our servers, that we looked at earlier, is just a combination of the name of the cube (`orders`) and the names of the `dimensions` and `measures` from your model (`location`, `count` and `created_at`):
 
 ```json
 {
@@ -254,19 +310,18 @@ And that’s it.  You now understand how to create basic model files and how tho
 
 ## **Summary (and additional notes)**
 
-- You define **models** in `*.cube.yml` files.
-    - **Note**: the `.cube.yml` extension is important.  Embeddable will only pay attention to data models ending in `.cube.yml` or `.cube.js`.
+- You define **models** in `*.cube.yml` files (or via the in-platform [Data Model Editor](/data-modeling/getting-setup)).
 - Cube’s SQL generation **doesn't** contain complicated witchcraft 🧙. It will always try to generate the simplest SQL it can, given your **models**, the **database type** (snowflake, postgres, etc.), the **security context** and the particular data **request**.
     - Cube is also very good at [joins](/data-modeling/joins) (including multiple connected tables) and it will only perform them **if and when needed** to answer a data request.
 - Any **filters** in a data request will automatically be applied as `WHERE` and / or `HAVING` clauses (Embeddable does not do any additional client-side filtering or post processing)
 - The row `LIMIT` on every data request is set to 100 by default to protect your database but you can increase it to 10,000 (and can use paging if necessary).
-- You can test out your models in Embeddable’s [**data playground**](/data-modeling/testing-models).
+- You can test out your models in Embeddable’s [Data Playground](/data-modeling/testing-models).
 
 ## Next steps:
 
 - define some models ([learn more](/data-modeling/defining-models)) 🚀.
 - test out your models in our [data playground](/data-modeling/testing-models).
-- once you’re happy with them, [push the models](/development/pushing-code) to your workspace
+- if you're using code models, [push the models](/development/pushing-code) to your workspace
 - you can then use them to [build your dashboards](/dashboards/building-dashboards).
 - you can also learn more about:
     - joins ([here](/data-modeling/joins))
