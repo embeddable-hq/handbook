@@ -4,3 +4,4 @@ sitemap.xml
 sitemap-*.xml
 robots.txt
 .env
+.DS_Store
