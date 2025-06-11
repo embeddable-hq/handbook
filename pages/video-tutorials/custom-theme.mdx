@@ -1,0 +1,264 @@
+# Building a Custom Theme with Vanilla Components
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefor at times makes reference to things you can see on screen. Where necessary, screenshots have been included.
+</Callout>
+
+<div style={{ margin: '30px 0', width: '100%', paddingTop: '56.25%', position: 'relative' }}>
+  <iframe style={{width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} src="https://www.youtube.com/embed/cxSbkzeobMc?si=k0ZZUIKcIlX7TzdK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+Hi everyone! Today we’re going to take a look at theming in Vanilla Components. Specifically, we’ll check out an example of what you can do with themes, and then we’ll implement a new theme ourselves. It’s pretty quick and easy, and should take about ten minutes.
+
+First off, let’s just take a look at how varied things can get with themes. As you can see here, I’ve built out a standard Embeddable dashboard using our default color scheme.
+
+![image.png](/img/tutorials/custom-theme/image.png)
+
+This is a great place to start, because it’s always nice to be able to actually see your changes as you make them when working with theming. Let’s switch to another theme - we’ll choose Kawaii Inc from the dropdown, and … yep, that’s a pretty different theme!
+
+![image.png](/img/tutorials/custom-theme/image%201.png)
+
+There’s a lot you can change in Embeddable, and we’re still adding to and improving the theme system, so if you find anything you can’t change and would like to, don’t hesitate to reach out and let us know.
+
+Now let’s talk about adding your own theme using client context. I’ll show you how I do that locally, and then how it all works together with your application. This tutorial assumes you’ve already snagged our boilerplate repo and gotten that set up - if you haven’t, please run through the getting started section of our docs!
+
+Ok, the first thing we need to do is add another value to our dropdown menu in the embeddable dashboard. To do that, make sure your dev server is running (you’ll notice that my dev dashboard is different from the one running in production). Now switch to your code editor and open up `/src/presets/client-contexts.cc.yml` … yours will look slightly different than mine, since I already set up Kawaii Inc. We’re going to create a new theme for a company called “Nebula Industries”. So let’s add the following code to this file:
+
+```yaml
+- name: Nebula Industries
+  clientContext:
+    theme: 'nebula'
+```
+
+Save the file. The next thing we need to do is establish a Nebula theme. The nice thing about Client Context is you can do this in different ways. Since Client Context is an arbitrary JSON string, you could just pass the entire theme object—which we’ll talk about more in a second—to your Embeddable and then parse it that way. I prefer to take a file-based approach, so that’s what we’re going to do here. Let’s create a folder in `/src` called `themes` (I’ve already got that folder), and in it create a file called `nebula.theme.ts`. For starters, just to establish that there’s something there we can import, we’ll add this code which creates a partial theme object:
+
+```tsx
+import { ThemePartial } from '@embeddable.com/vanilla-components';
+
+const nebula: ThemePartial = {
+  charts: {
+    colors: [
+      '#2e2d45',
+      '#3a606e',
+      '#ff7f50',
+      '#f9e68c',
+      '#7FFFD4',
+      '#7b5696',
+      '#ab2f4c',
+      '#325497',
+    ],
+  },
+};
+
+export default nebula;
+```
+
+As you can see, all this theme does right now is change the chart colors. That’s ok - we’ll be adding more later, but this is a good start. We’ll be able to see changes right away. So save that file, and let’s open `embeddable.theme.ts` - this is where we can merge themes together however we’d like. You can probably see what I’m doing, but let’s step through it real quick. I’m importing the Kawaii theme, and then checking to see if we’re passing a key/value pair via Client Context. The key is called `theme` and the value is a string. This matches up exactly with the `client-contexts.cc.yml` file we edited a minute ago, and will also match up with the Client Context value we send when we switch over to our example app in a bit.
+
+Let’s go ahead and add our Nebula theme to this file. Below the Kawaii import, add the following:
+
+```tsx
+import nebula from './src/themes/nebula.theme';
+```
+
+Once you’ve done that, below the check for the Kawaii theme, add a similar check for Nebula, like this:
+
+```tsx
+  if (clientContext?.theme === 'nebula') {
+    return defineTheme(parentTheme, nebula) as Theme;
+  }
+```
+
+You’ll probably note that we’re not actually checking for a default theme but are still getting it in the builder. That’s because the `parentTheme` value comes from Vanilla Components and includes the entire default theme. The custom `defineTheme` function provided by the Embeddable SDK merges the two objects, overwriting any values in the default theme with those that exist in the partial theme. This means your partial theme can be as simple as changing a single font family value, or as complicated as replacing the entire default theme. In this case, we’re going to make *some* changes, but we’ll still be inheriting a lot from the default theme.
+
+Go ahead and save this file, and let’s jump back to our Embeddable builder. If we check out our dropdown now (you might need to refresh), you can see that the Nebula theme is now available, and if we switch to it, our chart colors change. Cool!
+
+Now let’s flesh out that theme a bit. Switch back to `/src/themes/nebula.theme.ts` and let’s get building. We want a nice sci-fi look for Nebula, so we’re going to darken the theme, square off some edges, and make a few other adjustments. For the sake of tutorial brevity, I’m going to run through this pretty quickly, but don’t worry, there’s a full text transcription of this video, complete with code snippets, linked in the description.
+
+The first thing I want to change is the container that wraps most of the charts and graphs in our dashboard. Within your theme object, but *not* within the `charts` property, add this code:
+
+```tsx
+  container: {
+    backgroundColor: '#444444',
+    border: '1px solid #3a606e',
+    borderRadius: '0px',
+    padding: '20px',
+  },
+```
+
+Now let’s adjust our Bar Chart a bit - squaring off the bars and upping the font size. Inside the `charts` property, add this code:
+
+```tsx
+    bar: {
+      borderRadius: 0,
+      font: {
+        size: 16,
+      },
+    },
+```
+
+Save the file, watch the builder rebuild, and you’ve got … well, a pretty ugly dashboard right now. No worries, it’s a work in progress. I’m going to do a big chunk of code now, our entire `controls` property for the theme, *except* the date picker. We’ll handle that one in a minute. Below the `container` property, add this code:
+
+```tsx
+  controls: {
+    backgrounds: {
+      colors: {
+        heavy: '#3a606e',
+        soft: '#555555',
+      },
+    },
+    buttons: {
+      active: {
+        border: '#3a606e',
+        fontColor: '#3a606e',
+      },
+      hovered: {
+        border: '#3a606e',
+        fontColor: '#3a606e',
+      },
+      pressed: {
+        border: '#3a606e',
+        fontColor: '#3a606e',
+      },
+      radius: '0px',
+    },
+    borders: {
+      colors: {
+        normal: '#3a606e',
+      },
+      radius: '0px',
+    },
+    inputs: {
+      colors: {
+        hover: '#555555',
+        selected: '#666666',
+      },
+    },
+    tooltips: {
+      radius: '0px',
+    },
+  },
+```
+
+As you can see, we’re mostly just tweaking colors and border radiuses for the various controls provided by Vanilla Components, such as the dropdown control. When building your own themes, especially at first, I suggest you copy the entire default theme from Vanilla Components, tweak your values until you’re happy with them, and then diff your file against that default theme and remove any lines that didn’t change. But you can also build from the ground up like we’re doing here, using the default theme for reference. [It can be found in the “Vanilla Components V1” repo](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts) on Github.
+
+Remember that you can save at any time, as I’ve been doing, and see these changes reflected in your builder.
+
+Let’s add the date picker code. I’m doing it separately mostly to keep these code snippets a bit shorter. Between the `borders` property and the `inputs` property, add this code:
+
+```tsx
+    datepicker: {
+      backgrounds: {
+        colors: {
+          rangeEnd: '#7FFFD4',
+          rangeMiddle: '#3a606e',
+          rangeStart: '#7FFFD4',
+        },
+      },
+      font: {
+        colors: {
+          accent: '#3a606e',
+          rangeEnd: '#3a606e',
+          rangeMiddle: '#dddddd',
+          rangeStart: '#3a606e',
+          rangeStartDate: '#3a606e',
+          today: '#ffffff',
+        },
+      },
+      radiuses: {
+        buttonEnd: '0px 0px 0px 0px',
+        buttonStart: '0px 0px 0px 0px',
+        weekNumber: '0px',
+      },
+    },
+```
+
+More radiuses and colors, and we’re almost done! Our final three theme properties look like this:
+
+```tsx
+  font: {
+    color: '#BBBBDD',
+    colorNormal: '#7FFFD4',
+    family: 'Anta',
+  },
+  png: {
+    backgroundColor: '#333333',
+  },
+  svg: {
+    fillNormal: '#7FFFD4',
+    fillStrong: '#BBBBDD',
+    strokeSoft: '#474752',
+  },
+```
+
+Note that we’re changing the font here. You can use any font that’s available on Google Fonts and the theme will work with it automatically. If you want to use a custom font that Google doesn’t support, it’ll require some custom code on your end. Please get in touch with us if that’s the case, and we can help you get up and running.
+
+Now that we have this theme working in the builder, let’s get it working in our client app. First we need to run the build and push steps, then publish, for which you can find instructions in our docs. Now let’s switch over to our (huge air quotes) “client app” … as you can see, I’ve got a dead simple single-page React application set up with Vite.js, using a specific color scheme.
+
+![image.png](/img/tutorials/custom-theme/image%202.png)
+
+It’s basically just a header and a footer, using the same color scheme as what we’ve got in our Nebula theme. I won’t take you through the code that generates the security token that allows us to add our Embeddable to the app, but that process is fully covered in the docs. You should be generating your token on the back-end and then retrieving it on your front-end, which is what I’m doing with this custom hook:
+
+```tsx
+const { token } = useGetToken();
+```
+
+Let’s write the embed code. I’ve already included the necessary script tag in the top-level `index.html` file so all we need to do is write a custom component to add our Embeddable to a React app, like this:
+
+```tsx
+	type EmbeddableProps = {
+		token: string;
+		clientContext?: string;
+	};
+
+	const Embeddable: React.FC<EmbeddableProps> = (props) => {
+		const { token, clientContext } = props;
+		return React.createElement('em-beddable', {
+			'token': token,
+			'client-context': clientContext,
+		});
+	};
+```
+
+And then add that component in between our header and footer, like this:
+
+```tsx
+			<Header />
+			<div>
+				{token && (
+					<Embeddable
+						token={token}
+					/>
+				)}
+			</div>
+			<Footer />
+```
+
+Once we do that and save the file, we’ll see that our dashboard shows up in our client app.
+
+![image.png](/img/tutorials/custom-theme/image%203.png)
+
+It’s using the default theme, though, and that just won’t do. We need to update the component with some Client Context! All you need to do is change that code to look like this:
+
+```tsx
+			<Header />
+			<div>
+				{token && (
+					<Embeddable
+						token={token}
+						clientContext={JSON.stringify({ theme: 'nebula' })}
+					/>
+				)}
+			</div>
+			<Footer />
+```
+
+Save and … *voila*! We’ve got our Embeddable dashboard running with our custom Nebula theme.
+
+![image.png](/img/tutorials/custom-theme/image%204.png)
+
+So, there you have it. Three steps to get things running: create your theme, add it to `embeddable.theme.ts`, and then reference it in your client context.
+
+I hope this tutorial’s been useful! If you have any questions or comments, don’t hesitate to contact the Embeddable Customer Success team.
+
+See you next time!

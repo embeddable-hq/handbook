@@ -6,6 +6,8 @@
   "development": "Building components",
   "dashboards": "Dashboards",
   "deployment": "Deployment",
+  "###": { "type": "separator", "title": "More" },
+  "video-tutorials": "Video tutorials",
   "contact": {
     "title": "Home",
     "type": "page",
