@@ -187,7 +187,43 @@ This approach would support as many themes as you’d like, and the theme object
 
 ### A Note About Custom Fonts
 
-Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via [Google Fonts](https://fonts.google.com/). If they support it, we can load it. If you’re trying to use another font provider, please contact our Customer Success team for further information.
+We support two methods for importing custom fonts. The first is to use the `urls` array of the `font` property in the theme object, which allows you to specify URLs as strings to any custom font you want to use, and then reference it in the `family` property. Here’s an example of how that might look:
+
+```tsx
+font: {
+  color: '#888888',
+  colorNormal: '#333942',
+  colorSoft: '#e3e3e3',
+  family: '"Charlie Display", Helvetica, Arial, sans-serif',
+  size: '14px',
+  weight: 400,
+  urls: [
+    'https://assets.ctfassets.net/rz1oowkt5gyp/6EnDcOBYnO67MYVJcpQLUc/85d36587de9855f3cd9f4e23f2119cf8/Charlie_Display-Thin.woff2',
+    'https://assets.ctfassets.net/rz1oowkt5gyp/5Bpl6vErvLYCi1EdOqI2IK/b57fbec62ffab536b59e311837de9042/Charlie_Display-Thin.woff',
+  ],
+},
+```
+
+The second method lets you use any font that [Google Fonts](https://fonts.google.com/) supports by simply specifying the font family in the `family` property of the `font` object. For example:
+
+```tsx
+font: {
+  color: '#888888',
+  colorNormal: '#333942',
+  colorSoft: '#e3e3e3',
+  family: 'Inter, Helvetica, Arial, sans-serif',
+  size: '14px',
+  weight: 400,
+  urls: [],
+},
+```
+
+Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via Google Fonts. If they support it, we load it into the Embeddable and apply it to your theme.
+
+<Callout emoji="🚧">
+  Currently, your font choice impacts the entire dashboard. In the future, we will support the ability to set different fonts for different parts of the dashboard, such as titles, descriptions, etc.
+</Callout>
+
 
 ### Using Themes In Your Own Components
 
