@@ -68,6 +68,10 @@ We have set this environment variable in the Vercel platform:
 
 VERCEL_FORCE_NO_BUILD_CACHE to true
 
+## To test for broken links
+
+Use a tool like https://www.deadlinkchecker.com/
+
 ## License
 
 This project is licensed under the MIT License.
