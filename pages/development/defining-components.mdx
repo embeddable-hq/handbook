@@ -94,9 +94,50 @@ Two things to notice:
 
 Some inputs may directly reference the **dimensions** and **measures** you've defined in your data models. This might be fine for a bar graph, for example, where you're showing dates and a count, so the data is already easy for people to read. In other cases, you may find that the dimension name is not particularly user-friendly. As an example, your table component might display multiple columns of dimensions of metrics with names like `signed_up_date` or `total_revenue_by_month`, or even more esoteric/unreadable names like `ekp_mod_rev_mon`. In these cases, you can define additional inputs that will be used to display the data in a more user-friendly way.
 
-The way Embeddable allows you to do this is by defining an additional `inputs` array within any given item the top-level `inputs` array. When you do this, the Embeddable SDK recognizes it and will automatically create expandable inputs in the builder UI. The available sub-input types are:
+The way Embeddable allows you to do this is by defining an additional `inputs` array within any given item the top-level `inputs` array. Here's a quick example:
 
+```tsx
+    {
+      name: 'columns',
+      type: 'dimensionOrMeasure',
+      label: 'Columns',
+      array: true,
+      inputs: [
+        {
+          name: 'label',
+          type: 'string',
+          label: 'Label name',
+          description: 'The label to show on this column',
+          required: false,
+        },
+        {
+          name: 'suffix',
+          type: 'string',
+          supportedTypes: ['number', 'string'],
+          label: 'Suffix',
+        },
+      ],
+      config: {
+        dataset: 'ds',
+      },
+      category: 'Chart data',
+    },
+```
 
+ When you do this, the Embeddable SDK recognizes it and will automatically create expandable inputs in the builder UI. The available sub-input types are:
+
+| **Param**       | **Type**                                | **Required** |
+| --------------- | --------------------------------------- | ------------ |
+| `name`          | string                                  | ✅ Yes       |
+| `type`          | `CustomType` or `NativeType`            | ✅ Yes       |
+| `label`         | string                                  | ✅ Yes       |
+| `description`   | string                                  | ❌ No        |
+| `defaultValue`  | string                                  | ❌ No        |
+| `config`        | [Config](/development/defining-components#3-config)                                  | ❌ No        |
+| `required`      | boolean                                 | ❌ No        |
+| `supportedTypes`| array of strings                        | ❌ No        |
+
+Once defined, these sub-inputs will be displayed in the builder UI, and the values the user puts into them will be passed to your component as props, just like the top-level inputs. To learn more about how to use them, you can check our [Component Examples page](/development/component-examples).
 
 </Steps>
 
@@ -105,3 +146,5 @@ The way Embeddable allows you to do this is by defining an additional `inputs` a
 You may have noticed that `defineComponent` function we're using in the `.emb.ts` file. This is a utility function that allows you not only to return your inputs as props to your component, but to work with them beforehand, allowing you to customize the final values that reach your component. You can [learn more about it here](/development/defining-components/define-component).
 
 The `loadData` function used above is one of the **most powerful** parts of the Embeddable SDK. You can [learn more about it here](/development/loading-data).
+
+You can see detailed examples of how we create components in the [Component Examples](/development/component-examples) section.
