@@ -4,10 +4,6 @@
     Embeddable requires [Node.js version 20](/development/introduction#requirements) or later.
 </Callout>
 
-If you’re reading this, it means you have ***early access*** to [Embeddable](https://embeddable.com).
-
-This **step-by-step guide** walks you through the core concepts of Embeddable in just 20-30 minutes, helping you understand how it works while getting hands-on experience.
-
 <Steps>
 
 ### Download our Boilerplate Repo
@@ -24,9 +20,16 @@ Navigate into the cloned directory and install the required dependencies:
 ```bash
 npm i
 ```
-### Set Your Location
+### Set Your Region
 
-Update your repo according to your region ([details here](/deployment/deployment-regions#update-your-configuration)).
+In your `embeddable.config.ts` file, depending on [your region](/deployment/deployment-regions), uncomment either:
+```js
+region: 'US',
+```
+or
+```js
+region: 'EU',
+```
 
 If you’re unsure which `region` you’re using, please reach out to us. 
 
