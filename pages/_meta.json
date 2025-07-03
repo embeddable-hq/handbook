@@ -8,6 +8,7 @@
   "deployment": "Deployment",
   "###": { "type": "separator", "title": "More" },
   "video-tutorials": "Video tutorials",
+  "patch-notes": "Patch Notes",
   "contact": {
     "title": "Home",
     "type": "page",

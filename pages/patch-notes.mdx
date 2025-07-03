@@ -1,0 +1,75 @@
+---
+title: Patch Notes - Vanilla Components v1 
+---
+
+# Patch Notes - Vanilla Components v1
+
+Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
+
+## Version 1.0.13 - Theme Improvements
+  - Improved Background colors in Dropdown and Multi-Select Dropdown components
+  - Improved focus/blur handling in Dropdown and Multi-Select Dropdown components
+  - Datepicker start/end days correctly match radiuses in all situations
+  - Line tension values are now settable in themes, impact Line Chart, Comparison Line Chart, and the optional line on the Bar Chart component ([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+  - Line Chart interpolation modes can now be controlled in the theme ([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+  - Improved Datepicker SVG color handling
+  - Pie Chart border width and color can now be themed ([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+  - KPI charts now default to save as PNG off (can still be turned on in the inputs)
+  - Border radius on Pagination now matches other border radiuses
+  - Titles and Descriptions can each have their own color separate from each other and the body font -([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+  - Titles and Descriptions can each have their own weight separate from each other and the body font -([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+  - Titles and Descriptions can each have their own font family separate from each other and the body font ([uses new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts))
+
+## Version 1.0.12 - Custom Fonts
+  - Users can now add custom fonts to a `urls` array in the theme file, and the the Embeddable dashboard will automatically load them
+  - These fonts can then be referenced in the `font.family` property of the theme file
+
+## Version 1.0.11 - Keyboard Accessibility
+  - Added keyboard accessibility to the Dropdown and Multi-Select Dropdown components, allowing users to navigate options using the keyboard
+  - Added keyboard accessibility to the Download Menu, enabling users to open and select download options using the keyboard
+
+## Version 1.0.10 - Bug Fixes
+  - Fixed an issue where the Comparison Line Chart was breaking when only a single X-Axis value was provided
+
+## Version 1.0.9 - Bug Fixes
+  - Fixed an issue with the X-axis on the Time Series Line Chart
+
+## Version 1.0.8 - Pie Chart booleans & CSS Variables
+  - The Pie Chart now correctly displays boolean values as "True" or "False" instead of "True" or a blank string in tooltips
+  - CSS variables should now update correctly when Client Context changes regardless of how many Embeddables are on the page
+
+## Version 1.0.7 - Second X-Axis
+  - The Comparison Line Chart now supports adding a second X-Axis (e.g. for comparing two time periods)
+
+## Version 1.0.6 - Improvements
+  - The Bar Chart can now be sorted by any dimension or measure, regardless of whether they've been chosen as display values
+  - Dropdown and Multi-Select Dropdown now correctly recognize when a user clicks off of them
+
+## Version 1.0.5 - Download All
+  - The Table component now supports a "Download All" option in the download menu that gets the entire dataset, not just a single page of results
+
+## Version 1.0.4 - fixes
+  - Fixed NPM-reported vulnerabilities in dependencies
+  - Ensured dynamic X-Axis value remains when data updates
+  - Improved Dropdown and Multi-Select Dropdown focus/blur handling
+
+## Version 1.0.3 - Download Button
+ - Allows the Download Button to correctly recognize filters
+
+## Version 1.0.2 - Controls
+
+  - Ensured that background colors, border radiuses, and border colors can be properly set for:
+    - Text Input
+    - Number Input
+    - Dropdown
+    - Multi-Select Dropdown
+    - Date Picker date range display
+
+## Version 1.0.1 - Readme Improvements
+ - Improved README to clarify usage and installation instructions
+
+## Version 1.0.0 - Initial Release
+
+ - Initial release of Vanilla Components as an NPM package
+ - Introduced the `@embeddable.com/vanilla-components` package
+ - Components can now be imported and used directly in your projects
