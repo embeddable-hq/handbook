@@ -106,34 +106,38 @@ These additional inputs will be passed to your component as props, just like the
 
 <ImageGrid images={["/img/subinputs-table-after.png"]} />
 
-The way Embeddable allows you to do this is by defining an additional `inputs` array within any given item the top-level `inputs` array. Here's a quick example:
+The way Embeddable allows you to do this is by defining an additional `inputs` array within any given item the top-level `inputs` array. Here's a quick example of an input with its own sub inputs:
 
 ```tsx
-    {
-      name: 'columns',
-      type: 'dimensionOrMeasure',
-      label: 'Columns',
-      array: true,
-      inputs: [
-        {
-          name: 'label',
-          type: 'string',
-          label: 'Label name',
-          description: 'The label to show on this column',
-          required: false,
-        },
-        {
-          name: 'suffix',
-          type: 'string',
-          supportedTypes: ['number', 'string'],
-          label: 'Suffix',
-        },
-      ],
-      config: {
-        dataset: 'ds',
+inputs: [
+  // The top-level input
+  {
+    name: 'columns',
+    type: 'dimensionOrMeasure',
+    label: 'Columns',
+    array: true,
+    inputs: [
+      // The sub-inputs for the 'Columns' input
+      {
+        name: 'label',
+        type: 'string',
+        label: 'Label name',
+        description: 'The label to show on this column',
+        required: false,
       },
-      category: 'Chart data',
+      {
+        name: 'suffix',
+        type: 'string',
+        supportedTypes: ['number', 'string'],
+        label: 'Suffix',
+      },
+    ],
+    config: {
+      dataset: 'ds',
     },
+    category: 'Chart data',
+  },
+],
 ```
 
 When you do this, the Embeddable SDK recognizes it and will automatically create expandable inputs in the builder UI, like this:
