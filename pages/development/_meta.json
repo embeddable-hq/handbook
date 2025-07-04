@@ -2,6 +2,8 @@
     "introduction": "Intro to development",
     "local-environment": "Developing locally",
     "defining-components": "Defining components",
+    "define-component": "The defineComponent function",
+    "component-examples": "Step-by-step component examples",
     "loading-data": "Loading data",
     "interactivity": "Adding interactivity", 
     "theme-welcome":{
