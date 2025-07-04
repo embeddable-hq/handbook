@@ -92,7 +92,19 @@ Two things to notice:
 <a name="define-additional-inputs"></a>
 ### **Define Additional Inputs per Dimension/Measure** (optional)
 
-Some inputs may directly reference the **dimensions** and **measures** you've defined in your data models. This might be fine for a bar graph, for example, where you're showing dates and a count, so the data is already easy for people to read. In other cases, you may find that the dimension name is not particularly user-friendly. As an example, your table component might display multiple columns of dimensions of metrics with names like `signed_up_date` or `total_revenue_by_month`, or even more esoteric/unreadable names like `ekp_mod_rev_mon`. In these cases, you can define additional inputs that will be used to display the data in a more user-friendly way.
+Some inputs may directly reference the **dimensions** and **measures** you've defined in your data models, which may not have the most readable names. You can define additional inputs that will be used to generate extra inputs that you can reference in your code. They look like this in the builder UI:
+
+<ImageGrid images={["/img/subinputs-builder-example.png"]} />
+
+These additional inputs will be passed to your component as props, just like the top-level inputs. You can then reference them in your component code, allowing you to create more complex and customizable components (or just make things easier to read, like this table).
+
+#### Before
+
+<ImageGrid images={["/img/subinputs-table-before.png"]} />
+
+#### After
+
+<ImageGrid images={["/img/subinputs-table-after.png"]} />
 
 The way Embeddable allows you to do this is by defining an additional `inputs` array within any given item the top-level `inputs` array. Here's a quick example:
 
@@ -124,7 +136,9 @@ The way Embeddable allows you to do this is by defining an additional `inputs` a
     },
 ```
 
- When you do this, the Embeddable SDK recognizes it and will automatically create expandable inputs in the builder UI. The available sub-input types are:
+When you do this, the Embeddable SDK recognizes it and will automatically create expandable inputs in the builder UI, like this:
+ 
+The available sub-input types are:
 
 | **Param**       | **Type**                                | **Required** |
 | --------------- | --------------------------------------- | ------------ |
@@ -141,9 +155,9 @@ Once defined, these sub-inputs will be displayed in the builder UI, and the valu
 
 </Steps>
 
-## Futher Reading
+## Further Reading
 
-You may have noticed that `defineComponent` function we're using in the `.emb.ts` file. This is a utility function that allows you not only to return your inputs as props to your component, but to work with them beforehand, allowing you to customize the final values that reach your component. You can [learn more about it here](/development/defining-components/define-component).
+You may have noticed that `defineComponent` function we're using in the `.emb.ts` file. This is a utility function that allows you not only to return your inputs as props to your component, but to work with them beforehand, allowing you to customize the final values that reach your component. You can [learn more about it here](/development/define-component).
 
 The `loadData` function used above is one of the **most powerful** parts of the Embeddable SDK. You can [learn more about it here](/development/loading-data).
 

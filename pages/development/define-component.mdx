@@ -65,8 +65,8 @@ import Component from './index';
 | `classNames`    | string[]          | ❌ No        |
 | `defaultWidth`  | number            | ❌ No        |
 | `defaultHeight` | number            | ❌ No        |
-| `inputs`        | [`InputMeta[]`](/development/defining-components#inputmeta-definition)     | ❌ No        |
-| `events`        | [`EventMeta[]`](/development/defining-components#eventmeta-definition)     | ❌ No        |
+| `inputs`        | [`InputMeta[]`](/development/define-component#inputmeta-definition)     | ❌ No        |
+| `events`        | [`EventMeta[]`](/development/define-component#eventmeta-definition)     | ❌ No        |
 | `variables`     | [`VariableMeta[]`](/development/defining-components#variablemeta-definition)  | ❌ No        |
 
 
@@ -78,6 +78,7 @@ import Component from './index';
 - **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](). 
 - **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/development/interactivity).
 
+<a name="inputmeta-definition"></a>
 #### `InputMeta` Definition
 
 ```ts
@@ -117,6 +118,7 @@ export const meta: EmbeddedComponentMeta = {
 | `defaultValue`| any                                    | ❌ No        |
 | `config`      | object                                 | ❌ No        |
 | `array`       | boolean                                | ❌ No        |
+| `inputs`      | [`InputMeta[]`](/development/define-component#inputmeta-definition) | ❌ No        |
 | `category`    | string                                 | ❌ No        |
 | `required`    | boolean                                | ❌ No        |
 
@@ -129,6 +131,7 @@ export const meta: EmbeddedComponentMeta = {
 - **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. A common use-case includes specifying the dataset for `dimension` or `measure` inputs and limiting the options that display based on their type.
 - **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
+- **`inputs`**: An array of additional inputs that can be defined for this input. This allows you to create more complex inputs with [sub-inputs](/development/defining-components#define-additional-inputs), which will be displayed as expandable inputs in the no-code builder.
 
 #### Native Input Types
 
