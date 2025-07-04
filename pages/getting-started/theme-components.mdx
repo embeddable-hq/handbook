@@ -1,0 +1,118 @@
+# Theme your components
+
+As soon as you start using the [imported Starter components](./install-starter-kit), you'll notice that you can switch the **client context** to apply different themes:
+
+<VideoComponent
+    src="/video/theme-example.mp4"
+    width="800"
+    height="450"
+/>
+
+## Client contexts
+
+The **client contexts** are defined in the `presets` folder of your **repository** in a file called [client-contexts.cc.yml](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/client-contexts.cc.yml). You can define as many client contexts as you like in here, and they will appear in the **View as** dropdown in your workspace (see animation above).
+
+[This example](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/client-contexts.cc.yml) only contains a simple `theme` key:
+
+```yml
+- name: Example
+  clientContext:
+    theme: 'example'
+```
+but you can provide whatever context you like, e.g:
+```yml
+- name: Summer
+  clientContext:
+    colors: ['#555d8e','#566f94','#56819b'],
+    font: 'Noto Serif',
+    borderRadius: 10
+```
+
+And when embedding your Embeddable in your application, you can pass in the **client context** dynamically based on the user (i.e. you are not limited to the client contexts you have defined above):
+
+```js
+<em-beddable
+  token="${json.token}"
+  client-context="${JSON.stringify({ 
+  	colors: ['#555d8e','#566f94','#56819b'],
+    font: 'Noto Serif',
+    borderRadius: 10
+  })}"
+></em-beddable>
+```
+
+This means you can even customise the **client context** dynamically to every user.
+
+But the **client context** by itself does nothing.  You need to use it inside what's called a `themeProvider`.
+
+## Theme provider
+
+The **client contexts** are automatically made available inside the [embeddable.theme.ts](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/embeddable.theme.ts) file inside your repository.  This is called the `themeProvider`.
+
+
+The `themeProvider` has one job: it takes the **client context** passed to it and makes a decision what values it should apply to the **theme**.  This **theme** is then used inside all the components to decide their appearance and behaviour.
+
+A simple example, which would work with our "Summer" **client context** example (from above) could look something like this:
+
+```js
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/vanilla-components';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  
+  return defineTheme(parentTheme, {
+    charts: {
+      colors: clientContext.colors,
+    },
+    container: {
+      borderRadius: clientContext.borderRadius
+    },
+    font: {
+      family: clientContext.font,
+    },
+  }) as Theme;
+};
+
+export default themeProvider;
+```
+
+This allows you to set the colors, border radius and font family directly from the client context.
+
+Or if you don't want the theme to be dynamic, but you just want to update it to match your web application's look and feel, you can just define the `theme` values directly like this (ignoring **client context**):
+
+```js
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/vanilla-components';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  
+  return defineTheme(parentTheme, {
+    charts: {
+      colors: ['#555d8e','#566f94','#56819b'],
+    },
+    container: {
+      borderRadius: 10
+    },
+    font: {
+      family: 'Noto Serif',
+    },
+  }) as Theme;
+};
+
+export default themeProvider;
+```
+
+<Callout emoji="💡">
+You can find the full list of available `Theme` properties [here](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts).
+</Callout>
+
+For an in-depth look at **themes** click [here](/development/theming).
+
+## Next steps
+
+<CardGrid>
+  <LinkCard title="Connect your database" href="/data/connect-your-database" icon=""/> 
+  <LinkCard title="Embed your dashboard" href="/deployment/embedding" icon=""/> 
+</CardGrid>
+
+

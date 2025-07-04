@@ -1,6 +1,6 @@
 {
     "embedding": "Embedding dashboards",
-    "tokens-api": "Retrieving security tokens",
+    "tokens-api": "Tokens API",
     "interactivity": "Interacting with your Embeddable",
     "embeddables-api": "List your Embeddables",
     "deployment-regions": "Deployment Regions"
