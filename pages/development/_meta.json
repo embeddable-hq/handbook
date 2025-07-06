@@ -2,7 +2,8 @@
     "introduction": "Intro to development",
     "local-environment": "Developing locally",
     "defining-components": "Defining components",
-    "loading-data": "Loading data",
+    "define-component-function": "The `defineComponent` function",
+    "loading-data": "The `loadData` function",
     "interactivity": "Adding interactivity", 
     "theme-welcome":{
         "display": "hidden"
@@ -10,7 +11,7 @@
     "theme-upgrading": {
         "display": "hidden"
     },
-    "client-context": "Passing Client Context",
+    "client-context": "Client Context",
     "theming": "Theming",
     "custom-types": "Defining custom types",
     "pushing-code": "Pushing code"
