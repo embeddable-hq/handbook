@@ -20,8 +20,8 @@ When you call `defineComponent` in your `.emb.ts` file, you pass in three argume
 | **Param**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `component` | Component | ✅ Yes       |
-| `meta`      | [Meta](/development/defining-components#2-meta)      | ✅ Yes       |
-| `config`    | [Config](/development/defining-components#3-config)   | ✅ Yes       |
+| `meta`      | [Meta](#2-meta)      | ✅ Yes       |
+| `config`    | [Config](#3-config)   | ✅ Yes       |
 
 
 - **`component`**: your React component.
@@ -30,7 +30,7 @@ When you call `defineComponent` in your `.emb.ts` file, you pass in three argume
 
 ---
 
-### 1. `component`
+### 1. `component` 
 
 `component` is simply your React component:
 
@@ -65,9 +65,9 @@ import Component from './index';
 | `classNames`    | string[]          | ❌ No        |
 | `defaultWidth`  | number            | ❌ No        |
 | `defaultHeight` | number            | ❌ No        |
-| `inputs`        | [`InputMeta[]`](/development/defining-components#inputmeta-definition)     | ❌ No        |
-| `events`        | [`EventMeta[]`](/development/defining-components#eventmeta-definition)     | ❌ No        |
-| `variables`     | [`VariableMeta[]`](/development/defining-components#variablemeta-definition)  | ❌ No        |
+| `inputs`        | [`InputMeta[]`](#inputmeta-definition)     | ❌ No        |
+| `events`        | [`EventMeta[]`](#eventmeta-definition)     | ❌ No        |
+| `variables`     | [`VariableMeta[]`](#variablemeta-definition)  | ❌ No        |
 
 
 - **`name`**: A unique identifier that must match the `.emb.ts` filename. Changing it later can break references.
@@ -75,10 +75,10 @@ import Component from './index';
 - **`classNames`**: CSS class names for styling the container.
 - **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/development/custom-types)).
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
-- **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](). 
+- **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](/development/interactivity). 
 - **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/development/interactivity).
 
-#### `InputMeta` Definition
+#### `InputMeta` definition
 
 ```ts
 export const meta: EmbeddedComponentMeta = {
@@ -119,9 +119,10 @@ export const meta: EmbeddedComponentMeta = {
 | `array`       | boolean                                | ❌ No        |
 | `category`    | string                                 | ❌ No        |
 | `required`    | boolean                                | ❌ No        |
+| `inputs`      | [`SubInputMeta[]`](#subinputmeta-definition)                | ❌ No        |
 
 - **`name`**: A unique identifier for this input (within the component).
-- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](/development/defining-components#native-input-types).
+- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](#native-input-types).
 - **`label`**: User-facing label in the builder.
 - **`description`**: A helpful reference, not currently displayed in the builder.
 - **`defaultValue`**: The initial value for the input.
@@ -129,6 +130,78 @@ export const meta: EmbeddedComponentMeta = {
 - **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. A common use-case includes specifying the dataset for `dimension` or `measure` inputs and limiting the options that display based on their type.
 - **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
+- **`inputs`**: allows you to define sub-inputs for a given input.  Can **only** be applied to inputs of `type` "dimension", "measure", or "dimensionOrMeasure".  And only if `array` is set to `true`. Learn more [below](#subinputmeta-definition).
+
+#### `SubInputMeta` definition
+
+Sub inputs allow you to define additional inputs per dimension or measure chosen by the user of your component.  E.g. in the example below we're defining a standard table component, where one chooses the columns to show.  But for each column we have defined additional inputs that the user will be shown.  E.g. all columns will have a "Column name" sub input for overriding the column name.  Dimensions of type `time` will have a "Date format" sub input. And `string` columns will have a "prefix" sub input.
+
+```ts
+export const meta: EmbeddedComponentMeta = {
+    name: 'MyTable',
+    label: 'Table component',
+    inputs: [
+        {
+            name: 'ds',
+            type: 'dataset',
+            required: true
+        },
+        {
+            name: 'columns',
+            type: 'dimensionOrMeasure',
+            label: 'Columns',
+            array: true,
+            inputs: [
+              {
+                name: 'columnName',
+                type: 'string',
+                label: 'Column name',
+                description: 'The label to show on this column',
+                required: true
+              },
+              {
+                name: 'dateFormat',
+                type: 'string',
+                label: 'Date format',
+                supportedTypes: ['time'],
+                defaultValue: 'yyyy-MM-dd'
+              },
+              {
+                name: 'prefix',
+                type: 'string',
+                supportedTypes: ['string']
+              }
+            ]
+            config: {
+              dataset: 'ds',
+            }
+        },
+        ...
+    ]
+}
+```
+
+| **Param**       | **Type**                               | **Required** |
+| -------------   | -------------------------------------- | ------------ |
+| `name`          | string                                 | ✅ Yes       |
+| `type`          | `CustomType` or `NativeType`           | ✅ Yes       |
+| `label`         | string                                 | ✅ Yes       |
+| `description`   | string                                 | ❌ No        |
+| `defaultValue`  | any                                    | ❌ No        |
+| `config`        | object                                 | ❌ No        |
+| `required`      | boolean                                | ❌ No        |
+| `supportedTypes`| string[]                               | ❌ No        |
+
+
+- **`name`**: A unique identifier for this sub input (within the component).
+- **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](#native-input-types).
+- **`label`**: User-facing label in the builder.
+- **`description`**: A helpful reference, not currently displayed in the builder.
+- **`defaultValue`**: The initial value for the sub input.
+- **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
+- **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. 
+- **`supportedTypes`**: tells Embeddable which type of `dimension` or `measure` this sub input should be applied to (e.g. `['string', 'time']`). If omitted, this sub input will be shown on all dimensions and measures.
+
 
 #### Native Input Types
 
@@ -165,7 +238,7 @@ When defining `inputs` in your `.emb.ts` file, you can select from a set of **na
 
 If you need more specialized behavior than these native types provide (e.g., custom date pickers or advanced styling), you can define **custom types** along with a custom editor. These built-in types, however, cover most standard use cases for text, numbers, booleans, time inputs, and data references.
 
-#### `EventMeta` Definition
+#### `EventMeta` definition
 
 Events are used to create [interactive components](/development/interactivity). For example, a dropdown containing a list of countries that, when clicked, filters the data. Or a set of buttons showing 'day', 'week', and 'month' that, when clicked, update the x-axis granularity on a time-series chart. 
 
@@ -190,14 +263,14 @@ export const meta: EmbeddedComponentMeta = {
 | ------------ | ----------------- | ------------ |
 | `name`       | string            | ✅ Yes       |
 | `label`      | string            | ✅ Yes       |
-| `properties` | [`EventProperty[]`](/development/defining-components#eventproperty-definition) | ❌ No        |
+| `properties` | [`EventProperty[]`](#eventproperty-definition) | ❌ No        |
 
 - **`name`**: The event handler name passed into your React component. E.g. setting it to `onBigClick` means that Embeddable will inject a function into your React component, via its props, called `onBigClick`. When called, the value you pass to this function will be passed to `events.onBigClick` inside `defineComponent` where you need to map the value onto an `object` that has the shape described in `events.properties` in your `meta`. This allows Embeddable to make your event available to use as an interaction in the no-code builder.
 - **`label`**: How this event is labeled in the builder.
 - **`properties`**: Describes data passed to Embeddable when the event fires.
 
 
-    #### `EventProperty` Definition
+    #### `EventProperty` definition
 
   
 | **Param** | **Type**                     | **Required** |
@@ -213,7 +286,7 @@ export const meta: EmbeddedComponentMeta = {
     - **`array`**: Allows multiple values if set to `true`.
 
 
-#### `VariableMeta` Definition
+#### `VariableMeta` definition
 
 Variables are a core-concept in Embeddable. They are used mainly to store the values passed to Embeddable from events fired by [interactive components](/development/interactivity). 
 
@@ -243,7 +316,7 @@ export const meta: EmbeddedComponentMeta = {
 | `type`         | `CustomType` or `NativeType`   | ✅ Yes       |
 | `defaultValue` | any                            | ❌ No        |
 | `inputs`       | string[]                       | ❌ No        |
-| `events`       | [`EventRef[]`](/development/defining-components#eventref-definition)               | ❌ No        |
+| `events`       | [`EventRef[]`](#eventref-definition)               | ❌ No        |
 
 - **`name`**: The variable’s name when auto-created in the builder.
 - **`type`**: The variable type (`string`, `boolean`, etc.).
@@ -251,7 +324,7 @@ export const meta: EmbeddedComponentMeta = {
 - **`inputs`**: A list of inputs whose value should be linked to the variable. The names must match the name of an input defined in `inputs.name` in your `meta`.
 - **`events`**: If you want certain events to update this variable’s value.
 
-    #### `EventRef` Definition
+    #### `EventRef` definition
 
     | **Param**  | **Type** | **Required** |
     | ---------- | -------- | ------------ |
