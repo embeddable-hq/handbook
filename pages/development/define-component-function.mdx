@@ -202,6 +202,20 @@ export const meta: EmbeddedComponentMeta = {
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. 
 - **`supportedTypes`**: tells Embeddable which type of `dimension` or `measure` this sub input should be applied to (e.g. `['string', 'time']`). If omitted, this sub input will be shown on all dimensions and measures.
 
+Inputs that contain sub inputs will contain an additional expandable section in the no-code builder, as shown here:
+
+<ImageGrid images={["/img/subinputs-builder-example.png"]} />
+
+These values are then passed to your component along with the other input props, and can be used within the component to customize behavior. Here's an example of a table with no custom inputs set:
+
+<ImageGrid images={["/img/subinputs-table-before.png"]} />
+
+And here's the same table using the custom inputs defined in the screenshot of the no-code builder above:
+
+<ImageGrid images={["/img/subinputs-table-after.png"]} />
+
+Notice that multiple column headers have been adjusted, an "Orders" suffix has been added to values in the first column, and the date format has been changed to something much more readable.
+
 
 #### Native Input Types
 
