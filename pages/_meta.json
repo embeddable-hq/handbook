@@ -9,6 +9,7 @@
   "###": { "type": "separator", "title": "More" },
   "video-tutorials": "Video tutorials",
   "patch-notes": "Patch Notes",
+  "whats-new": "What's new",
   "contact": {
     "title": "Home",
     "type": "page",
