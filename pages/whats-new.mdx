@@ -1,7 +1,7 @@
 
 # 🚀 What’s New in Embeddable
 
-In Q2 we developed several new features. Here is an overview of the most important updates.
+In Q2, we shipped several updates to make building and managing dashboards more intuitive and flexible. From improvements to the data modeling experience to new ways to configure inputs and control versioning, here’s a quick look at what’s new.
 
 ---
 
@@ -11,95 +11,94 @@ You can now create and edit data models directly in Embeddable.
 
 <ImageGrid images={["/img/data-model-editor.png"]}/>
 
-### Why it matters:**
+#### Why it matters:
 
 This makes it easier to define models and build dashboards faster, especially for teams getting started.
 
-### What’s new:**
+#### What’s new:
 
 - Create, edit, and delete no-code models
 - View read-only previews of code-managed models
 - Visual editing for models, joins, dimensions, and measures
 - Inline YAML preview with copy/download
 
-### [Link to documentation]**
+Learn more about `Data Model Editor` [here](/data-modeling/getting-setup).
 
----
+
+
 
 ## 2. Time Granularity Picker
 
 You can now pick a **granularity (day, week, month, etc.)** when using time dimensions—without separate chart types.
 
-**Why it matters:**
+{/* Wanted to add an image, but it's too big and blury imho <ImageGrid images={["/img/time-granularity-picker.png"]}/> */}
+
+#### Why it matters:
 
 No more duplicating charts just to handle time-based grouping.
 
-**What’s new:**
+#### What’s new:
 
 - Granularity dropdown appears when selecting a time dimension
 - "Day" is default for new charts; existing charts stay unchanged
 - Works in Builder and Playground
-- Powered by a new `select` parameter in `loadData`
 
----
 
-**3. Cube Version Picker**
+## 3. Cube Version Picker
 
 Control exactly which **Cube.js version** your dashboards use.
 
-**Why it matters:**
+#### Why it matters:
 
 Test safely before going live and avoid breaking changes from upstream Cube updates.
 
-**What’s new:**
+#### What’s new:
 
 - New "Cube version" picker in Builder and Playground
 - Default is latest, but you can switch freely
 - Live embeddables only update after you publish with a selected version
 
----
 
-**4. Sub Inputs for Dimensions & Measures**
+## 4. Sub Inputs for Dimensions & Measures
 
 You can now define **custom sub inputs** per dimension or measure in chart configurations.
 
-**Why it matters:**
+#### Why it matters:
 
 Fine-tune how values are displayed—without writing custom logic.
 
-**Examples:**
+#### examples:
 
 - Add a prefix/suffix to string fields
 - Customize date formatting for time fields
 - Rename columns with user-friendly labels
 
----
 
-**5. Dimension & Measure Variables**
+## 5. Dimension & Measure Variables
 
 You can now use dimensions and measures as variables and link them directly as inputs to dashboard components.
 
-**Why it matters:**
+#### Why it matters:
 
 [...]
 
-**What’s new:**
+#### What’s new:
 
 - New variable types: “Dimension”, “Measure”, and “Dimension or Measure” available in the variable type dropdown.
 - Select from all available dimensions or measures across your models, with support for single or multi-select.
 - Easily link these variables as inputs to components, just like other variable types.
 
----
 
-**6. In-App AI Support (Powered by Inkeep)**
+
+## 6. In-App AI Support (Powered by Inkeep)
 
 We’ve added an **AI assistant across the platform** so you can get help instantly—without leaving the app.
 
-**Why it matters:**
+#### Why it matters:
 
 Search across docs, FAQs, roadmap, and changelogs without needing to message us.
 
-**What’s new:**
+#### What’s new:
 
 - Ask product questions in Workspace, Builder, Preview, or Docs
 - AI pulls answers from all support content
