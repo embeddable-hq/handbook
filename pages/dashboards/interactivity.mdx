@@ -159,6 +159,116 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 </Steps>
 
+## Example: Change a Pie Chart's Metrics With a Picker
+
+You can also use **dimensions** and **measures** as variables. This is useful for components that need to filter data based on user selections, like a dropdown that lets users pick a dimension or measure to display.
+
+In order to facilitate this behavior, we provide six predefined picker components in [our starter library](/dashboards/starter-components.mdx) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
+
+Dimensions and measures as variables are powerful because they let users dynamically change the data being displayed in charts or tables without needing to write any code. This adds a significant level of interactivity to your dashboards without requiring additional code on your part.
+
+<VideoComponent
+    src="/video/dim-meas-vars-pie-example.mp4"
+    width="600"
+    height="688"
+/>
+
+<Steps>
+
+### Add a Measure Picker Component
+
+- Drop the **Measures single select** component onto your canvas. This will create a variable called **Measure choice**. You can also choose which measures you want to include from the **Choices** multiselect dropdown.
+- In the right-hand panel, you can set the **default value** to one of your measures (e.g. "Orders"). This will be the initial measure displayed in the pie chart.
+
+<VideoComponent
+    src="/video/dim-meas-vars-pie-picker.mp4"
+    width="1250"
+    height="814"
+/>
+
+### Add a Pie Chart and Connect it to the Picker Variable
+
+- Add a **Pie Chart** component to your canvas.
+- Set your **Slice** value to whatever dimension you want to group by (e.g. "Country of Origin").
+- For the **Metric**, click the link icon and select the **Measure choice** variable you created earlier. This will allow the pie chart to dynamically change based on the user's selection in the picker.
+- Save your changes.
+
+<VideoComponent
+    src="/video/dim-meas-vars-pie-chart.mp4"
+    width="1250"
+    height="820"
+/>
+
+### Test the Interaction
+
+- Switch to **Preview** mode.
+- Note that by default the pie chart will show the measure you set as the default in the picker (e.g. "# of Orders").
+- Click the dropdown in the **Measure choice** picker and select a different measure (e.g "# of Customers").
+- Watch the pie chart update to reflect the new measure, showing the number of customers by country instead of orders.
+
+<VideoComponent
+    src="/video/dim-meas-vars-pie-preview.mp4"
+    width="1250"
+    height="814"
+/>
+
+<Callout emoji="🚨">
+  It's important to make sure that you use a picker component that matches the type of value your chart is expecting. For example, the Bar Chart's "metric" input expects an array of measures, as it can support displaying multiple measures at once. This means you should use the **MultiSelectorMeasure** component to select measures for a Bar Chart, rather than the **SelectorMeasure** which only allows single selections (and may cause errors).
+</Callout>
+
+</Steps>
+
+## Example: Select Bar Chart x-Axis Values With a Picker
+
+[As mentioned above](#example-change-a-pie-charts-metrics-with-a-picker), you can also use **Dimensions** as variables. This example shows how to use a select component to let users choose which dimension to display on the bar chart's x-axis.
+
+<VideoComponent
+    src="/video/dim-meas-vars-bar-example.mp4"
+    width="600"
+    height="436"
+/>
+
+<Steps>
+
+### Add a Dimension Picker Component
+
+- Drop the **Dimensions select** component onto your canvas. This will create a variable called **Dimension choice**. You can also choose which dimensions you want to include from the **Choices** multiselect dropdown.
+- In the right-hand panel, you can set the **default value** to one of your dimensions (e.g. "Country of Origin"). This will be the initial dimension displayed in the bar chart.
+
+<VideoComponent
+    src="/video/dim-meas-vars-bar-picker.mp4"
+    width="1250"
+    height="758"
+/>
+
+### Add a Bar Chart and Connect it to the Picker Variable
+
+- Add a **Bar Chart** component to your canvas.
+- For the **x-Axis**, click the link icon and select the **Dimension choice** variable you created earlier. This will allow the bar chart to dynamically change based on the user's selection in the picker.
+- For the **metric**, choose a measure (e.g. "# of Orders") that you want to display.
+- Save your changes.
+
+<VideoComponent
+    src="/video/dim-meas-vars-bar-chart.mp4"
+    width="1250"
+    height="782"
+/>
+
+### Test the Interaction
+
+- Switch to **Preview** mode.
+- Note that by default the bar chart will show the dimension you set as the default in the picker (e.g. "Country of Origin").
+- Click the dropdown in the **Dimension choice** picker and select a different dimension (e.g "Product Name").
+- Watch the bar chart update to reflect the new dimension, showing the number of orders by product instead of country.
+
+<VideoComponent
+    src="/video/dim-meas-vars-bar-preview.mp4"
+    width="1250"
+    height="820"
+/>
+
+</Steps>
+
 ## Setting Default Values
 
 You can set a default variable value that applies when the dashboard first loads. Simple:
@@ -177,39 +287,3 @@ If certain values are **customer-specific** (like “United States” for one cl
 Each variable is defined with a **type** - like `text`, `time`, or `number`. When you link a variable to an input or dataset filter, both sides must share a **matching type**. For instance, you can’t connect a **number** input to a **text** variable.
 
 **Note**: In the future, we plan to offer more flexibility around how different types can interact.
-
-## Dimensions and Measures as Variables
-
-You can also use **dimensions** and **measures** as variables. This is useful for components that need to filter data based on user selections, like a dropdown that lets users pick a dimension or measure to display.
-
-In order to facilitate this behavior, we provide six predefined picker components in [our starter library](/dashboards/starter-components.mdx) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
-
-Here we can see a simple bar chart that uses a multi-select measure variable to filter the data, currently showing orders by country:
-
-<ImageGrid images={["/img/dim-meas-vars-table-before.png"]}/>
-
-We've tied it to the variable from the picker in the Bar Chart inputs, like this:
-
-<ImageGrid images={["/img/dim-meas-vars-inputs.png"]} width={400}/>
-
-Which means if we choose a different measure, or in this case add two other measures, we're now showing orders, total products sold, and number of customers by country.
-
-<ImageGrid images={["/img/dim-meas-vars-table-after.png"]}/>
-
-Dimensions and measures as variables are powerful because they let users dynamically change the data being displayed in charts or tables without needing to write any code. This adds a significant level of interactivity to your dashboards without requiring additional code on your part.
-
-<Callout emoji="🚨">
-  It's important to make sure that you use a picker component that matches the type of value your chart is expecting. For example, the Bar Chart's "metric" input expects an array of measures, as it can support displaying multiple measures at once. This means you should use the **MultiSelectorMeasure** component to select measures for a Bar Chart, rather than the **SelectorMeasure** which only allows single selections (and may cause errors).
-</Callout>
-
-### Example: Connect a Pie Chart to a Metric Picker
-
-In this video, we set up a single-measure picker, give it a default value, and connect it to a pie chart. We then show how it can switch between multiple measures.
-
-<VideoComponent
-    src="/video/dimensions-measures-variables.mp4"
-    width="1250"
-    height="723"
-/>
-
-
