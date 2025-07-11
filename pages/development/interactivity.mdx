@@ -286,35 +286,4 @@ export default defineComponent(MyComponent, meta, {
     }
   }
 });
-``` 
-
-## Dimensions and Measures as Variables
-
-You can also use **dimensions** and **measures** as variables. This is useful for components that need to filter data based on user selections, like a dropdown that lets users pick a dimension or measure to display. In order to facilitate this behavior, we provide six predefined picker components that can be accessed in the no-code builder:
-
-- **SelectorDimension**: A single-select dropdown for dimensions.
-- **SelectorMeasure**: A single-select dropdown for measures.
-- **SelectorDimensionOrMeasure**: A single-select dropdown that lets users choose between dimensions and measures.
-- **MultiSelectorDimension**: A multi-select dropdown for dimensions.
-- **MultiSelectorMeasure**: A multi-select dropdown for measures.
-- **MultiSelectorDimensionOrMeasure**: A multi-select dropdown that lets users choose between dimensions and measures.
-
-These components automatically create variables in the no-code builder, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
-
-Here we can see a simple bar chart that uses a multi-select measure variable to filter the data, currently showing orders by country:
-
-<ImageGrid images={["/img/dim-meas-vars-table-before.png"]}/>
-
-We've tied it to the variable from the picker in the Bar Chart inputs, like this:
-
-<ImageGrid images={["/img/dim-meas-vars-inputs.png"]} width={400}/>
-
-Which means if we choose a different measure, or in this case add two other measures, we're now showing orders, total products sold, and number of customers by country.
-
-<ImageGrid images={["/img/dim-meas-vars-table-after.png"]}/>
-
-Dimensions and measures as variables are powerful because they let users dynamically change the data being displayed in charts or tables without needing to write any code. This adds a significant level of interactivity to your dashboards without requiring additional code on your part.
-
-<Callout emoji="🚨">
-  It's important to make sure that you use a picker component that matches the type of value your chart is expecting. For example, the Bar Chart's "metric" input expects an array of measures, as it can support displaying multiple measures at once. This means you should use the **MultiSelectorMeasure** component to select measures for a Bar Chart, rather than the **SelectorMeasure** which only allows single selections (and may cause errors).
-</Callout>
+```
