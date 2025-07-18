@@ -45,8 +45,7 @@ export default defineComponent(Component, meta, {
       ...inputs,
       results: loadData({
         from: inputs.ds, // Receives the chosen dataset
-        dimensions: [inputs.myDimension], // Receives the chosen dimension
-        measures: inputs.myMeasures // Receives the chosen measures
+        select: [inputs.myDimension, inputs.myMeasures]
       })
     };
   }
@@ -108,9 +107,7 @@ Below are the main parameters relevant to `loadData(...)`, with examples. For ea
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
 | `from`           | `Dataset`             | **Yes**                                         | —                 |
-| `dimensions`     | `Dimension[]`         | At least one dimension or measure is required   | `[]`              |
-| `measures`       | `Measure[]`           | At least one dimension or measure is required   | `[]`              |
-| `timeDimensions` | `TimeDimension[]`     | No                                              | `[]`              |
+| `select`         | `(Dimension|Measure|TimeDimension)[]`         | At least one dimension measure or time dimension is required   | `[]`              |
 | `orderBy`        | `OrderBy[]`           | No                                              | none              |
 | `limit`          | `number`              | No                                              | `100`             |
 | `offset`         | `number`              | No                                              | `0`               |
@@ -133,14 +130,13 @@ OFFSET <offset>
 
 - `Dataset` is a defined dataset in the no-code builder that's based on a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
 
-- [`Dimension`](/data-modeling/dimensions-and-measures#dimensions) 
-  is an array of one or more dimensions.
+- `select` is an array of [dimensions](/data-modeling/dimensions-and-measures#dimensions), [measures](/data-modeling/dimensions-and-measures#dimensions) and *timeDimensions* (time-based dimensions, often paired with a **granularity**).
 
-- [`Measure`](/data-modeling/dimensions-and-measures#dimensions)  is an array of one or more measures  
-
-- `TimeDimensions` are time-based dimensions, often paired with a **granularity** (e.g. day, week, month).
   ```ts
-  timeDimensions: [
+  select: [
+    inputs.groupBy, // one or more dimensions
+    inputs.count, // one or more measures
+    // example of timeDimension
     {
       dimension: inputs.xAxis?.name, //pass just the dimension name
       granularity: inputs.granularity

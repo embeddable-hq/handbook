@@ -246,7 +246,7 @@ Events are used to create [interactive components](/development/interactivity). 
 export const meta: EmbeddedComponentMeta = {
     name: 'BasicDropdownComponent',
     label: 'Basic Dropdown',
-    inputs: [],
+    inputs: [...],
     events: [
         {
             name: 'onChange',
@@ -296,8 +296,8 @@ Variables can be created manually in the no-code builder or they can be defined 
 export const meta: EmbeddedComponentMeta = {
     name: 'BasicDropdownComponent',
     label: 'Basic Dropdown',
-    inputs: [],
-    events: [],
+    inputs: [...],
+    events: [...],
     variables: [
         {
             name: 'chosen value',
