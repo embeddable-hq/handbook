@@ -12,6 +12,12 @@
 ### **Define Connections**  
    Use the [Connections API](./connect-your-database) to create named database connections (e.g. `"prod-postgres"`, `"staging-postgres"`). Each connection includes the **credentials** (host, port, user, etc.) for a particular database.
 
+  <Callout emoji="💡">
+    <strong>Note:</strong> It's important to understand that **connections** and **data sources** (see next step) are not the same thing. If you're not using environments, it can feel like they are, but they serve different purposes. Connections are the actual database connections, while data sources are logical names that map to these connections in your models.
+  </Callout>
+
+  Connection names should be logical and descriptive, explaining both the environment and the database they're connecting to. If you plan to connect to multiple databases in your Embeddable, consider using a naming convention like `<environment>-<database-type>` (e.g. `"prod-postgres"`, `"staging-bigquery"`).
+
 ### **Assign `data_source` in Your Models**  
    In your `.cube.yml` (or `.cube.js`) files, specify `data_source` for each model. If omitted, it defaults to `"default"`:
    ```yaml
@@ -44,6 +50,10 @@
    - **`name`** is a unique ID for the environment (e.g. `"prod"` or `"microsoft"`).  
    - **`datasources`** is a list mapping each model’s `data_source` to a named **connection** (e.g. in the above example, all models whose `data_source` is set to `"primary_db"` will use the connection named `"prod-postgres"`).
    - Learn more about `region` [here](/deployment/deployment-regions).
+
+   <Callout emoji="💡">
+      <strong>Note:</strong> every environment must contain a mapping for any **`data_source`** you plan to use in your models, or your Cube builds will fail. So if you're using **`primary_db`** in your models, you must include it in every environment you create. If you don't have a one-to-one match for a database in every environment, you can create a dummy connection (e.g. **`staging-postgres-dummy`**) that can point to a nonexistent or test database.
+   </Callout>
 
 ### **Use the Environment via Token API**  
    When requesting a [**security token**](/deployment/tokens-api), supply the `environment` field:
