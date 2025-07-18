@@ -1,7 +1,7 @@
 
 # 🚀 What’s New in Embeddable
 
-In Q2, we shipped several updates to make building and managing dashboards more intuitive and flexible. From improvements to the data modeling experience to new ways to configure inputs and control versioning, here’s a quick look at what’s new.
+In the last months we shipped several updates to make building and managing dashboards more intuitive and flexible. From improvements to the data modeling experience to new ways to configure inputs and control versioning, here’s a quick look at what’s new.
 
 ---
 
@@ -31,7 +31,8 @@ Learn more about `Data Model Editor` [here](/data-modeling/getting-setup).
 
 You can now pick a **granularity (day, week, month, etc.)** when using time dimensions—without separate chart types.
 
-{/* Wanted to add an image, but it's too big and blury imho <ImageGrid images={["/img/time-granularity-picker.png"]}/> */}
+<ImageGrid width='50%' images={["/img/time-granularity.png"]}/>
+
 
 #### Why it matters:
 
@@ -48,6 +49,8 @@ No more duplicating charts just to handle time-based grouping.
 
 Control exactly which **Cube.js version** your dashboards use.
 
+<ImageGrid width='50%' images={["/img/cube-version-picker.png"]}/>
+
 #### Why it matters:
 
 Test safely before going live and avoid breaking changes from upstream Cube updates.
@@ -63,6 +66,8 @@ Test safely before going live and avoid breaking changes from upstream Cube upda
 
 You can now define **custom sub inputs** per dimension or measure in chart configurations.
 
+<ImageGrid width='50%' images={["/img/sub-inputs.png"]}/>
+
 #### Why it matters:
 
 Fine-tune how values are displayed—without writing custom logic.
@@ -74,13 +79,20 @@ Fine-tune how values are displayed—without writing custom logic.
 - Rename columns with user-friendly labels
 
 
+Learn more about `Sub Inputs for Dimensions & Measures` [here](/development/define-component-function#subinputmeta-definition)
+
+
+
+
 ## 5. Dimension & Measure Variables
 
 You can now use dimensions and measures as variables and link them directly as inputs to dashboard components.
 
+<ImageGrid width='50%' images={["/img/dimension-or-measure-as-variable.png"]}/>
+
 #### Why it matters:
 
-[...]
+A popular feature that teams want to be able to implement is the ability to allow end-users to dynamically change the measures or dimensions that are being shown on a dashboard.  E.g. you could have a dropdown containing a list of dimensions or measures, and then when users switch to another dimension or measure, all the charts update to show that dimension or measure.  This is now easy to do in Embeddable.
 
 #### What’s new:
 
@@ -100,5 +112,5 @@ Search across docs, FAQs, roadmap, and changelogs without needing to message us.
 
 #### What’s new:
 
-- Ask product questions in Workspace, Builder, Preview, or Docs
+- ‘Ask AI’ button in the top-right corner of the Embeddable platform, or bottom-right in the documentation
 - AI pulls answers from all support content
