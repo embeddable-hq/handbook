@@ -98,7 +98,7 @@ export default defineComponent<Inputs>(Component, meta, {
       // Load dimension values for the dropdown
       results: loadData({
         from: inputs.ds,
-        dimensions: [inputs.values],
+        select: [inputs.values],
       }),
     };
   },
@@ -241,8 +241,7 @@ export default defineComponent(PieChartComponent, meta, {
       ...inputs,
       results: loadData({
         from: inputs.ds,
-        dimensions: [inputs.slice],
-        measures: [inputs.metric],
+        select: [inputs.slice, inputs.metric]
       })
     };
   },

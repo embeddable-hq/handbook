@@ -65,6 +65,10 @@ export default themeProvider;
 
 Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in [`Theme`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts) which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
 
+<Callout emoji="💡">
+You can find the full list of available `Theme` properties (and their default values) [here](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts).
+</Callout>
+
 Once you’ve changed `embeddable.theme.ts`, save it, and you should be set. Your theme changes will show up across all of the Vanilla Components. [Try it out](/development/defining-components#push-to-embeddable) using `npm run embeddable:dev`!
 
 ### Multiple Themes With Client Context
