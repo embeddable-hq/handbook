@@ -22,6 +22,7 @@
    ```
    This tells Embeddable that the “orders” model should look for a connection named `"primary_db"` in the chosen environment.
 
+
 ### **Create an Environment**  
    Define an **environment** that maps each `data_source` to a corresponding **connection**:
    ```ts
@@ -43,6 +44,11 @@
    ```
    - **`name`** is a unique ID for the environment (e.g. `"prod"` or `"microsoft"`).  
    - **`datasources`** is a list mapping each model’s `data_source` to a named **connection** (e.g. in the above example, all models whose `data_source` is set to `"primary_db"` will use the connection named `"prod-postgres"`).
+
+   <Callout emoji="💡">
+  **Important**: every environment you create should have **the same** set of `data_source` keys.  They can (and likely will) point to different `connection`s, but the set of `data_source`s should be the same (so that every **data model** has a valid `connection` in every Environment).
+  </Callout>
+
    - Learn more about `region` [here](/deployment/deployment-regions).
 
 ### **Use the Environment via Token API**  
