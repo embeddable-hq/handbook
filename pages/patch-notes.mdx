@@ -6,6 +6,16 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.0.19 - Table Improvements
+  - Ensured that the normal and pivot tables both display boolean values as "True" or "False" instead of just a blank string.
+
+## Version 1.0.18 - Chart Fix
+  - Fixed an issue with the Bar Chart and displaying axis values.
+
+## Version 1.0.17 - CSS and Bar charts
+  - Moved several CSS items in [`index.css`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/components/vanilla/index.css) to [new theme values](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts). This is a non-breaking change as all the values are set to the same values as before.
+  - The Bar Chart now automatically includes a "Granularity" sub input when the X-Axis is a date, allowing users to choose between "Day", "Week", etc. If you leave it blank, the chart defaults to "yyyy-mm-dd", eliminating those long, ugly UTC strings.
+
 ## Version 1.0.16 - Links and themes
   - Allowed links in table cells using markdown link formatting
   - Made Multi-Select buttons Theme-reactive
