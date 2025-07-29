@@ -148,6 +148,8 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIqQgU/5Cdbe8sTPZ9S3Zy6iTyBRNP7cjZmD5LtlX0
 
 </Steps>
 
+Note: SSH tunnels are set up per database server. If you need to connect to two different database servers, you’ll need two separate SSH tunnels. However, the same SSH user can be reused if both databases are accessible through the same bastion host.
+
 ## Connect to External Data Platforms
 
 Embeddable works seamlessly with Cube Cloud, allowing you to use your existing Cube models alongside Embeddable.
