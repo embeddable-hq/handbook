@@ -148,7 +148,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIqQgU/5Cdbe8sTPZ9S3Zy6iTyBRNP7cjZmD5LtlX0
 
 </Steps>
 
-Pleas note: tunnels are per database server; for 2 different database servers, 2 SSH tunnels must be created. SSH users can be reused if both databases are accessible from the same bastion.
+Note: SSH tunnels are set up per database server. If you need to connect to two different database servers, you’ll need two separate SSH tunnels. However, the same SSH user can be reused if both databases are accessible through the same bastion host.
 
 ## Connect to External Data Platforms
 
