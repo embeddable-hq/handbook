@@ -1,0 +1,318 @@
+# Building a Custom Theme with Vanilla Components
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefor at times makes reference to things you can see on screen. Where necessary, screenshots have been included.
+</Callout>
+
+<div style={{ margin: '30px 0', width: '100%', paddingTop: '56.25%', position: 'relative' }}>
+  <iframe style={{width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} src="https://www.youtube.com/embed/dUB_u4ZZTM0?si=aD9svCMzUzRathMw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+Hello everyone,
+
+Today we’re going to talk about creating a custom component in Embeddable. We’ve covered this in the docs, of course, but this will allow us to simultaneously build something a bit more complex and cover things in a simple, step-by-step fashion.
+
+To that end, we’re going to build a component using Chart.js that doesn’t exist in the Vanilla Components. Specifically, were going to build a Polar Area Chart. It’s similar to a pie chart, but it helps give additional context by scaling the wedges. We’re going to use Embeddable’s sample data for this, and we’re going to organize the chart by a dimension, then break it into slices by a measure.
+
+One last thing to mention: just because we use Chart.js at Embeddable doesn’t mean you have to! We have clients using AmCharts, High Charts, and a variety of other options. If you can build it in React, you can build it in Embeddable.
+
+We’ll need two files to do this, which are key to the way that Embeddable works. The first is the `emb.ts` file, which controls what our chart inputs look like in the builder, how we load data, and how we pass it to the chart. The second is our `index.tsx` file, which is a pure React component. This is where we’ll put all the actual chart code. Everything from from the `emb.ts` file will be passed to `index.ts` as props, just the way you’re used to with ordinary React.
+
+Let’s get started! If you haven’t already, you’ll want to [download our Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate), which gives you everything you need to get set up with Embeddable. I’ve got a clean download of that all set up, including removing the example components and enabling the [Vanilla Components library](https://github.com/embeddable-hq/vanilla-components-v1/) (our [getting started documentation](/getting-started/quick-start-guide) covers exactly how to do that). I’ve also created a folder in `/src/embeddable.com/components` called `PolarAreaChart`.
+
+A couple of pre-requisites before we dive in:
+
+1. You’ll need to run `npm i` if you just cloned or downloaded the repo
+2. We’re going to need some Chart.js modules, so make sure to also run this command: `npm i chart.js chartjs-adapter-date-fns react-chartjs-2`
+
+With those out of the way, you should be ready to go!
+
+If you’re watching the video, you can see that my `tsconfig.json` file is angry right now, but that error will go away as soon as we have any files in the folder. So, with that in mind, let’s go ahead and create them. I like to start by creating a very basic `index.tsx`, which should look like this (I’m going to copy and paste for the sake of video brevity)
+
+```tsx
+const PolarAreaChart = (props) => {
+  return <div>This will be a polar area chart.</div>;
+};
+
+export default PolarAreaChart;
+```
+
+As you can see, that’s an extremely basic React component. It’ll grow as we build things out, but for now we just need something to reference in our `emb.ts` file. Let’s create `PolarAreaChart.emb.ts` and get started filling it out with the following code:
+
+```tsx
+import { OrderBy, loadData } from '@embeddable.com/core';
+import {
+  EmbeddedComponentMeta,
+  Inputs,
+  defineComponent,
+} from '@embeddable.com/react';
+
+import Component from './index';
+
+export const meta = {
+  name: 'PolarAreaChart',
+  label: 'Polar Area Chart',
+  classNames: ['inside-card'],
+  category: 'Charts: essentials',
+  inputs: [],
+} as const satisfies EmbeddedComponentMeta;
+
+export default defineComponent(Component, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    return {
+      ...inputs,
+    };
+  },
+});
+```
+
+Not much here, yet, either. That’s okay! That makes it easier to understand what we’re dealing with. The first thing to notice is that we’re importing our Component from `index.tsx`. We pass that into the `defineComponent` function, which allows Embeddable to work its magic. After that, we define some meta information. Most of this is straightforward and just allows us to name and categorize the chart. That empty `inputs` array is important, though, and we’ll be adding things to it shortly.
+
+After that, we run `defineComponent`, which at the moment isn’t doing much. It’s just passing each of our inputs to the component as props … except we don’t have any inputs yet, so it’s passing an empty props object. That’s not very useful, so let’s add some inputs!
+
+First thing, we need a dataset input in order to wire your chart up to one of your datasets, so within the `inputs` array, let’s add this:
+
+```tsx
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset',
+      description: 'Dataset',
+      defaultValue: false,
+      category: 'Chart data',
+    },
+```
+
+We’re also going to need a dimension with which to slice up our pie:
+
+```tsx
+    {
+      name: 'slice',
+      type: 'dimension',
+      label: 'Slice',
+      config: {
+        dataset: 'ds',
+      },
+      category: 'Chart data',
+    },
+```
+
+And a measure for the size of the slices:
+
+```tsx
+    {
+      name: 'metric',
+      type: 'measure',
+      label: 'Metric',
+      config: {
+        dataset: 'ds',
+      },
+      category: 'Chart data',
+    },
+```
+
+This is technically all we need. We could add a lot more (and you’ve probably noticed that most of the Vanilla Components have a lot more inputs in the builder). Let’s keep it simple for now, but we’re going to add two more inputs just to match the other components: a title and a description. Here they are:
+
+```tsx
+    {
+      name: 'title',
+      type: 'string',
+      label: 'Title',
+      description: 'The title for the chart',
+      category: 'Chart settings',
+    },
+    {
+      name: 'description',
+      type: 'string',
+      label: 'Description',
+      description: 'The description for the chart',
+      category: 'Chart settings',
+    },
+```
+
+Before we switch to working with these inputs in `index.ts` we need to modify `defineComponent` to actually pull data from our data source. We do this with Embeddable’s built-in `loadData` function. Change the `return` statement from this:
+
+```tsx
+    return {
+      ...inputs,
+    };
+```
+
+to this:
+
+```tsx
+    return {
+      ...inputs,
+      results: loadData({
+        from: inputs.ds,
+        select: [inputs.slice, inputs.metric],
+      }),
+    };
+```
+
+Now our props will not only include all of the inputs, but also a `results` array that contains the data loaded from the datasource, based on our dimension and measure values. In fact, before we make the chart work, let’s just verify that we’re getting values in our props. Save this file and switch back over to `index.tsx`. We’re going to make a bunch of modifications to this file. Let’s start with this:
+
+```tsx
+import { Dataset, Dimension, Measure } from '@embeddable.com/core';
+
+type Props = {};
+
+const PolarAreaChart: React.FC = (props) => {
+  console.log(props);
+  return <div>This will be a polar area chart.</div>;
+};
+
+export default PolarAreaChart;
+```
+
+That gives us enough to start checking things in the browser! Save the file and let’s fire up `embeddable:dev` - this should automatically open a browser window and show your Embeddable dev workspace. Create a new dashboard, and you should see the Polar Area Chart in your list of charts. Add it to the dashboard, and let’s fill out the inputs. You’ll need to create a dataset. I’m using Embeddable’s sample Orders data, and I’m going to set my slice to the joined `Country of Origin` Dimension, and my metric to the `# of orders` measure.
+
+![image.png](/img/tutorials/custom-component/chart-inputs.png)
+
+Click save, and you’ll see a very boring box of text that just says “This will be a polar area chart.” That’s expected, for now. Let’s check out our developer console, where you should see your props logged. Your data will probably be different unless you’re still on Embeddable’s sample connection, but it should look something like this:
+
+![image.png](/img/tutorials/custom-component/console.png)
+
+Great! We’ve got everything we need to make the Polar Area Chart do something. Let’s get that working. Switch back to your code editor, and in `index.tsx`, add the following imports:
+
+```tsx
+import { useEffect, useState } from 'react';
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  ChartData,
+  Filler,
+  Legend,
+  LinearScale,
+  PointElement,
+  TimeScale,
+} from 'chart.js';
+import 'chart.js/auto';
+import 'chartjs-adapter-date-fns';
+import { PolarArea } from 'react-chartjs-2';
+```
+
+That’s everything we’ll need to make things work. Next, let’s register a few defaults with Chart.js like this:
+
+```tsx
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Filler,
+  Legend,
+  TimeScale,
+);
+```
+
+And just below that, we’ll define a quick type for our props:
+
+```tsx
+type Props = {
+  ds: Dataset;
+  slice: Dimension;
+  metric: Measure;
+  title?: string;
+  description?: string;
+  results?: any;
+};
+```
+
+All right, with the housekeeping out of the way, let’s jump down to our actual function. Right now it looks like this:
+
+```tsx
+const PolarAreaChart: React.FC = (props) => {
+  console.log(props);
+  return <div>This will be a polar area chart.</div>;
+};
+```
+
+But we’re going to expand it a bit. First, remove the `console.log`, and after that, add our Props type to `React.FC` like this:
+
+```tsx
+const PolarAreaChart: React.FC<Props> = (props) => {
+```
+
+then just below the function declaration, add this:
+
+```tsx
+  const [data, setData] = useState<ChartData<'polarArea'>>({
+    labels: [],
+    datasets: [],
+  });
+```
+
+Now that we have some empty chart data in state, we’ll use `useEffect` to populate it. This code snippet’s a little long, so I’ve commented it to explain what’s going on, and we’ll also step through it.
+
+```tsx
+  useEffect(() => {
+    // Pull labels and values from the dimension and measure, respectively
+    if (props.results?.data?.length > 0) {
+      const labels = props.results.data.map(
+        (item: any) => item[props.slice.name],
+      );
+      const values = props.results.data.map(
+        (item: any) => item[props.metric.name],
+      );
+
+			// Set ChartJS data, including the colors for the slices
+      setData({
+        labels, // set above (our slices)
+        datasets: [
+          {
+            label: props.title || 'Polar Area Chart',
+            data: values, // set above (our counts)
+            backgroundColor: [
+              '#6778DE',
+              '#FF997C',
+              '#9EA4F4',
+              '#B8B8D1',
+              '#FF6B6C',
+              '#FFC145',
+              '#9DC7FF',
+              '#FF805B',
+            ],
+            borderWidth: 0,
+          },
+        ],
+      });
+    }
+  // Make sure to re-run the useEffect if any values change
+  }, [props.results, props.slice.name, props.metric.name, props.title]);
+```
+
+What we’re doing here is straightforward. First we check and see if we have data. If and when we do, we get our list of labels and values from the dimension and measure values. Then we pass that data to Chart.js along with some color values, a border width, and a label. Chart.js has a LOT of other options you can configure, either by hardcoding them or by tying them into additional inputs (and thus prop values) that you create in the `emb.ts` file. You can get as complex as you want, within the bounds of whatever library you’re working with.
+
+Okay, last but not least, we need to make the actual Polar Area Chart. Where we currently have a one-line `return` statement, instead use this code:
+
+```tsx
+  return (
+    <div style={{ height: '100%', maxHeight: '100%' }}>
+      {props.title && <strong>{props.title}</strong>}
+      {props.description && <p>{props.description}</p>}
+      <div style={{ height: '90%', maxHeight: '90%' }}>
+        {props.results?.isLoading ? (
+          <p>Loading data...</p>
+        ) : (
+          <PolarArea data={data} options={{}} height="100%" />
+        )}
+      </div>
+    </div>
+  );
+```
+
+As you can see, we show the title and description if they exist. We also check the results provided by `loadData` for an `isLoading` boolean and if it’s true, we show some loading text (you could replace this with a spinner, which is how our Vanilla Components do things). Once `isLoading` is no longer true, we show the Polar Area chart filled with the appropriate data, which we set up in the `useEffect` above.
+
+Let’s go check out our dev server. Save the file and then fire the server back up if you quit out of it, or just switch to your browser if you left it running. It’ll auto-refresh. Now, instead of our “coming soon” message, we can see a chart full of data! In my example, the US is dominating the order count and making the Polar Area Chart look a little goofy, so I’m going to add a quick filter to remove US values.
+
+![image.png](/img/tutorials/custom-component/filter.png)
+
+With that done, we get a pretty cool-looking Polar Area Chart!
+
+![image.png](/img/tutorials/custom-component/chart.png)
+
+From here, the sky’s the limit. You can customize your chart as much as you want, add additional inputs, tie the chart into the Embeddable theming system … whatever you like.
+
+I hope this tutorial has helped you wrap your head around creating custom components in Embeddable. As always, if you have any questions, don’t hesitate to reach out to our Customer Success team.
+
+See you in the next one!
