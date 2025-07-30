@@ -1,12 +1,10 @@
-# Building a Custom Theme with Vanilla Components
+# Building a Custom Chart with Embeddable
 
 <Callout emoji="💡">
-     this document is transcribed from the video and therefor at times makes reference to things you can see on screen. Where necessary, screenshots have been included.
+     this document is transcribed from the video and therefore at times makes reference to things you can see on screen. Where necessary, screenshots have been included.
 </Callout>
 
-<div style={{ margin: '30px 0', width: '100%', paddingTop: '56.25%', position: 'relative' }}>
-  <iframe style={{width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} src="https://www.youtube.com/embed/dUB_u4ZZTM0?si=aD9svCMzUzRathMw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+<ExternalVideo src="https://www.youtube.com/embed/dUB_u4ZZTM0?si=aD9svCMzUzRathMw"/>
 
 Hello everyone,
 
@@ -17,6 +15,8 @@ To that end, we’re going to build a component using Chart.js that doesn’t ex
 One last thing to mention: just because we use Chart.js at Embeddable doesn’t mean you have to! We have clients using AmCharts, High Charts, and a variety of other options. If you can build it in React, you can build it in Embeddable.
 
 We’ll need two files to do this, which are key to the way that Embeddable works. The first is the `emb.ts` file, which controls what our chart inputs look like in the builder, how we load data, and how we pass it to the chart. The second is our `index.tsx` file, which is a pure React component. This is where we’ll put all the actual chart code. Everything from from the `emb.ts` file will be passed to `index.ts` as props, just the way you’re used to with ordinary React.
+
+## Getting Started
 
 Let’s get started! If you haven’t already, you’ll want to [download our Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate), which gives you everything you need to get set up with Embeddable. I’ve got a clean download of that all set up, including removing the example components and enabling the [Vanilla Components library](https://github.com/embeddable-hq/vanilla-components-v1/) (our [getting started documentation](/getting-started/quick-start-guide) covers exactly how to do that). I’ve also created a folder in `/src/embeddable.com/components` called `PolarAreaChart`.
 
@@ -36,6 +36,8 @@ const PolarAreaChart = (props) => {
 
 export default PolarAreaChart;
 ```
+
+## Creating the emb.ts File
 
 As you can see, that’s an extremely basic React component. It’ll grow as we build things out, but for now we just need something to reference in our `emb.ts` file. Let’s create `PolarAreaChart.emb.ts` and get started filling it out with the following code:
 
@@ -69,6 +71,8 @@ export default defineComponent(Component, meta, {
 Not much here, yet, either. That’s okay! That makes it easier to understand what we’re dealing with. The first thing to notice is that we’re importing our Component from `index.tsx`. We pass that into the `defineComponent` function, which allows Embeddable to work its magic. After that, we define some meta information. Most of this is straightforward and just allows us to name and categorize the chart. That empty `inputs` array is important, though, and we’ll be adding things to it shortly.
 
 After that, we run `defineComponent`, which at the moment isn’t doing much. It’s just passing each of our inputs to the component as props … except we don’t have any inputs yet, so it’s passing an empty props object. That’s not very useful, so let’s add some inputs!
+
+## Defining Inputs
 
 First thing, we need a dataset input in order to wire your chart up to one of your datasets, so within the `inputs` array, let’s add this:
 
@@ -150,6 +154,8 @@ to this:
     };
 ```
 
+## Testing the Inputs
+
 Now our props will not only include all of the inputs, but also a `results` array that contains the data loaded from the datasource, based on our dimension and measure values. In fact, before we make the chart work, let’s just verify that we’re getting values in our props. Save this file and switch back over to `index.tsx`. We’re going to make a bunch of modifications to this file. Let’s start with this:
 
 ```tsx
@@ -172,6 +178,8 @@ That gives us enough to start checking things in the browser! Save the file and 
 Click save, and you’ll see a very boring box of text that just says “This will be a polar area chart.” That’s expected, for now. Let’s check out our developer console, where you should see your props logged. Your data will probably be different unless you’re still on Embeddable’s sample connection, but it should look something like this:
 
 ![image.png](/img/tutorials/custom-component/console.png)
+
+## Building the Polar Area Chart
 
 Great! We’ve got everything we need to make the Polar Area Chart do something. Let’s get that working. Switch back to your code editor, and in `index.tsx`, add the following imports:
 
@@ -302,6 +310,8 @@ Okay, last but not least, we need to make the actual Polar Area Chart. Where we 
 ```
 
 As you can see, we show the title and description if they exist. We also check the results provided by `loadData` for an `isLoading` boolean and if it’s true, we show some loading text (you could replace this with a spinner, which is how our Vanilla Components do things). Once `isLoading` is no longer true, we show the Polar Area chart filled with the appropriate data, which we set up in the `useEffect` above.
+
+## Wrapping Up
 
 Let’s go check out our dev server. Save the file and then fire the server back up if you quit out of it, or just switch to your browser if you left it running. It’ll auto-refresh. Now, instead of our “coming soon” message, we can see a chart full of data! In my example, the US is dominating the order count and making the Polar Area Chart look a little goofy, so I’m going to add a quick filter to remove US values.
 
