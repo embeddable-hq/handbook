@@ -1,7 +1,11 @@
 # Defining custom types
 
 <Callout emoji="⚠️">
-  Custom types are still in **Beta**.  You may experience **typescript errors** when using them, you may need to restart `embeddable:dev` for changes to take effect, and custom types are not yet supported in **Custom Canvas**. We may make **breaking changes** to them in the future.
+  Custom types are still in **Beta**:  
+   - You may experience **typescript errors** when using them.
+   - You may need to restart `embeddable:dev` for changes to take effect.
+   - Custom types are not yet supported in **Custom Canvas**. 
+   - We may make **breaking changes** to custom types in the future.
 </Callout>
 
 Out of the box, we provide you with all the standard types, like `string`, `number`, `boolean`, `time` and `timeRange` (we call these [native types](/development/define-component-function#native-input-types)). But sometimes you'll want to create your own **custom types**.
@@ -20,9 +24,9 @@ E.g:
 
 ## The `defineType` function
 
-Let's define a `Color` type.
+The `defineType` function is how you define a **custom type** in Embeddable (on top of the built-in [native types](/development/define-component-function#native-input-types)).
 
-Create a file named `Color.type.emb.ts` (file must end in `.type.emb.ts` for Embeddable to pick it up):
+E.g. to define a `Color` type, create a file named `Color.type.emb.ts` (file must end in `.type.emb.ts` for Embeddable to pick it up) like so:
 
 ```ts
 import { defineType } from '@embeddable.com/core';
@@ -34,15 +38,34 @@ const ColorType = defineType('color', {
 export default ColorType;
 ```
 
-**Things to notice:**
-- `defineType` is what tells Embeddable that we're introducing a new type (on top of the standard [native types](/development/define-component-function#native-input-types)).
-- The first argument to `defineType` (in this case `'color'`) is a unique identifier for the type. This name is used internally by Embeddable to reference the type in dashboards where it is used. Updating it once it's in use can potentially break your dashboards.
-- `label` is the human-readable name that appears in the UI (you can change it anytime without impacting the underlying logic):
+### Parameters
+
+The `defineType` function takes the following parameters:
+
+| **Param**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `id` | string | Yes |
+| `properties`      | object  | Yes |
+
+The **first parameter** (in this case `'color'`) must be a unique identifier for the type (i.e. it cannot conflict with that of a native type). This name is used internally by Embeddable to reference the type in dashboards where it is used. Updating it once it's in use can potentially break your dashboards
+
+The **second parameter** is an object that takes the following properties:
+
+| **Property**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `label` | string | Yes |
+| `optionLabel`      | (object) => string  | No |
+| `toNativeDataType`    | \{ [type]: (object) => object \}  | No   |
+
+
+- **`label`**: the human-readable name that appears in the UI.  You can change it anytime without impacting the underlying logic.  E.g. you can see our custom type, labeled 'Color', appearing here among the native types in the Variable Builder:
 <ImageGrid width='50%' images={["/img/custom-type-label.png"]} />
+- **`optionLabel`**: This tells Embeddable how to render each **option** of this custom type in the UI ([learn more](/development/custom-types#the-defineoption-function)).
+- **`toNativeDataType`**: an object specifying how to map this custom type to other native types ([learn more](/development/custom-types#using-custom-types-to-filter-datasets)).
 
 ## The `defineOption` function
 
-The easiest way to introduce a new type is to provide it with a few **options**.  Think of this like an `enum`.  You can use **options** to statically define the values available for this type.
+The easiest way to start using a custom type in Embeddable is to provide it with a few **options**.  Think of these like an `enum` of choices.  You can use **options** to statically define the values available for this custom type.
 
 E.g. let's define 3 `Color` options: Orange, Red and Blue.
 
@@ -63,13 +86,23 @@ defineOption(ColorType, { name: 'Blue', r: 65, g: 98, b: 136 });
 export default ColorType;
 ```
 
-**Things to notice**:
-- The first argument to `defineOption` is the **type** itself.  This tells Embeddable which **type** you're adding the **option** to.
-- The second argument to `defineOption` is the javascript value that represents that option.  That means that if a component takes an **input** of type **Color** (we'll show how to do this [below](/development/custom-types#using-a-type-in-a-component)) and the builder chooses "Orange", then `{ name: 'Orange', r: 256, g: 158, b: 84 }` is the value that will be passed to the component (concrete example of this [below](/development/custom-types#using-a-type-in-a-component)).
+### Parameters
+
+The `defineOption` function takes the following parameters:
+
+| **Param**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `type` | CustomType | Yes |
+| `value`      | object  | Yes |
+
+The **first argument** is the **type** itself (e.g. `ColorType`).  This tells Embeddable which **type** you're adding the **option** to.
+
+The **second argument** is the javascript **value** that represents that option (e.g. `{ name: 'Orange', r: 256, g: 158, b: 84 }`).  This is the javascript value that will get passed to a component if that option is chosen (concrete example of this [below](/development/custom-types#using-a-type-in-a-component)).
 <Callout emoji="💡">
-  In this case we're using `name` and `r`, `g` and `b` to represent our type, but we could define the shape of the object however we like.  As long as the components that use this type know how to handle it.
+  In the example above we're using `name` and `r`, `g` and `b` to represent our type, but we could define the shape of the object however we like.  As long as the components that use this custom type know how to handle it.
 </Callout>
-- Also notice the `optionLabel` on the `defineType` function.  This tells Embeddable how to render the **option** in the UI (in this case Embeddable will use the `name` property from `{ name: 'Orange', r: 256, g: 158, b: 84 }`):
+
+Also notice the `optionLabel`, on the `defineType` function, in the example above.  This tells Embeddable how to render the **option** in the UI (in this case `optionLabel` is defined as `(color) => color.name` so Embeddable will use the `name` property from `{ name: 'Orange', r: 256, g: 158, b: 84 }`) like so:
 <ImageGrid width='50%' images={["/img/custom-type-values.png"]} />
 
 ## Using a type in a component
@@ -262,20 +295,22 @@ export type Props = {
 ```
 - To set the value of our type, we use the same shape as used by our options: `defaultValue: { name: 'Light blue', r: 97, g: 153, b: 243 }` 
 
+So now we can customize the color of our Toggle component directly in Embeddable:
+<ImageGrid width='50%' images={["/img/toggle-input.png"]} />
 
 ## The `defineEditor` function
 
-The fastest way to use custom types is to use `defineOption` (as demonstrated [above](/development/custom-types#the-defineoption-function)) as it automatically makes this type available as a dropdown of the available options:
+The fastest way to use custom types is to use `defineOption` (as demonstrated [above](/development/custom-types#the-defineoption-function)) as it automatically makes this type available as a **dropdown** of the available options:
 
 <ImageGrid width='50%' images={["/img/custom-type-values.png"]} />
 
-But sometimes you want to provide a more flexible way of using custom types in the Embeddable builder.  This is where `defineEditor` comes in.  It allows you to use React.js to define your own editor component for that type.
+But sometimes you want to provide a more flexible way of using custom types in the Embeddable builder.  This is where `defineEditor` comes in.  It allows you to use React.js to define your own **editor component** for that type.
 
-Let's define a **very** basic RGB (Red-Green-Blue) editor for our `Color` type:
+E.g. let's define a **very** basic RGB (Red-Green-Blue) editor for our `Color` type:
 
 <ImageGrid width='50%' images={["/img/color-editor.png"]} />
 
-It will allow builders to define their colors using custom RGB values, both in the Variable builder (shown above) and inside components themselves:
+It will allow builders to define their colors using custom RGB values, both in the Variable builder (shown above) and inside components themselves, like so:
 
 <ImageGrid width='60%' images={["/img/component-color-editor.png"]} />
 
@@ -375,13 +410,47 @@ export default defineEditor(Component, meta, {
 });
 ```
 
-**Things to notice**:
-- The `defineEditor` function tells Embeddable that this editor exists (must be called from inside a file ending in `.emb.ts`).
-- The first argument to `defineEditor` is the React component we defined above (the one that will be used as the editor for this custom type).
-- The `type` in the `meta` is the custom type that this editor should be used to edit.
-- The `setter` is the function that must be called to **update** the value of the custom type (the value passed to it must match the shape expected by the type, e.g. `setter(Value.of({ r: 97, g: 153, b: 243 }))`)
-- The `value` tells us the current value.
+### Parameters
+
+The `defineEditor` function tells Embeddable that a **custom editor** exists for a given **custom type**.  
+<Callout emoji="💡">
+It must be called from inside a file named `<EditorName>.emb.ts` and it must export the editor (see example above).  
+</Callout>
+It takes the following parameters:
+
+| **Param**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `component` | ReactComponent | Yes |
+| `meta`      | Meta  | Yes |
+| `inputs`      | Inputs  | Yes |
+
+- **`component`** is the React component that should be used as the editor for this **custom type**.
+- **`meta`** and **`inputs`** are described below.
+
+**Meta** contains the following properties:
+
+| **Property**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `name` | string | Yes |
+| `label`      | string  | Yes |
+| `type`      | CustomType  | Yes |
+
+- **`name`** is the name of this editor.  It must match the name of the file (e.g. `<EditorName>.emb.ts`)
+- **`label`** is not currently used, but may be used in the future if we add support for multiple editors per type.
+- **`type`** tells Embeddable which **custom type** that this editor should be an **editor** for.
+
+**Inputs** contains only one property:
+
+| **Property**   | **Type**  | **Required** |
+| ----------- | --------- | ------------ |
+| `inputs` | (value, setter) => object | Yes |
+
 - Whatever `inputs` returns is what will be passed as the `props` to our React component.
+- The `setter` is the function that must be called to **update** the value of the custom type (the value passed to it must match the shape expected by the type, e.g. `setter(Value.of({ r: 97, g: 153, b: 243 }))`)
+- The `value` tells us the current value of our custom type.
+
+We should now be able to use our custom editor like so:
+<ImageGrid width='60%' images={["/img/component-color-editor.png"]} />
 
 ## Using custom types to filter datasets
 
