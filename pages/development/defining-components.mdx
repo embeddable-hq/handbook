@@ -184,7 +184,7 @@ The `defineComponent` and `loadData` functions used above are two of the **most 
 
 ## Extending Vanilla Components
 
-You can also **extend existing components** like the Bar Chart or Pivot Table to add custom functionality. This allows you to leverage the existing UI while adding your own logic or data handling. There are two ways to do this:
+You can also **extend [existing components](/dashboards/starter-components)** like the Bar Chart or Pivot Table to add custom functionality. This allows you to leverage the existing UI while adding your own logic or data handling. There are two ways to do this:
 
 ### Copy the Component and Make It Your own
 
@@ -196,7 +196,7 @@ This is the way we recommend, as it will allow you to have both your customized 
 [Visit our repo](https://github.com/embeddable-hq/vanilla-components-v1/) and copy the component code from the Vanilla component you want to extend. For example, if you want to extend the Bar Chart, copy the code from `src/components/BarChart/index.tsx` and `src/components/BarChart/BarChart.emb.ts`.
 
 ### Create Your Own Component
-Create a new folder in `src/components/` with your component name, and paste the copied code into it. Then, update the component name in the `.emb.ts` file to match your new component name.
+Create a new folder in `src/components/` with your component name, and paste the copied code into it. Then, update the component name in the `.emb.ts` file to match your new component name. Make sure your component's `.emb.ts` file name matches the component name, e.g. if your component is named `MyBarChart`, the file should be `MyBarChart.emb.ts`.
 
 </Steps>
 
@@ -210,9 +210,9 @@ Some components are more complex than others, and a few of them call on various 
   <p><strong>Important:</strong> if you follow this route, you will no longer receive updates to the original component. They'll still come through when you update the package, but because this involves disabling a particular chart, you won't see them.</p>
 </Callout>
 
-If you want to completely override a Vanilla component, you can do so by disabling it in the `.embeddable.config.ts` file. This will remove it from the builder and allow you to use your own version instead. The process for creating your own component is [the same as above](#copy-the-component-and-make-it-your-own) (you still need to copy the code), but you won't need to rename the component - you can use the same folder and component name as the original Vanilla component.
+If you want to completely override a Vanilla component, you can do so by disabling it in the `embeddable.config.ts` file. This will remove it from the builder and allow you to use your own version instead. The process for creating your own component is [the same as above](#copy-the-component-and-make-it-your-own) (you still need to copy the code), but you won't need to rename the component - you can use the same folder and component name as the original Vanilla component.
 
-To disable the Vanilla component, open the `.embeddable.config.ts` file in your project root and add the following code:
+To disable the Vanilla component, open the `embeddable.config.ts` file in your project root and add the following code:
 
 ```ts
 componentLibraries: [{
