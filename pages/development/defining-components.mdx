@@ -181,3 +181,46 @@ export default defineComponent(Component, meta, {
 ```
 
 The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](./define-component-function) and [loadData](/development/loading-data).
+
+## Extending Vanilla Components
+
+You can also **extend existing components** like the Bar Chart or Pivot Table to add custom functionality. This allows you to leverage the existing UI while adding your own logic or data handling. There are two ways to do this:
+
+### Copy the Component and Make It Your own
+
+This is the way we recommend, as it will allow you to have both your customized component and the original Vanilla component available in the builder. There are two simple steps:
+
+<Steps>
+#### Copy the Component Code
+
+[Visit our repo(https://github.com/embeddable-hq/vanilla-components-v1/) and copy the component code from the Vanilla component you want to extend. For example, if you want to extend the Bar Chart, copy the code from `src/components/BarChart/index.tsx` and `src/components/BarChart/BarChart.emb.ts`.
+
+#### Create Your Own Component
+Create a new folder in `src/components/` with your component name, and paste the copied code into it. Then, update the component name in the `.emb.ts` file to match your new component name.
+
+</Steps>
+
+From here, you'll have a fully functional component that you can customize further. You can add your own logic, inputs, and data handling as needed. When you're ready to test, just fire up the development server with `npm run embeddable:dev` and you'll be able to see your new component in the menu.
+
+Some components are more complex than others, and a few of them call on various helper/utility files to handle specific functionality. If you find that your component is missing some of these dependencies, you can copy them over from the Vanilla component's folder as well. You can change the folder structure as needed, but make sure to update the import paths in your component code accordingly.
+
+### Override the Vanilla Component Entirely
+
+  <Callout emoji="⚠️">
+    <p><strong>Important:</strong> if you follow this route, you will no longer receive updates to the original component. They'll still come through when you update the package, but because this involves disabling a particular chart, you won't see them.</p>
+  </Callout>
+
+  If you want to completely override a Vanilla component, you can do so by disabling it in the `.embeddable.config.ts` file. This will remove it from the builder and allow you to use your own version instead. The process for creating your own component is [the same as above](#copy-the-component-and-make-it-your-own) (you still need to copy the code), but you won't need to rename the component - you can use the same folder and component name as the original Vanilla component.
+
+  To disable the Vanilla component, open the `.embeddable.config.ts` file in your project root and add the following code:
+
+  ```ts
+  componentLibraries: [{
+    name: '@embeddable.com/vanilla-components',
+    exclude: ['BarChart'],
+  }],
+  ```
+
+  ... where `BarChart` is the name of the component you want to disable. You can add multiple components to the `exclude` array if needed. This will <strong>remove the Vanilla component from the builder</strong>, allowing you to use your own version instead.
+
+  Once you've done this, you can run `npm run embeddable:dev` to test your new component in the builder. It will now appear in the menu, and you can use it in your dashboard just like any other component. Keep in mind that until you make some changes, the component will look and behave exactly like the original Vanilla component, so you'll need to customize it further to make it your own.
