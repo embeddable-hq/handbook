@@ -206,21 +206,21 @@ Some components are more complex than others, and a few of them call on various 
 
 ### Override the Vanilla Component Entirely
 
-  <Callout emoji="⚠️">
-    <p><strong>Important:</strong> if you follow this route, you will no longer receive updates to the original component. They'll still come through when you update the package, but because this involves disabling a particular chart, you won't see them.</p>
-  </Callout>
+<Callout emoji="⚠️">
+  <p><strong>Important:</strong> if you follow this route, you will no longer receive updates to the original component. They'll still come through when you update the package, but because this involves disabling a particular chart, you won't see them.</p>
+</Callout>
 
-  If you want to completely override a Vanilla component, you can do so by disabling it in the `.embeddable.config.ts` file. This will remove it from the builder and allow you to use your own version instead. The process for creating your own component is [the same as above](#copy-the-component-and-make-it-your-own) (you still need to copy the code), but you won't need to rename the component - you can use the same folder and component name as the original Vanilla component.
+If you want to completely override a Vanilla component, you can do so by disabling it in the `.embeddable.config.ts` file. This will remove it from the builder and allow you to use your own version instead. The process for creating your own component is [the same as above](#copy-the-component-and-make-it-your-own) (you still need to copy the code), but you won't need to rename the component - you can use the same folder and component name as the original Vanilla component.
 
-  To disable the Vanilla component, open the `.embeddable.config.ts` file in your project root and add the following code:
+To disable the Vanilla component, open the `.embeddable.config.ts` file in your project root and add the following code:
 
-  ```ts
-  componentLibraries: [{
-    name: '@embeddable.com/vanilla-components',
-    exclude: ['BarChart'],
-  }],
-  ```
+```ts
+componentLibraries: [{
+  name: '@embeddable.com/vanilla-components',
+  exclude: ['BarChart'],
+}],
+```
 
-  ... where `BarChart` is the name of the component you want to disable. You can add multiple components to the `exclude` array if needed. This will <strong>remove the Vanilla component from the builder</strong>, allowing you to use your own version instead.
+... where `BarChart` is the name of the component you want to disable. You can add multiple components to the `exclude` array if needed. This will <strong>remove the Vanilla component from the builder</strong>, allowing you to use your own version instead.
 
-  Once you've done this, you can run `npm run embeddable:dev` to test your new component in the builder. It will now appear in the menu, and you can use it in your dashboard just like any other component. Keep in mind that until you make some changes, the component will look and behave exactly like the original Vanilla component, so you'll need to customize it further to make it your own.
+Once you've done this, you can run `npm run embeddable:dev` to test your new component in the builder. It will now appear in the menu, and you can use it in your dashboard just like any other component. Keep in mind that until you make some changes, the component will look and behave exactly like the original Vanilla component, so you'll need to customize it further to make it your own.
