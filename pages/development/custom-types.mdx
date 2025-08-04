@@ -105,7 +105,7 @@ The **second argument** is the javascript **value** that represents that option 
 Also notice the `optionLabel`, on the `defineType` function, in the example above.  This tells Embeddable how to render the **option** in the UI (in this case `optionLabel` is defined as `(color) => color.name` so Embeddable will use the `name` property from `{ name: 'Orange', r: 256, g: 158, b: 84 }`) like so:
 <ImageGrid width='50%' images={["/img/custom-type-values.png"]} />
 
-## Using a type in a component
+## Using a custom type in a component
 
 Let's look at a **full example** of how we can use our new **Color type** in a component.
 
