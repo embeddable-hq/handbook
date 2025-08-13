@@ -70,6 +70,9 @@ Learn more about `region` [here](/deployment/deployment-regions).
     - **micro service architecture**, where your data is spread across multiple databases. 
 
 - **`dashboardState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). We basically store a custom canvas layout (per `embeddableId`) for each unique value of `dashboardState` that you pass to the Tokens API.  So all you have to do is generate some unique string id (e.g. 'dashboard-12') every time you want a fresh new custom canvas and pass that to `dashboardState`.  Then next time they want to see that custom canvas again, just pass the same unique id ('dashboard-12') to `dashboardState` and Embeddable will automatically display the latest state of that custom canvas.
+<Callout emoji="💡">
+  Note that `dashboardState` is per `embeddableId`, so if you want different custom canvas states per environment too (dev vs qa vs prod) then make sure to include the environment name as a prefix or suffix of the `dashboardState`.
+</Callout>
 
 ## Testing Security Contexts
 
