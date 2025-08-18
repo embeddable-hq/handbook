@@ -16,6 +16,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   },
   body: JSON.stringify({
     embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
+    savedVersion: "production", // or "development" or "staging", etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
@@ -48,6 +49,13 @@ Learn more about `region` [here](/deployment/deployment-regions).
 
 ### Parameters
 
+- **`embeddableId`** is the id of the Embeddable dashboard that you want to load.  Click 'save version' or 'publish' on your Embeddable dashboard to get the id.
+- **`savedVersion`** this is the saved version of the Embeddable dashboard that you want to load.  Available options include: 
+  - 'latest' - the most recently saved version.
+  - 'production' (default) - the saved version published with the 'Production' tag.  This will be used by default if `savedVersion` is omitted.
+  - 'staging' - the saved version published with the 'Staging' tag
+  - 'development' - the saved version published with the 'Development' tag
+  - 'v3' (or v11, etc.) - the saved version with the given version number.
 - **`securityContext`** is an arbitrary JSON object included in your token request. Embeddable passes it to your **data models**, allowing you to enforce [row/table/schema-level security](/data-modeling/row-level-security). For example:
 
     ```sql
