@@ -6,6 +6,12 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.0 - Automatic Granularity
+  - Updates components to work with the new automatic granularity feature in the Embeddable SDK, which recognizes when time dimensions are used and automatically adds a granularity picker just below them. In order to keep this release backwards-compatible with existing dashboards, any components (such as Time Series Bar Chart) that previously used a dedicated granularity picker will continue to do so. However, new components and any components that did not previously include a granularity picker will use the automatic granularity picker by default.
+
+## Version 1.022 - Dropdown sort
+  - Adds the ability to sort the Dropdown and Multi-Select Dropdown components
+
 ## Version 1.0.21 - Download Menu
   - Significantly improved the ability to theme the Download Menu. You can find all of the new theme values in the [default theme file](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts) in the new `downloadMenu` section. This change may introduce very slight visual differences in the Download Menu, but it is not a breaking change. The default values remain the same, the menu is just more flexible now.
 
