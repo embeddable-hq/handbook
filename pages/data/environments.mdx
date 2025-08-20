@@ -23,8 +23,10 @@
    This tells Embeddable that the “orders” model should look for a connection named `"primary_db"` in the chosen environment.
 
 
-### **Create an Environment**  
-   Define an **environment** that maps each `data_source` to a corresponding **connection**:
+### **Create Environments**  
+   For each **environment** that you want to define (prod, staging, etc.) you should define an Environment using the Environments API (example below) mapping each `data_source` to a corresponding **connection**.
+
+Here is an example of how you would create two environments (one for prod and one for staging):
    ```ts
    // for security reasons, this must *never* be called from your client-side
    fetch('https://api.<region>.embeddable.com/api/v1/environments', {
@@ -38,6 +40,21 @@
        datasources: [
          { data_source: 'primary_db', connection: 'prod-postgres' },
          { data_source: 'warehouse', connection: 'prod-bigquery' }
+       ]
+     })
+   });
+
+   fetch('https://api.<region>.embeddable.com/api/v1/environments', {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Authorization': `Bearer ${apiKey}`
+     },
+     body: JSON.stringify({
+       name: 'staging',
+       datasources: [
+         { data_source: 'primary_db', connection: 'staging-postgres' },
+         { data_source: 'warehouse', connection: 'staging-bigquery' }
        ]
      })
    });
