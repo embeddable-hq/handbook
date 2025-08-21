@@ -1,6 +1,6 @@
 # List Dashboard Versions
 
-The **Versions API** allows you to programmatically list all saved versions of a specific dashboard (Embeddable) in your workspace. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
+The **Versions API** allows you to programmatically list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
 
 ## Endpoint
 
@@ -62,7 +62,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 ## Notes
 
 - Version values are **per embeddable** and are not shared across different dashboards.
-- The API returns the last 30 saved versions, ordered by `saved-at` timestamp.
+- The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
 - You can use this API endpoint to build custom deployment workflows, such as automatically promoting versions from development to production based on your CI/CD processes.
 
 ## Related Topics
