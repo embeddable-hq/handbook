@@ -50,15 +50,11 @@ Learn more about `region` [here](/deployment/deployment-regions).
 ### Parameters
 
 - **`embeddableId`** is the id of the Embeddable dashboard that you want to load.  Click 'save version' or 'publish' on your Embeddable dashboard to get the id.
-- **`savedVersion`** this is the saved version of the Embeddable dashboard that you want to load.  Available options include: 
+- **`savedVersion`** this is the [saved version](/deployment/versions) of the Embeddable dashboard that you want to load.  Available options include: 
   - 'production' (default) - the saved version published with the 'Production' tag.  This will be used by default if `savedVersion` is omitted.
   - 'staging' - the saved version published with the 'Staging' tag
   - 'development' - the saved version published with the 'Development' tag
   - 'v3' (or v11, etc.) - the saved version with the given version number.
-  
-[Learn More about deploying with saved versions](/deployment/versions).
-
-  **Note**: If you don't specify `savedVersion`, Embeddable will use the latest version of the dashboard that has been published to the 'Production' tag.
 - **`securityContext`** is an arbitrary JSON object included in your token request. Embeddable passes it to your **data models**, allowing you to enforce [row/table/schema-level security](/data-modeling/row-level-security). For example:
 
     ```sql
