@@ -1,0 +1,35 @@
+# Deploying Dashboard Versions
+
+Dashboard versions are a powerful way to manage your dashboard deployments. They allow you to save specific states of your dashboard, including the models, components, and Cube.js versions used. This allows you to:
+- **Roll Back** to previous versions if needed.
+- **Promote** versions through your development workflow.
+- **Test Safely** in Development or Staging before going to Production.
+
+## Two Control Models
+
+There are two main ways to control dashboard versions in Embeddable. In both cases, you'll need to pass `savedVersion` to the Embeddable Tokens API when generating your JWT token (more info [here](/deployment/tokens-api)), but they serve different purposes:
+
+- **Publish Button**: This allows users to publish their own changes directly from the no-code builder. It’s great for empowering non-technical users to manage their dashboards. Tokens can simply set `savedVersion` to development, staging, or production per environment.
+
+- **Saved Versions via the API**: This is more controlled and allows you to manage versions through your development workflow. You can create specific dashboard versions that can be promoted through your CI/CD pipeline.
+
+## `savedVersion` Strategies
+
+There are three approaches to using `savedVersion` while generating an Embeddable token:
+
+- **latest**: The easiest embed setup. This always shows the most recently saved version and is a good choice for internal sandboxes.
+- **development / staging / production**: Use this when dashboard builders control promotion. In all dev environments, set `savedVersion` to "development" and vary your data via the environment parameter. In all test environments, use "staging". In all prod environments, use "production".
+- **vX**: This provides fine-grained control by engineering. It allows you to gradually roll out to subsets of customers, pin a specific version during incident response, or land a PR that updates `savedVersion` in code, then let CI/CD promote through your environments as usual.
+
+## Example Usage
+
+For a complete example, see the [Tokens API documentation](/deployment/tokens-api).
+
+## Get Available Versions
+
+Use the **[Versions API](/deployment/versions-api)** to list saved versions for an embeddable and see current tags.
+
+## Related Topics
+
+- **[Data environments](/data/environments)** and how they map to databases
+- **[Tokens API](/deployment/tokens-api)** for generating Embeddable Tokens

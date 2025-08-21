@@ -1,7 +1,9 @@
 {
     "embedding": "Embedding dashboards",
     "tokens-api": "Tokens API",
+    "versions": "Saved versions",
     "interactivity": "Interacting with your Embeddable",
+    "versions-api": "List Versions",
     "embeddables-api": "List your Embeddables",
     "deployment-regions": "Deployment Regions"
 }

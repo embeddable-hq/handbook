@@ -1,20 +1,50 @@
 # Publishing Your Dashboard
 
-When your dashboard is ready to ship, simply hit the **publish** button. This finalizes your changes so you can:
+There are two ways to publish your dashboard:
+
+- **Publish button**: If you want to empower your dashboard users to publish their own changes, you can enable the **Publish** button in the no-code builder. This allows them to push updates directly to the live environment.
+- **Saved versions via the API**: For more controlled deployments, you can use the **Saved versions** feature. This lets you create specific dashboard versions that can be promoted through your development workflow.
+
+## Using the Publish Button
+
+When you enable the **Publish** button, users can click it to push their current dashboard state live. This includes all components, models, and configurations they have set up in the no-code builder. Users can publish to the **Development**, **Staging**, or **Production** environments, or any combination, depending on your workspace settings.
+
+<Callout emoji="⚠️">
+In order to enable the Publish button, you must have at least one of the **Development**, **Staging**, or **Production** tags enabled in your workspace. This ensures users can publish to at least one environment.
+</Callout>
+
+The Publish button brings up a dialog that is split into two sections:
+
+<ImageGrid images={["/img/publish-dialog.png"]} />
+
+- **Saved Versions**: The left-hand column lists all saved versions of the dashboard. Users can select a version to publish to any of the three environments. To create a new version, see [Saving Versions](/dashboards/saving).
+- **Info and Action Pane**: The right-hand column lists the **Model**, **Component**, and **Cube** versions of the currently selected saved version. It also allows the user to choose which environments to publish to. Environments that the version is _already published to_ are greyed out, while those that are not are selectable.
+
+The **Info and Action Pane** also includes the **Publish button** itself, and a link with additional information on [How to embed your dashboard](/deployment/embedding). The Publish button will only be enabled if the user has selected at least one environment to publish to.
+
+## Rolling Back Changes
+
+To roll back Production (or any tag):
+<Steps>
+  ### Open Publish versions.
+
+  ### Select the prior saved version.
+
+  ### Check Production and click Publish.
+ 
+  The tag moves back to the chosen version and is effective immediately.
+</Steps>
+
+## When to use Publish vs Tokens
+- **Publish button**: Empower your dashboard builders to promote versions without code changes. As soon as they're happy with their dashboard, they can publish it.
+
+- **API with `savedVersion`**: Publish your dashboard through code/PRs and CI/CD. See [Deploying Dashboard Versions](/deployment/versions) for details.
+
+## Once your Dashboard is Published
 
 - **Embed the Dashboard**: Your engineering need to follow the simple instructions [here](/deployment/embedding).
 - **Iterate Anytime**: Once it's embedded, you can make edits any time and push them live. Return to the no-code builder, adjust your components or data, and publish again.
 
-## A Native Look and Feel
+## Next Steps
 
-Embeddable dashboards appear on your site through a **web component** (`<em-beddable>`). This approach offers:
-
-- **Seamless Integration**: The web component behaves like any native HTML element, so your dashboard feels right at home in your layout.
-- **Mobile Responsiveness**: Automatic breakpoints and scaling help your dashboards adapt to smaller screens without extra effort.
-- **Flexible Branding**: Any theming you’ve applied (e.g., custom colors) comes through naturally, since the canvas is invisible and won’t override your site’s look.
-
-By design, visitors can’t tell they’re viewing something “external” - it looks and behaves like a **built-in** part of your website.
-
-**Examples**
-
-<ImageGrid images={["/img/eyk-example.png", "/img/pledge-example.png", "/img/ra-example.png", "/img/concept-x-example.png" ]} />
+Once you've published your dashboard, you can [Embed it in your application](/deployment/embedding) to make it available to your users.
