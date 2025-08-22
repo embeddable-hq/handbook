@@ -29,14 +29,13 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 ```json
 {
   "tags": {
-    "latest": { "version": "v3", "updated-at": "2025-06-27T09:31:42.125Z" },
     "development": { "version": "v3", "updated-at": "2025-06-27T09:32:10.004Z" },
     "production": { "version": "v2", "updated-at": "2025-06-21T16:12:53.542Z" }
   },
   "saved-versions": [
     {
       "version": "v1",
-      "saved-by": "jozef@embeddable.de",
+      "saved-by": "sina@embeddable.com",
       "description": "Our first publish!!",
       "saved-at": "2025-06-19T09:01:03.023523Z",
       "components-version": "2025-02-11T18:53:03.527633Z",
@@ -50,7 +49,6 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 
 ## Field Reference
 
-- **`tags.latest`**: The most recently saved version and when it was last updated. Always present if at least one version has been saved.
 - **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
 - **`saved-versions[]`**: Each saved version, newest first.
   - **`version`**: The generated version label (v1, v2, ...).
