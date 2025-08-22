@@ -50,7 +50,7 @@ Learn more about `region` [here](/deployment/deployment-regions).
 ### Parameters
 
 - **`embeddableId`** is the id of the Embeddable dashboard that you want to load.  Click 'save version' or 'publish' on your Embeddable dashboard to get the id.
-- **`savedVersion`** this is the saved version of the Embeddable dashboard that you want to load.  Available options include: 
+- **`savedVersion`** this is the [saved version](/deployment/versions) of the Embeddable dashboard that you want to load.  Available options include: 
   - 'production' (default) - the saved version published with the 'Production' tag.  This will be used by default if `savedVersion` is omitted.
   - 'staging' - the saved version published with the 'Staging' tag
   - 'development' - the saved version published with the 'Development' tag
@@ -75,6 +75,8 @@ Learn more about `region` [here](/deployment/deployment-regions).
     - **single-tenancy** (AKA **database-level security**), where each of your customers has their data in a different database.
     - different database connections for **prod**, **qa**, **testing**, etc. 
     - **micro service architecture**, where your data is spread across multiple databases. 
+
+- **`expiryInSeconds`** is the number of seconds until the token expires. The default is 7 days (60 * 60 * 24 * 7). Tokens are standard JWTs, and contain `iat` and `exp` when decoded. On your front-end, you can keep track of the token expiry and refresh it as needed with a call to the Embeddable Tokens API, without needing to reload the page.
 
 - **`dashboardState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). We basically store a custom canvas layout (per `embeddableId`) for each unique value of `dashboardState` that you pass to the Tokens API.  So all you have to do is generate some unique string id (e.g. 'dashboard-12') every time you want a fresh new custom canvas and pass that to `dashboardState`.  Then next time they want to see that custom canvas again, just pass the same unique id ('dashboard-12') to `dashboardState` and Embeddable will automatically display the latest state of that custom canvas.
 <Callout emoji="💡">

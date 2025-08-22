@@ -1,0 +1,70 @@
+# List Dashboard Versions
+
+The **Versions API** allows you to programmatically list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
+
+## Endpoint
+
+```
+GET https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions
+```
+
+## Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+## Example Response
+
+```json
+{
+  "tags": {
+    "development": { "version": "v3", "updated-at": "2025-06-27T09:32:10.004Z" },
+    "production": { "version": "v2", "updated-at": "2025-06-21T16:12:53.542Z" }
+  },
+  "saved-versions": [
+    {
+      "version": "v1",
+      "saved-by": "sina@embeddable.com",
+      "description": "Our first publish!!",
+      "saved-at": "2025-06-19T09:01:03.023523Z",
+      "components-version": "2025-02-11T18:53:03.527633Z",
+      "models-version": "2025-02-11T18:53:03.527633Z", // cube-internal only
+      "cube-version": "1.3.22" // cube-internal only
+    }
+    // ... up to last 30
+  ]
+}
+```
+
+## Field Reference
+
+- **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
+- **`saved-versions[]`**: Each saved version, newest first.
+  - **`version`**: The generated version label (v1, v2, ...).
+  - **`saved-by`**: Email of the user who saved it.
+  - **`description`**: The Save version note. Also appears in the builder and publish modal.
+  - **`saved-at`**: When the snapshot was taken.
+  - **`components-version / models-version / cube-version`**: The underlying versions that this saved version references.
+
+## Notes
+
+- Version values are **per embeddable** and are not shared across different dashboards.
+- The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
+- You can use this API endpoint to build custom deployment workflows, such as automatically promoting versions from development to production based on your CI/CD processes.
+
+## Related Topics
+
+- **[Token Targeting](/deployment/tokens-api)**: How to use saved versions in your Embeddable tokens.
+- **[Promotion Strategies](/deployment/versions#savedversion-strategies)**: Best practices for managing and promoting dashboard
+

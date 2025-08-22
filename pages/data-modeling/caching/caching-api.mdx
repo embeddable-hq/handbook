@@ -2,41 +2,53 @@
 
 Use Embeddable’s Caching API to tell Embeddable which security contexts and pre-aggregations to refresh and how often:
    
-   ```javascript
-   fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json',
-       'Accept': 'application/json',
-       'Authorization': `Bearer ${apiKey}` // Keep your API key secure
-     },
-     body: JSON.stringify({
-       refreshInterval: "30 minutes",
-        embeddableIds: ['5f311740-d144-412e-aab8-3d9e632aba2f', '20e19de8-0C12-4c80-9ae9-db062c418f76'],
-       scheduledRefreshContexts: [
-         {
-           securityContext: {
-             userId: '9sZSJ9LHsiYXR0cmli'
-           },
-           environment: 'default'
-         },
-         {
-           securityContext: {
-             userId: 'HsiYXR0cmli9sZSJ9L'
-           },
-           environment: 'prod'
-         }
-       ]
-     })
-   });
+```javascript
+fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    refreshInterval: "30 minutes",
+    embeddables: [
+      {
+        id: "4beec55e-11f5-489a-8417-eb77c6a3c6c3",
+        savedVersions: ["production"]  // If not provided, the latest saved version will be used by default
+      }
+    ],
+    scheduledRefreshContexts: [
+      {
+        securityContext: {
+          userId: '9sZSJ9LHsiYXR0cmli'
+        },
+        environment: 'default'
+      },
+      {
+        securityContext: {
+          userId: 'HsiYXR0cmli9sZSJ9L'
+        },
+        environment: 'prod'
+      }
+    ]
+  })
+});
 
-   Response:
-   Status 204 (No Content)
-   ```
+Response:
+Status 204 (No Content)
+```
+
+<Callout emoji="💡">
+  The `savedVersion` value for a given dashboard tells Embeddable which models and cube version it should use when refreshing pre-aggregations (e.g. it will use those tagged as “production”)
+</Callout>
+
    - `region`: your deployment region ([learn more](/deployment/deployment-regions)). 
    - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
    - `refreshInterval`: (required) the refresh interval, in `minutes`, `hours`, or `days` (must be `30 minutes` or larger, currently).
-   - `embeddableIds`: (required) the ids of Embeddables that you whose pre-aggregations you want refreshed 
+    - `embeddables`: (required) a list of Embeddables to refresh. Each object must contain:
+      - `id`: the unique identifier of the Embeddable dashboard.
+      - `savedVersions`: (optional) an array of saved versions to refresh. If not provided, the latest saved version will be used by default.
    - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
    - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
 

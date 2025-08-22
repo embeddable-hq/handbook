@@ -28,14 +28,17 @@ Learn more about `region` [here](/deployment/deployment-regions).
       "name": "Marketing dash",
       "tags": ["Marketing"],
       "lastPublishedAt": {
-        "default": "2024-02-11T18:53:03.527633Z"
+        "latest": "2024-02-11T18:53:03.527633Z",
+        "production": undefined, // hasn't yet been published to production
+        "staging": "2024-02-11T18:53:03.527633Z",
+        "development": "2024-02-10T12:55:03.563273Z",
       }
     },
     {
       "id": "d36785d6-6ef2-4d8a-bfce-ad09fbb97064",
       "name": "Product KPIs",
       "tags": ["OKRs", "Product"],
-      "lastPublishedAt": {} //this hasn't been published
+      "lastPublishedAt": {} // this hasn't yet been saved
     }
   ]
 }
@@ -44,4 +47,4 @@ Learn more about `region` [here](/deployment/deployment-regions).
 - **`id`**: A unique identifier for the Embeddable (a dashboard).  
 - **`name`**: The display name your team set in the no-code builder.  
 - **`tags`**: Optional labels for categorization or searching (support for `tags` is coming shortly).
-- **`lastPublishedAt`**: Shows timestamps for each environment (e.g. `default`) indicating when the dashboard was last published. If empty, it hasn’t been published in that environment yet.
+- **`lastPublishedAt`**: Shows timestamps for each environment (e.g. `production`) indicating when the dashboard was last published. If empty, it hasn't been published in that environment yet.
