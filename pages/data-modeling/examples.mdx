@@ -1,4 +1,4 @@
-# Example Data Models: from SQL to Cubes
+# Examples: from SQL to Models
 
 This section contains some examples of how to translate **SQL** into **data models**. 
 
@@ -106,7 +106,7 @@ cubes:
         type: count
         title: "# of Orders"
 
-    - name: total_revenue
+      - name: total_revenue
         sql: total_amount
         type: sum
         title: "Total Revenue"
@@ -121,7 +121,7 @@ cubes:
 ```
 
 - These models enable us to recreate the “revenue by customer” query in Embeddable’s builder simply by selecting the `total_revenue` measure and the `customer_name` dimension. 
-- But the real power, along with centralising our data logic, is that they unlock many other questions without writing new SQL:
+- But the real power, along with centralizing our data logic, is that they unlock many other questions without writing new SQL:
     - Revenue by country.
     - Order volume trends over time
     - Top customers by spend in the last 30 days
@@ -131,7 +131,8 @@ cubes:
 -  **No aggregations in the cube SQL** - the model definitions don’t SUM or GROUP BY. Aggregations come from measures (e.g. total_revenue with type: sum) and grouping comes from dimensions (e.g. customer_name) you select in the builder.
 - **Filters aren’t baked into the base dataset** - instead of `WHERE o.status = 'completed'` in the cube SQL, the example uses a filtered measure.
 - **Joins are modeled once, then reused** - the orders model declares a single join to customers. After that, any chart can use customer fields (customer_name, country) without rewriting the join.
-- **Sorting is a visualization concern** -the original SQL orders by `total_revenue DESC`. In Embeddable, you sort when needed in the builder, rather than hard-coding it in the model.
+- **Sorting is a visualization concern** - the original SQL orders by `total_revenue DESC`. In Embeddable, you sort when needed in the builder, rather than hard-coding it in the model.
+- **The examples above use `sql_table`** - these are simple fact table examples. You use `sql` if your model relies on CTEs/window functions or you want a denormalized base.
 
 
 ### KPI: Revenue by country (last 30 days)
@@ -176,7 +177,7 @@ cubes:
     joins:
       - name: customers
         sql: "{CUBE}.customer_id = {customers}.id"
-        relationship: one_to_one
+        relationship: many_to_one
 
     dimensions:
       - name: id
@@ -215,12 +216,12 @@ Essentially, with the model, “Simple MRR” becomes a reusable measure you can
 
 - In SQL queries, you hard-code the joins, filters, and aggregation for that one question. 
     - Output is **a single result set** (great for ad-hoc or one chart).
-- In models, you define reusable semantics: dimensions (fields), measures (aggregations), joins, and optional segments. 
+- In models, you define reusable semantics: dimensions (fields), measures (aggregations), and joins.
     - Output is **a flexible dataset** you can slice by time, country, product, etc, without new SQL.
 
 Modeling wins because it gives you:
 
-- **Reusability**: Centralize logic into measures/segments and reuse across dashboards.  
+- **Reusability**: Centralize logic into measures and reuse across dashboards.  
 - **Consistency**: Everyone answers KPIs from the same definitions.  
 - **Composability**: Build derived cubes for complex KPIs; keep base cubes broad.  
 - **Governance & speed**: Easier reviews, CI/CD, and safer iteration.  
