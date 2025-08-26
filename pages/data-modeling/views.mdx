@@ -85,7 +85,7 @@ A simple Cube View might look like this:
 #
 views: 
   - name: customer_view
-	  title: Customer View
+    title: Customer View
     cubes:
       - join_path: customers
         prefix: true
@@ -125,13 +125,13 @@ views:
       - join_path: orders
         prefix: true
         includes:
-	        - id
+          - id
           - created_at
 
       - join_path: products
         prefix: true
         includes: 
-	        - id
+          - id
           - name
           - size
           - count
@@ -146,24 +146,24 @@ views:
   - name: customer_view
     cubes:
       - join_path: customers
-	      prefix: true
+        prefix: true
         includes: "*"
 
       - join_path: orders
         includes:
           - name: created_at
-	          alias: orders_created_at
-	          title: 'Order date'
+            alias: orders_created_at
+            title: 'Order date'
 
       - join_path: products
         includes: 
           - name: name
-	          alias: products_name
+            alias: products_name
           - name: size
-	          alias: products_size
-	          title: 'Size of the product'
+            alias: products_size
+            title: 'Size of the product'
           - name: count
-	          alias: products_count
+            alias: products_count
 ```
 
 This can be particularly useful if you want to name your members (dimensions and measures) differently for different audiences.  You can define a different view for each audience and give each member different titles.
@@ -227,7 +227,7 @@ views:
         prefix: true
         includes: "*"
         excludes:
-	        - id
+          - id
 ```
 
 ### Access policies
@@ -239,21 +239,21 @@ views:
 
 ```yaml
 views:
-	- name: customer_view
+  - name: customer_view
     cubes:
       - join_path: customers
         prefix: true
         includes: "*"
-	        
-		access_policy:
-		  - role: 'default'
-			  member_level:
-				  includes: "*"
-		    row_level:
-		      filters:
-		        - member: customers_id
-		          operator: equals
-		          values: ["{ securityContext.user_id }"]
+          
+    access_policy:
+      - role: 'default'
+        member_level:
+          includes: "*"
+        row_level:
+          filters:
+            - member: customers_id
+              operator: equals
+              values: ["{ securityContext.user_id }"]
 ```
 
 The above `access_policy`, for example, gives every end-user with the “default” role, access to **all** members of the `customers_view` view, but it restricts them to only access the rows whose `customers_id` is equal to a given `user_id` in the `securityContext`.
