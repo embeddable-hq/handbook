@@ -5,6 +5,7 @@
     "defining-models": "Defining data models",
     "dimensions-and-measures": "Dimensions and Measures",
     "joins": "Joins",
+    "examples": "Example models",
     "row-level-security": "Row-level security",
     "pushing-models": "Pushing your models",
     "caching": "Caching"
