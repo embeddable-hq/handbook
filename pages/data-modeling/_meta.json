@@ -7,6 +7,7 @@
     "joins": "Joins",
     "examples": "Example models",
     "row-level-security": "Row-level security",
+    "views": "Views",
     "pushing-models": "Pushing your models",
     "caching": "Caching"
   }

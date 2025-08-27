@@ -1,0 +1,261 @@
+# Cube Views
+
+Cube Views provide an elegant way to:
+
+- Define a **clean view** on top of your data models.
+- Tell Embeddable and Cube which **join paths** to use and when.
+- Enforce that **row-level security** is always applied consistently.
+
+![source: [Cube Data Modeling Concepts](https://cube.dev/docs/product/data-modeling/concepts#views)](/img/views.png)
+
+Source: [Cube's Official Docs](https://cube.dev/docs/product/data-modeling/concepts#views)
+
+## Why use Cube Views?
+
+**Cube data models** (known as “**cubes**”) allow you to define user-friendly entities, measures and dimensions and the relationships between them.  This works well when you’re getting started, but as you start to build out more and more models you can quickly start to hit **a number of problems**:
+
+- **Clutter:** Embeddable starts to show dozens of models in the builder and it can be hard for dashboard builders to know where to start from.
+- **Ambiguous join paths:** Models are connected via multiple join paths and Cube doesn’t know which path to take.
+- **Enforcing row-level security**: Defining row-level security at the cube level means that row-level security is only applied when queries use that cube.  You therefore find yourself defining row-level security repeatedly in every model.
+
+Cube Views **solve these problems**:
+
+- **Clutter**: Views allow you to represent different **subsets** of your connected Cubes graph as individual Views (e.g. you could have just a Marketing view, a Sales View and an Admin view, each with their own individualised terminology)
+- **Ambiguous join paths:** Views represent a subset of the connected graph and thus allow you to specify exactly which join path to use for any measure or dimension that is queried using that view.
+- **Enforcing row-level security**: Views allow you to define view-level **access policies** that can significantly simplify your row-level security.  You define your row-level security rules once at the view-level, and you can be confident that they will always be applied for any query.
+
+## How to define Cube Views
+
+The simplest way to get started with **Cube Views** is to define a `<view-name>.cube.yml` file (e.g. `customer_view.cube.yml`) like so:
+
+```yaml
+views: 
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+          
+      - join_path: orders
+        prefix: true
+        includes: "*"
+          
+      - join_path: products
+        prefix: true
+        includes: "*"
+```
+
+This tells Embeddable that it should present a model called “Customer View” that contains **all** the dimensions and measures from the `customers`, `orders` and `products` models.
+
+<ImageGrid width='75%' images={["/img/customer-view.png"]}/>
+
+You can then mark those models as `public: false` in your codebase so that the models themselves will no longer appear in Embeddable:
+
+```yaml
+cubes:
+  - name: customers
+    public: false
+    ...
+```
+
+```yaml
+cubes:
+  - name: orders
+    public: false
+    ...
+```
+
+```yaml
+cubes:
+  - name: products
+    public: false
+```
+
+Meaning you end up with a much cleaner list of models in Embeddable:
+
+<ImageGrid width='75%' images={["/img/list-of-views.png"]}/>
+
+## Example Views
+
+A simple Cube View might look like this:
+
+```yaml
+#
+# customer_view.cube.yml
+#
+views: 
+  - name: customer_view
+    title: Customer View
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+          
+      - join_path: orders
+        prefix: true
+        includes: "*"
+          
+      - join_path: products
+        prefix: true
+        includes: "*"
+```
+
+Things to notice:
+
+- `views` Even though views have the same file structure as cubes (i.e. their file must end in `.cube.yml`), the root of the file starts with `views` instead of `cubes`.
+- `name` This is the unique name used internally by Embeddable and Cube to reference this View. Updating it once it’s in use can potentially break your dashboards.
+- `title` This is an optional, human-readable name that appears in the UI. You can change it anytime without impacting the underlying logic.
+- `cubes` This lists the cubes that you want to give access to in your View.
+- `join_path` In its simplest form this is the name of the cube to include in the View, but you can use dot-notation to tell Cube which join path to use when querying members (dimensions and measures) of this model.  Learn more [here](/data-modeling/views#join-paths).
+- `prefix` Setting this to `true` will prefix the `name` of all the members (dimensions and members) of this model with the model `name` (e.g. turning `created_at` in `products` into `products_created_at`).  This is quite useful as it avoids conflicts where two models have members with the same name (e.g. `customers` and `products` may both have a measure named `count`).  You can also solve this conflict problem by defining an `alias`.  Learn more [here](/data-modeling/views#alias-and-title).
+- `includes` this lists the members (dimensions and measures) that you want to include in the View.  `"*"` means **include all**.  Below we show how to explicitly include specific members.
+
+### Includes
+
+When describing which members (dimensions and measures) to include you can either use `“*”`, as shown in the `customers` section below, to include all its members.  Or you can explicitly describe each member one by one, as shown in the `orders` and `products` sections below: 
+
+```yaml
+views: 
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+
+      - join_path: orders
+        prefix: true
+        includes:
+          - id
+          - created_at
+
+      - join_path: products
+        prefix: true
+        includes: 
+          - id
+          - name
+          - size
+          - count
+```
+
+### Alias and title
+
+By default Cube will derive the `name` and `title`, for each member (dimension and measure) in the View, using the `name` and `title` as defined in the Cube it is referencing.  But if you want more control over the `name` and `title` to use, you can define these explicitly using `alias` and `title` as shown in the `orders` and `products` sections below:
+
+```yaml
+views: 
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+
+      - join_path: orders
+        includes:
+          - name: created_at
+            alias: orders_created_at
+            title: 'Order date'
+
+      - join_path: products
+        includes: 
+          - name: name
+            alias: products_name
+          - name: size
+            alias: products_size
+            title: 'Size of the product'
+          - name: count
+            alias: products_count
+```
+
+This can be particularly useful if you want to name your members (dimensions and measures) differently for different audiences.  You can define a different view for each audience and give each member different titles.
+
+### Join paths
+
+The `join_path` parameter uses dot notation (e.g. `<cube1>.<cube2>.<cube3>`) to define the joins that should be used when accessing particular members (dimensions and measures) within the View. 
+
+E.g:
+
+```yaml
+views: 
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+          
+      - join_path: customers.orders
+        prefix: true
+        includes: "*"
+          
+      - join_path: customers.orders.products
+        prefix: true
+        includes: "*"
+```
+
+In this example:
+
+- All members of the `customers` cube will be accessed directly
+- All members of the `orders` cube must include a direct join from `customers` , even if no members from the customers cube are requested.
+- All members of the `products` cube must include a join from `customers` via `orders` even if only members of the products cube are requested.
+
+E.g a query requesting just the `product_count` would generate the following SQL: 
+
+```sql
+SELECT
+  count(distinct "products".id) "customer_view__products_count"
+FROM
+  public.customers AS "customers"
+  LEFT JOIN public.orders AS "orders" ON "customers".id = "orders".customer_id
+  LEFT JOIN public.products AS "products" ON "orders".product_id = "products".id
+LIMIT
+  100
+```
+
+This can be **particularly useful** if:
+
+1. Your **row-level security** has been defined in the `customers` cube model, and you want to make sure that that **row-level security** is **always** applied.
+2. You have defined multiple **join paths** from `customers` to `products`, but you want Cube to take the path that goes through `orders`.
+
+### Excludes
+
+If you use `includes: '*'` you can also use `excludes` to exclude particular members (dimensions and measures) from your View, like so:
+
+```yaml
+views: 
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+        excludes:
+          - id
+```
+
+### Access policies
+
+**Access policies** allow you to apply both `member_level` and `row_level` security to your Views based on roles (i.e. control which columns and rows are visible to which end-users).  This is a nice alternative to **cube-level [row-level security](/data-modeling/row-level-security)**, as:
+
+1. It can be defined in one place on the View (rather than having to define it in each cube model)
+2. It can also allow you to control which members (dimensions and measures) are visible.
+
+```yaml
+views:
+  - name: customer_view
+    cubes:
+      - join_path: customers
+        prefix: true
+        includes: "*"
+          
+    access_policy:
+      - role: 'default'
+        member_level:
+          includes: "*"
+        row_level:
+          filters:
+            - member: customers_id
+              operator: equals
+              values: ["{ securityContext.user_id }"]
+```
+
+The above `access_policy`, for example, gives every end-user with the “default” role, access to **all** members of the `customers_view` view, but it restricts them to only access the rows whose `customers_id` is equal to a given `user_id` in the `securityContext`.
+
+Learn more here (TODO).
