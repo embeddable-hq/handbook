@@ -6,6 +6,10 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.1 & 1.1.2 - Bug Fixes
+  - Fixed an issue where the "Next" button on Table Pagination was not working correctly in some instances.
+  - Fixed an issue where in rare cases the Table Chart would crash when interpreting strings and getting a `null` value instead of an empty string.
+
 ## Version 1.1.0 - Automatic Granularity
   - Updates components to work with the new automatic granularity feature in the Embeddable SDK, which recognizes when time dimensions are used and automatically adds a granularity picker just below them. In order to keep this release backwards-compatible with existing dashboards, any components (such as Time Series Bar Chart) that previously used a dedicated granularity picker will continue to do so. However, new components and any components that did not previously include a granularity picker will use the automatic granularity picker by default.
 

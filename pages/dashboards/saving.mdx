@@ -1,0 +1,100 @@
+# Saving Dashboard Versions
+
+When you're building a dashboard, it's important to save your work regularly. The no-code builder has two main ways to save your progress: 
+
+ - **Auto‑Save** protects your work as you edit. 
+ - **Saving a version** lets you commit a known good state, add context, and reuse or promote that exact state later.
+
+## Auto-Save
+
+This occurs automatically whenever you make changes. Your latest dashboard state is **always** saved, even if you close the browser or lose connection.
+
+If you decide you want to revert any changes you've made that were auto-saved, you can choose to revert to a previous **Saved version** in the [Version Picker](/dashboards/saving#version-picker).
+
+## Saving a version
+
+You can click the **Save Version** button at the top of the dashboard builder to create a specific version. These versions persist, so you can switch back and forth between them and also, crucially, [publish them](/dashboards/publishing).
+
+<ImageGrid images={["/img/save-version-button.png"]} width="50%" />
+
+Saved versions record which **Models**, **Components**, and **Cube** versions were used. This guarantees reproducible deploys and reliable rollbacks. They also include an optional **Description** field, so you can document what changed or why you saved that version.
+
+<ImageGrid images={["/img/dashboard-versions-save.png"]} width="50%" />
+
+- **Description**: A text field where you can enter a brief summary of what changes were made in this version. This appears wherever that saved version is listed. Examples: “Add cohort filter”, “Swap source to v2 model”.
+- **Models version**: information on the currently-selected Models version, including the date and message from the last models publish.
+- **Components version**: information on the currently-selected Components version, including the date and message from the last components publish.
+- **Cube version**: information on the currently-selected Cube version.
+
+You can change your models/components/cube version by quitting out of the dialog, selecting the version you want to use from the [Version Picker](/dashboards/saving#version-picker) at the top of the dashboard builder, and then clicking **Save Version** again.
+
+<ImageGrid images={["/img/versions-menu.png"]} width="30%" />
+
+After saving succeeds, we show the following confirmation dialog:
+
+<ImageGrid images={["/img/dashboard-versions-save-success.png"]} width="50%" />
+
+This shows you the [version number](/deployment/versions), a [Publish button](/dashboards/publishing), and information on how to [Embed this version](/deployment/versions) in your site.
+
+### Effects on other parts of the platform
+
+The version you save can be:
+ - selected in the [Saved versions picker](/dashboards/saving#saved-versions)
+ - promoted to Development/Staging/Production via the [Publish flow](/dashboards/publishing) 
+ - targeted via the [Tokens API](/deployment/tokens-api) (`savedVersion`), 
+ - accessed in the [Embeddable API](/deployment/embeddables-api) metadata, and 
+ - used by the [Caching API](/data-modeling/caching/caching-api) when refreshing pre‑aggregations.
+
+## Version Picker
+
+The versions picker at the top of the dashboard builder allows you to select versions of your dashboard, models, components, and Cube.js. This lets you quickly switch between different states of your dashboard.
+
+<ImageGrid images={["/img/versions-menu.png"]} width="30%" />
+
+### Saved versions
+
+The last 30 saved versions are listed in the dropdown, with the most recent at the top. You can select any saved version to load it into the builder. Note that if you have unsaved changes, you will be prompted to confirm before switching, as doing so will discard them.
+
+<Callout emoji="💡">
+  **Reset Changes**: To discard any unwanted dashboard changes, simply select the latest saved version from the "Saved versions" dropdown to reset to the latest saved version.
+</Callout>
+
+This picker also shows the **description** entered when saving the version, the **date** it was saved, **who** saved it, whether it is the **currently selected** version being used by the dashboard builder, and whether it is **currently published** to development, staging, or production.
+
+<ImageGrid width='70%' images={["/img/versions-dashboard.png"]} />
+
+When you change dashboard versions, we also update the **Models**, **Components**, and **Cube** pickers to match what that saved version used. Note that you can switch your dashboard version without impacting published statuses (only the "selected" tag will move):
+
+<ImageGrid images={["/img/versions-dashboard.png", "/img/versions-dashboard-selected.png"]} />
+
+If a referenced Cube version is no longer available, we'll surface a clear warning and guide you to select a compatible version before you save or publish again.
+
+### Models version
+
+The Models version picker shows the currently selected [Models version](/development/pushing-code), along with the date and message from the last models publish. You can switch to a different version by selecting it from the dropdown.
+
+<ImageGrid images={["/img/versions-models.png","/img/versions-models-selected.png"]} />
+
+### Components version
+
+The Components version picker shows the currently selected [Components version](/development/pushing-code), along with the date and message from the last components publish. You can switch to a different version by selecting it from the dropdown.
+
+<ImageGrid images={["/img/versions-components.png","/img/versions-components-selected.png"]} />
+
+### Cube version
+
+The Cube version picker shows the currently selected [Cube version](https://cube.dev/blog/category/changelog), along with the date and message from the last Cube.js publish. You can switch to a different version by selecting it from the dropdown.
+
+<ImageGrid images={["/img/versions-cube.png","/img/versions-cube-selected.png"]} />
+
+## Publish tag availability
+
+Workspaces can enable any combination of **Development**, **Staging**, and **Production** tags. If your workspace disables all tags, **Publish** actions are hidden.
+
+<Callout emoji="💡">
+**Don't see a tag you expect?** Ask your admin or contact support to enable it for your workspace.
+</Callout>
+
+## Next Steps
+
+Once you've saved a version of your dashboard, you're ready to [publish it](/dashboards/publishing).

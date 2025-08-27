@@ -10,7 +10,7 @@ It brings together your **data models** (defined in code) and your **components*
 - **Faster Iterations**: Dashboards can be designed and tested on the fly. No need to wait for dev cycles to adjust charts or filters.  
 - **Reuse & Scale**: Your code-defined models and components are made available in one place. Embeddable handles the plumbing - so a single chart component can be reused by multiple teams or use cases.
 
-<ImageGrid images={["/img/builder-ui.png"]}/>
+<ImageGrid images={["/img/dash1.png", "/img/dash2.png"]}/>
 
 ## High-Level Workflow
 
@@ -33,3 +33,17 @@ It brings together your **data models** (defined in code) and your **components*
    - [Embed](/deployment/embedding) the resulting dashboard on your website or app using a web-component (not an iFrame).
 
 With the **no-code builder**, everyone in your organization - devs and non-devs alike - can collaborate on analytics dashboards. Devs define the underlying data logic and React components; end users assemble, configure, and publish dashboards. 
+
+## A Native Look and Feel
+
+Embeddable dashboards appear on your site through a **web component** (`<em-beddable>`). This approach offers:
+
+- **Seamless Integration**: The web component behaves like any native HTML element, so your dashboard feels right at home in your layout.
+- **Mobile Responsiveness**: Automatic breakpoints and scaling help your dashboards adapt to smaller screens without extra effort.
+- **Flexible Branding**: Any theming you’ve applied (e.g., custom colors) comes through naturally, since the canvas is invisible and won’t override your site’s look.
+
+By design, visitors can’t tell they’re viewing something “external” - it looks and behaves like a **built-in** part of your website.
+
+**Examples**
+
+<ImageGrid images={["/img/eyk-example.png", "/img/pledge-example.png", "/img/ra-example.png", "/img/concept-x-example.png" ]} />

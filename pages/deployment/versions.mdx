@@ -1,0 +1,58 @@
+# Deploying Dashboard Versions
+
+[Saved dashboard versions](/dashboards/saving) are a powerful way to manage your **dashboard deployments**. They allow your [dashboard builders](/dashboards/introduction) to **save specific versions** of their dashboards (including the dashboard layout, the models, components, and Cube.js versions used) and you can control (via [API](/deployment/tokens-api)) which of these saved versions are shown to which group of users. 
+
+This allows you to:
+- **Test Safely** a new saved dashboard version in Development or Staging before going to Production.
+- **Roll Back** to previous versions if needed.
+- **Promote** versions through your development workflow using code (or [in our UI](/dashboards/publishing)).
+
+## Two Control Models
+
+There are two main ways to control dashboard versions in Embeddable. In both cases, you'll need to pass `savedVersion` to the Embeddable [Tokens API](/deployment/tokens-api) when generating your [Security Token](/deployment/embedding#place-the-em-beddable-element), but they serve different purposes:
+
+- **Publish Button**: This allows users to publish their own changes directly from the no-code builder (learn more [here](/dashboards/publishing)). It’s great for empowering non-technical users to manage their dashboards. When calling the **Token API**, simply set `savedVersion` to "development", "staging", or "production" per environment (see example [here](/deployment/tokens-api)).
+
+- **Saved Versions via the API**: This is more controlled and allows you to manage versions through your development workflow. You can create specific dashboard versions that can be promoted through your CI/CD pipeline.
+
+## Saved Versions via the API
+
+Use this approach if you want your engineering team to have fine-grained control over which saved versions are deployed where.
+
+E.g:
+
+ - You could release a new version to a subset of customers to get feedback before releasing to everyone.
+
+ - You can also apply the version to your main codebase as part of a PR, and then promote that version through your different environments via your standard code promotion mechanism (e.g. merging into main branch)
+
+To do this, simply pass the exact version to `savedVersion` in the [Tokens API](/deployment/tokens-api), like this: 
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
+    savedVersion: "v4", // or "v11", etc.
+    ...
+    })
+  })
+})
+```
+
+You can get the version number directly from the [Saved Versions picker](/dashboards/saving#version-picker) or by calling the [Versions API](/deployment/versions-api).
+
+If you want to remove the **Publish button** from the no-code builder entirely, please contact support and we can disable it for your workspace.
+
+## Get Available Versions
+
+Use the **[Versions API](/deployment/versions-api)** to list saved versions for an embeddable and see current tags.
+
+## Related Topics
+
+- **[Data environments](/data/environments)** and how they map to databases
+- **[Tokens API](/deployment/tokens-api)** for generating Embeddable Tokens

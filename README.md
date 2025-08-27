@@ -1,4 +1,4 @@
-# Embeddable Handbook 
+# Embeddable Handbook
 
 This is the repo for Embeddable's [Docs](https://docs.embeddable.com).
 
@@ -10,7 +10,7 @@ Any changes pushed to the main branch are automatically deployed to https://docs
 
 ## Documentation Guidelines
 
-These guidelines help keep our docs easy to navigate and consistent, as we scale.
+These guidelines help keep our docs easy to navigate and consistent, as we scale. We also have a **[style guide](https://www.notion.so/trevorio/Handbook-Guidelines-256726382bcf8078882bda58242bb6d7)** with additional information.
 
 ### Structure
 
@@ -18,8 +18,8 @@ These guidelines help keep our docs easy to navigate and consistent, as we scale
 - Avoid using dropdowns as pages. They can be tricky to navigate, especially on mobile.
 
 ### Writing
-- For consistency in writing style and tone, refer to the principles here: https://www.notion.so/trevorio/Documentation-Principles-19a726382bcf8008a1eed5ca537b086a?pvs=4
 
+- For consistency in writing style and tone, refer to the principles here: https://www.notion.so/trevorio/Documentation-Principles-19a726382bcf8008a1eed5ca537b086a?pvs=4
 
 ## Local Development
 
@@ -37,16 +37,17 @@ Run `pnpm run start` to preview the built app
 
 ## Deploying
 
-Sometimes, the left sidebar is cached, causing strange behaviour when deploying. 
+Sometimes, the left sidebar is cached, causing strange behaviour when deploying.
 
 When deploying:
+
 - Go to Vercel.
-- You'll see your branch. 
-- Click three dots. 
-- Select latest deployment. 
-- In the top right, click the three dots. 
-- Click Redeploy. 
-- Make sure 'use existing build cache' is unticked. 
+- You'll see your branch.
+- Click three dots.
+- Select latest deployment.
+- In the top right, click the three dots.
+- Click Redeploy.
+- Make sure 'use existing build cache' is unticked.
 
 ## Prepping media
 
