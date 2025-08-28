@@ -6,6 +6,12 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.3 - Small Fixes
+  - Fixed "default sort direction" on Table component not always being applied
+  - Adjusted Pie Chart logic so that if "view as percentages" is on, and CSV data is downloaded, the CSV data will also display percentages
+  - Added Aria labels and role descriptions to all charts to improve accessibility
+  - Improved `null` value handling with Download Button component (all `null`, `undefined`, or `No Value` values are now empty cells in the resulting CSV)
+
 ## Version 1.1.1 & 1.1.2 - Bug Fixes
   - Fixed an issue where the "Next" button on Table Pagination was not working correctly in some instances.
   - Fixed an issue where in rare cases the Table Chart would crash when interpreting strings and getting a `null` value instead of an empty string.
