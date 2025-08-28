@@ -2,7 +2,7 @@
 
 Cube Views provide an elegant way to:
 
-- Define a **clean view** on top of your data models.
+- Define a **clean facade** on top of your data models.
 - Tell Embeddable and Cube which **join paths** to use and when.
 - Enforce that **row-level security** is always applied consistently.
 
@@ -20,8 +20,8 @@ Source: [Cube's Official Docs](https://cube.dev/docs/product/data-modeling/conce
 
 Cube Views **solve these problems**:
 
-- **Clutter**: Views allow you to represent different **subsets** of your connected Cubes graph as individual Views (e.g. you could have just a Marketing view, a Sales View and an Admin view, each with their own individualised terminology)
-- **Ambiguous join paths:** Views represent a subset of the connected graph and thus allow you to specify exactly which join path to use for any measure or dimension that is queried using that view.
+- **Clutter**: Views allow you to represent different **subsets** of your connected Cubes graph as individual Views (e.g. you could have just a Marketing view, a Sales View and an Admin view).  You can even have different names, for each measure and dimension, for each View.
+- **Ambiguous join paths:** Views represent a subset of the connected graph and thus allow you to specify exactly which join path to use for any measure or dimension that is queried using that View.
 - **Enforcing row-level security**: Views allow you to define view-level **access policies** that can significantly simplify your row-level security.  You define your row-level security rules once at the view-level, and you can be confident that they will always be applied for any query.
 
 ## How to define Cube Views

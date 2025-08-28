@@ -59,18 +59,35 @@ Let's add a **search input** that filters the data. Watch and follow this quick 
 
 ### Embed your dashboard
 
-1. Click **Publish** at the top of your dashboard.
-2. In the pop-up, copy your **API Key** and **Embeddable ID**.
+Now let's test Embedding your dashboard in a simple HTML page.
 
-<ImageGrid images={["/img/api-key.png"]} />
+1. Click **'Save version'** at the top of your dashboard.
 
-3. In your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs)).  
-4. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard.  
-5. Run:
+<ImageGrid width='40%' images={['/img/save-version-button.png']} />
+
+2. Enter a **description** of your changes so far and click **'Save new version'** to save your dashboard as it is.
+
+<ImageGrid width='75%' images={['/img/dashboard-versions-save.png']} />
+
+3. Click **'Publish'** to open the Publish modal.
+
+<ImageGrid width='75%' images={['/img/dashboard-versions-save-success.png']} />
+
+4. Select **'Production'** and then click **'Publish'** again to publish your newly saved version to the Production environment.
+
+<ImageGrid width='75%' images={['/img/publish-dialog.png']} />
+
+5. Before closing the **Publish modal**, grab your **API Key** and **Embeddable ID** from the **'How to embed'** section at the bottom of the modal.
+
+<ImageGrid width='75%' images={['/img/how-to-embed.png']} />
+
+6. In your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs)).  
+7. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard.  
+8. Run:
    ```bash
    node src/embeddable.com/scripts/embedding-preview.cjs
    ```
-6. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
+9. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
 
 </Steps>
 
