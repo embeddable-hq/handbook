@@ -7,6 +7,22 @@
 
 ## How It Works
 
+Let's imagine you have a **"prod"** environment and a **"staging"** environment and each environment has two databases:
+
+```yml
+prod:
+  primary_db: prod-postgres
+  warehouse: prod-bigquery
+
+staging:
+  primary_db: staging-postgres
+  warehouse: staging-bigquery
+```
+
+In this setup, your data models **don't** need to know about `prod-postgres`, `staging-postgres`, etc.  
+
+They just need to know that they can either connect to the `primary_db` or the `warehouse`.  And then the chosen **environment** will automatically connect the model to the appropriate database.
+
 <Steps>
 
 ### **Define Connections**  
@@ -20,15 +36,17 @@
        sql_table: public.orders
        data_source: primary_db
    ```
-   This tells Embeddable that the “orders” model should look for a connection named `"primary_db"` in the chosen environment.
+   This tells Embeddable that the “orders” model should look for a data_source named `"primary_db"` in the chosen environment.
 
 
 ### **Create Environments**  
-   For each **environment** that you want to define (prod, staging, etc.) you should define an Environment using the Environments API (example below) mapping each `data_source` to a corresponding **connection**.
+   For each **environment** that you want to define (prod, staging, etc.) you should define an Environment using the Environments API (example below) mapping each `data_source` to a corresponding database `connection`.
 
-Here is an example of how you would create two environments (one for prod and one for staging):
+Here is an example of how you could call the Environments API to create two environments (one for 'prod' and one for 'staging'):
    ```ts
-   // for security reasons, this must *never* be called from your client-side
+   // 
+   // create a 'prod' environment
+   // 
    fetch('https://api.<region>.embeddable.com/api/v1/environments', {
      method: 'POST',
      headers: {
@@ -44,6 +62,9 @@ Here is an example of how you would create two environments (one for prod and on
      })
    });
 
+   // 
+   // create a 'staging' environment
+   // 
    fetch('https://api.<region>.embeddable.com/api/v1/environments', {
      method: 'POST',
      headers: {
