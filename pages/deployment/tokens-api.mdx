@@ -24,7 +24,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     },
     user: 'sina@embeddable.com', // unique key representing current user
     dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
-    environment: 'prod' // each environment defines which databases to connect to
+    environment: 'default' // each environment defines which databases to connect to
     })
   })
 })
@@ -71,7 +71,7 @@ Learn more about `region` [here](/deployment/deployment-regions).
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
 
-- **`environment`** optionally specifies which [environment](/data/environments) to retrieve data from. By default, “default” is used. This lets you achieve things like:
+- **`environment`** optionally specifies which [environment](/data/environments) to retrieve data from. Until you're ready to define environments, omit this parameter for now (by default, “default” is used). [Environments](/data/environments) let you achieve things like:
     - **single-tenancy** (AKA **database-level security**), where each of your customers has their data in a different database.
     - different database connections for **prod**, **qa**, **testing**, etc. 
     - **micro service architecture**, where your data is spread across multiple databases. 
