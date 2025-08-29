@@ -10,16 +10,21 @@ Any changes pushed to the main branch are automatically deployed to https://docs
 
 ## Documentation Guidelines
 
-These guidelines help keep our docs easy to navigate and consistent, as we scale. We also have a **[style guide](https://www.notion.so/trevorio/Handbook-Guidelines-256726382bcf8078882bda58242bb6d7)** with additional information.
+### Writing
+
+- Please follow our **[style guide](https://www.notion.so/trevorio/Handbook-Guidelines-256726382bcf8078882bda58242bb6d7)**
 
 ### Structure
 
 - Keep nesting no more than two levels deep (e.g. Connect your data > Integrations > Cube Cloud).
 - Avoid using dropdowns as pages. They can be tricky to navigate, especially on mobile.
 
-### Writing
+## Clone repo
 
-- For consistency in writing style and tone, refer to the principles here: https://www.notion.so/trevorio/Documentation-Principles-19a726382bcf8008a1eed5ca537b086a?pvs=4
+Use `git clone git@github.com:embeddable-hq/handbook.git`
+
+Troubleshooting:
+- You may need to [generate an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add the SSH key to your github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
 ## Local Development
 
@@ -27,7 +32,20 @@ Install `pnpm`, e.g: `npm install -g pnpm`
 
 Run `pnpm i` to install the dependencies.
 
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
+Then, run `pnpm dev` to start the development server and visit `https://localhost:3000`.
+
+## Remove Cookie banner
+
+The cookie banner will constantly appear.
+
+Hack to fix this:
+ - in `_document.tsx` update line 16 to be: `})(window,document,'script','dataLayer','DO-NOT-COMMIT');`
+
+## Git UI
+
+These are popular git UI tools:
+ - [Github Desktop](https://github.com/desktop/desktop)
+ - [Sourcetree](https://www.sourcetreeapp.com/)
 
 ## Testing final app
 
