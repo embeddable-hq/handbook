@@ -1,0 +1,445 @@
+# Access Policies
+
+**Access Policies** let you control which rows of data a user can see in Embeddable by defining them in cube models or [views](https://docs.embeddable.com/data-modeling/views). They are applied at query time and affect Dashboards, Data Playground, and the SQL API.
+
+There are two ways to do row-level security in Embeddable:
+
+1. **SQL-based row-level security** – easy to get started, full power of SQL. Learn more [here](https://docs.embeddable.com/data-modeling/row-level-security).
+2. **Access Policies** – reusable in views, applied at run time, support nested filters and role-based logic, and protect against SQL injection.
+
+## Why use Access Policies
+
+SQL-based [row-level security](https://docs.embeddable.com/data-modeling/row-level-security) works, but it introduces **several problems at scale**.
+
+- **Duplication**: As your number of models increase within Embeddable, you'll need to repeat the same security context filter in each one. This makes keeping these filters in sync difficult and error-prone.
+- **Performance**: SQL-based security requires recompiling the model for every new security context. On large projects with many models, recompilation can take several seconds, slowing down dashboards and the Data Playground.
+- **Complexity**: Some access rules depend on multiple factors, such as whether the user is a full-time employee, which department they belong to, and whether they are an admin. Expressing this kind of nested logic directly in SQL filters is hard to manage and easy to get wrong.
+- **Consistency**: Without a central place to define row-level security, it’s easy for some models or queries to miss a filter, unintentionally exposing sensitive data.
+- **Safety**: When you interpolate values from a token directly into SQL, you must be careful to escape them properly. Otherwise, you risk SQL injection vulnerabilities.
+
+**Access Policies solve these problems:**
+
+- **Duplication**: Define the filter once, in a view, and reuse it across multiple models.
+- **Performance**: Apply rules at run time, so queries adapt instantly without waiting for recompilation.
+- **Complexity**: Support nested filters, conditions, and roles directly in the model, so complex logic is easier to express.
+- **Consistency**: Centralise access rules, ensuring consistency across all dashboards, the Data Playground, and queries.
+- **Safety**: Automatically escape values from the `securityContext`, protecting against SQL injection.
+
+## How to define Access Policies
+
+Here’s a simple example of an access policy defined on a view.
+
+**Token security context:**
+
+```yaml
+- name: Customer
+  securityContext:
+    user_key: 123
+  roles:
+    - customer
+```
+
+**View definition:**
+
+```yaml
+views:
+  - name: customers_view
+    cubes:
+      - join_path: customers
+        includes: "*"
+    access_policy:
+      - role: customer
+        member_level:
+          includes: '*'
+        row_level:
+          filters:
+            - member: user_id
+              operator: equals
+              values: ["{ securityContext.user_key }"]
+```
+
+**Generated SQL:**
+
+```sql
+SELECT * FROM public.customers WHERE user_id = '123';
+```
+
+**Things to notice:**
+
+- The `customers_view` brings in all columns from the `customers` model. The access policy is applied at the view level, so you only need to define it once instead of repeating it across every model.
+- The role `customer` is taken from the token. Think of roles as simple tags you attach to a user. The user’s access is the **UNION** of all policies for the roles in their token.
+- For example, if a user is granted both `Finance Ops` and `Developer Ops` roles, they will see all the data available to Finance Ops **plus** all the data available to Developer Ops.
+- The filter matches the `user_id` in the cube to the `user_key` from the token.
+- Policies apply at query time, so no recompilation is needed.
+
+## Parameters
+
+### 1. role
+
+Defines which role a policy applies to.
+
+- `default` — applied if no roles provided in the token.
+- `my_role` — custom role string you grant via the token e.g. default, admin, manager.
+- `*` — wildcard; applies to all users (use with care).
+
+### 2. conditions
+
+`conditions` let you make a policy apply only in certain cases. If all conditions are true, the policy applies; if any are false, it’s skipped.
+
+```yaml
+access_policy:
+  - role: default
+    conditions:
+      - if: "{ securityContext.is_full_time_employee }"
+    row_level:
+      filters:
+        - member: user_id
+          operator: equals
+          values: ["{ securityContext.user_key }"]
+
+```
+
+If `is_full_time_employee` is true, this policy applies. Otherwise, it is ignored.
+
+### 3. row_level
+
+`row_level` defines which rows in your data the user can see. Each row must pass the filters you define here.
+
+**Example:**
+
+```yaml
+row_level:
+  filters:
+    - member: country
+      operator: equals
+      values: ["Denmark"]
+
+```
+
+**member**
+
+`member` tells the policy which field to filter on. This can be a **dimension** or **measure**, and you can reference joined models using dot notation (e.g. `orders.country`).
+
+**operator**
+
+`operator` defines how the filter should compare the field to the values. For example, `equals` checks for exact matches, `notSet` checks for nulls.
+
+| Operator | Explanation |
+| --- | --- |
+| `equals` | Member equals the given value(s). |
+| `notEquals` | Member does not equal the given value(s). |
+| `contains` | Case-insensitive substring match. |
+| `notContains` | Inverse of contains. |
+| `startsWith` | Prefix match. |
+| `notStartsWith` | Inverse of startsWith. |
+| `endsWith` | Suffix match. |
+| `notEndsWith` | Inverse of endsWith. |
+| `gt` | Greater than a numeric value. |
+| `gte` | Greater than or equal to a numeric value. |
+| `lt` | Less than a numeric value. |
+| `lte` | Less than or equal to a numeric value. |
+| `inDateRange` | Time member is within the given range. |
+| `notInDateRange` | Excludes rows within the given range. |
+| `onTheDate` | Member is on the exact date provided. |
+| `beforeDate` | Strictly before the given timestamp. |
+| `beforeOrOnDate` | Before or on the given timestamp. |
+| `afterDate` | Strictly after the given timestamp. |
+| `afterOrOnDate` | After or on the given timestamp. |
+| `set` | Member is **NOT NULL** (omit `values`). |
+| `notSet` | Member is **NULL** (omit `values`). |
+| `measureFilter` | Applies measure filters in drill downs. |
+
+Authoritative list of operators is [here](https://github.com/cube-js/cube/blob/master/packages/cubejs-schema-compiler/src/compiler/CubeValidator.ts#L712-L735).
+
+**values**
+
+`values` are what the field is compared against. Always an array. If the operator is `set` or `notSet`, you leave this out.
+
+```yaml
+["123"]
+["United States", "Germany"]
+["2025-08-23"]
+["2025-01-01", "2025-03-31"]
+
+```
+
+Required unless operator is `set` or `notSet`.
+
+**Example (`notSet`):**
+
+```yaml
+access_policy:
+  - role: default
+    row_level:
+      filters:
+        - member: deleted_at
+          operator: notSet
+```
+
+Generates:
+
+```sql
+WHERE deleted_at IS NULL
+```
+
+### 4. member_level
+
+`member_level` controls which dimensions and measures a role can query in a cube or view. It is especially useful for restricting access to sensitive fields.
+
+**Example:**
+
+```yaml
+access_policy:
+  - role: employee
+    member_level:
+      excludes:
+        - revenue
+        - profit_margin
+    row_level:
+      filters:
+        - member: department
+          operator: equals
+          values: ["{ securityContext.department }"]
+```
+
+In this example:
+
+- The `employee` role cannot query sensitive fields like `revenue` or `profit_margin` and rows are filtered by their department.
+
+Important things to notice about member-level access:
+
+- In cube models, member-level rules are combined with public parameters using **AND** logic. Both sets of rules apply.
+- In cube views, only the member-level rules defined in the view apply. Rules in underlying cubes are ignored.
+- You can define data access policies in both cubes and views. We recommend keeping cubes private and defining access policies only in views. This makes policies easier to maintain and reason about, especially for member-level access.
+
+**Deny all by default**
+
+In some cases, you may want to restrict access entirely by default and then selectively allow it for specific roles. You can do this by setting `includes: []` for the `*` role:
+
+```yaml
+access_policy:
+  - role: "*"
+    member_level:
+      includes: []
+
+  - role: employee
+    member_level:
+      excludes:
+        - revenue
+        - profit_margin
+    row_level:
+      filters:
+        - member: department
+          operator: equals
+          values: ["{ securityContext.department }"]
+
+  - role: manager
+    member_level:
+      includes: "*"
+    row_level:
+      filters:
+        - member: department
+          operator: equals
+          values: ["{ securityContext.department }"]
+```
+
+**Things to notice:**
+
+- The  role with `includes: []` removes access for all users by default.
+- Only roles explicitly defined (`employee`, `manager`) are granted access.
+- The `manager` role also filters rows by department, but includes all fields in the model, including revenue-related measures.
+- This approach follows the principle of least privilege: start with no access, then grant access selectively.
+
+## Testing Access Policies
+
+Switch between different security contexts in the no-code builder to test how roles affect visibility.
+
+**Example 1: Admin**
+
+```yaml
+# Admin sees all rows and all fields
+- name: Admin
+  securityContext:
+    user_id: 0
+  roles:
+    - admin
+```
+
+**Example 2: User**
+
+```yaml
+- name: User
+  securityContext:
+    user_id: 123
+  roles:
+    - user
+```
+
+**Customers Model:**
+
+```yaml
+access_policy:
+  - role: admin
+    member_level:
+      includes: "*" 
+    row_level:
+      allow_all: true
+
+  - role: user
+    member_level:
+      includes: "*" 
+    row_level:
+      filters:
+        - member: id
+          operator: equals
+          values: ["{ securityContext.user_id }"]
+```
+
+<VideoComponent
+    src="/video/access_policies_example.mp4"
+    width="1920"
+    height="1080"
+/>
+
+## Examples
+
+### Multiple values
+
+This example shows how to allow access to multiple regions at once by passing them in the token.
+
+**Access policy**
+
+```yaml
+- name: Default
+  securityContext:
+    regions: [us-east, eu-west]
+  roles:
+    - default
+
+access_policy:
+  - role: default
+    row_level:
+      filters:
+        - member: region
+          operator: equals
+          values: ["{ securityContext.regions }"]
+
+```
+
+**Generated SQL**
+
+```sql
+WHERE region IN ('us-east','eu-west')
+```
+
+### Check value is not null
+
+This example demonstrates how to filter out rows where a column has no value (NULL). Useful for ignoring deleted or incomplete records.
+
+**Access policy**
+
+```yaml
+access_policy:
+  - role: default
+    row_level:
+      filters:
+        - member: deleted_at
+          operator: notSet
+```
+
+**Generated SQL**
+
+```sql
+WHERE deleted_at IS NULL
+```
+
+### Super admin back door
+
+This example shows how to give administrators unrestricted access while still applying row-level restrictions for other users.
+
+**Token**
+
+```yaml
+- name: Admin
+  securityContext:
+    is_super_admin: true
+  roles:
+    - admin
+```
+
+**Access policy**
+
+```yaml
+access_policy:
+  - role: admin
+    conditions:
+      - if: "{ securityContext.is_super_admin }"
+    member_level:
+      includes: "*"
+    row_level:
+      allow_all: true
+```
+
+**Generated SQL**
+
+```sql
+-- Admin has full access when is_super_admin is true
+SELECT * FROM ...
+-- no additional WHERE clause or member restrictions applied by access policies
+```
+
+The `allow_all: true` property means that all rows are visible to this role, regardless of any filters. This is typically used for super admin or system-level roles where no restrictions should apply.
+
+### Nested AND / OR filters
+
+This example demonstrates how to combine multiple filters using AND/OR logic to handle more complex conditions.
+
+**Access policy**
+
+```yaml
+filters:
+  - or:
+      - and:
+          - member: region
+            operator: equals
+            values: ["North America"]
+          - member: customer_status
+            operator: equals
+            values: ["Active"]
+      - and:
+          - member: region
+            operator: equals
+            values: ["Europe"]
+          - member: customer_status
+            operator: equals
+            values: ["Active"]
+  - member: subscription_tier
+    operator: equals
+    values: ["Premium"]
+
+```
+
+**Generated SQL**
+
+```sql
+WHERE ((region = 'North America' AND customer_status = 'Active') 
+       OR (region = 'Europe' AND customer_status = 'Active'))
+AND subscription_tier = 'Premium'
+```
+
+**Explanation:**
+
+- Grants access only to **Premium customers who are Active in North America and Europe.**
+
+## Notes & best practices
+
+- Prefer defining access policies in v**iews** and keep cubes private. This reduces duplication and makes policies easier to maintain.
+- Keep role names stable; map them from your app’s auth layer.
+- Start with a restrictive `default` role.
+- Avoid `*` unless combined with conditions.
+
+## Troubleshooting
+
+- User sees everything: check for `*` or `allow_all: true`.
+- Filters do not apply: confirm token has correct roles.
+- No roles passed but access granted: expected; `default` applies.
