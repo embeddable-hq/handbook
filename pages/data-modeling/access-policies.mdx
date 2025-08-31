@@ -1,15 +1,15 @@
 # Access Policies
 
-**Access Policies** let you control which rows of data a user can see in Embeddable by defining them in cube models or [views](https://docs.embeddable.com/data-modeling/views). They are applied at query time and affect Dashboards, Data Playground, and the SQL API.
+**Access Policies** let you control which rows of data a user can see in Embeddable by defining them in [cube models](/data-modelling/defining-models) or [views](/data-modeling/views). They are applied at query time and affect [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models).
 
 There are two ways to do row-level security in Embeddable:
 
-1. **SQL-based row-level security** – easy to get started, full power of SQL. Learn more [here](https://docs.embeddable.com/data-modeling/row-level-security).
+1. **SQL-based row-level security** – easy to get started, full power of SQL. Learn more [here](/data-modeling/row-level-security).
 2. **Access Policies** – reusable in views, applied at run time, support nested filters and role-based logic, and protect against SQL injection.
 
 ## Why use Access Policies
 
-SQL-based [row-level security](https://docs.embeddable.com/data-modeling/row-level-security) works, but it introduces **several problems at scale**.
+SQL-based [row-level security](/data-modeling/row-level-security) works, but it introduces **several problems at scale**.
 
 - **Duplication**: As your number of models increase within Embeddable, you'll need to repeat the same security context filter in each one. This makes keeping these filters in sync difficult and error-prone.
 - **Performance**: SQL-based security requires recompiling the model for every new security context. On large projects with many models, recompilation can take several seconds, slowing down dashboards and the Data Playground.
@@ -22,12 +22,12 @@ SQL-based [row-level security](https://docs.embeddable.com/data-modeling/row-lev
 - **Duplication**: Define the filter once, in a view, and reuse it across multiple models.
 - **Performance**: Apply rules at run time, so queries adapt instantly without waiting for recompilation.
 - **Complexity**: Support nested filters, conditions, and roles directly in the model, so complex logic is easier to express.
-- **Consistency**: Centralise access rules, ensuring consistency across all dashboards, the Data Playground, and queries.
-- **Safety**: Automatically escape values from the `securityContext`, protecting against SQL injection.
+- **Consistency**: Centralise access rules, ensuring consistency across all dashboards, the data playground, and queries.
+- **Safety**: Use parameterized queries for values from the securityContext, protecting against SQL injection.
 
 ## How to define Access Policies
 
-Here’s a simple example of an access policy defined on a view.
+Here’s a simple example of an access policy defined on a [view](/data-modeling/views).
 
 **Token security context:**
 
@@ -66,9 +66,9 @@ SELECT * FROM public.customers WHERE user_id = '123';
 
 **Things to notice:**
 
-- The `customers_view` brings in all columns from the `customers` model. The access policy is applied at the view level, so you only need to define it once instead of repeating it across every model.
+- The `customers_view` brings in all columns from the `customers` model. The access policy is applied at the view level, so you only need to define it once instead of repeating it across every model. Learn more about views [here](/data-modeling/views).
 - The role `customer` is taken from the token. Think of roles as simple tags you attach to a user. The user’s access is the **UNION** of all policies for the roles in their token.
-- For example, if a user is granted both `Finance Ops` and `Developer Ops` roles, they will see all the data available to Finance Ops **plus** all the data available to Developer Ops.
+    - For example, if a user is granted both `Finance Ops` and `Developer Ops` roles, they will see all the data available to Finance Ops **plus** all the data available to Developer Ops.
 - The filter matches the `user_id` in the cube to the `user_key` from the token.
 - Policies apply at query time, so no recompilation is needed.
 
@@ -210,11 +210,13 @@ Important things to notice about member-level access:
 
 - In cube models, member-level rules are combined with public parameters using **AND** logic. Both sets of rules apply.
 - In cube views, only the member-level rules defined in the view apply. Rules in underlying cubes are ignored.
-- You can define data access policies in both cubes and views. We recommend keeping cubes private and defining access policies only in views. This makes policies easier to maintain and reason about, especially for member-level access.
+- You can define data access policies in both cubes and views. We recommend [keeping cubes private](/data-modeling/views#how-to-define-cube-views) and defining access policies only in views. This makes policies easier to maintain and reason about, especially for member-level access.
 
 **Deny all by default**
 
-In some cases, you may want to restrict access entirely by default and then selectively allow it for specific roles. You can do this by setting `includes: []` for the `*` role:
+Access policies already restrict access by default i.e. if a user’s role does not match any policy, they will not see any data.
+
+Sometimes you may still want to make this explicit in your model. You can do this by setting `includes: []` for the `*` role. This doesn’t change behavior, but it documents the intent clearly and avoids assumptions.
 
 ```yaml
 access_policy:
@@ -307,7 +309,7 @@ access_policy:
 
 This example shows how to allow access to multiple regions at once by passing them in the token.
 
-**Access policy**
+**Token**
 
 ```yaml
 - name: Default
@@ -315,7 +317,11 @@ This example shows how to allow access to multiple regions at once by passing th
     regions: [us-east, eu-west]
   roles:
     - default
+```
 
+**Access policy**
+
+```yaml
 access_policy:
   - role: default
     row_level:
@@ -323,7 +329,6 @@ access_policy:
         - member: region
           operator: equals
           values: ["{ securityContext.regions }"]
-
 ```
 
 **Generated SQL**
@@ -433,13 +438,13 @@ AND subscription_tier = 'Premium'
 
 ## Notes & best practices
 
-- Prefer defining access policies in v**iews** and keep cubes private. This reduces duplication and makes policies easier to maintain.
-- Keep role names stable; map them from your app’s auth layer.
+- Prefer defining access policies in [views](/data-modeling/views) and [keep cubes private](/data-modeling/views#how-to-define-cube-views). This reduces duplication and makes policies easier to maintain.
+- Keep role names consistent with your application’s authentication system. For example, if your auth layer defines groups like admin or employee, pass those directly in the token and reference the same names in your access policies.
 - Start with a restrictive `default` role.
 - Avoid `*` unless combined with conditions.
 
 ## Troubleshooting
 
-- User sees everything: check for `*` or `allow_all: true`.
-- Filters do not apply: confirm token has correct roles.
-- No roles passed but access granted: expected; `default` applies.
+- **User sees everything**: check for `*` or `allow_all: true`.
+- **Filters do not apply**: confirm token has correct roles.
+- **No roles passed but access granted**: expected; `default` applies.
