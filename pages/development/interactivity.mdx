@@ -37,11 +37,15 @@ By combining **events** and **variables**, you can build **interactive** compone
 Below is an `.emb.ts` file for a dropdown component that loads a list of country values from a dataset. It leverages **events** and **variables** to provide an interactive experience.
 
 ```jsx
-import { defineComponent, EmbeddedComponentMeta, Inputs } from '@embeddable.com/react';
+import {
+  defineComponent,
+  EmbeddedComponentMeta,
+  Inputs,
+} from '@embeddable.com/react';
 import { loadData, Value } from '@embeddable.com/core';
 import Component from './index';
 
-export const meta: EmbeddedComponentMeta = {
+export const meta = {
   name: 'BasicDropdownComponent',
   label: 'Basic Dropdown',
   defaultWidth: 320,
@@ -72,27 +76,27 @@ export const meta: EmbeddedComponentMeta = {
       name: 'onChange', // Pass an event called OnChange to your component as a prop
       label: 'Change', // How this event appears in the builder UI when defining interactions
       properties: [
-        { 
+        {
           name: 'value', // The property name to be passed back to the builder
           type: 'string', // The value's expected type
-          array: false // Set to true for a multi-select dropdown
+          array: false, // Set to true for a multi-select dropdown
         },
       ],
     },
   ],
   variables: [
     {
-      name: 'chosen value',  // Variable created automatically when this component is added
+      name: 'chosen value', // Variable created automatically when this component is added
       type: 'string',
       defaultValue: Value.noFilter(), // Initial variable value (this can also be set in the no-code builder)
       inputs: ['defaultValue'], // Connects the variable to the 'defaultValue' input, which is passed into the React component
       events: [{ name: 'onChange', property: 'value' }], // On the 'onChange' event, update the 'chosen value' variable with the 'value' property from the event
     },
   ],
-};
+} as const satisfies EmbeddedComponentMeta;;
 
-export default defineComponent<Inputs>(Component, meta, {
-  props: (inputs) => {
+export default defineComponent(Component, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
     return {
       ...inputs,
       // Load dimension values for the dropdown
@@ -108,6 +112,66 @@ export default defineComponent<Inputs>(Component, meta, {
   },
 });
 ```
+
+This file interacts with an `index.tsx` file in the same folder, which contains the actual React component logic. The component receives five props: `defaultValue`, `ds`, `values`, `results` (the loaded dimension values), and an `onChange` function to call whenever the user selects a new option.
+
+<Callout icon="💡">
+  Because of the way `defineComponent` works, the third parameter, the object that defines props and events, must be delivered inline (i.e. not as a separate variable). This prevents build errors.
+</Callout>
+
+Here is a very simple implementation of the `index.tsx` file you might pair with the above `.emb.ts` file:
+
+```tsx
+import { useState } from 'react';
+import { DataResponse, Dataset, Dimension } from '@embeddable.com/core';
+
+type Change = (text: string) => void;
+let timeout: NodeJS.Timeout | null = null;
+
+type Props = {
+  defaultValue?: string;
+  ds?: Dataset;
+  onChange?: Change;
+  results?: DataResponse;
+  values?: Dimension;
+};
+
+export default (props: Props) => {
+  const { defaultValue, ds, onChange, results, values } = props;
+  const [value, setValue] = useState(props.defaultValue || '');
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      onChange(newValue);
+    }, 500);
+  };
+
+  return (
+    <>
+      <select
+        style={{ width: '100%', height: 40, fontSize: 16 }}
+        value={value || defaultValue || ''}
+        onChange={(e) => handleChange(e.target.value)}
+        disabled={!ds}
+      >
+        {results?.data?.map((row, index) => {
+          const val = row[values.name];
+          return (
+            <option key={index} value={val} selected={val === value}>
+              {val}
+            </option>
+          );
+        })}
+      </select>
+    </>
+  );
+};
+```
+
 #### Usage Flow
 
 1. **Add Component**: A teammate drags the **BasicDropdownComponent** onto the canvas in the builder, choosing a dataset and picking a dimension. 
@@ -124,11 +188,15 @@ Below is an `.emb` file for a  **granularity picker** component that lets users 
 ```ts
 // src/components/GranularityPicker/GranularityPicker.emb.ts
 
-import { defineComponent, EmbeddedComponentMeta, Inputs } from '@embeddable.com/react';
+import {
+  defineComponent,
+  EmbeddedComponentMeta,
+  Inputs,
+} from '@embeddable.com/react';
 import { Value } from '@embeddable.com/core';
 import GranularityPickerComponent from './index';
 
-export const meta: EmbeddedComponentMeta = {
+export const meta = {
   name: 'GranularityPicker',
   label: 'Granularity Picker',
   inputs: [
@@ -136,8 +204,8 @@ export const meta: EmbeddedComponentMeta = {
       name: 'defaultGranularity',
       type: 'string',
       label: 'Default Granularity',
-      description: 'Initial granularity (e.g. "day", "week", or "month")'
-    }
+      description: 'Initial granularity (e.g. "day", "week", or "month")',
+    },
   ],
   events: [
     {
@@ -146,10 +214,10 @@ export const meta: EmbeddedComponentMeta = {
       properties: [
         {
           name: 'value',
-          type: 'granularity'
-        }
-      ]
-    }
+          type: 'granularity',
+        },
+      ],
+    },
   ],
   variables: [
     {
@@ -157,26 +225,27 @@ export const meta: EmbeddedComponentMeta = {
       type: 'granularity',
       defaultValue: 'month', // or Value.noFilter() if you want no default
       inputs: ['defaultGranularity'], // Ties the 'defaultGranularity' input to this variable
-      events: [ // Ties this variable to the onPickGranularity
-        { 
-          name: 'onPickGranularity', 
-          property: 'value' 
-        }
-      ]
-    }
-  ]
-};
+      events: [
+        // Ties this variable to the onPickGranularity
+        {
+          name: 'onPickGranularity',
+          property: 'value',
+        },
+      ],
+    },
+  ],
+} as const satisfies EmbeddedComponentMeta;
 
 export default defineComponent(GranularityPickerComponent, meta, {
   props: (inputs: Inputs<typeof meta>) => {
     return {
-      ...inputs
+      ...inputs,
     };
   },
   events: {
     // Maps the 'onPickGranularity' event from your component to the event described in meta
-    onPickGranularity: (value) => ({ value: value || Value.noFilter() })
-  }
+    onPickGranularity: (value) => ({ value: value || Value.noFilter() }),
+  },
 });
 ```
 
@@ -197,10 +266,14 @@ Below is a **minimal** pie chart configuration. When the user clicks on a pie se
 // src/components/PieChart/PieChart.emb.ts
 
 import { Value, loadData } from '@embeddable.com/core';
-import { EmbeddedComponentMeta, Inputs, defineComponent } from '@embeddable.com/react';
+import {
+  EmbeddedComponentMeta,
+  Inputs,
+  defineComponent,
+} from '@embeddable.com/react';
 import PieChartComponent from './index';
 
-export const meta: EmbeddedComponentMeta = {
+export const meta = {
   name: 'PieChart',
   label: 'Pie Chart',
   category: 'Charts',
@@ -221,7 +294,7 @@ export const meta: EmbeddedComponentMeta = {
       type: 'measure',
       label: 'Metric',
       config: { dataset: 'ds' },
-    }
+    },
   ],
   events: [
     {
@@ -229,11 +302,11 @@ export const meta: EmbeddedComponentMeta = {
       label: 'Click', // The event label in the builder
       properties: [
         { name: 'slice', type: 'string' },
-        { name: 'metric', type: 'number' }
-      ]
-    }
-  ]
-};
+        { name: 'metric', type: 'number' },
+      ],
+    },
+  ],
+} as const satisfies EmbeddedComponentMeta;
 
 export default defineComponent(PieChartComponent, meta, {
   props: (inputs: Inputs<typeof meta>) => {
@@ -241,8 +314,8 @@ export default defineComponent(PieChartComponent, meta, {
       ...inputs,
       results: loadData({
         from: inputs.ds,
-        select: [inputs.slice, inputs.metric]
-      })
+        select: [inputs.slice, inputs.metric],
+      }),
     };
   },
   events: {
@@ -250,8 +323,8 @@ export default defineComponent(PieChartComponent, meta, {
     onClick: (value) => ({
       slice: value.slice || Value.noFilter(),
       metric: value.metric || Value.noFilter(),
-    })
-  }
+    }),
+  },
 });
 ```
 ### Usage flow
