@@ -327,8 +327,8 @@ access_policy:
     row_level:
       filters:
         - member: region
-          operator: equals
-          values: ["{ securityContext.regions }"]
+          operator: in
+          values: "{ securityContext.regions }"
 ```
 
 **Generated SQL**
