@@ -31,6 +31,8 @@ Here’s a simple example of an access policy defined on a [view](/data-modeling
 
 **Token security context:**
 
+You can specify `roles` in your `security-context.sc.yml` ([learn more](/data-modeling/row-level-security#testing-security-contexts-in-embeddable)) like so:
+
 ```yaml
 - name: Customer
   securityContext:
@@ -40,6 +42,8 @@ Here’s a simple example of an access policy defined on a [view](/data-modeling
 ```
 
 **View definition:**
+
+You then define that role inside your view or cube definition:
 
 ```yaml
 views:
@@ -59,6 +63,8 @@ views:
 ```
 
 **Generated SQL:**
+
+Which means your row-level security will be applied like so:
 
 ```sql
 SELECT * FROM public.customers WHERE user_id = '123';
@@ -254,7 +260,7 @@ access_policy:
 
 ## Testing Access Policies
 
-Switch between different security contexts in the no-code builder to test how roles affect visibility.
+Switch between different [security contexts](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) in the no-code builder to test how roles affect visibility.
 
 **Example 1: Admin**
 
