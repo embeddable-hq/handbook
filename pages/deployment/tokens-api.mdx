@@ -24,7 +24,8 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     },
     user: 'sina@embeddable.com', // unique key representing current user
     dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
-    environment: 'default' // each environment defines which databases to connect to
+    environment: 'default', // each environment defines which databases to connect to
+    roles: ["manager"] // any access-policy roles to grant this user i.e. manager, default etc.
     })
   })
 })
@@ -68,6 +69,7 @@ Learn more about `region` [here](/deployment/deployment-regions).
             AND region IN {{ list(COMPILE_CONTEXT.securityContext.regions) }}
         {% endif %}
     ```
+- **`roles`** grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the default role. Refer [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
 
