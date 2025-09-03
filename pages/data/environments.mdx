@@ -40,7 +40,11 @@ They just need to know that they can either connect to the `primary_db` or the `
 
 
 ### **Create Environments**  
-   For each **environment** that you want to define (prod, staging, etc.) you should define an Environment using the Environments API (example below) mapping each `data_source` to a corresponding database `connection`.
+   For each **environment** that you want to define (prod, staging, etc.) you should define an Environment using the **Environments API**.
+
+   <Bruno/>
+
+An environment is simply a mapping, mapping each `data_source` to a corresponding database `connection`.
 
 Here is an example of how you could call the Environments API to create two environments (one for 'prod' and one for 'staging'):
    ```ts
