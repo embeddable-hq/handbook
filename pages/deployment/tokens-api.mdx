@@ -71,7 +71,8 @@ Learn more about `region` [here](/deployment/deployment-regions).
             AND region IN {{ list(COMPILE_CONTEXT.securityContext.regions) }}
         {% endif %}
     ```
-- **`roles`** grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the default role. Refer [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
+    
+- **`roles`** grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the default role. Refer to [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
 
