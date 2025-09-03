@@ -2,6 +2,11 @@
 
 For **customer-facing analytics**, each **end-user** should only see the **data they’re allowed to see** and nothing more. That’s why row-level security is a **first-class citizen** in Embeddable.
 
+There are two ways to do row-level security in Embeddable:
+
+1. **SQL-based row-level security** – easiest and fastest way to get started. SQL-based row-level security is the topic of the remainder of this page.
+2. **Access Policies** – a more scalable approach to row-level security, and particularly powerful if you start using [Views](/data-modeling/views). Learn more about Access Policies [here](/data-modeling/access-policies).
+
 ## Security Tokens and Security Context
 
 Embeddable dashboards are [embedded](/deployment/embedding) in your site via an HTML web component:
