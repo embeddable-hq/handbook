@@ -7,6 +7,7 @@ import { Steps } from 'nextra/components'
 import { Callout } from 'nextra-theme-docs'
 import CardGrid from './components/CardGrid'
 import ExternalVideo from './components/ExternalVideo'
+import Bruno from './components/Bruno'
 import { InkeepChat } from './components/InkeepChatButton'
 
 const config: DocsThemeConfig = {
@@ -19,6 +20,7 @@ const config: DocsThemeConfig = {
   },
   docsRepositoryBase: 'https://github.com/embeddable-hq/handbook/blob/main',
   components: {
+    'Bruno': Bruno,
     'ImageGrid': ImageGrid,
     'LinkCard': LinkCard,
     'CardGrid': CardGrid,

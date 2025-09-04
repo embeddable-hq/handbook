@@ -1,6 +1,8 @@
 # Caching API
 
-Use Embeddable’s Caching API to tell Embeddable which security contexts and pre-aggregations to refresh and how often:
+Use Embeddable’s Caching API to tell Embeddable which security contexts and pre-aggregations to refresh and how often.
+
+<Bruno/>
    
 ```javascript
 fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
@@ -14,7 +16,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
     refreshInterval: "30 minutes",
     embeddables: [
       {
-        id: "4beec55e-11f5-489a-8417-eb77c6a3c6c3",
+        embeddableId: "4beec55e-11f5-489a-8417-eb77c6a3c6c3",
         savedVersions: ["production"]  // If not provided, the latest saved version will be used by default
       }
     ],
@@ -23,7 +25,8 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
         securityContext: {
           userId: '9sZSJ9LHsiYXR0cmli'
         },
-        environment: 'default'
+        environment: 'default',
+        timezones: ['UTC']
       },
       {
         securityContext: {
@@ -31,7 +34,8 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
         },
         environment: 'prod'
       }
-    ]
+    ],
+    roles: ['default']
   })
 });
 
