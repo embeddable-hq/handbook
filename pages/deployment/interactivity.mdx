@@ -87,6 +87,8 @@ You can use this to log errors, show error messages to users, or take other acti
 
 You can listen to when your Embeddable has finished loading its components by adding an event listener for the `onComponentsLoad` event. This event is fired each time the Embeddable has finished loading all its components (e.g., charts, tables). This can be useful for showing a loading spinner while the Embeddable is loading, and then hiding it once the components are ready.
 
+This event fires once all of the Embeddable's components have loaded and rendered, but each component may still be in an individual loading state, as this event does not wait for any `loadData` requests to return.
+
 Here is an example of how to listen to the components load event in your Embeddable:
 
 ```tsx
