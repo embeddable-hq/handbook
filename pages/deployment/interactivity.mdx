@@ -2,81 +2,227 @@
 
 You can interact with your `<em-beddable>` as if it is a part of your own codebase.
 
-You can:
- - pass in and even update Embeddable `variables` (in response to actions in your app).  Learn more about variables [here](/dashboards/interactivity).
- - listen to `onVariablesChange` events as your users interact with the dashboard. Learn more about variables [here](/dashboards/interactivity).
- - listen to `onEmbeddableError` errors (javascript and HTTP errors) that may occur in your dashboard (useful for debugging or being notified when your users are experiencing errors).
- - get notified `onComponentsLoad` when your dashboard has finished loading (useful for showing a loading spinner).
- - pass a `clientContext` directly to your react components (learn more [here](/development/client-context)).
+## Pass In and Update Variables
 
+You can pass in variables to your Embeddable by passing a `variables` attribute in your web component that contains an arbitrary JSON string. You can also update these variables in response to actions in your app. This will cause the Embeddable to refresh and display data based on the new variable values.
+
+<VideoComponent
+    src="/video/client-side-variables.mp4"
+    width="1250"
+    height="616"
+/>
+
+
+Here is an example of passing variables from a simple client app to your Embeddable:
 
 ```tsx
-const Dashboard = ({ securityToken }) => {
+const securityToken = await getSecurityTokenFromYourBackend();
+const variables = {
+  'Country': 'Germany',
+  'Date range': { from: new Date(2024, 1, 12), to: new Date() }
+};
+// Embeddable React component defined as per example below
+<Embeddable token={securityToken} variables={variables} />
+```
+
+Note that variable names must exactly match the variable names defined in your dashboard. You can learn more about dashboard variables [here](/dashboards/interactivity).
+
+If you update these variables in your client application, the Embeddable will refresh and display data based on the new values. For example, you could have a dropdown in your app that allows users to select a country, and when they select a new country, you update the `Country` variable in your Embeddable.
+
+This flow is bi-directional. If a user interacts with the dashboard and changes a variable (e.g., by using a filter), you can listen to these changes in your app (see below).
+
+## Listen to Variable Changes
+
+You can listen to variable changes in your Embeddable by adding an event listener for the `onVariablesChange` event. This event is fired each time a variable inside your Embeddable updates (e.g., user selects a new country). The event detail contains an array of objects with the variable name and its new value.
+
+Here is an example of how to listen to variable changes in your Embeddable:
+
+```tsx
+const securityToken = await getSecurityTokenFromYourBackend();
+function handleVariableChange(e) {
+  console.log('Variables changed:', e.detail);
+  // e.detail is an array of { variableName, newValue }
+  // eg:
+  // detail: [
+  //   { variableName: 'Country', newValue: 'France' },
+  //   { variableName: 'Date range', newValue: { from: '2024-01-01', to: '2024-12-31' } }
+  // ]
+}
+
+// Embeddable React component defined as per example below
+<Embeddable
+  token={securityToken}
+  onVariablesChange={handleVariableChange}
+/>
+```
+
+## Handle Component Errors
+
+You can listen to errors that occur in your Embeddable by adding an event listener for the `onEmbeddableError` event. This event is fired each time an error occurs in your Embeddable (e.g., network error, invalid token). The event's `detail` property contains an object with the error message and error detail.
+
+Here is an example of how to listen to errors in your Embeddable:
+
+```tsx
+const securityToken = await getSecurityTokenFromYourBackend();
+function handleEmbeddableError(e) {
+  console.error('Embeddable error:', e.detail);
+  // e.detail is an object with errorMessage and errorDetail
+  // eg:
+  // detail: {
+  //   errorMessage: 'Network error',
+  //   errorDetail: 'Failed to fetch data from API'
+  // }
+}
+
+// Embeddable React component defined as per example below
+<Embeddable
+  token={securityToken}
+  onEmbeddableError={handleEmbeddableError}
+/>
+```
+
+You can use this to log errors, show error messages to users, or take other actions in response to errors. You could also use this to send the error details to your back-end for further processing, such as alerting or logging.
+
+## Know When Components are Loaded
+
+You can listen to when your Embeddable has finished loading its components by adding an event listener for the `onComponentsLoad` event. This event is fired each time the Embeddable has finished loading all its components (e.g., charts, tables). This can be useful for showing a loading spinner while the Embeddable is loading, and then hiding it once the components are ready.
+
+Here is an example of how to listen to the components load event in your Embeddable:
+
+```tsx
+const securityToken = await getSecurityTokenFromYourBackend();
+const [isLoading, setIsLoading] = React.useState(true);
+function handleComponentsLoad() {
+  setIsLoading(false);
+}
+
+// Embeddable React component defined as per example below
+<>
+  {isLoading && <div>Loading...</div>}
+  <Embeddable
+    token={securityToken}
+    onComponentsLoad={handleComponentsLoad}
+  />
+</>
+```
+
+## Pass Client Context
+
+Client Context allows you to pass information about the user or environment to your React components. This is accomplished by passing a `client-context` attribute in your web component that contains an arbitrary JSON string. This can be useful for localization, theming, or other context-specific behavior. You can [learn more here](/development/client-context), including detailed examples.
+ 
+## Complete Example
+
+Here is a complete example of a React component that uses the Embeddable component and demonstrates all of the above features. First is the main `Dashboard` component that uses the `Embeddable` component:
+
+```tsx
+import React from 'react';
+import Embeddable from './Embeddable';
+
+type Props = {
+  securityToken: string;
+};
+
+const Dashboard: React.FC<Props> = ({ securityToken }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [variables, setVariables] = React.useState({
-    'Country': 'Germany',
-    'Date range': { from: new Date(2024, 1, 12), to: new Date() }
+    Country: 'Germany',
+    'Date range': { from: new Date(2024, 1, 12), to: new Date() },
   });
 
   return (
-    <Embeddable
-      token={securityToken}
-      variables={variables}
-      onVariablesChange={setVariables}
-      onEmbeddableError={(e) => {
-        console.log(`${e.errorMessage} : ${e.errorDetail}`);
-      }}
-      onComponentsLoad={() => setIsLoading(false)}
-      clientContext={{ locale: ['en-US'], language: 'en', darkMode: false }}
-    />
+    <>
+      {isLoading && <div>Loading...</div>}
+      <Embeddable
+        token={securityToken}
+        variables={variables}
+        onVariablesChange={setVariables}
+        onEmbeddableError={(e) => {
+          console.log(`${e.errorMessage} : ${e.errorDetail}`);
+        }}
+        onComponentsLoad={() => setIsLoading(false)}
+        clientContext={{ locale: ['en-US'], language: 'en', darkMode: false }}
+      />
+    </>
   );
 };
+
+export default Dashboard;
 ```
 
 Below is the **Embeddable** component, which wraps `<em-beddable>` and wires up event listeners:
 
 ```tsx
-function Embeddable({
+import React, { type Dispatch, type SetStateAction } from 'react';
+
+type Props = {
+  token: string;
+  onComponentsLoad: (e: any) => void;
+  variables: Record<string, any>;
+  onVariablesChange: Dispatch<
+    SetStateAction<{ Country: string; 'Date range': { from: Date; to: Date } }>
+  >;
+  onEmbeddableError: (error: any) => void;
+  clientContext: Record<string, any>;
+};
+
+type Detail = {
+  variableName: string;
+  newValue: any;
+};
+
+const Embeddable: React.FC<Props> = ({
   token,
   onComponentsLoad,
   variables,
   onVariablesChange,
   onEmbeddableError,
-  clientContext
-}) {
-  const ref = React.useRef(null);
+  clientContext,
+}) => {
+  const ref = React.useRef<any>(null);
 
-  function handleVariableChange(e) {
+  function handleVariableChange(e: { detail: Detail[] }) {
     if (onVariablesChange) {
       onVariablesChange(
-        Object.fromEntries(e.detail.map((c) => [c.variableName, c.newValue]))
+        Object.fromEntries(
+          e.detail.map((c: any) => [c.variableName, c.newValue]),
+        ),
       );
     }
   }
 
-  function handleEmbeddableError(e) {
+  function handleEmbeddableError(e: any) {
     onEmbeddableError(e.detail);
   }
 
   React.useEffect(() => {
-    ref.current.addEventListener('variablesChange', handleVariableChange);
-    ref.current.addEventListener('componentsLoad', onComponentsLoad);
-    ref.current.addEventListener('embeddableError', handleEmbeddableError);
+    if (ref.current) {
+      ref.current.addEventListener('variablesChange', handleVariableChange);
+      ref.current.addEventListener('componentsLoad', onComponentsLoad);
+      ref.current.addEventListener('embeddableError', handleEmbeddableError);
 
-    return () => {
-      ref.current.removeEventListener('variablesChange', handleVariableChange);
-      ref.current.removeEventListener('componentsLoad', onComponentsLoad);
-      ref.current.removeEventListener('embeddableError', handleEmbeddableError);
-    };
+      return () => {
+        ref.current?.removeEventListener(
+          'variablesChange',
+          handleVariableChange,
+        );
+        ref.current?.removeEventListener('componentsLoad', onComponentsLoad);
+        ref.current?.removeEventListener(
+          'embeddableError',
+          handleEmbeddableError,
+        );
+      };
+    }
   }, []);
 
   return React.createElement('em-beddable', {
     ref,
     token,
-    "client-context": JSON.stringify(clientContext),
-    variables: JSON.stringify(variables)
+    'client-context': JSON.stringify(clientContext),
+    variables: JSON.stringify(variables),
   });
-}
+};
+
+export default Embeddable;
 ```
 
 **How This Helps**:
