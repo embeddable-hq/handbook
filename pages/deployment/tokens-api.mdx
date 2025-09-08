@@ -20,22 +20,23 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
     savedVersion: "production", // or "development" or "staging", etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
-    securityContext: { // any context you want to provide to the SQL data models
+    securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
       regions: ['us-east', 'eu-west']
     },
-    user: 'sina@embeddable.com', // unique key representing current user
+    user: 'sina@embeddable.com', // unique key (e.g. email or user_id) representing current user
+
+    // optional fields
     dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
     environment: 'default', // each environment defines which databases to connect to
     roles: ["manager"] // any access-policy roles to grant this user i.e. manager, default etc.
-    })
   })
 })
-  .then((resp) => resp.json())
-  .then(({ token }) => {
-    // 'token' is the JWT your web component needs
-    console.log(token);
-  });
+.then((resp) => resp.json())
+.then(({ token }) => {
+  // 'token' is the security token your `<em-beddable token={token}.../>` web component needs
+  console.log(token);
+});
 ```
 
 **Response**:
