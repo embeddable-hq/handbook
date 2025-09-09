@@ -38,7 +38,7 @@ When building locally using [`embeddable:dev`](/development/local-environment):
 
 ### Code version pickers in the builder
 
-Two version pickers appear in the top menu in the dashboard builder to choose the **models version** and **components version**. Publishing a dashboard uses whichever models and components versions are currently selected. A version is only live **once published**.
+In the top menu in the dashboard builder you can use the version pickers to choose the **models version** and **components version**. Publishing a dashboard uses whichever models and components versions are currently selected when you save a version. A version is only live **once published**.
 
 <ImageGrid images={["/img/pushCode-min.png"]}/>
 
@@ -64,16 +64,6 @@ If you have multiple workspaces, you will be prompted to select which workspace 
 
 You can also push your models and components using your API key, which is especially useful for integrating into your **CI/CD pipeline**:
 
-```bash
-npm run embeddable:push -- --api-key <API Key> --email <Email>
-```
-
-Replace `<API Key>` with your [actual API key](/getting-started/set-up-your-workspace#retrieve-your-api-key) and `<Email>` with your registered email address.
-
-Optionally, you can add a `message`, like so:
-
-```bash
-npm run embeddable:push -- --api-key <API Key> --email <Email> --message <Message>
-```
-
-This will appear in the **code version** picker in the no-code builder. 
+<CardGrid>
+  <LinkCard title="Push the code bundle" href="/getting-started/set-up-your-workspace#push-the-code-bundle" icon=""/> 
+</CardGrid> 
