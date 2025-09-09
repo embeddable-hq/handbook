@@ -1,11 +1,76 @@
 
 # 🚀 What’s New in Embeddable
 
+
+## September 2025
+
+Here is a overview of our latest improvements:
+
+### 1. Save dashboard and publish to different enviornments 
+
+You can now save an Embeddable dashboard as a version and publish it to different enviornments. Push dashboards to dev, staging, or prod, and even run it all through your CI/CD.
+
+<ImageGrid width='75%' images={["/img/publish-version.png"]}/>
+
+Learn more about `Saving versions` [here](/dashboards/saving).
+
+
+### 2. Workspace management
+
+Manage team member access to Embeddable workspace under 'Manage team' menu option.
+
+<ImageGrid width='75%' images={["/img/manage-team.png"]}/>
+
+
+### 3. Data Access Policies
+
+Control exactly what data each user can see based on their assigned roles. Define access policies that automatically apply at runtime, supporting:
+
+- Multiple roles per user
+- Conditional rules (e.g., only if a user is an admin)
+- Complex nested filters (AND/OR combinations)
+- Safe handling of user-provided values (SQL injection protection)
+
+Learn more about `Data Access Policies` [here](/data-modeling/access-policies).
+
+
+
+### 4. Point at different Cube deployments
+
+You can now test and run Embeddables against different Cube deployments (internal or external).
+
+- Define and manage external data providers in your workspace
+- Refresh metadata per environment directly in the builder or data playground
+- Environment-aware UI for external Cube users, hiding internal-only features
+
+Learn more about `Cube deployments` [here](/).
+
+
+### 5. Timezone support 
+
+You can now set a specific timezone for Embeddable dashboards.
+
+This ensures all users see data in a consistent “reporting timezone,” avoiding confusion from browser-based timezones and supporting accurate aggregations across global teams.
+
+- Pass a standard timezone string in clientContext and loadData for timezone-aware queries
+- Schedule Cube pre-aggregations for specific timezones via the Caching API
+- Default timezone remains UTC for backwards compatibility and omitted values
+- Handles timezones globally, including daylight saving changes, across US, Asia, and London
+
+
+### 6. Time granularity when choosing a time dimension
+
+Pick a time dimension and select granularity (second, minute, hour, day, week, month, quarter, year) in the builder or data playground.
+
+<ImageGrid width='50%' images={["/img/time-granularity-small.png"]}/>
+
+
+## July 2025
+
 In the last months we shipped several updates to make building and managing dashboards more intuitive and flexible. From improvements to the data modeling experience to new ways to configure inputs and control versioning, here’s a quick look at what’s new.
 
----
 
-## 1. Data Model Editor
+### 1. Data Model Editor
 
 You can now create and edit data models directly in Embeddable.
 
@@ -26,26 +91,7 @@ Learn more about `Data Model Editor` [here](/data-modeling/getting-setup).
 
 
 
-
-## 2. Time Granularity Picker
-
-You can now pick a **granularity (day, week, month, etc.)** when using time dimensions—without separate chart types.
-
-<ImageGrid width='50%' images={["/img/time-granularity.png"]}/>
-
-
-#### Why it matters:
-
-No more duplicating charts just to handle time-based grouping.
-
-#### What’s new:
-
-- Granularity dropdown appears when selecting a time dimension
-- "Day" is default for new charts; existing charts stay unchanged
-- Works in Builder and Playground
-
-
-## 3. Cube Version Picker
+### 2. Cube Version Picker
 
 Control exactly which **Cube.js version** your dashboards use.
 
@@ -62,7 +108,7 @@ Test safely before going live and avoid breaking changes from upstream Cube upda
 - Live embeddables only update after you publish with a selected version
 
 
-## 4. Sub Inputs for Dimensions & Measures
+### 3. Sub Inputs for Dimensions & Measures
 
 You can now define **custom sub inputs** per dimension or measure in chart configurations.
 
@@ -82,9 +128,7 @@ Allows specifying a number of additional settings (e.g. title / granularity / ro
 Learn more about `Sub Inputs for Dimensions & Measures` [here](/development/define-component-function#subinputmeta-definition)
 
 
-
-
-## 5. Dimension & Measure Variables
+### 4. Dimension & Measure Variables
 
 You can now use dimensions and measures as variables and link them directly as inputs to dashboard components.
 
@@ -107,7 +151,7 @@ A popular feature that teams want to be able to implement is the ability to allo
 
 Learn more about `Dimensions & Measures as variables` [here](/dashboards/interactivity#example-change-a-pie-charts-metrics-with-a-picker)
 
-## 6. In-App AI Support (Powered by Inkeep)
+### 5. In-App AI Support (Powered by Inkeep)
 
 We’ve added an **AI assistant across the platform** so you can get help instantly—without leaving the app.
 
