@@ -1,0 +1,322 @@
+# Connecting Embeddable to Cube Cloud
+
+Embeddable works seamlessly with [**Cube Cloud**](https://cube.dev/product/why-cube-cloud), letting you pick and visualize your [**Cube models**](https://cube.dev/docs/product/workspace/data-model) right in Embeddable’s no-code builder. 
+
+The recommended way to connect Embeddable to Cube is via the **Data Provider API**. To connect, you’ll need to provide your `REST API Endpoint` and `API Secret` to Embeddable.
+
+<Steps>
+
+### Find Your Cube Credentials
+
+1. **REST API Endpoint**  
+    - You can find your endpoint in the **Integrations** tab in the Cube Cloud platform, accessible from the left side menu. Once you’re there, select the tab **REST API** and copy your API credentials under **Endpoint**.
+
+    <ImageGrid images={["/img/cube-api-credentials-min.png"]}/>
+
+2. **API Secret**  
+   - Under **Settings** → **Environment Variables** in Cube Cloud, look for **CUBEJS_API_Secret**.  
+
+   <ImageGrid images={["/img/cube-env-min.png"]}/>
+
+### Data Provider API
+
+Connect Embeddable to your Cube deployment using our Data Provider API, which also allows you to manage single/multiple deployments efficiently.
+
+You can call the Data Provider API directly using tools like [Postman](https://www.postman.com/) or Bruno (link below)
+
+<Bruno/>
+
+The example below shows a CREATE action. Other CRUD operations (list, read, update, delete) are available in our Bruno APIs collection.
+
+```jsx
+const apiKey = '<your API Key>';
+const ProviderName = '<some unique name>'; //my-cube-deployment
+const BASE_URL = 'https://api.us.embeddable.com'; // US API
+// const BASE_URL = 'https://api.eu.embeddable.com'; // EU API
+ 
+const resp = await fetch(`${BASE_URL}/api/v1/data-providers`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}` /* keep your API Key secure */,
+    },
+    body: JSON.stringify({
+        name: ProviderName,
+        type: 'cube', // Data provider type
+        credentials: {
+          secretKey: '<your API Secret>',
+          instanceUrl: '<your REST API Endpoint>'
+        },
+    }),
+});
+```
+
+- **apiKey**: This is located on the homepage of your workspace.
+- **ProviderName**: A unique identifier you'll use to reference your Cube deployment (e.g. `main_instance`)
+- **type**: Always set to `cube` for external cube deployments.
+- **credentials**:
+    - **secretKey** – your API secret.
+    - **instanceUrl** – your REST API Endpoint.
+
+For example, if we set **ProviderName** = **"main-instance"** when connecting to Cube using the Data Provider API, we'll need to update our [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) file like this:
+
+```yaml
+- name: Main Instance
+  securityContext:
+    country: United States
+    userid: 123
+  dataProvider: main-instance #my-cube-deployment 
+```
+
+### **Use Your Cube Models/Views in Embeddable**
+
+Watch this short video demonstrating Cube Cloud and Embeddable in action:
+
+<VideoComponent
+    src="/video/cube-models-in-embeddable.mp4"
+    width="1920"
+    height="1080"
+/>
+
+**Things to notice**
+
+- `dataProvider` is configured as “**main instance”** in our [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context).
+- Our cube cloud has multiple models set to `public: false` and exposed through cube [views](/data-modeling/views) (orders, customers).
+- The example demonstrates how to use orders view in our Embeddable dashboard.
+
+**Notes and best practices**
+
+- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-cloud#data-provider-api).
+- Use clear names for your data providers (e.g., `main_instance`) so they map directly to your Cube instances.
+- Ensure roles are **inside** the `securityContext` so that [**row-level security**](/data-modeling/row-level-security)/[**access policies**](/data-modeling/access-policies) apply as expected. The same applies to environment parameter.
+
+</Steps>
+
+## Testing Multiple Data Providers
+
+Once you've connected your Cube deployment to Embeddable as explained above, you might want to connect **multiple Cube deployments**. This approach helps you manage different environments, test changes safely, and support various business needs.
+
+Embeddable supports connecting to multiple cube deployments through the [**Data Provider API**](/data/cube-cloud#data-provider-api). These deployments generally fall into two categories:
+
+1. **Preview or Staging Branches (Cube Cloud only)**
+    - These are **separate staging URLs** within the same deployment.
+    - They allow you to **test changes** in Embeddable before merging them into your main branch.
+    - **Example:** Creating a branch to experiment with a new measure or model update without impacting production.
+    
+2. **Completely Separate Deployments (Cube Cloud and Cube Core)**
+    - These are fully independent deployments, often used to **handle different workloads**, **serve separate lines of business**, or **scale horizontally**.
+    - **Example:** One deployment for internal analytics and another for external customer-facing analytics.
+    
+
+### **Preview or Staging Branches**
+
+Lets walkthrough an example of testing a new measure in Embeddable before we merge to our main branch. 
+
+Firstly, we'll create a new branch called `add_completed_percentage_measure`. In this branch, we'll add a new ***"completed percentage"*** measure to our `base_orders` model and include it in the `orders` [**view**](/data-modeling/views).
+
+<VideoComponent
+    src="/video/testing-multiple-data-providers.mp4"
+    width="1920"
+    height="1080"
+/>
+
+Next, we’ll create a new data provider called `testing` that points to a specific [staging environment](https://cube.dev/docs/product/workspace/environments#staging-environments).
+
+Each **staging branch** in Cube Cloud has its own **unique staging URL**, which you’ll need to configure this data provider.
+
+To set it up, you’ll need two things:
+
+1. **Staging URL** – Go to **Settings → Staging Environments** to find the URL for your branch.
+2. **Secret Key** – Go to **Settings → Environment Variables → `CUBEJS_API_SECRET`** to find the key.
+
+<VideoComponent
+    src="/video/staging-url-and-secret.mp4"
+    width="1920"
+    height="1080"
+/>
+
+Once you have both, pass them to the [**Data Provider API**](/data/cube-cloud#data-provider-api) when creating the `testing` data provider.
+
+Now let's update our security context file to include these two security contexts:
+
+**Example 1: Main Instance** 
+
+```yaml
+- name: Main Instance
+  securityContext:
+    country: United States
+    userid: 123
+  dataProvider: main-instance #my-cube-deployment
+```
+
+**Example 2: Testing**
+
+```yaml
+- name: Testing
+  securityContext:
+    country: United States
+    userid: 123
+  dataProvider: testing #points to staging environment
+```
+
+Switch between different security contexts in the no-code builder to test how data providers affect visibility.
+
+<VideoComponent
+    src="/video/testing-data-providers-in-sc.mp4"
+    width="1920"
+    height="1080"
+/>
+
+**Things to notice**
+
+- `dataProviders` are configured to your **main instance and testing**.
+- The **main instance** do not have the **completed_percentage** measure.
+- **completed_percentage** measure is only available in the **testing** data provider that points to your staging environment url.
+- You can test this new measure in [data playground](/data-modeling/testing-models) or [dashboard](/dashboards/building-dashboards) before merging it to your main branch.
+
+### **Completely Separate Deployments**
+
+For **separate deployments**, you'll need to **set up a data provider for each one**. Since each deployment has its **own Rest API Endpoint and Secret**, just repeat the same configuration steps for each deployment as described earlier [**here**](/data/cube-cloud#find-your-cube-credentials).
+
+## Cube Cloud Dual Authentication (JWKS)
+
+This section explains how to configure dual authentication for Cube Cloud, allowing your Cube Cloud instance to support both JWK-based authentication (for customer applications) and secret-based authentication (for the Embeddable backend).
+
+<Steps>
+
+### **Cube Cloud Configuration**
+    - In your Cube Cloud environment, set the following environment variables:
+        - `CUBEJS_JWK_URL`: Set this to the JWKS endpoint URL from your identity provider. For example, Auth0 provides the following URL:
+        `https://{yourDomain}/.well-known/jwks.json`
+### **Cube.js Configuration Files**
+    - Copy the `auth.js` file to the root of the cube cloud folder (see below for example).
+    - Copy the `cube.js` file to the root of the cube cloud folder (see below for example).
+    - Copy the `package.json` file to the root of the cube cloud folder. This file lists the required dependencies (`jsonwebtoken` and `jwks-rsa` - see below for example).
+### **Deploy to Cube Cloud**
+    - Upload the `auth.js`, `cube.js`, and `package.json` files to your Cube Cloud environment.
+    - Deploy your Cube.js application. If you’re doing this for the first time, information can be [found in Cube’s Documentation](https://cube.dev/docs/product/deployment/cloud/deployments). Additionally, we recommend following [Cube’s Guidelines for continuous deployment](https://cube.dev/docs/product/deployment/cloud/continuous-deployment).
+
+</Steps>
+
+## **How it Works**
+
+- **JWK Authentication:** When a request comes from your applications, Cube Cloud will use the `CUBEJS_JWK_URL` and the `validateJwt` function in `auth.js` to authenticate the request using the provided JWT and the JWKS from your identity provider.
+- **Secret-Based Authentication:** When a request comes from the Embeddable backend, it will include the `Request-Origin: embeddable` header. Cube Cloud will then use the `CUBEJS_API_SECRET` and the `validateEmbeddableJwt` function in `auth.js` to authenticate the request using the shared secret key.
+
+## **Important Notes**
+
+- **Backend Requests:** The Embeddable backend will automatically include the `Request-Origin` header in its requests to Cube Cloud.
+
+This dual authentication setup provides flexibility and security for your Cube.js integration, allowing you to use both JWK-based and secret-based authentication methods as needed.
+
+### Auth.js
+
+This is an example `auth.js` file. Copying and pasting this file probably won’t work for you (unless you have identical environment variable names), but it’s a good way to get started!
+
+```jsx
+const jwt = require("jsonwebtoken");
+const jwksRsa = require('jwks-rsa'); // jwks-rsa library handles caching of the JWKS internally
+
+class AuthHandlerError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+const jwkUrl = process.env.CUBEJS_JWK_URL;
+const jwksClient = jwksRsa({
+  jwksUri: jwkUrl
+});
+const secretKey = process.env.CUBEJS_API_SECRET;
+
+const customCheckAuth = async (req, auth) => {
+  if (auth) {
+    if (req.get('Request-Origin') === 'embeddable') {
+      validateEmbeddableJwt(auth, req); // Secret key authentication
+      console.debug("validateEmbeddableJwt JWT verification successful.")
+    } else {
+      await validateJwt(auth, req); // JWK authentication
+      console.debug("validateJwt JWT verification successful.")
+    }
+  } else {
+    throw new AuthHandlerError(403, "Authentication required");
+  }
+};
+
+const validateEmbeddableJwt = (auth, req) => {
+  try {
+    const decoded = jwt.verify(auth, secretKey, {algorithms: ['HS256']});
+
+    req.securityContext = decoded;
+  } catch (err) {
+    throw new AuthHandlerError(403, `validateEmbeddableJwt JWT validation failed: ${err.message}, ${auth}`);
+  }
+};
+
+const validateJwt = async (auth, req) => {
+  try {
+    console.log("Starting JWT validation...");
+
+    const getKey = (header, callback) => {
+      console.debug("Fetching signing key with kid:", header.kid);
+      jwksClient.getSigningKey(header.kid, (err, key) => {
+        if (err) {
+          console.error("Error getting signing key:", err);
+          callback(err, null);
+          return;
+        }
+        console.debug("Signing key:", key);
+        const signingKey = key.getPublicKey();
+        callback(null, signingKey);
+      });
+    };
+
+    const decoded = await new Promise((resolve, reject) => {
+      jwt.verify(auth, getKey, {algorithms: ["RS256"]}, (err, decoded) => {
+        if (err) {
+          reject(new AuthHandlerError(403, `jwt.verify, JWT validation failed: ${err.message}`));
+        } else {
+          resolve(decoded);
+        }
+      });
+    });
+
+    console.debug("JWT verification successful. Decoded payload:", decoded);
+    req.securityContext = decoded;
+
+  } catch (err) {
+    throw new AuthHandlerError(403, `validateJwt JWT, validation failed: ${err.message}`);
+  }
+};
+
+module.exports = {customCheckAuth, AuthHandlerError};
+```
+
+### Cube.js
+
+This is an example `cube.js` file. Copying and pasting this file probably *will* work for you, although you may want to modify it!
+
+```jsx
+const { customCheckAuth } = require('./auth');
+
+module.exports = {
+  checkAuth: async (req, auth) => {
+    await customCheckAuth(req, auth);
+  }
+}
+```
+
+### Package.json
+
+This is an example `package.json` file. This is almost certainly not everything you’ll need in your version. Better to just add these items to your dependencies object!
+
+```json
+{
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0"
+  }
+}
+
+```
