@@ -2,7 +2,11 @@
 
 Embeddable works seamlessly with [**Cube Cloud**](https://cube.dev/product/why-cube-cloud), letting you pick and visualize your [**Cube models**](https://cube.dev/docs/product/workspace/data-model) right in Embeddable’s no-code builder. 
 
-The recommended way to connect Embeddable to Cube is via the **Data Provider API**. To connect, you’ll need to provide your `REST API Endpoint` and `API Secret` to Embeddable.
+To connect Embeddable to Cube you use the **Data Provider API**. 
+
+## Data Provider API
+
+To connect Cube Cloud, you’ll need to provide your `REST API Endpoint` and `API Secret` to Embeddable.
 
 <Steps>
 
@@ -18,7 +22,7 @@ The recommended way to connect Embeddable to Cube is via the **Data Provider API
 
    <ImageGrid images={["/img/cube-env-min.png"]}/>
 
-### Data Provider API
+### Create a Data Provider
 
 Connect Embeddable to your Cube deployment using our Data Provider API, which also allows you to manage single/multiple deployments efficiently.
 
@@ -29,19 +33,14 @@ You can call the Data Provider API directly using tools like [Postman](https://w
 The example below shows a CREATE action. Other CRUD operations (list, read, update, delete) are available in our Bruno APIs collection.
 
 ```jsx
-const apiKey = '<your API Key>';
-const ProviderName = '<some unique name>'; //my-cube-deployment
-const BASE_URL = 'https://api.us.embeddable.com'; // US API
-// const BASE_URL = 'https://api.eu.embeddable.com'; // EU API
- 
-const resp = await fetch(`${BASE_URL}/api/v1/data-providers`, {
+fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}` /* keep your API Key secure */,
     },
     body: JSON.stringify({
-        name: ProviderName,
+        name: 'main-instance', // unique name for your cube endpoint
         type: 'cube', // Data provider type
         credentials: {
           secretKey: '<your API Secret>',
@@ -52,43 +51,41 @@ const resp = await fetch(`${BASE_URL}/api/v1/data-providers`, {
 ```
 
 - **apiKey**: This is located on the homepage of your workspace.
-- **ProviderName**: A unique identifier you'll use to reference your Cube deployment (e.g. `main_instance`)
+- **name**: A unique identifier you'll use to reference your Cube deployment (e.g. `main-instance`)
 - **type**: Always set to `cube` for external cube deployments.
 - **credentials**:
     - **secretKey** – your API secret.
     - **instanceUrl** – your REST API Endpoint.
+- **region**: Learn more about `region` [here](/deployment/deployment-regions).
 
-For example, if we set **ProviderName** = **"main-instance"** when connecting to Cube using the Data Provider API, we'll need to update our [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) file like this:
+
+For example, if we set **name** = **"main-instance"** when connecting to Cube using the Data Provider API, we'll need to update our [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
 
 ```yaml
-- name: Main Instance
+- name: Example customer 1
   securityContext:
     country: United States
     userid: 123
-  dataProvider: main-instance #my-cube-deployment 
+  dataProvider: main-instance 
 ```
 
-### **Use Your Cube Models/Views in Embeddable**
+### Use Your Cube Models in Embeddable
 
 Watch this short video demonstrating Cube Cloud and Embeddable in action:
 
-<VideoComponent
-    src="/video/cube-models-in-embeddable.mp4"
-    width="1920"
-    height="1080"
-/>
+<ExternalVideo src="https://www.loom.com/embed/824de8d3e4344dc5aefa7cbfb7c7ed92?sid=b46b4327-bd92-4ac3-891e-fd689c3ecc0e"/>
 
-**Things to notice**
+**Things to notice:**
 
-- `dataProvider` is configured as “**main instance”** in our [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context).
-- Our cube cloud has multiple models set to `public: false` and exposed through cube [views](/data-modeling/views) (orders, customers).
-- The example demonstrates how to use orders view in our Embeddable dashboard.
+ - [0:00] Your cube models, dimensions and measures all appear in Embeddable via **Datasets**.
+ - [0:57] If you make changes to your models, just click the **Refresh button** in the Datasets section to bring in your changes.
+ - [1:35] You can switch between **security contexts** using the [View As](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) dropdown.
 
 **Notes and best practices**
 
-- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-cloud#data-provider-api).
-- Use clear names for your data providers (e.g., `main_instance`) so they map directly to your Cube instances.
-- Ensure roles are **inside** the `securityContext` so that [**row-level security**](/data-modeling/row-level-security)/[**access policies**](/data-modeling/access-policies) apply as expected. The same applies to environment parameter.
+- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-cloud#data-provider-api).
+- Use clear names for your data providers (e.g., `main-instance`) so they map directly to your Cube instances.
+- Anything you want to pass from Embeddable to your Cube deployment, ensure it is **inside** the `securityContext`.
 
 </Steps>
 
@@ -98,12 +95,12 @@ Once you've connected your Cube deployment to Embeddable as explained above, you
 
 Embeddable supports connecting to multiple cube deployments through the [**Data Provider API**](/data/cube-cloud#data-provider-api). These deployments generally fall into two categories:
 
-1. **Preview or Staging Branches (Cube Cloud only)**
+1. **Preview or Staging Branches**
     - These are **separate staging URLs** within the same deployment.
     - They allow you to **test changes** in Embeddable before merging them into your main branch.
     - **Example:** Creating a branch to experiment with a new measure or model update without impacting production.
     
-2. **Completely Separate Deployments (Cube Cloud and Cube Core)**
+2. **Completely Separate Deployments**
     - These are fully independent deployments, often used to **handle different workloads**, **serve separate lines of business**, or **scale horizontally**.
     - **Example:** One deployment for internal analytics and another for external customer-facing analytics.
     
@@ -146,7 +143,7 @@ Now let's update our security context file to include these two security context
   securityContext:
     country: United States
     userid: 123
-  dataProvider: main-instance #my-cube-deployment
+  dataProvider: main-instance 
 ```
 
 **Example 2: Testing**

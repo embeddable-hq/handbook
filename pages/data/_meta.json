@@ -3,6 +3,6 @@
     "credentials": "Database credentials",
     "environments": "Set up Environments",
     "troubleshooting": "Troubleshooting",
-    "bring-your-own-cube": "Bring your own cube",
-    "cube-cloud": "Connecting Embeddable to Cube Cloud"
+    "bring-your-own-cube": "Bring your own Cube",
+    "cube-cloud": "Cube Cloud"
 }
