@@ -3,5 +3,6 @@
     "credentials": "Database credentials",
     "environments": "Set up Environments",
     "troubleshooting": "Troubleshooting",
-    "integrations": "Integrations"
+    "bring-your-own-cube": "Bring your own Cube",
+    "cube-cloud": "Cube Cloud"
 }
