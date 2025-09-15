@@ -6,7 +6,7 @@ There are three existing Embeddable types that can be extended with additional o
 - `timeRange`: Represents a range of time between two points. It is commonly used for selecting a start and end date.
 - `granularity`: Represents the level of detail for time-based data. It is used to specify how data should be aggregated over time (e.g., daily, weekly, monthly).
 
-To extend these types with additional options, you can use `defineType` (explained in detail in ["Defining Custom Types"](/development/custom-types)) that build upon the existing ones.
+To extend these types with additional options, you can use `defineOption` (explained in detail in ["Defining Custom Types"](/development/custom-types)) that build upon the existing ones.
 
 <Callout emoji="⚠️">
   When extending existing types, best practice is to create a new `type.emb.ts` file as if you were creating a custom type, but avoid using the `defineType` function, as this will cause build errors. The type is already defined in the core library. You only need the `defineOption` function to add new options to the existing type.
