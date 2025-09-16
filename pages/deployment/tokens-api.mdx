@@ -28,8 +28,13 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
     // optional fields
     dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
-    environment: 'default', // each environment defines which databases to connect to
-    roles: ["manager"] // any access-policy roles to grant this user i.e. manager, default etc.
+
+    // managed Cube
+    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
+    roles: ["manager"], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
+
+    // external Cube 
+    dataProvider: 'my-cube-deployment' // tells Embeddable which external Cube deployment to connect to
   })
 })
 .then((resp) => resp.json())
@@ -73,14 +78,19 @@ Learn more about `region` [here](/deployment/deployment-regions).
         {% endif %}
     ```
     
-- **`roles`** grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the default role. Refer to [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
+- **`roles`** optional field, only needed if you're using [Access Policies](/data-modeling/access-policies). Grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the "default" role. Refer to [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
 
-- **`environment`** optionally specifies which [environment](/data/environments) to retrieve data from. Until you're ready to define environments, omit this parameter for now (by default, “default” is used). [Environments](/data/environments) let you achieve things like:
+- **`environment`** optional field, only needed if you're using [Environments](/data/environments). Specifies which [environment](/data/environments) to retrieve data from. If omitted, the "default" environment is used. [Environments](/data/environments) let you achieve things like:
     - **single-tenancy** (AKA **database-level security**), where each of your customers has their data in a different database.
     - different database connections for **prod**, **qa**, **testing**, etc. 
-    - **micro service architecture**, where your data is spread across multiple databases. 
+    - **micro service architecture**, where your data is spread across multiple databases.
+
+- **`dataProvider`** is required if (and only if) you are [bringing your own Cube deployment](/data/bring-your-own-cube). Specifies which external Cube deployment Embeddable should connect to. This must match a data provider you have created using the [**Data Provider API**](/data/cube-cloud#data-provider-api) (for example, `my-cube-deployment`). 
+<Callout emoji="💡">
+  Note that the `dataProvider` parameter is only required when connecting to an external Cube deployment.
+</Callout>
 
 - **`expiryInSeconds`** is the number of seconds until the token expires. The default is 7 days (60 * 60 * 24 * 7). Tokens are standard JWTs, and contain `iat` and `exp` when decoded. On your front-end, you can keep track of the token expiry and refresh it as needed with a call to the Embeddable Tokens API, without needing to reload the page.
 

@@ -107,7 +107,7 @@ Below are the main parameters relevant to `loadData(...)`, with examples. For ea
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
 | `from`           | `Dataset`             | **Yes**                                         | —                 |
-| `select`         | `(Dimension|Measure|TimeDimension)[]`         | At least one dimension measure or time dimension is required   | `[]`              |
+| `select`         | `(Dimension\|Measure\|TimeDimension)[]`        | At least one dimension measure or time dimension is required   | `[]`              |
 | `orderBy`        | `OrderBy[]`           | No                                              | none              |
 | `limit`          | `number`              | No                                              | `100`             |
 | `offset`         | `number`              | No                                              | `0`               |
@@ -274,9 +274,7 @@ export default defineComponent(Component, meta, {
       ...inputs,
       results: loadData({
         from: inputs.ds,
-        measures: [inputs.yAxis],
-        dimensions: [inputs.groupBy],
-        timeDimensions: [
+        select: [inputs.yAxis, inputs.groupBy, 
           {
             dimension: inputs.xAxis?.name,
             granularity: inputs.granularity
@@ -375,13 +373,12 @@ export default defineComponent(Component, meta, {
       // First request
       mainResults: loadData({
         from: inputs.mainDataset,
-        dimensions: [inputs.mainDimension],
-        measures: [inputs.mainMeasure]
+        select: [inputs.mainDimension, inputs.mainMeasure]
       }),
       // Second request
       secondaryResults: loadData({
         from: inputs.secondaryDataset,
-        measures: [inputs.secondaryMeasure]
+        select: [inputs.secondaryMeasure]
       })
     };
   }
@@ -438,7 +435,7 @@ export default defineComponent(TableComponent, meta, {
       setPage: (newPage) => setState({ page: newPage }), // So the React component can update page
       results: loadData({
         from: inputs.ds,
-        dimensions: inputs.columns,
+        select: inputs.columns,
         limit,
         offset: page * limit
       })
@@ -517,7 +514,7 @@ export default defineComponent(Component, meta, {
       currentFilter,
       results: loadData({
         from: inputs.ds,
-        dimensions: inputs.columns,
+        select: inputs.columns,
         filters: currentFilter ? [currentFilter] : undefined
       })
     };
