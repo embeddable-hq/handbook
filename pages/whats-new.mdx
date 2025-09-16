@@ -4,7 +4,7 @@
 
 ## September 2025
 
-Here is a overview of our latest improvements:
+We’ve been hard at work improving Embeddable! Here’s a roundup of the latest features and enhancements designed to help you build, manage, and secure dashboards more efficiently.
 
 ### 1. Save dashboard and publish to different enviornments 
 
@@ -24,12 +24,15 @@ Manage team member access to Embeddable workspace under 'Manage team' menu optio
 
 ### 3. Data Access Policies
 
-Control exactly what data each user can see based on their assigned roles. Define access policies that automatically apply at runtime, supporting:
+Access Policies make enforcing row-level security powerful, flexible, and safe. Reusable and applied at runtime, they support nested filters, role-based logic, and automatically guard against SQL injection.
 
-- Multiple roles per user
-- Conditional rules (e.g., only if a user is an admin)
-- Complex nested filters (AND/OR combinations)
-- Safe handling of user-provided values (SQL injection protection)
+With Access Policies, you can:
+- Assign multiple roles per user without complex SQL workarounds
+- Apply conditional rules (e.g., only for admin users) easily
+- Build complex nested filters (AND/OR combinations) in a maintainable way
+- Automatically handle user-provided values safely, protecting against SQL injection
+
+We continue to support traditional SQL-based RLS, but Access Policies make it easier to manage security at scale.
 
 Learn more about `Data Access Policies` [here](/data-modeling/access-policies).
 
@@ -37,13 +40,10 @@ Learn more about `Data Access Policies` [here](/data-modeling/access-policies).
 
 ### 4. Point at different Cube deployments
 
-You can now test and run Embeddables against different Cube deployments (internal or external).
+Embeddable now lets you connect to multiple Cube deployments — either staging/preview branches or completely separate deployments — so you can test changes safely, manage different environments, and switch between data providers in the builder.
 
-- Define and manage external data providers in your workspace
-- Refresh metadata per environment directly in the builder or data playground
-- Environment-aware UI for external Cube users, hiding internal-only features
 
-Learn more about `Cube deployments` [here](/).
+Learn more about `Multiple Cube deployments` [here](/data/cube-cloud#testing-multiple-data-providers).
 
 
 ### 5. Timezone support 
@@ -53,14 +53,13 @@ You can now set a specific timezone for Embeddable dashboards.
 This ensures all users see data in a consistent “reporting timezone,” avoiding confusion from browser-based timezones and supporting accurate aggregations across global teams.
 
 - Pass a standard timezone string in clientContext and loadData for timezone-aware queries
-- Schedule Cube pre-aggregations for specific timezones via the Caching API
 - Default timezone remains UTC for backwards compatibility and omitted values
-- Handles timezones globally, including daylight saving changes, across US, Asia, and London
+- Handles timezones globally, including daylight saving changes
 
 
 ### 6. Time granularity when choosing a time dimension
 
-Pick a time dimension and select granularity (second, minute, hour, day, week, month, quarter, year) in the builder or data playground.
+Pick a time dimension and select granularity (second, minute, hour, day, week, month, quarter, year). Works in the chart builder or in data playground.
 
 <ImageGrid width='50%' images={["/img/time-granularity-small.png"]}/>
 
