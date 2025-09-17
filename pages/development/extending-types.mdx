@@ -62,30 +62,7 @@ Use a date range picker component in your Embeddable and note that the new optio
 ## Extending the `granularity` Type
 
 <Steps>
-### Create Type File
-
-Create a new file named `granularity.type.emb.ts` in your types directory.
-
-### Extend Types
-
-Add the following code to extend the `granularity` type with your desired new options.
-```typescript
-import { defineOption } from '@embeddable.com/core';
-// Example options
-defineOption('granularity', 'quarter_hour');
-defineOption('granularity', 'week_starting_on_sunday');
-```
-
-### Update Models
-
-Your models must contain the same values to use the new granularity options. See [implementing extended granularities in data models](#implementing-extended-granularities-in-data-models) below for details.
-
-### Update Custom Components
-
-Any custom components that use the `granularity` type must be updated to reference your new options. See [implementing extended granularities in custom components](#implementing-extended-granularities-in-custom-components) below for details.
-</Steps>
-
-## Implementing Extended Granularities in Data Models
+### Update Your Data Models
 
 In order to use custom granularities, you will also need to add a few lines to your data model(s). This is done with a simple YAML addition to any time dimension, like so:
 
@@ -106,13 +83,36 @@ In order to use custom granularities, you will also need to add a few lines to y
 
 To learn more about defining custom granularities in your data models, see the [Cube Documentation](https://cube.dev/docs/product/data-modeling/reference/dimensions#granularities).
 
-## Implementing Extended Granularities in Custom Components
+### Create Type File
+
+Create a new file named `granularity.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `granularity` type with your desired new options.
+```typescript
+import { defineOption } from '@embeddable.com/core';
+// Example options
+defineOption('granularity', 'quarter_hour');
+defineOption('granularity', 'week_starting_on_sunday');
+```
+
+### Update Custom Components
+
+Any custom components that use the `granularity` type must be updated to reference your new options.
 
 By default, Embeddable's Vanilla Components will work with your custom granularities (you can also disable this behavior in the component settings). However, if you have created custom components that use the `granularity` type, you will need to make a couple of small changes to ensure they work with your new options.
 
-Note: The Date Picker with Granularity component will display your new `granularity` options, but they will always show (the default options are filtered so that only relevant options show in the list).
+Note: The Date Picker with Granularity component will display your new `granularity` options, but they will always show (the native options are filtered so that only relevant options show in the list).
 
-The following examples show in detail how the Granularity picker was updated, and should give you the tools you need to update your own custom components.
+See below for a complete example
+
+</Steps>
+
+
+### Updating Custom Components to Use Extended Granularities
+
+The following examples show how the Granularity picker was updated, and should give you the tools you need to update your own custom components.
 
 ### `GranularityPicker.emb.ts`
 
@@ -129,17 +129,68 @@ Added the following input:
     },
 ```
 
+### New File: `util/getCustomGranularities.ts`
+
+This function is required because depending on whether you're in the dev or production Embeddable environment, the structure of the `window` object is slightly different. This function handles both cases.
+
+```typescript
+type NativeTypesShape = {
+  granularity?: {
+    options?: string[];
+  };
+};
+
+type Embeddable = {
+  nativeTypes?: NativeTypesShape;
+  [key: string]: any; // bundle hash is used as a key in production
+};
+
+type WindowSimplified = {
+  __EMBEDDABLE__?: Embeddable;
+  __EMBEDDABLE_BUNDLE_HASH__?: string;
+};
+
+const extendedWindow = window as WindowSimplified;
+
+export const getBundleHash = () => {
+  return extendedWindow.__EMBEDDABLE_BUNDLE_HASH__;
+};
+
+const getFromWindow = (): NativeTypesShape | undefined => {
+  const bundleHash = getBundleHash();
+  const embeddable = extendedWindow.__EMBEDDABLE__;
+
+  if (bundleHash && embeddable && embeddable[bundleHash]) {
+    const bundleProp = embeddable[bundleHash];
+    return bundleProp.nativeTypes as NativeTypesShape | undefined;
+  } else if (embeddable && embeddable.nativeTypes) {
+    return embeddable.nativeTypes;
+  }
+  return undefined;
+};
+
+export const getCustomGranularities = (): string[] => {
+  if (typeof window !== 'undefined') {
+    const nativeTypes = getFromWindow();
+    return nativeTypes?.granularity?.options || [];
+  } else {
+    return [];
+  }
+};
+```
+
 ### `index.tsx`
 
 First, we get our custom granularities. These are found under the `__EMBEDDABLE__` property that's added to the `window` object by the Embeddable SDK.
 
 ```tsx
+import { getCustomGranularities } from '../../../util/getCustomGranularities';
+
 const [customGranularities, setCustomGranularities] = useState<string[]>([]);
 
 useEffect(() => {
   // Get granularities from the window object if available
-  const windowGranularities = (window as WindowSimplified).__EMBEDDABLE__?.nativeTypes
-    ?.granularity?.options;
+  const windowGranularities = getCustomGranularities();
   setCustomGranularities(windowGranularities || []);
 }, []);
 ```
