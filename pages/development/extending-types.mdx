@@ -1,0 +1,243 @@
+# Extending Existing Native Types
+
+There are three [existing native types](/development/define-component-function#native-input-types) that can be extended with additional options: `time`, `timeRange`, and `granularity`. These types are used in various components to provide date and time selection functionality.
+
+- `time`: Represents a specific point in time. It is typically used for selecting a single date or timestamp.
+- `timeRange`: Represents a range of time between two points. It is commonly used for selecting a start and end date.
+- `granularity`: Represents the level of detail for time-based data. It is used to specify how data should be aggregated over time (e.g., daily, weekly, monthly).
+
+To extend these types with additional options, you can use `defineOption` (explained in detail in ["Defining Custom Types"](/development/custom-types#the-defineoption-function)) that build upon the existing native types.
+
+<Callout emoji="⚠️">
+  When extending native types, best practice is to create a new `type.emb.ts` file as if you were creating a custom type, but avoid using the `defineType` function, as this will cause build errors. The native type is already defined in the core library. You only need the `defineOption` function to add new options to it.
+</Callout>
+
+Below are examples of how to extend each type:
+
+## Extending the `time` Type
+
+<Steps>
+### Create Type File
+
+Create a new file named `time.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `time` type with your desired new options.
+
+```typescript
+import { defineOption } from '@embeddable.com/core';
+
+// Example options
+defineOption('time', { date: new Date(1980, 3, 28), label: 'My birthday' })
+defineOption('time', { relativeTimeString: 'next week', label: 'Next week' })
+```
+### Test Your New Options
+
+Use a date picker component in your Embeddable and note that the new options are available for selection.
+</Steps>
+
+## Extending the `timeRange` Type
+
+<Steps>
+### Create Type File
+
+Create a new file named `timeRange.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `timeRange` type with your desired new options.
+```typescript
+import { defineOption } from '@embeddable.com/core';
+
+// Example options
+defineOption('timeRange', { from: new Date(2000, 1, 1), to: new Date(), label: 'This millenium' })
+defineOption('timeRange', { relativeTimeString: 'last quarter', label: 'Last quarter' })
+```
+### Test Your New Options
+
+Use a date range picker component in your Embeddable and note that the new options are available for selection.
+</Steps>
+
+## Extending the `granularity` Type
+
+<Steps>
+### Update Your Data Models
+
+In order to use custom granularities, you will also need to add a few lines to your data model(s). This is done with a simple YAML addition to any time dimension, like so:
+
+```yaml
+- name: created_at
+  sql: created_at
+  type: time
+  description: 'The time when the order was created'
+  # optional - define additional custom time intervals (granularities)
+  granularities:
+    - name: quarter_hour
+      interval: 15 minutes
+
+    - name: week_starting_on_sunday
+      interval: 1 week
+      offset: -1 day
+```
+
+To learn more about defining custom granularities in your data models, see the [Cube Documentation](https://cube.dev/docs/product/data-modeling/reference/dimensions#granularities).
+
+### Create Type File
+
+Create a new file named `granularity.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `granularity` type with your desired new options.
+```typescript
+import { defineOption } from '@embeddable.com/core';
+// Example options
+defineOption('granularity', 'quarter_hour');
+defineOption('granularity', 'week_starting_on_sunday');
+```
+
+### Update Custom Components
+
+Any custom components that use the `granularity` type must be updated to reference your new options.
+
+By default, Embeddable's Vanilla Components will work with your custom granularities (you can also disable this behavior in the component settings). However, if you have created custom components that use the `granularity` type, you will need to make a couple of small changes to ensure they work with your new options.
+
+Note: The Date Picker with Granularity component will display your new `granularity` options, but they will always show (the native options are filtered so that only relevant options show in the list).
+
+See below for a complete example
+
+</Steps>
+
+
+### Updating Custom Components to Use Extended Granularities
+
+The following examples show how the Granularity picker was updated, and should give you the tools you need to update your own custom components.
+
+### `GranularityPicker.emb.ts`
+
+Added the following input:
+
+```typescript
+    {
+      name: 'displayCustomGranularities',
+      type: 'boolean',
+      label: `Display Custom Granularities`,
+      description: `If enabled, additional granularities defined by your data team will be included in the dropdown.`,
+      defaultValue: true,
+      category: 'Granularity options',
+    },
+```
+
+### New File: `util/getCustomGranularities.ts`
+
+This function is required because depending on whether you're in the dev or production Embeddable environment, the structure of the `window` object is slightly different. This function handles both cases.
+
+```typescript
+type NativeTypesShape = {
+  granularity?: {
+    options?: string[];
+  };
+};
+
+type Embeddable = {
+  nativeTypes?: NativeTypesShape;
+  [key: string]: any; // bundle hash is used as a key in production
+};
+
+type WindowSimplified = {
+  __EMBEDDABLE__?: Embeddable;
+  __EMBEDDABLE_BUNDLE_HASH__?: string;
+};
+
+const extendedWindow = window as WindowSimplified;
+
+export const getBundleHash = () => {
+  return extendedWindow.__EMBEDDABLE_BUNDLE_HASH__;
+};
+
+const getFromWindow = (): NativeTypesShape | undefined => {
+  const bundleHash = getBundleHash();
+  const embeddable = extendedWindow.__EMBEDDABLE__;
+
+  if (bundleHash && embeddable && embeddable[bundleHash]) {
+    const bundleProp = embeddable[bundleHash];
+    return bundleProp.nativeTypes as NativeTypesShape | undefined;
+  } else if (embeddable && embeddable.nativeTypes) {
+    return embeddable.nativeTypes;
+  }
+  return undefined;
+};
+
+export const getCustomGranularities = (): string[] => {
+  if (typeof window !== 'undefined') {
+    const nativeTypes = getFromWindow();
+    return nativeTypes?.granularity?.options || [];
+  } else {
+    return [];
+  }
+};
+```
+
+### `index.tsx`
+
+First, we get our custom granularities. These are found under the `__EMBEDDABLE__` property that's added to the `window` object by the Embeddable SDK.
+
+```tsx
+import { getCustomGranularities } from '../../../util/getCustomGranularities';
+
+const [customGranularities, setCustomGranularities] = useState<string[]>([]);
+
+useEffect(() => {
+  // Get granularities from the window object if available
+  const windowGranularities = getCustomGranularities();
+  setCustomGranularities(windowGranularities || []);
+}, []);
+```
+
+Then we ensure that our final list of granularities includes our custom ones if the input is enabled:
+
+```tsx
+const granularityOptions = (): GranularityResponse => {
+  const data: { value: Granularity }[] = [];
+  // display options selected by user
+  options.filter((option) => props[option])?.forEach((option) => data.push({ value: option }));
+
+  // Handle custom granularities from window object
+  let customOptions: { value: Granularity }[] = [];
+  if (props.displayCustomGranularities) {
+    customOptions = customGranularities.map((title: string) => ({
+      value: title as Granularity,
+    }));
+  }
+
+  const finalData = [...data, ...customOptions];
+
+  return {
+    isLoading: false,
+    data: finalData,
+  };
+};
+```
+
+Finally, we pass the results of that function to the Dropdown component:
+
+```tsx
+<Dropdown
+  unclearable
+  minDropdownWidth={320}
+  defaultValue={props.defaultValue}
+  options={granularityOptions()}
+  placeholder="Granularity"
+  property={valueProp}
+  onChange={(v) => handleChange(v)}
+/>
+```
+
+One final important thing we need to adjust is to ensure visual consistency between the default granularities (lowercase with spaces) and the custom granularities (lowercase with underscores). This is just a matter of stripping any underscores and replacing them with spaces on display:
+
+```tsx
+{o[props.property?.name || ''].replaceAll('_', ' ')}
+```
+
+In this fashion, the dropdown passes the proper value (with underscores) but displays a user-friendly version (with spaces).

@@ -15,6 +15,10 @@ To connect Cube Cloud, you’ll need to provide your `REST API Endpoint` and `AP
 1. **REST API Endpoint**  
     - You can find your endpoint in the **Integrations** tab in the Cube Cloud platform, accessible from the left side menu. Once you’re there, select the tab **REST API** and copy your API credentials under **Endpoint**.
 
+    <Callout emoji="💡">
+      Copy only the URL segment before cubejs-api/v1.
+    </Callout>
+
     <ImageGrid images={["/img/cube-api-credentials-min.png"]}/>
 
 2. **API Secret**  
@@ -124,6 +128,11 @@ Each **staging branch** in Cube Cloud has its own **unique staging URL**, which 
 To set it up, you’ll need two things:
 
 1. **Staging URL** – Go to **Settings → Staging Environments** to find the URL for your branch.
+
+    <Callout emoji="💡">
+      Copy only the URL segment before cubejs-api/v1.
+    </Callout>
+
 2. **Secret Key** – Go to **Settings → Environment Variables → `CUBEJS_API_SECRET`** to find the key.
 
 <VideoComponent
