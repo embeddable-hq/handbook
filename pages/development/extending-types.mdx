@@ -1,15 +1,15 @@
-# Extending Existing Embeddable Types
+# Extending Existing Native Types
 
-There are three existing Embeddable types that can be extended with additional options: `time`, `timeRange`, and `granularity`. These types are used in various components to provide date and time selection functionality.
+There are three [existing native types](/development/define-component-function#native-input-types) that can be extended with additional options: `time`, `timeRange`, and `granularity`. These types are used in various components to provide date and time selection functionality.
 
 - `time`: Represents a specific point in time. It is typically used for selecting a single date or timestamp.
 - `timeRange`: Represents a range of time between two points. It is commonly used for selecting a start and end date.
 - `granularity`: Represents the level of detail for time-based data. It is used to specify how data should be aggregated over time (e.g., daily, weekly, monthly).
 
-To extend these types with additional options, you can use `defineOption` (explained in detail in ["Defining Custom Types"](/development/custom-types)) that build upon the existing ones.
+To extend these types with additional options, you can use `defineOption` (explained in detail in ["Defining Custom Types"](/development/custom-types#the-defineoption-function)) that build upon the existing native types.
 
 <Callout emoji="⚠️">
-  When extending existing types, best practice is to create a new `type.emb.ts` file as if you were creating a custom type, but avoid using the `defineType` function, as this will cause build errors. The type is already defined in the core library. You only need the `defineOption` function to add new options to the existing type.
+  When extending native types, best practice is to create a new `type.emb.ts` file as if you were creating a custom type, but avoid using the `defineType` function, as this will cause build errors. The native type is already defined in the core library. You only need the `defineOption` function to add new options to it.
 </Callout>
 
 Below are examples of how to extend each type:
@@ -17,8 +17,13 @@ Below are examples of how to extend each type:
 ## Extending the `time` Type
 
 <Steps>
-### Step 1: Create a new file named `time.type.emb.ts` in your types directory.
-### Step 2: Add the following code to extend the `time` type with your desired new options.
+### Create Type File
+
+Create a new file named `time.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `time` type with your desired new options.
 
 ```typescript
 import { defineOption } from '@embeddable.com/core';
@@ -27,14 +32,21 @@ import { defineOption } from '@embeddable.com/core';
 defineOption('time', { date: new Date(1980, 3, 28), label: 'My birthday' })
 defineOption('time', { relativeTimeString: 'next week', label: 'Next week' })
 ```
-### Step 3: Use a date picker component in your Embeddable and note that the new options are available for selection.
+### Test Your New Options
+
+Use a date picker component in your Embeddable and note that the new options are available for selection.
 </Steps>
 
 ## Extending the `timeRange` Type
 
 <Steps>
-### Step 1: Create a new file named `timeRange.type.emb.ts` in your types directory.
-### Step 2: Add the following code to extend the `timeRange` type with your desired new options.
+### Create Type File
+
+Create a new file named `timeRange.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `timeRange` type with your desired new options.
 ```typescript
 import { defineOption } from '@embeddable.com/core';
 
@@ -42,25 +54,38 @@ import { defineOption } from '@embeddable.com/core';
 defineOption('timeRange', { from: new Date(2000, 1, 1), to: new Date(), label: 'This millenium' })
 defineOption('timeRange', { relativeTimeString: 'last quarter', label: 'Last quarter' })
 ```
-### Step 3: Use a date range picker component in your Embeddable and note that the new options are available for selection.
+### Test Your New Options
+
+Use a date range picker component in your Embeddable and note that the new options are available for selection.
 </Steps>
 
 ## Extending the `granularity` Type
 
 <Steps>
-### Step 1: Create a new file named `granularity.type.emb.ts` in your types directory.
-### Step 2: Add the following code to extend the `granularity` type with your desired new options.
+### Create Type File
+
+Create a new file named `granularity.type.emb.ts` in your types directory.
+
+### Extend Types
+
+Add the following code to extend the `granularity` type with your desired new options.
 ```typescript
 import { defineOption } from '@embeddable.com/core';
 // Example options
 defineOption('granularity', 'quarter_hour');
 defineOption('granularity', 'week_starting_on_sunday');
 ```
-### Step 3: Update your models (see below) to use the new granularity options.
-### Step 4: Update any custom components that use the `granularity` type to reference your new extended type instead of the original (see below).
+
+### Update Models
+
+Your models must contain the same values to use the new granularity options. See [implementing extended granularities in data models](#implementing-extended-granularities-in-data-models) below for details.
+
+### Update Custom Components
+
+Any custom components that use the `granularity` type must be updated to reference your new options. See [implementing extended granularities in custom components](#implementing-extended-granularities-in-custom-components) below for details.
 </Steps>
 
-## Implementing Extended Types in Data Models
+## Implementing Extended Granularities in Data Models
 
 In order to use custom granularities, you will also need to add a few lines to your data model(s). This is done with a simple YAML addition to any time dimension, like so:
 
@@ -81,7 +106,7 @@ In order to use custom granularities, you will also need to add a few lines to y
 
 To learn more about defining custom granularities in your data models, see the [Cube Documentation](https://cube.dev/docs/product/data-modeling/reference/dimensions#granularities).
 
-## Implementing Extended Types in Custom Components
+## Implementing Extended Granularities in Custom Components
 
 By default, Embeddable's Vanilla Components will work with your custom granularities (you can also disable this behavior in the component settings). However, if you have created custom components that use the `granularity` type, you will need to make a couple of small changes to ensure they work with your new options.
 
