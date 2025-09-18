@@ -17,24 +17,14 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     'Authorization': `Bearer ${apiKey}` // Keep your API key secure
   },
   body: JSON.stringify({
-    embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
+    embeddableId: "<dashboard-id>", // the id of the dashboard you want to load
     savedVersion: "production", // or "development" or "staging", etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
       regions: ['us-east', 'eu-west']
     },
-    user: 'sina@embeddable.com', // unique key (e.g. email or user_id) representing current user
-
-    // optional fields
-    dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
-
-    // managed Cube
-    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
-    roles: ["manager"], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
-
-    // external Cube 
-    dataProvider: 'my-cube-deployment' // tells Embeddable which external Cube deployment to connect to
+    user: 'example@domain.com', // unique key (e.g. email or user_id) representing current user
   })
 })
 .then((resp) => resp.json())
@@ -54,6 +44,53 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 You would then use this `token` in your `<em-beddable>` element, as explained in [Embedding an Embeddable](/deployment/embedding#how-it-works).
 
 Learn more about `region` [here](/deployment/deployment-regions).
+
+## Comprehensive example
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    //
+    // required fields
+    //
+    embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
+    savedVersion: "production", // or "development" or "staging", etc.
+    expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
+    securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
+      userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
+      regions: ['us-east', 'eu-west']
+    },
+    user: 'example@domain.com', // unique key (e.g. email or user_id) representing current user
+
+    //
+    // optional fields
+    //
+    dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
+
+    //
+    // managed Cube (default)
+    //
+    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
+    roles: ["manager"], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
+
+    //
+    // external Cube (e.g. Cube Cloud)
+    //
+    dataProvider: 'my-cube-deployment' // tells Embeddable which external Cube deployment to connect to
+  })
+})
+.then((resp) => resp.json())
+.then(({ token }) => {
+  // 'token' is the security token your `<em-beddable token={token}.../>` web component needs
+  console.log(token);
+});
+```
 
 
 ### Parameters
