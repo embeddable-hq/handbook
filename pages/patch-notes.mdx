@@ -6,6 +6,11 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.8 - Heat Grid, z-index, and replaceAll fixes
+  - Fixed Heat Grid Sizing Issues (it will now scroll horizontally in small containers)
+  - Moved all hard-coded z-index values in components to theme
+  - Fixed an issue where `replaceAll` was sometimes being called on non-string values coming in from Dimensions, leading to error messages.
+
 ## Version 1.1.7 - Bug Fixes
   - Updated Bar Chart "limit" input to properly reflect the existing default
   - Fixed a bug that was causing the stacked area chart to render a blank canvas in certain circumstances
