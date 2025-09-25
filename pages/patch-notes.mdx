@@ -6,6 +6,10 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.9 - CORS and Table Improvements
+  - Ensured that all Google font `link` tags have `crossorigin="anonymous"` which should help with potential CORS issues is some setups
+  - Table cells can now display arbitrary JSON. Includes a new setting to indicate whether cells should expand to show the entirety of the JSON value or clip it.
+
 ## Version 1.1.8 - Heat Grid, z-index, and replaceAll fixes
   - Fixed Heat Grid Sizing Issues (it will now scroll horizontally in small containers)
   - Moved all hard-coded z-index values in components to theme
