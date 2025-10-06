@@ -19,7 +19,7 @@ Below are examples of how to extend each type:
 <Steps>
 ### Create Type File
 
-Create a new file named `time.type.emb.ts` in your types directory.
+Create a new file named `Time.type.emb.ts` in your types directory.
 
 ### Extend Types
 
@@ -29,8 +29,8 @@ Add the following code to extend the `time` type with your desired new options.
 import { defineOption } from '@embeddable.com/core';
 
 // Example options
-defineOption('time', { date: new Date(1980, 3, 28), label: 'My birthday' })
-defineOption('time', { relativeTimeString: 'next week', label: 'Next week' })
+defineOption('time', { date: new Date(1980, 3, 28), name: 'My birthday' })
+defineOption('time', { relativeTimeString: 'next week', name: 'Next week' })
 ```
 ### Test Your New Options
 
@@ -42,7 +42,7 @@ Use a date picker component in your Embeddable and note that the new options are
 <Steps>
 ### Create Type File
 
-Create a new file named `timeRange.type.emb.ts` in your types directory.
+Create a new file named `TimeRange.type.emb.ts` in your types directory.
 
 ### Extend Types
 
@@ -51,8 +51,8 @@ Add the following code to extend the `timeRange` type with your desired new opti
 import { defineOption } from '@embeddable.com/core';
 
 // Example options
-defineOption('timeRange', { from: new Date(2000, 1, 1), to: new Date(), label: 'This millenium' })
-defineOption('timeRange', { relativeTimeString: 'last quarter', label: 'Last quarter' })
+defineOption('timeRange', { from: new Date(2000, 1, 1), to: new Date(), name: 'This millennium' })
+defineOption('timeRange', { relativeTimeString: 'last quarter', name: 'Last quarter' })
 ```
 ### Test Your New Options
 
@@ -85,7 +85,7 @@ To learn more about defining custom granularities in your data models, see the [
 
 ### Create Type File
 
-Create a new file named `granularity.type.emb.ts` in your types directory.
+Create a new file named `Granularity.type.emb.ts` in your types directory.
 
 ### Extend Types
 
