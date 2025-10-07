@@ -71,7 +71,8 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     // optional fields
     //
-    customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user dashboard state
+    customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user custom dashboard state
+    customCanvasReadOnly: false, // turns off custom dashboard editing for your end-user (if "custom canvas" is enabled)
 
     //
     // managed Cube (default)
@@ -128,7 +129,9 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 - **`expiryInSeconds`** is the number of seconds until the token expires. The default is 7 days (60 * 60 * 24 * 7). Tokens are standard JWTs, and contain `iat` and `exp` when decoded. On your front-end, you can keep track of the token expiry and refresh it as needed with a call to the Embeddable Tokens API, without needing to reload the page.
 
-- **`customCanvasState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field correctly [here](./custom-canvas).  
+- **`customCanvasState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field [here](./custom-canvas).  
+
+- **`customCanvasReadOnly`** is also only needed if you are using [Custom Canvas](/dashboards/custom-canvas).  If `true` the end-user will only be able to view (and interact with) the dashboard, but not edit it (add/remove/move/resize charts). It defaults to `false`.  Learn more [here](./custom-canvas).
 
 ## Testing Security Contexts
 
