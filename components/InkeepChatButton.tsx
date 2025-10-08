@@ -49,7 +49,7 @@ const cfg: InkeepChatButtonProps = {
 		  name: 'Slack Community',
 		  action: {
 			type: 'open_link' as const,
-			url: 'https://join.slack.com/t/embeddableworkspace/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA',
+			url: 'https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA',
 		  },
 		},
 		{
