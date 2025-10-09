@@ -119,6 +119,26 @@ Each entry shows up as a selectable context in your dashboards in your Embeddabl
 
 ---
 
+## Testing Client-Side Variables
+
+You can also send values to your variables in Embeddable from your client application ([learn more](/deployment/interactivity#pass-in-and-update-variables)). To simulate this in the no-code builder, you can add lines to your `client-contexts.cc.yml` file like so:
+
+```yaml
+- name: United States
+  clientContext:
+    currency: 'dollar'
+    currencySymbol: '$'
+  variables:
+    currency: USD
+
+- name: France
+  clientContext:
+    currency: 'euro'
+    currencySymbol: '€'
+  variables:
+    currency: EUR
+```
+
 ## Example Use Case: Localization
 
 A common scenario is **localizing** dashboards based on user language or region. For instance, you might pass `clientContext.language` and then load or map text accordingly:
