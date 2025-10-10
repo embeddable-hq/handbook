@@ -6,6 +6,10 @@ title: Patch Notes - Vanilla Components v1
 
 Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
+## Version 1.1.10 - Minor Improvements
+  - Added an option in the Table and Pivot Table components to remove Markdown links from data and just leave the text that was linked (eg `[Embeddable](https://embeddable.com)` becomes `Embeddable` in the CSV.
+  - Fixed an issue where the dropdown options were not expanding to the same size as the dropdown itself, causing text to be unnecessarily cut off.
+
 ## Version 1.1.9 - CORS and Table Improvements
   - Ensured that all Google font `link` tags have `crossorigin="anonymous"` which should help with potential CORS issues is some setups
   - Table cells can now display arbitrary JSON. Includes a new setting to indicate whether cells should expand to show the entirety of the JSON value or clip it.
