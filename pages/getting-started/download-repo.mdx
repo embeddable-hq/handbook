@@ -42,6 +42,17 @@ npm run embeddable:build
 ```
 </Steps>
 
+On Windows, you may encounter an like `Cannot find module './swc.win32-x64-msvc.node'` at this point.
+
+Make sure you have Microsoft Visual C++ Redistributable installed. https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist
+
+Following this, delete `node_modules` and `package-lock.json`. Finally, install your `node_modules` again:
+
+```bash
+npm i
+```
+
+
 ## Next steps
 
 You're now ready to set up your workspace and push your first code bundle. 
