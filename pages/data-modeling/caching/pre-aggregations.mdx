@@ -131,6 +131,39 @@ Whereas the below query is asking for the same data (`customers.country`), but i
     }
 }
 ```
+## How to know if my pre-aggregation is being used?
+
+You can verify whether your pre-aggregation is being used by checking the generated SQL in the **Embeddable [Data Playground](/data-modeling/testing-models)** or in your Chart’s Query.
+
+When a query uses a pre-aggregation, the SQL will reference the pre-aggregation table name instead of the underlying source table. For example:
+
+```sql
+FROM
+p565c35d4728de3a1d2942475fe26095d2b0b7224de.user_actions_total_daily_action_count_last8d AS `user_actions__total_daily_action_count_last8d`
+```
+
+**Things to notice:**
+
+- The `p<hash>.<pre_aggregation_name>` pattern indicates the query is pulling data from the pre-aggregation rather than the underlying base table.
+- The hash prefix (e.g., `p565c35d4728de3a1d2942475fe26095d2b0b7224de`) is automatically generated using your **workspace id**, [**model version**](/dashboards/saving#models-version), [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) and [**environment**](/data/environments).
+
+### In the Data Playground
+
+In the **Embeddable [Data Playground](https://docs.embeddable.com/data-modeling/testing-models)**, the generated SQL preview will show the pre-aggregation table name in the `FROM` clause. This confirms that your query is using the pre-aggregated table.
+
+<ImageGrid images={["/img/dataplayground_preaggregation-min.png"]}/>
+
+### In your Embeddable chart
+
+If you’ve built an Embeddable that uses a dataset containing a pre-aggregation, you can confirm it’s being used by inspecting the chart’s SQL.
+
+In the video below, you’ll see that the **TableChart** we created shows the same `FROM` clause pattern in its query, confirming that the chart is using the pre-aggregation rather than querying the base table directly.
+
+<VideoComponent
+    src="/video/pre_aggregations_sqlChart-min.mp4"
+    width="1920"
+    height="1080"
+/>
 
 ## Why do queries sometimes not use my pre-aggregations?
 
