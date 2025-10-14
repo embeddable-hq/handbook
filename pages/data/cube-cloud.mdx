@@ -63,7 +63,7 @@ fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
 - **region**: Learn more about `region` [here](/deployment/deployment-regions).
 
 
-For example, if we set **name** = **"main-instance"** when connecting to Cube using the Data Provider API, we'll need to update our [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
+You can then test it in Embeddable by updating your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
 
 ```yaml
 - name: Example customer 1
@@ -71,6 +71,18 @@ For example, if we set **name** = **"main-instance"** when connecting to Cube us
     country: United States
     userid: 123
   dataProvider: main-instance 
+```
+
+and you can [embed your dashboard](/deployment/embedding) by calling the [Tokens API](/deployment/tokens-api#comprehensive-example) like this:
+
+```bash
+POST /api/v1/security-token
+  embbeddableId: '...',
+  securityContext: { /* ... */ },
+  #
+  # other fields...
+  #
+  dataProvider: 'main-instance'
 ```
 
 ### Use Your Cube Models in Embeddable
