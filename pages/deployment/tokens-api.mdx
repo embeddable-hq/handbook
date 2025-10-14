@@ -17,14 +17,17 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     'Authorization': `Bearer ${apiKey}` // Keep your API key secure
   },
   body: JSON.stringify({
-    embeddableId: "<dashboard-id>", // the id of the dashboard you want to load
-    savedVersion: "production", // or "development" or "staging", etc.
+    embeddableId: '<dashboard-id>', // the id of the dashboard you want to load
+    savedVersion: 'production', // or 'development' or 'staging', etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
       regions: ['us-east', 'eu-west']
     },
     user: 'example@domain.com', // unique key (e.g. email or user_id) representing current user
+    //
+    // for more fields, see "Comprehensive example" below
+    //
   })
 })
 .then((resp) => resp.json())
@@ -59,8 +62,8 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     // required fields
     //
-    embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
-    savedVersion: "production", // or "development" or "staging", etc.
+    embeddableId: '<dashboard-id>', //the id of the dashboard you want to load
+    savedVersion: 'production', // or 'development' or 'staging', etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
@@ -78,7 +81,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     // managed Cube (default)
     //
     environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
-    roles: ["manager"], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
+    roles: ['manager'], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
 
     //
     // external Cube (e.g. Cube Cloud)
