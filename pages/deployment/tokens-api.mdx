@@ -9,6 +9,9 @@ Whenever a user accesses an Embeddable dashboard in your app, you should fetch a
 **Important**: Always call this **server-side**—never from client code, to avoid exposing your API key.
 
 ```ts
+//
+// for security reasons: always call this from your server-side - never from client code
+//
 fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   method: 'POST',
   headers: {
@@ -51,6 +54,9 @@ Learn more about `region` [here](/deployment/deployment-regions).
 ## Comprehensive example
 
 ```ts
+//
+// for security reasons: always call this from your server-side - never from client code
+//
 fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   method: 'POST',
   headers: {
