@@ -215,12 +215,14 @@ font: {
   color: '#888888',
   colorNormal: '#333942',
   colorSoft: '#e3e3e3',
-  family: 'Inter, Helvetica, Arial, sans-serif',
+  family: '"Charlie Display", Inter, Helvetica, Arial, sans-serif',
   size: '14px',
   weight: 400,
   urls: [],
 },
 ```
+
+**Important Note**: if your font names contain a space, you must wrap them in double-quotes (eg `"Example Font"`) inside the single quotes of the family string, as shown above, otherwise the font will not be applied correctly. Additionally, the name must match exactly what Google fonts is looking for &ndash; note that the titles on their website are not always the same as the actual font family name.
 
 Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via Google Fonts. If they support it, we load it into the Embeddable and apply it to your theme.
 
