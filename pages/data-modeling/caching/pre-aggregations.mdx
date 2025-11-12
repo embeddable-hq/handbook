@@ -747,7 +747,6 @@ cubes:
       - name: products_preagg
         type: rollup
         dimensions:
-          - id
           - name
         measures:
           - count
@@ -755,15 +754,13 @@ cubes:
         indexes:
           - name: product_index
             columns:
-              - id
-        refresh_key:
-	        every: 1 hour
+              - name
 ```
 
 In this example:
 
-- The `products_preagg` pre-aggregation stores aggregated products data.
-- The index `product_index` on `id` speeds up joins and queries using that dimension.
+- The `products_preagg` pre-aggregation stores aggregated products data by name dimension.
+- The index `product_index` on `name` speeds up queries using that dimension.
 - Make sure the column you’re indexing is also included in the pre-aggregation dimensions; otherwise, Cube will return an error like:
 
   > Error during create table: Column 'products__id' in index 'products_products_preagg_product_index' is not found in table 'products_products_preagg'
@@ -787,7 +784,29 @@ Learn more about indexes [here](https://cube.dev/docs/product/data-modeling/refe
 You don’t need a rollup_join to join cubes from the same data source. Just include the other cube’s dimensions and measures directly in your rollup definition as mentioned [here](/data-modeling/caching/pre-aggregations#performing-joins-across-cubes-in-your-pre-aggregations)
 </Callout>
 
-- Let’s build on the previous example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source and add a new orders model from MotherDuck to show how to run analytics across databases.
+Let’s build on the example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source. Since it joins to the orders model on the id column, we’ll update the pre-aggregation to include id and add an index on it.
+
+```yaml
+
+    pre_aggregations:
+      - name: products_preagg
+        type: rollup
+        dimensions:
+          - id
+          - name
+        measures:
+          - count
+          - price
+        indexes:
+          - name: product_index
+            columns:
+              - id
+        refresh_key:
+	        every: 1 hour
+```
+
+The new orders model from MotherDuck data source will be added to show how to run analytics across databases.
+
 
 ```yaml
 cubes:
@@ -824,7 +843,6 @@ cubes:
       - name: orders_preagg
         type: rollup
         dimensions:
-          - id
           - product_id
           - created_at
         measures:
@@ -909,7 +927,7 @@ cubes:
   `rollup_join` is an ephemeral pre-aggregation. It uses the referenced pre-aggregations at query time, so freshness is controlled by them, not the rollup_join itself.
 </Callout>
 
-- We’ve set the `refresh_key` to **1 hour** on both referenced pre-aggregations (`products_preagg` and `orders_preagg`) to keep the data up to date. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
+- Notice that we’ve set the `refresh_key` to **1 hour** on both referenced pre-aggregations (`products_preagg` and `orders_preagg`) to keep the data up to date. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
 
 ### How `rollup_join` works in Embeddable
 
