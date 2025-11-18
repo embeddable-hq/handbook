@@ -106,6 +106,37 @@ Learn more about `region` [here](/deployment/deployment-regions).
 
 Learn how to retrieve a `token` [here](/deployment/tokens-api).
 
+### Using Typescript
+
+When embedding in TSX, you may get the following error:
+
+```
+Property 'em-beddable' does not exist on type 'JSX.IntrinsicElements'. ts(2339)
+```
+
+To fix this, you need to add a JSX element type declaration.
+You can either add this directly above a react component in the same file, or put it in a global types module.
+
+```ts
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'em-beddable': DetailedHTMLProps<
+        HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & {
+        token: string;
+        variables?: string;
+        'client-context'?: string;
+      };
+    }
+  }
+}
+```
+
+This code ensures the `<em-beddable>` tag is recognized by typescript,
+and that you get correct type-checking on it's props.
+
 ---
 
 ## Embedding in a Vue App
