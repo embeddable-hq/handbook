@@ -1,0 +1,213 @@
+# Internationalization
+
+Remarkable Pro includes full i18n support, so your users see data in a way that feels natural to them - whether that’s their language, their number/currency formatting, or their local timezone.
+
+You can pass this context into Embeddable (or switch between contexts dynamically) using [Client Context](/development/client-context).
+
+Remarkable supports three key aspects of localisation:
+
+- Language
+- Formatting
+- Timezone
+
+## Language
+
+Namespace: `theme.i18n`
+
+In Remarkable, you can localize language via theming:
+
+- **Hard-coded UI labels** (menus, empty/error states, etc.)
+- **Database values** (dimension values like country names)
+- **Component input values** (titles, axis labels, column headers, etc.)
+
+**Example**
+
+```tsx
+const themeProvider = (clientContext, parentTheme) => {
+    const myTheme: DeepPartial<Theme> = {
+        i18n: {
+            language: clientContext?.language || "en",
+            translations: { 
+                fr: {
+                    translation: {
+                        welcomeToEmbeddable: "Bienvenue chez Embeddable",
+                    },
+                },
+                en: {
+                    translation: {
+                        welcomeToEmbeddable: "Welcome to Embeddable",
+                    },
+                },    
+            },
+        },
+    };
+	return defineTheme(parentTheme, myTheme);
+};
+```
+
+**Notes**
+
+- `i18n.language` controls which language is currently active. You can set this directly or pass it through `clientContext` so it updates dynamically as your user’s language changes.
+- Add your translations under `i18n.translations`, using language codes like `en`, `fr`, `de`, that map to their own translation objects.
+- Translations can be **hard-coded** in your theme (as shown above), or **loaded from any external system** and passed into Embeddable at runtime using `clientContext`.
+
+**Example: loading translations externally and passing them into the theme**
+
+```tsx
+const themeProvider = (clientContext, parentTheme) => {
+    const myTheme: DeepPartial<Theme> = {
+        i18n: {
+            language: clientContext.language,
+            translations: {
+                fr: {
+                    translation: clientContext.translations?.fr,
+                },
+            },
+        },
+    };
+
+  return defineTheme(parentTheme, myTheme);
+};
+```
+
+This lets you manage all translations in your own system while still using Remarkable’s i18n support.
+
+## Translate input values
+
+You can translate the values you pass into components via their inputs in the Builder (e.g. titles, descriptions, axis-labels etc)
+
+To do this, in the builder, provide values as: **key|Default Label.**
+
+Then, add entries directly under `translation`. 
+
+**Example**
+
+- In the builder, type your input like so: `myBarChartTitle | Customers per country`
+<ImageGrid width='80%' images={["/img/input-translation.png"]}/>
+- Then, in the theme, define your translation:
+
+```tsx
+//theme.i18n
+i18n: {
+	language: "fr",
+    translations: {
+        fr: {
+            translation: {
+                myBarChartTitle: "Clients par pays"
+            },
+        },
+	},
+};
+```
+
+**Notes**
+
+- All string-typed inputs and sub-inputs can be translated.
+- **If a translation is found:** uses the translation.
+- **If missing:** uses the part after the | (the default).
+- **If there’s no |:** uses the original value as-is.
+
+## Translating hard-coded UI labels
+
+Remarkable includes UI labels that you may want to translate. 
+
+You can see the full list of labels in the Remarkable [English translation file](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/remarkable-pro/theme/i18n/translations/en.ts). You can translate these into other languages by providing translations using the format shown [above](/component-libraries/remarkable-pro/i18n#language).  
+
+The list of hard-coded values fall into two categories:
+
+### 1. Labels built into Remarkable itself
+
+These are strings used inside components (for example, error messages or empty-state text).
+
+### 2. Labels defined in your theme
+
+Some labels come from the theme rather than the core components.
+
+For example, each export option has a label (e.g. “download as CSV”).
+
+If you extend these options in your theme, you can also localise the new labels you introduce using the approach detailed in the Translate Input Values section, above. 
+
+**Example**
+
+Here’s how you would extend the comparison options:
+
+```
+ //New comparison option
+ {
+    value: 'New period',
+    label: 'defaults.comparisonPeriodOptions.newPeriod|My new period',
+    dateFormat: 'DD MMM YYYY',
+    getRange: getPreviousPeriodRange,
+  },
+  
+  
+  //Then, within theme.i18n:
+  translations: {
+	    fr: {
+	      translation: {
+	        defaults: {
+			      comparisonPeriodOptions: {
+			        newPeriod: 'Ma nouvelle période',
+			      },
+			    },
+	      },
+	    },
+	    en: {
+		    translation: {
+	        defaults: {
+			      comparisonPeriodOptions: {
+			        newPeriod: 'My new period',
+			      },
+			    },
+	      },
+	    },    
+	  },
+```
+
+## Translate database values
+
+You can translate dimension values returned from the database. 
+
+To do this, add translations under `translation.dimension`. 
+
+You can use either:
+
+- **Qualified key**: "data-model-name.field.value" (recommended for safety)
+- **Direct match**: "Value"
+
+**Example**
+
+Imagine you have a data model called **customers** containing **a dimension** called **country,** which returns values like *United States* and *Germany*:
+
+```jsx
+//theme.i18n
+i18n: {
+	language: "de",
+	translations: {
+        de: {
+            translation: {
+                "dimension": {
+                    "customers.country" : "Land" // this is the dimension name itself
+                    "customers.country.United States": "Vereinigte Staaten",
+                    'customers.country.Germany': 'Deutschland',
+                },
+            },
+        },
+	},
+};
+```
+
+**Notes**
+
+- At render time, Remarkable UI looks up the value and replaces it.
+- If not found, the raw database value is shown.
+- When interacting with data, everything still works - only the original value is passed to Embeddable or the database to apply filters or other interactions. 
+
+
+## Formatting
+
+This section is coming shortly. 
+
+## Timezone
+
+Support for timezones is coming shortly. 

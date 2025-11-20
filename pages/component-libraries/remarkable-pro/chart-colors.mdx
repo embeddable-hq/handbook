@@ -1,0 +1,71 @@
+# Chart Colors
+
+You can control chart colors globally via the [theme](/component-libraries/remarkable-pro/theming).
+
+Namespace: `theme.charts`
+
+**Example:**
+
+```tsx
+// theme.charts
+backgroundColors?: string[]; // used for fills: bars, areas, pie/donut segments, etc.
+borderColors?: string[]; // used for strokes: bar/area outlines, line strokes, segment borders
+
+const myTheme: DeepPartial<Theme> = {
+  charts: {
+    backgroundColors: ["#d2ecfd", "#a3d4fa", "#6bb7f5"],
+    borderColors: ["#86bdf2", "#5aa1ef", "#2e82ea"] // slightly darker for definition
+  }
+}
+```
+
+**Notes**
+
+- You can pass **any length** arrays; we’ll cycle if there are more categories than colours.
+- Values can be **hex**, **rgb(a)**, **hsl(a)**, or **CSS variables**, e.g. "var(--em-chart-color-1)".
+- If backgroundColors and borderColors are identical, borders will effectively disappear (this can be desirable for minimalist styles).
+- If backgroundColors and borderColors are omitted, Remarkable Pro's default colors will apply. 
+
+### **Colour assignment**
+
+- For charts where multiple categories/series are shown (e.g. **pie/donut**, **grouped/stacked bars**, **multi-line**), colours are **assigned to dimension values deterministically**. This means the same category label gets the same color across components (e.g. United States → always blue), improving cross-chart scanability.
+
+- For charts that, by convention, use a **single colour** (to emphasise shape, not category), colours are assigned to **measures**.This means the same measure gets the same colour across components (e.g. Total USD → always green). Typical single-colour cases:
+    - Bar (one measure, one dimension)
+    - Line (single series)
+    - Area (single series)
+
+### **Cycling & overflow**
+
+- If your data has more unique values than colours in the array, we **cycle** through the palette in order.
+- Best practice: provide enough colours to cover your expected maximum legend cardinality for a dashboard.
+
+## **Practical tips**
+
+- **Dark/light themes:**
+    Create **separate theme objects** (e.g. lightTheme, darkTheme) and swap them via your provider or client-context. Keep the **order** of colours identical across themes so value→colour mapping stays consistent.
+- **Colours per customer / tenant:** You can inject colours per user via client-context and merge them in a themeProvider. If your theme expects separate fill/stroke arrays, map them explicitly:
+        
+```jsx
+<em-beddable
+    token="${json.token}"
+    client-context='${JSON.stringify({
+        colors: ["#555d8e", "#566f94", "#56819b"]
+    })}'
+></em-beddable>
+```
+
+```tsx
+export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+    const colors: string[] | undefined = clientContext?.colors;
+
+    const overrides: DeepPartial<Theme> = colors
+        ? { 
+            charts: {
+                backgroundColors: colors,     
+            }
+        } : {};
+
+    return defineTheme(parentTheme, overrides) as Theme;
+};
+```

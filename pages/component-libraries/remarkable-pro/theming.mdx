@@ -1,0 +1,55 @@
+# Getting started with theming
+
+Once you’ve got the boilerplate running, the best place to begin is the **theme file**: 
+
+`embeddable.theme.ts`
+
+This is where you shape how Remarkable **looks**, **behaves**, and **aligns with your product’s design system**.
+
+Open `embeddable.theme.ts` and you’ll find a small starter theme. It’s intentionally simple - just enough to show the structure without getting in your way - and you can grow it piece by piece as you go.
+
+Everything you can change is covered in the documentation, and because the entire system is strongly typed, you can always inspect the types to discover exactly what’s available.
+
+### Example theme
+
+```ts
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+    const myTheme: DeepPartial<Theme> = {
+        charts: {
+            backgroundColors: [
+                'rgb(75, 134, 255)',
+                'rgb(255, 99, 132)',
+                'rgb(255, 205, 86)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)',
+            ],
+        },
+        styles: {
+            '--em-background-color-default': 'rgb(196 49 196)',
+            '--em-foreground-color-default': 'rgb(0 181 60)',
+        },
+    };
+
+    const theme = defineTheme(parentTheme, newTheme) as Theme;
+    return theme;
+};
+
+export default themeProvider;
+```
+
+While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from **Embeddable’s general theming system**. You can read more about it [here](/development/theming).
+
+
+You're able to create multiple themes and switch between them. Many teams use:
+- a light and dark mode  
+- separate themes for demos or internal environments.
+- a dedicated theme per customer  
+
+It's worth nothing, when you create a theme, you’re **not building everything from scratch**. Remarkable ships with a **full set of defaults** - colours, styles, chart behaviour, i18n, and more. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in defaults, giving you a clean, predictable way to extend only what you need.
+
+## Next step
+
+A good first step is to define your chart colours - it’s quick, visual, and immediately makes the system feel like *yours*.
+
