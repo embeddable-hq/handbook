@@ -24,6 +24,7 @@ Any changes pushed to the main branch are automatically deployed to https://docs
 Use `git clone git@github.com:embeddable-hq/handbook.git`
 
 Troubleshooting:
+
 - You may need to [generate an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add the SSH key to your github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
 ## Local Development
@@ -39,13 +40,15 @@ Then, run `pnpm dev` to start the development server and visit `https://localhos
 The cookie banner will constantly appear.
 
 Hack to fix this:
- - in `_document.tsx` update line 16 to be: `})(window,document,'script','dataLayer','DO-NOT-COMMIT');`
+
+- in `_document.tsx` update line 16 to be: `})(window,document,'script','dataLayer','DO-NOT-COMMIT');`
 
 ## Git UI
 
 These are popular git UI tools:
- - [Github Desktop](https://github.com/desktop/desktop)
- - [Sourcetree](https://www.sourcetreeapp.com/)
+
+- [Github Desktop](https://github.com/desktop/desktop)
+- [Sourcetree](https://www.sourcetreeapp.com/)
 
 ## Testing final app
 
@@ -94,3 +97,19 @@ Use a tool like https://www.deadlinkchecker.com/
 ## License
 
 This project is licensed under the MIT License.
+
+---
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://docs.embeddable.com/img/logos/colour-horizontal-white-transparent.png, https://docs.embeddable.com/img/logos/colour-horizontal-white-transparent@2x.png 2x">
+  <source media="(prefers-color-scheme: light)" srcset="https://docs.embeddable.com/img/logos/colour-horizontal-black-transparent.png, https://docs.embeddable.com/img/logos/colour-horizontal-black-transparent@2x.png 2x">
+  <img alt="Embeddable" src="https://docs.embeddable.com/img/logos/colour-horizontal-black@2x.png" width="216">
+</picture>
+
+[Embeddable](https://embeddable.com/) is a developer toolkit for building fast,
+interactive, customer-facing analytics directly into your product.
+Fully customize analytics dashboards using React.js, and seamlessly
+integrate them anywhere with Web Components.
+
+Discover more about Embeddable by reading our [Docs](https://docs.embeddable.com/),
+[Customer Stories](https://embeddable.com/customer-stories), and [Blog](https://embeddable.com/blog).
