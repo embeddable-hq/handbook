@@ -12,7 +12,7 @@ Remarkable supports three key aspects of localisation:
 
 ## Language
 
-Namespace: `theme.i18n`
+Theme namespace: `theme.i18n`
 
 In Remarkable, you can localize language via theming:
 
@@ -23,6 +23,8 @@ In Remarkable, you can localize language via theming:
 **Example**
 
 ```tsx
+//embeddable.theme.ts
+
 const themeProvider = (clientContext, parentTheme) => {
     const myTheme: DeepPartial<Theme> = {
         i18n: {
@@ -54,6 +56,8 @@ const themeProvider = (clientContext, parentTheme) => {
 **Example: loading translations externally and passing them into the theme**
 
 ```tsx
+//embeddable.theme.ts
+
 const themeProvider = (clientContext, parentTheme) => {
     const myTheme: DeepPartial<Theme> = {
         i18n: {
@@ -131,37 +135,37 @@ If you extend these options in your theme, you can also localise the new labels 
 
 Here’s how you would extend the comparison options:
 
-```
- //New comparison option
- {
+```ts
+//New comparison option
+{
     value: 'New period',
     label: 'defaults.comparisonPeriodOptions.newPeriod|My new period',
     dateFormat: 'DD MMM YYYY',
     getRange: getPreviousPeriodRange,
-  },
+},
   
   
-  //Then, within theme.i18n:
-  translations: {
-	    fr: {
-	      translation: {
-	        defaults: {
-			      comparisonPeriodOptions: {
-			        newPeriod: 'Ma nouvelle période',
-			      },
-			    },
-	      },
-	    },
-	    en: {
-		    translation: {
-	        defaults: {
-			      comparisonPeriodOptions: {
-			        newPeriod: 'My new period',
-			      },
-			    },
-	      },
-	    },    
-	  },
+//Then, within theme.i18n:
+translations: {
+    fr: {
+        translation: {
+        defaults: {
+                comparisonPeriodOptions: {
+                newPeriod: 'Ma nouvelle période',
+                },
+            },
+        },
+    },
+    en: {
+        translation: {
+        defaults: {
+                comparisonPeriodOptions: {
+                newPeriod: 'My new period',
+                },
+            },
+        },
+    },    
+    },
 ```
 
 ## Translate database values
@@ -178,7 +182,7 @@ You can use:
 
 Imagine you have a data model called **customers** containing **a dimension** called **country,** which returns values like *United States* and *Germany*:
 
-```jsx
+```ts
 //theme.i18n
 i18n: {
 	language: "de",

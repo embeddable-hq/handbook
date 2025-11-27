@@ -2,12 +2,13 @@
 
 You can control chart colors globally via the [theme](/component-libraries/remarkable-pro/theming).
 
-Namespace: `theme.charts`
+Theme namespace: `theme.charts`
 
 **Example:**
 
 ```tsx
-// theme.charts
+// embeddable.theme.ts
+
 backgroundColors?: string[]; // used for fills: bars, areas, pie/donut segments, etc.
 borderColors?: string[]; // used for strokes: bar/area outlines, line strokes, segment borders
 
@@ -56,6 +57,8 @@ const myTheme: DeepPartial<Theme> = {
 ```
 
 ```tsx
+// embeddable.theme.ts
+
 export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     const colors: string[] | undefined = clientContext?.colors;
 

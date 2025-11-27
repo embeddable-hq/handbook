@@ -2,7 +2,7 @@
 
 Remarkable Pro uses design tokens (CSS variables behind the scenes) that can be updated via the theme. 
 
-Namespace: `theme.styles`
+Theme namespace: `theme.styles`
 
 - `theme.styles` is a flat, strongly-typed list of style tokens that map to CSS values.  
 - Only tokens defined in the underlying theme can be overridden.
@@ -10,6 +10,8 @@ Namespace: `theme.styles`
 **Example**
 
 ```tsx
+// embeddable.theme.ts
+
 const myTheme: DeepPartial<Theme> = {
   styles: {
     '--em-background-color-default': 'f1f1f1',
@@ -18,6 +20,10 @@ const myTheme: DeepPartial<Theme> = {
   }
 }
 ```
+
+<CardGrid>
+  <LinkCard title="Follow our quick-start styling guide to get set up fast" href="/component-libraries/remarkable-pro/styling/quick-start" icon="🎨"/> 
+</CardGrid>
 
 ## How CSS tokens are structured
 
