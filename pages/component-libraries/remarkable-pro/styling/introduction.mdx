@@ -1,0 +1,58 @@
+# How Styling Works
+
+Remarkable Pro uses design tokens (CSS variables behind the scenes) that can be updated via the theme. 
+
+Namespace: `theme.styles`
+
+- `theme.styles` is a flat, strongly-typed list of style tokens that map to CSS values.  
+- Only tokens defined in the underlying theme can be overridden.
+
+**Example**
+
+```tsx
+const myTheme: DeepPartial<Theme> = {
+  styles: {
+    '--em-background-color-default': 'f1f1f1',
+    '--em-foreground-color-default': '#000',
+    '--em-background-color-neutral': '#fff'
+  }
+}
+```
+
+## How CSS tokens are structured
+
+Remarkable’s design system is built on three layers of tokens. You can override tokens at any layer, but each serves a different purpose.
+
+### 1. Core tokens
+
+These are the raw design primitives:
+- colour scales
+- spacing scales
+- typography scales
+- shadows
+
+You *can* override core tokens if you’re building your own design system or want full control over the fundamentals. However, most teams leave the base layer alone and customise the higher layers instead. 
+
+### 2. Semantic tokens
+
+These control global visual-level styling and are usually where most teams start when applying their brand:
+- text colours
+- surface/background colours
+
+By default, semantic tokens reference core tokens, but they can also reference any valid CSS value. 
+
+### 3. Component tokens
+
+These apply to specific components (charts, cards, dropdowns, etc). They let you fine-tune details without affecting the entire system.
+
+By default, most component tokens reference semantic tokens (or core tokens when appropriate), but but they can also reference any valid CSS value. 
+
+### When to modify each
+
+This layered structure keeps theming flexible and predictable. 
+
+| **Variable type** | **When to use** |
+| --- | --- |
+| **Core** | When redefining the core design foundations (colours, spacing scale, typography scale, radii, shadows, motion). |
+| **Semantic** | When applying visual-design across the entire product (global backgrounds and text colours). |
+| **Component** | When making targeted, isolated tweaks to a specific component (e.g. dropdown padding, card title colour). |
