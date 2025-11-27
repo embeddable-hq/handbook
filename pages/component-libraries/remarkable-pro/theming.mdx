@@ -1,12 +1,10 @@
 # Getting started with theming
 
-Once you’ve got the boilerplate running, the best place to begin is the **theme file**: 
+The theme is where you shape how Remarkable Pro **looks**, **behavess**, and **align with your product’s design system**.
 
 `embeddable.theme.ts`
 
-This is where you shape how Remarkable **looks**, **behaves**, and **aligns with your product’s design system**.
-
-Open `embeddable.theme.ts` and you’ll find a small starter theme. It’s intentionally simple - just enough to show the structure without getting in your way - and you can grow it piece by piece as you go.
+Open this file and you’ll find a small starter theme. It’s intentionally simple - just enough to show the structure without getting in your way - and you can grow it piece by piece as you go.
 
 Everything you can change is covered in the documentation, and because the entire system is strongly typed, you can always inspect the types to discover exactly what’s available.
 
@@ -47,9 +45,11 @@ You're able to create multiple themes and switch between them. Many teams use:
 - separate themes for demos or internal environments.
 - a dedicated theme per customer  
 
-It's worth nothing, when you create a theme, you’re **not building everything from scratch**. Remarkable ships with a **full set of defaults** - colours, styles, chart behaviour, i18n, and more. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in defaults, giving you a clean, predictable way to extend only what you need.
+Importantly, with Remarkable Pro, when you create a theme, you’re **not building everything from scratch**. Remarkable ships with a **full set of defaults** - colours, styles, chart behaviour, i18n, and more. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in defaults, giving you a clean, predictable way to extend only what you need.
 
 ## Next step
 
-A good first step is to define your chart colours - it’s quick, visual, and immediately makes the system feel like *yours*.
+<CardGrid>
+  <LinkCard title="Define your chart colors" href="/component-libraries/remarkable-pro/chart-colors" icon=""/> 
+</CardGrid>
 

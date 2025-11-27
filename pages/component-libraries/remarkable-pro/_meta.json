@@ -4,5 +4,6 @@
     "theming": "Theming",
     "chart-colors": "Chart colors",
     "i18n": "Internationalization",
-     "date-ranges": "Default date-ranges"
+    "styles": "Styling",
+    "customizations": "Customizations"
 }

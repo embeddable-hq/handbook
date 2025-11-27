@@ -1,0 +1,162 @@
+# Date range overrides
+
+Namespace: `theme.defaults.dateRangesOptions`
+
+Date ranges are a core part of most analytics workflows. Components like the **Date Range Select Field** display a set of relative options such as:
+
+- `Today`
+- `Yesterday`
+- `Last 7 days`
+- `This month`
+- `Last 30 days`
+
+These default options are defined inside Remarkable’s theme, but you can easily override them to:
+
+- hide or re-order options
+- change how the ranges are calculated
+- add entirely new options
+
+This gives you a simple way to adapt date behaviour to your product and your users.
+
+## Modifying the default options
+
+You configure date range options via the theme at:
+
+`theme.defaults.dateRangesOptions`
+
+Each option has the following shape:
+
+```ts
+type TimeRange = {
+  from: Date | undefined; // UTC
+  to: Date | undefined;   // UTC
+};
+
+type DateRangeOption = {
+  value: string;              // e.g. 'date-range-yesterday'
+  label: string;              // e.g. 'defaults.dateRangesOptions.yesterday | Yesterday'
+  dateFormat: string;         // e.g. 'MMM DD'
+  getRange: () => TimeRange;  // how the range is calculated
+};
+```
+
+You typically start from the defaults in the `parentTheme`, then adjust them as needed:
+
+```ts
+
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const dateRangeOptions = parentTheme.defaults.dateRangesOptions as DateRangeOption[];
+
+  const myTheme: DeepPartial<Theme> = {
+    defaults: {
+      dateRangesOptions: dateRangeOptions,
+    },
+  };
+
+  const theme = defineTheme(parentTheme, myTheme) as Theme;
+  return theme;
+};
+```
+
+**Things to note**
+
+- You access the default options via `parentTheme.defaults.dateRangesOptions` inside the themeProvider.
+- The default list is a plain array of `DateRangeOption`, so you can manipulate it using normal array operations (`filter`, `map`, `concat`, etc.).
+
+### Example: remove options
+
+Here’s how you might hide the “Today” option:
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myRanges = parentTheme.defaults.dateRangesOptions
+    .filter((option) => option.value !== 'Today')
+    .map(option => option);
+
+  const myTheme: DeepPartial<Theme> = {
+    defaults: {
+      dateRangesOptions: myRanges,
+    },
+  };
+
+  return defineTheme(parentTheme, myTheme) as Theme;
+};
+```
+
+### Example: change options
+
+Here’s how you might edit the `Week to date` option, changing:
+
+- its label
+- how the date range is calculated
+
+```ts
+
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myRanges = parentTheme.defaults.dateRangesOptions.map((option) => {
+    if (option.value === 'week-to-date') {
+      return {
+        ...option,
+        label: 'defaults.dateRangesOptions.weekSoFar | Week so far',
+        getRange: () => {
+          // your custom function returning a TimeRange
+        },
+      };
+    }
+    return option;
+  });
+
+  const myTheme: DeepPartial<Theme> = {
+    defaults: {
+      dateRangesOptions: myRanges,
+    },
+  };
+
+  return defineTheme(parentTheme, myTheme) as Theme;
+};
+```
+
+### Example: add custom options
+
+Let’s say we want to add a new date range: `Month to date`.
+
+All we need to do is append a new DateRangeOption to the existing list, or insert it in the location we want:
+
+```ts
+
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myRanges: DateRangeOption[] = [
+    ...parentTheme.defaults.dateRangesOptions,
+    {
+      value: 'month-to-date',
+      label: 'customOptions.monthToDate | Month to date',
+      dateFormat: 'MMM DD',
+      getRange: () => myCustomRangeFunction(),
+    },
+  ];
+
+  const myTheme: DeepPartial<Theme> = {
+    defaults: {
+      dateRangesOptions: myRanges,
+    },
+  };
+
+  return defineTheme(parentTheme, myTheme) as Theme;
+};
+```
+
+**Things to note**
+- For the new `month-to-date` option, the label follows the pattern we use for translations. It will use `customOptions.monthToDate` as a key to look up the translation value in the theme, and fall back to `Month to date` if nothing is found. Read more about translations [here](/component-libraries/remarkable-pro/i18n).  
+
+## Making new options appear in the Builder
+
+- When you add a new option, it will automatically appear in any Remarkable Pro (or custom) components that use the date range options list, such as the Date Range Select Field.
+- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default filter), you’ll also need to extend Embeddable’s native `timerange` types. Learn more about this [here](/development/extending-types). 
