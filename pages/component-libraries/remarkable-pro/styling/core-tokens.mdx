@@ -1,0 +1,73 @@
+# CSS Tokens – Core
+
+Core tokens are the lowest-level design primitives in Remarkable. 
+
+They represent the raw building blocks of the system and remain constant across all modes, themes, and brands e.g. your spacing and typography scales.
+
+**For example**
+
+```ts
+'--em-core-line-height--sm': '14px',
+'--em-core-line-height--md': '16px',
+'--em-core-line-height--l': '19px',
+'--em-core-line-height--xl': '38px',
+```
+
+You *can* override core tokens if you’re building your own design system or want full control over the fundamentals. But, **most teams leave the base layer alone and customise the higher semantic and component layers instead**.
+
+### Pattern for Core tokens
+
+```ts
+'--em-core-{category}-{property}'  
+'--em-core-{category}-{property}--{modifier}'
+```
+
+### Pattern breakdown
+
+**`em`** - the Embeddable design system namespace.
+
+**`core`** - indicates a *core-level* token:  
+- fundamental design primitives  
+- never themed, never semantic  
+- identical across all themes, modes, and environments  
+
+These behave like the “source of truth” for your design foundation.
+
+**`{category}`** - defines the type of primitive.  
+
+**For example**
+
+- color  
+- spacing  
+- size  
+- border-radius  
+- border-width  
+- font-size  
+- font-weight  
+- line-height  
+- shadow  
+
+**`{property}`** - specifies the item within that category.  
+
+**For example**
+
+- `gray`, `orange` (colour families)  
+- `md`, `sm`, `xl` (typography steps)  
+- `default` (shadow preset)  
+- `position-x`, `position-y` (shadow axes)  
+- `base` (font-family)  
+
+**`{modifier}` (optional)** - a scale step used to refine the primitive. Importantly:
+
+- modifiers are **pure scales**, not semantics  
+- always use `--` before the modifier  
+
+**For example**
+
+- `0`  
+- `50`  
+- `100` 
+- `md`  
+- `xxl`  
+
+Core tokens give you the foundation. Higher layers (Semantic and Component tokens) build on top of these to theme and brand the system.

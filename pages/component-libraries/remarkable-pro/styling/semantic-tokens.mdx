@@ -1,0 +1,73 @@
+# CSS Tokens – Semantic
+
+Semantic tokens form the *main theming layer* for Remarkable. They’re **where most teams start when applying their brand**. 
+
+Instead of focusing on raw colours, semantic tokens describe **what a value is used for** - such as default background, muted text, or error status.
+
+They let you update broad visual-level styling in one place, and every component that references those roles updates automatically.
+
+**For example**
+
+```ts
+'--em-sem-background': 'var(--em-core-color-gray--0050)',
+'--em-sem-background--muted': 'var(--em-core-color-gray--0300)',
+'--em-sem-text--subtle': 'var(--em-core-color-gray--0400)',
+'--em-sem-status-error-background': 'rgb(246 226 226)',
+'--em-sem-status-error-text': 'rgb(188 16 16)'
+```
+
+By default, Semantic tokens sit on top of the [Core layer](/component-libraries/remarkable-pro/styling/core-variables), mapping design primitives into meaningful UI roles. But, you’re not limited to referencing Core tokens. You can assign **any valid CSS value**:
+
+```ts
+'--em-sem-background': 'var(--em-core-color-gray--0050)',
+'--em-sem-background--muted': '#f6f6f6',
+'--em-sem-text--subtle': 'rgba(0 0 0 / 40%)',
+'--em-sem-status-error-background': 'rgb(246 226 226)',
+'--em-sem-status-error-text': 'hsl(0 80% 40%)',
+```
+
+If you’re not used to working with design primitives, this approach can actually feel simpler: you just assign a CSS value to the semantic role you want to change.
+
+### Pattern for Semantic tokens
+
+```ts
+'--em-sem-{category}'
+'--em-sem-{category}--{modifier}'
+```
+
+### Pattern breakdown
+
+`em` - the Embeddable design system namespace.
+
+`sem` - indicates a *semantic-level* token:
+- describes functional meaning (background, text, border, accent, chart colour)
+- references Core primitives
+- consistent across all components and layouts
+
+`{category}`- defines the semantic role — *what this value represents*.  
+
+Categories may include one or more words separated by dashes.
+
+**For example**
+
+- background  
+- text  
+- border  
+- chart-color  
+- status-background  
+- status-text  
+
+`{modifier}` (optional) - a variation of the semantic role. 
+
+Modifiers always use double-dash `--` and define nuance, state, or palette steps within a semantic category.
+
+**For example**
+
+- subtle  
+- inverted  
+- muted  
+- neutral  
+- 1  
+- hover  
+- active  
+- disabled  
