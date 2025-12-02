@@ -12,7 +12,7 @@ Any changes pushed to the main branch are automatically deployed to https://docs
 
 ### Writing
 
-- Please follow our **[style guide](https://www.notion.so/trevorio/Handbook-Guidelines-256726382bcf8078882bda58242bb6d7)**
+- Please follow our **[style guide](STYLEGUIDE.md)**
 
 ### Structure
 
