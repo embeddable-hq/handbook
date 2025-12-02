@@ -21,11 +21,12 @@ Any changes pushed to the main branch are automatically deployed to https://docs
 
 ## Clone repo
 
-Use `git clone git@github.com:embeddable-hq/handbook.git`
+Use `git clone https://github.com/embeddable-hq/handbook.git`
 
-Troubleshooting:
+Alternatively, you can try one of these popular git UI tools:
 
-- You may need to [generate an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add the SSH key to your github account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+- [Github Desktop](https://github.com/desktop/desktop)
+- [Sourcetree](https://www.sourcetreeapp.com/)
 
 ## Local Development
 
@@ -35,20 +36,9 @@ Run `pnpm i` to install the dependencies.
 
 Then, run `pnpm dev` to start the development server and visit `https://localhost:3000`.
 
-## Remove Cookie banner
+## Media
 
-The cookie banner will constantly appear.
-
-Hack to fix this:
-
-- in `_document.tsx` update line 16 to be: `})(window,document,'script','dataLayer','DO-NOT-COMMIT');`
-
-## Git UI
-
-These are popular git UI tools:
-
-- [Github Desktop](https://github.com/desktop/desktop)
-- [Sourcetree](https://www.sourcetreeapp.com/)
+Resize images and videos to be no more than 1250px wide.
 
 ## Testing final app
 
@@ -56,43 +46,9 @@ Run `pnpm build` to build the app
 
 Run `pnpm run start` to preview the built app
 
-## Deploying
+## Deployment
 
-Sometimes, the left sidebar is cached, causing strange behaviour when deploying.
-
-When deploying:
-
-- Go to Vercel.
-- You'll see your branch.
-- Click three dots.
-- Select latest deployment.
-- In the top right, click the three dots.
-- Click Redeploy.
-- Make sure 'use existing build cache' is unticked.
-
-## Prepping media
-
-- Resize to max 1250px width for videos and images.
-
-**To resize videos:**
-
-1. Convert file to .mp4: https://www.freefileconvert.com/
-2. Resize it: https://ezgif.com/resize-video/ezgif-6-478b77626d11.mp4
-
-**To resize images**
-
-1. https://www.iloveimg.com/resize-image
-2. https://compresspng.com/
-
-## To avoid caching issues in Vercel
-
-We have set this environment variable in the Vercel platform:
-
-VERCEL_FORCE_NO_BUILD_CACHE to true
-
-## To test for broken links
-
-Use a tool like https://www.deadlinkchecker.com/
+For contributors with access to our Vercel deployment, please also reference the [deployment readme](DEPLOYMENT.md).
 
 ## License
 
