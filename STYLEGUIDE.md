@@ -13,6 +13,7 @@ Each section of the handbook targets a different user-persona:
 
 When writing in each section, write as if you are speaking **to** them, **not** about them.
 
+> [!NOTE]
 > E.g. when writing in the “Data modeling” section of the handbook, prefer “To start using the data model editor…” over “Data people can start using the data model editor…” .
 
 | Section                 | Audience                            | Notes                                                                                                                                             |
