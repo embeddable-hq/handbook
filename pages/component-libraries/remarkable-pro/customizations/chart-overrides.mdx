@@ -14,20 +14,28 @@ You can override these options per chart-variant directly through the theme.
 ### Example: hide data points on line charts
 
 ```ts
-//theme.charts
+// embeddable.theme.ts
 
-lineChartGroupedPro: {
-  options: {
-    elements: {
-      point: {
-        radius: 0,      // hides visible circles
-        hoverRadius: 4, // still shows hover feedback
-        hitRadius: 8,   // keeps tooltip trigger area generous
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+  const myTheme: DeepPartial<Theme> = {
+    charts: {
+      lineChartGroupedPro: {
+        options: {
+          elements: {
+            point: {
+              radius: 0,      // hides visible circles
+              hoverRadius: 4, // still shows hover feedback
+              hitRadius: 8,   // keeps tooltip trigger area generous
+            },
+          },
+        },
       },
     },
-  }
-  ,
-}
+  };
+
+  return defineTheme(parentTheme, myTheme) as Theme;
+};
 ```
 
 **Things to note:**

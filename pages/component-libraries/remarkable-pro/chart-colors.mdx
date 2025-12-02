@@ -22,30 +22,36 @@ const myTheme: DeepPartial<Theme> = {
 
 **Notes**
 
-- You can pass **any length** arrays; we’ll cycle if there are more categories than colours.
+- You can pass **any length** arrays; we’ll cycle if there are more categories than colors.
 - Values can be **hex**, **rgb(a)**, **hsl(a)**, or **CSS variables**, e.g. "var(--em-chart-color-1)".
 - If backgroundColors and borderColors are identical, borders will effectively disappear (this can be desirable for minimalist styles).
 - If backgroundColors and borderColors are omitted, Remarkable Pro's default colors will apply. 
 
-### **Colour assignment**
+### Color assignment
 
-- For charts where multiple categories/series are shown (e.g. **pie/donut**, **grouped/stacked bars**, **multi-line**), colours are **assigned to dimension values deterministically**. This means the same category label gets the same color across components (e.g. United States → always blue), improving cross-chart scanability.
+- For charts where multiple categories/series are shown (e.g. **pie/donut**, **grouped/stacked bars**, **multi-line**), colors are **assigned to dimension values deterministically**. This means the same category label gets the same color across components (e.g. United States → always blue), improving cross-chart scanability.
 
-- For charts that, by convention, use a **single colour** (to emphasise shape, not category), colours are assigned to **measures**.This means the same measure gets the same colour across components (e.g. Total USD → always green). Typical single-colour cases:
+- For charts that, by convention, use a **single color** (to emphasise shape, not category), colors are assigned to **measures**.This means the same measure gets the same color across components (e.g. Total USD → always green). Typical single-color cases:
     - Bar (one measure, one dimension)
     - Line (single series)
     - Area (single series)
 
-### **Cycling & overflow**
+### Cycling & overflow
 
-- If your data has more unique values than colours in the array, we **cycle** through the palette in order.
-- Best practice: provide enough colours to cover your expected maximum legend cardinality for a dashboard.
+- If your data has more unique values than colors in the array, we **cycle** through the palette in order.
+- Best practice: provide enough colors to cover your expected maximum legend cardinality for a dashboard.
 
-## **Practical tips**
+### Manual color assignment
+
+For charts with a single color, you can select the color manually via the no-code builder. 
+
+We will shortly enable you to manually assign colors to values for category charts too, via theming e.g. the value "positive" should always be green. 
+
+## Practical tips
 
 - **Dark/light themes:**
-    Create **separate theme objects** (e.g. lightTheme, darkTheme) and swap them via your provider or client-context. Keep the **order** of colours identical across themes so value→colour mapping stays consistent.
-- **Colours per customer / tenant:** You can inject colours per user via client-context and merge them in a themeProvider. If your theme expects separate fill/stroke arrays, map them explicitly:
+    Create **separate theme objects** (e.g. lightTheme, darkTheme) and swap them via [client-context](/getting-started/theme-components). Keep the **order** of colors identical across themes so value→color mapping stays consistent.
+- **Colors per customer / tenant:** You can inject colors per user via client-context and merge them. If your theme expects separate fill/stroke arrays, map them explicitly:
         
 ```jsx
 <em-beddable

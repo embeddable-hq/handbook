@@ -2,15 +2,19 @@
 
 The theme is where you shape Remarkable Pro. 
 
-`embeddable.theme.ts`
+It lives in your repo, inside `embeddable.theme.ts` and is your control panel for branding, styling, internationalisation, and the global options that power your analytics experience.
 
-Open this file and you’ll find a small starter theme. It’s intentionally simple - just enough to show the structure without getting in your way - and you can grow it piece by piece as you go.
+You can create **multiple themes** and switch between them. Many teams use:
+- a light and dark mode.
+- separate themes for demos or internal environments.
+- a dedicated theme per customer.
 
-Everything you can change is covered in the documentation, and because the entire system is strongly typed, you can always inspect the types to discover exactly what’s available.
-
-### Example theme
+**Example theme**
 
 ```ts
+
+//embeddable.theme.ts
+
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 
     const myTheme: DeepPartial<Theme> = {
@@ -30,26 +34,47 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
         },
     };
 
-    const theme = defineTheme(parentTheme, newTheme) as Theme;
+    const theme = defineTheme(parentTheme, myTheme) as Theme;
     return theme;
 };
 
 export default themeProvider;
 ```
 
-While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from **Embeddable’s general theming system**. You can read more about it [here](/development/theming).
+**Things to notice**
+- While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from Embeddable’s general [theming system](/development/theming).
+- Remarkable ships with a **full set of defaults**. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in parent theme, giving you a clean way to extend only what you need.
+- You can pass **dynamic values** via  to your theme at run-time via **Client Context** (e.g. client-specific colors, or the name of a theme to apply), as well as create presets for testing in the builder. [Learn more here](/getting-started/theme-components).
+- The `themeProvider` has one job: take the incoming client context and decide which values to apply to the theme.
 
 
-You're able to create multiple themes and switch between them. Many teams use:
-- a light and dark mode  
-- separate themes for demos or internal environments.
-- a dedicated theme per customer  
+## Where to start
 
-Importantly, with Remarkable Pro, when you create a theme, you’re **not building everything from scratch**. Remarkable ships with a **full set of defaults** - colours, styles, chart behaviour, i18n, and more. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in defaults, giving you a clean, predictable way to extend only what you need.
-
-## Next step
+The best place to start is to **define your brand colors**. These will be used inside all your charts. 
 
 <CardGrid>
-  <LinkCard title="Define your chart colors" href="/component-libraries/remarkable-pro/chart-colors" icon=""/> 
+  <LinkCard title="Define your chart colors" href="/component-libraries/remarkable-pro/chart-colors" icon="🎨"/> 
 </CardGrid>
+
+## Theming vs Builder Customizations 
+
+Remarkable Pro components come with a large set of **functional** options that are configured in the **Builder**, not in your theme. Understanding this split makes theming much clearer:
+
+- **Theme** → generally, the global appearance, branding, localisation, and logic. 
+- **Builder** → generally, the configuration for a specific chart on one of your dashboards. 
+
+### In the Builder, you control things like:
+- which data to display.
+- whether to show legends, tooltips, and other UI elements. 
+- the max number of categories for grouped charts.
+- formatting rules (prefix, suffix, currency, rounding, abbreviations, date granularity, etc.)
+
+### In the theme, you control things like:
+- global styling for the entire dashboard. 
+- the options available across components, and how they’re calculated (e.g. export options, date-range presets, comparison ranges).
+- translations and locale-aware formatting.
+- chart-specific overrides and fine-grained component styling.  
+
+Together, the Theme and the Builder let you customise how your analytics both **look and behave**.
+
 

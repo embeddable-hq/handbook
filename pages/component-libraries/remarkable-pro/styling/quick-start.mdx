@@ -1,23 +1,53 @@
 # Quick start styling guide
 
-Here’s a simple sequence to help you **style Remarkable quickly** the first time. 
+<Pill><span>Takes ~5 mins</span></Pill>
 
-You’ll be updating the `styles` namespace inside your theme file (`embeddable.theme.ts`).
+Follow these steps to style Remarkable **for the first time**. 
 
 We recommend spinning up your [local environment](/development/local-environment) while making these changes so you can see the impact of each adjustment in real time.
 
 <Steps>
 
-### Set your text colors  
-These tokens control all major text roles across Remarkable.
+### Open your theme file
+
+1. Open `embeddable.theme.ts` inside your repo. 
+2. Add an empty `styles` object to a new or existing theme. 
+
+```tsx
+//embeddable.theme.ts
+
+export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+    const myTestStyles: DeepPartial<Theme> = {
+        styles: {
+            //your styles will go here
+        }
+    }
+
+    return defineTheme(parentTheme, myTestStyles) as Theme;
+};
+```
+
+### Set your text colors
+These tokens control all major text roles across Remarkable. Replace the CSS values with your own. 
 
 `'--em-sem-text': '#000'` 
 
-Updates primary text throughout the UI: titles, table text, dropdown labels, x-axis labels, KPI values, tooltip text, and icons.
+- Updates primary text throughout the UI: titles, table text, dropdown labels, x-axis labels, KPI values, tooltip text, and icons.
 
 `'--em-sem-text--muted': '#888'`  
 
-Updates other text elements like descriptions, y-axis labels, legend categories, and subtle UI text.
+-   Updates other text elements like descriptions, y-axis labels, legend categories, and subtle UI text.
+
+```tsx
+//theme.styles
+
+styles: {
+    `'--em-sem-text': '#000'`,
+    `'--em-sem-text--muted': '#888'` 
+}
+
+```
 
 ### Set your background colours  
 
@@ -25,31 +55,24 @@ These tokens define the core surfaces used throughout the product.
 
 `'--em-sem-background': '#fff'`
 
-Controls chart card backgrounds and many hover surfaces (e.g. table row hover, dropdown item hover).
+- Controls chart card backgrounds and many hover surfaces (e.g. table row hover, dropdown item hover).
 
 `'--em-sem-background--neutral': '#ccc'`  
 
-Controls neutral surfaces such as SelectField triggers, dropdown panels, table-chart backgrounds, and chart-label values.
+- Controls neutral surfaces such as SelectField triggers, dropdown panels, table-chart backgrounds, and chart-label values.
 
-### Set your border radius  
+### Set your border radii  
 Adjust how rounded the UI should feel. You can set a single system-wide radius or tweak components individually.
 
 `'--em-card-border-radius': '0px'`  
 
-Updates border radius for chart cards.
+- Updates border radius for chart cards.
 
 `'--em-selectfield-trigger-border-radius': '0px'`
+
 `'--em-selectfield-content-border-radius': '0px'`  
 
-Updates SelectField buttons and dropdown panels.
-
-### Set your font family
-
-Start by updating your base font token so the entire UI uses your product’s typography:
-
-`'--em-core-font-family--base': 'Open Sans'`
-
-Importantly, you’ll also need to load your font in via the lifecycle hook inside your boilerplate repo.
+- Updates SelectField buttons and dropdown panels.
 
 </Steps>
 
@@ -75,7 +98,7 @@ export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => 
         }
     }
 
-    return defineTheme(parentTheme, overrides) as Theme;
+    return defineTheme(parentTheme, myTestStyles) as Theme;
 };
 ```
 
@@ -86,8 +109,8 @@ Once the basics are in place, you can start making more specific adjustments. Mo
 A few tips to help you dig deeper:
 
 - **Inspect elements in the browser** to see exactly which component tokens a UI part is using. This is the fastest way to learn what controls what.
-- **Browse the [Component token lists](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/remarkable-ui/styles/styles.tokensComponents.constants.ts)** in the Remarkable UI repo to understand everything that can be customized for each component.
-- **Use [Storybook](https://embeddable-hq.github.io/remarkable-ui)** to preview components in isolation and test different styling overrides.
+- **Browse the [Component token lists](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/styles/global.tokens.ts)** in the Remarkable UI repo to understand everything that can be customized for each component.
+- **Use Storybook** (coming shortly) to preview components in isolation and test different styling overrides.
 - **Refer to the Figma files** (coming shortly) for naming, hierarchy, and intended design behaviour—Figma and the token structure are tightly aligned.
 
 With these tools, you can fine-tune styles on a per-component basis and get as granular as you need, without losing the consistency provided by your broader theme.

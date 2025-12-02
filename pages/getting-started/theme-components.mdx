@@ -1,118 +1,82 @@
-# Theme your components
+# Switch the theme
 
-As soon as you start using the [imported Starter components](./install-starter-kit), you'll notice that you can switch the **client context** to apply different themes:
+<Pill><span>Takes ~1 min</span></Pill>
+
+**Switch between themes** inside the no-code builder:
+
+1. Open the dashboard you created in [step 3](/getting-started/first-embeddable), or create a new one.
+2. In the top bar, toggle on **Preview** mode. 
+3. In the **View as** dropdown, select **Dark Theme** under *Client Context*. 
 
 <VideoComponent
-    src="/video/theme-example.mp4"
-    width="800"
-    height="450"
+    src="/video/Client-Context-Theme-Switch.mp4"
+    width="1000"
+    height="664"
 />
 
-## Client contexts
+This interaction is powered by two things:
 
-The **client contexts** are defined in the `presets` folder of your **repository** in a file called [client-contexts.cc.yml](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/client-contexts.cc.yml). You can define as many client contexts as you like in here, and they will appear in the **View as** dropdown in your workspace (see animation above).
+### 1. **Client Context**
+[Client context](/development/client-context) lets you pass dynamic values to your dashboards at runtime based on the user, such as:
+- **client-specific theming** (e.g. color schemes)
+-  **localization** (e.g. language)
+- **dark/light mode**.
 
-[This example](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/client-contexts.cc.yml) only contains a simple `theme` key:
-
-```yml
-- name: Example
-  clientContext:
-    theme: 'example'
-```
-but you can provide whatever context you like, e.g:
-```yml
-- name: Summer
-  clientContext:
-    colors: ['#555d8e','#566f94','#56819b']
-    font: 'Noto Serif'
-    borderRadius: 10
-```
-
-And when embedding your Embeddable in your application, you can pass in the **client context** dynamically based on the user (i.e. you are not limited to the client contexts you have defined above):
+**For example**
 
 ```js
 <em-beddable
   token="${json.token}"
   client-context="${JSON.stringify({ 
-  	colors: ['#555d8e','#566f94','#56819b'],
+    colors: ['#555d8e','#566f94','#56819b'],
     font: 'Noto Serif',
     borderRadius: 10
   })}"
 ></em-beddable>
 ```
 
-This means you can even customise the **client context** dynamically to every user.
+**Things to notice**
+- You can pass in anything you like. 
+- Client Context is made available to **both your components and your theme**, enabling you to customise dashboards dynamically for each user.
+- You can define **Client Context presets** to switch between context objects in the builder (as shown in the video above). These live in the [presets folder](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/presets) of your repo.
 
-But the **client context** by itself does nothing.  You need to use it inside what's called a `themeProvider`.
+### 2. **Theming**
 
-## Theme provider
+The [theme](/component-libraries/remarkable-pro/theming) is a structured **TypeScript object** that drives your dashboard’s appearance and behaviour. 
 
-The **client contexts** are automatically made available inside the [embeddable.theme.ts](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/embeddable.theme.ts) file inside your repository.  This is called the `themeProvider`.
+You can define as many themes as you like (e.g. light/dark mode or even a single theme per customer). One change to your theme updates the entire interface instantly.
 
+**For example**
 
-The `themeProvider` has one job: it takes the **client context** passed to it and makes a decision what values it should apply to the **theme**.  This **theme** is then used inside all the components to decide their appearance and behaviour.
-
-A simple example, which would work with our "Summer" **client context** example (from above) could look something like this:
-
-```js
-import { defineTheme } from '@embeddable.com/core';
-import { Theme } from '@embeddable.com/vanilla-components';
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  
-  return defineTheme(parentTheme, {
-    charts: {
-      colors: clientContext.colors,
-    },
-    container: {
-      borderRadius: clientContext.borderRadius
-    },
-    font: {
-      family: clientContext.font,
-    },
-  }) as Theme;
-};
-
-export default themeProvider;
-```
-
-This allows you to set the colors, border radius and font family directly from the client context.
-
-Or if you don't want the theme to be dynamic, but you just want to update it to match your web application's look and feel, you can just define the `theme` values directly like this (ignoring **client context**):
-
-```js
-import { defineTheme } from '@embeddable.com/core';
-import { Theme } from '@embeddable.com/vanilla-components';
+```ts
+//embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  
-  return defineTheme(parentTheme, {
-    charts: {
-      colors: ['#555d8e','#566f94','#56819b'],
-    },
-    container: {
-      borderRadius: 10
-    },
-    font: {
-      family: 'Noto Serif',
-    },
-  }) as Theme;
+    const myTheme: DeepPartial<Theme> = {
+        charts: {
+            backgroundColors: clientContext.colors, //defined dynamically based on the client context
+            borderColors: ['#555d8e','#566f94','#56819b'] //hard-coded in the theme
+        },
+    };
+    const theme = defineTheme(parentTheme, myTheme) as Theme;
+    return theme;
 };
-
+ 
 export default themeProvider;
+
 ```
 
-<Callout emoji="💡">
-You can find the full list of available `Theme` properties (and their default values) [here](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts).
-</Callout>
+**Things to notice**
+- Your **client contexts** are automatically passed into [the theme](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.theme.ts) via the `themeProvider`.
+- The `themeProvider` has one job: take the incoming **client context** and decide which values to apply to the **theme**.
+- The theme shape used in the example comes from [Remarkable Pro](http://localhost:3000/component-libraries/remarkable-pro/theming), Embeddable's ready-to-use component suite. 
 
 For an in-depth look at **themes** click [here](/development/theming).
 
 ## Next steps
 
 <CardGrid>
-  <LinkCard title="Connect your database" href="/data/connect-your-database" icon=""/> 
-  <LinkCard title="Embed your dashboard" href="/deployment/embedding" icon=""/> 
+  <LinkCard title="Build your first component" href="/getting-started/first-component" icon="5️⃣"/> 
 </CardGrid>
 
 
