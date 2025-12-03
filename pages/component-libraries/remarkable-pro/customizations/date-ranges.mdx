@@ -28,8 +28,8 @@ Each option has the following shape:
 
 ```ts
 type TimeRange = {
-  from: Date | undefined; // UTC
-  to: Date | undefined;   // UTC
+  from?: Date; // UTC
+  to?: Date;   // UTC
 };
 
 type DateRangeOption = {
