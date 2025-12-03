@@ -27,15 +27,15 @@ Each option has the following shape:
 
 ```ts
 type TimeRange = {
-  from: Date | undefined; // UTC
-  to: Date | undefined;   // UTC
+  from?: Date; // UTC
+  to?: Date;   // UTC
 };
 
 type ComparisonPeriodOption = {
   value: string;                     // e.g. 'previous-period'
   label: string;                     // e.g. 'defaults.comparisonPeriodOptions.previousPeriod | Previous period'
   dateFormat: string;                // e.g. 'DD MMM YYYY'
-  getRange: (dateRange: TimeRange) => TimeRange; // how the comparison range is calculated
+  getRange: (timeRange: TimeRange) => TimeRange; // how the comparison range is calculated
 };
 ```
 
