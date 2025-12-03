@@ -11,7 +11,7 @@ Embeddable’s charts use **Chart.js** behind the scenes. Each chart type expose
 
 You can override these options per chart-variant directly through the theme.
 
-### Example: hide data points on line charts
+## Example: hide data points on line charts
 
 ```ts
 // embeddable.theme.ts
@@ -42,7 +42,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 - Overrides are applied **per chart variant**. If you want this behavior for all line-chart variants, for example, apply the same override to each one.
 - Behind the scenes, the options object you pass in will be merged with the default. 
 
-### Example: Change legend visibility or position
+## Example: Change legend visibility or position
 
 ```ts
 //theme.charts
@@ -59,7 +59,7 @@ barChartGroupedPro: {
 }
 ```
 
-### Example: Customise tooltip text and formatting
+## Example: Customise tooltip text and formatting
 
 ```ts
 //theme.charts
@@ -79,7 +79,7 @@ lineChartPro: {
 }
 ```
 
-### Example: Adjust line smoothness (tension)
+## Example: Adjust line smoothness (tension)
 
 ```ts
 //theme.charts
@@ -95,7 +95,7 @@ lineChartGroupedPro: {
 }
 ```
 
-### Example: Modify bar styling (corner radius, thickness)
+## Example: Modify bar styling (corner radius, thickness)
 
 ```ts
 //theme.charts
@@ -112,7 +112,7 @@ barChartPro: {
 }
 ```
 
-### Example: Custom donut thickness (cutout)
+## Example: Custom donut thickness (cutout)
 
 ```ts
 //theme.charts
@@ -124,7 +124,7 @@ donutChartPro: {
 }
 ```
 
-### Example: Disable or customise animations
+## Example: Disable or customise animations
 
 ```ts
 //theme.charts
@@ -139,5 +139,4 @@ lineChartPro: {
 ```
 
 ## Limitations
-- Some Chart.js options rely on specific plugins. If a plugin is not used by Remarkable, options related to that plugin will not work.
-- You can see exactly which plugins are included [here](https://github.com/embeddable-hq/remarkable-ui/blob/main/package-lock.json).
+- Some Chart.js options rely on specific plugins. If a plugin is not used by Remarkable, options related to that plugin will not work. You can see exactly which plugins are included [here](https://github.com/embeddable-hq/remarkable-ui/blob/main/package-lock.json).

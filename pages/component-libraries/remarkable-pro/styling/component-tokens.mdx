@@ -15,19 +15,19 @@ Use Component tokens when you want to adjust a single component’s appearance.
 - Use **semantic tokens** for broad, visual-design changes to colors.  
 - Modify **core tokens** only if you are redefining your entire design foundation.
 
-### Pattern for Component tokens
+## Pattern for Component tokens
 
 ```ts
 '--em-{component}-{property}'
-'--em-{component}-{property}[—{variant}]'
-'—-em-{component}-{property}[—{state}]'
+'--em-{component}-{property}[--{variant}]'
+'—-em-{component}-{property}[—-{state}]'
 '—-em-{component}-{slot}-{property}'
-'—-em-{component}-{slot}-{property}[—{variant}]'
-'—-em-{component}-{slot}-{property}[—{state}]'
-'—-em-{component}-{slot}-{property}[—{size}]'
+'—-em-{component}-{slot}-{property}[—-{variant}]'
+'—-em-{component}-{slot}-{property}[—-{state}]'
+'—-em-{component}-{slot}-{property}[—-{size}]'
 ```
 
-### Pattern breakdown
+## Pattern breakdown
 
 `em` - the Embeddable design system namespace.
 

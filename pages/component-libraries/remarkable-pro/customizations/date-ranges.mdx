@@ -49,18 +49,16 @@ You typically start from the defaults in the `parentTheme`, then adjust them as 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const dateRangeOptions = parentTheme.defaults.dateRangesOptions;
 
-  const myTheme = {
+  return defineTheme(parentTheme, {
     defaults: {
       dateRangesOptions: dateRangeOptions,
     },
-  };
-
-  const theme = defineTheme(parentTheme, myTheme);
-  return theme;
+  });
+  
 };
 ```
 
-**Things to note**
+**Things to notice**
 
 - The default list is a plain array of `DateRangeOption`, so you can manipulate it using normal array operations (`filter`, `map`, `concat`, etc.).
 
@@ -73,8 +71,7 @@ Here’s how you might hide the “Today” option:
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const myRanges = parentTheme.defaults.dateRangesOptions
-    .filter((option) => option.value !== 'Today')
-    .map(option => option);
+    .filter((option) => option.value !== 'Today');
 
   const myTheme =  {
     defaults: {
@@ -104,7 +101,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
         ...option,
         label: 'defaults.dateRangesOptions.weekSoFar | Week so far',
         getRange: () => {
-          // your custom function returning a TimeRange
+          // your custom function returning a UTC TimeRange
         },
       };
     }
@@ -152,7 +149,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 };
 ```
 
-**Things to note**
+**Things to notice**
 - For the new `month-to-date` option, the label follows the pattern we use for translations. It will use `customOptions.monthToDate` as a key to look up the translation value in the theme, and fall back to `Month to date` if nothing is found. Read more about translations [here](/component-libraries/remarkable-pro/i18n).  
 
 ## Making new options appear in the Builder

@@ -57,7 +57,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 };
 ```
 
-**Things to note**
+**Things to notice**
 
 - The default list is just an array of `ComparisonPeriodOption`, so you can manipulate it using normal array utilities like `filter`, `map`, `sort`, `concat`, etc.
 - `getRange` takes a single `dateRange: TimeRange` argument. This is the **primary** date range (for example, “This month”), and `getRange` returns the **comparison** range.
@@ -145,7 +145,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
       label: 'customOptions.twoYearsAgo | Two years ago',
       dateFormat: 'DD MMM YYYY',
       getRange: (dateRange: TimeRange): TimeRange => {
-        return myCustomPeriodFunction(dateRange); // must return a TimeRange
+        return myCustomPeriodFunction(dateRange); // must return a UTC-based TimeRange
       },
     },
   ];
@@ -160,7 +160,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 };
 ```
 
-**Things to note**
+**Things to notice**
 
 - Comparison ranges should be returned in **UTC**. Remarkable Pro handles the timezone conversion for display.
 - The `dateFormat` controls how the comparison dates are rendered in the UI.
@@ -168,6 +168,5 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 ## Making new options appear in the Builder
 
 - When you add a new comparison period option, it will automatically appear in any Remarkable Pro (or custom) components that use `comparisonPeriodsOptions`, such as the Comparison Period Select Field.
-- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default comparison setting), you’ll also need to extend Embeddable’s custom comparison period type (e.g. `ComparisonPeriodType`). 
-- Learn more about defining custom types [here](/development/custom-types).
-View the Comparison Period custom type in the Remarkable library [here](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts).  
+- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default comparison setting), you’ll also need to extend Embeddable’s custom comparison period type (e.g. `ComparisonPeriodType`). Learn more about defining custom types [here](/development/custom-types).
+- View the Comparison Period custom type in the Remarkable library [here](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts).  

@@ -17,25 +17,23 @@ You can create **multiple themes** and switch between them. Many teams use:
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 
-    const myTheme: DeepPartial<Theme> = {
+    return defineTheme(parentTheme, {
         charts: {
             backgroundColors: [
-                'rgb(75, 134, 255)',
-                'rgb(255, 99, 132)',
-                'rgb(255, 205, 86)',
-                'rgb(54, 162, 235)',
-                'rgb(153, 102, 255)',
-                'rgb(255, 159, 64)',
+                'rgb(75 134 255)',
+                'rgb(255 99 132)',
+                'rgb(255 205 86)',
+                'rgb(54 162 235)',
+                'rgb(153 102 255)',
+                'rgb(255 159 64)',
             ],
         },
         styles: {
             '--em-background-color-default': 'rgb(196 49 196)',
             '--em-foreground-color-default': 'rgb(0 181 60)',
         },
-    };
+    });
 
-    const theme = defineTheme(parentTheme, myTheme) as Theme;
-    return theme;
 };
 
 export default themeProvider;
