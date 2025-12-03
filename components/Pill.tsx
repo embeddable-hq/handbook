@@ -10,13 +10,14 @@ const Pill = ({ children, className }: { children: React.ReactNode, className: s
 
       <style jsx>{`
         .pill {
-        display: inline-block;
+          display: inline-block;
           padding: 0.5rem 1rem;
           border-radius: 100px;
           background-color: rgba(243, 244, 246, 1);
           font-size: 0.85rem;
           font-weight: 400;
           margin: 1rem 0 0 0;
+          color: rgb(51 65 85);
         }
       `}</style>
     </>

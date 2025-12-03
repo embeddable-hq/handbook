@@ -2,7 +2,7 @@
 
 <Pill>Takes ~5 mins</Pill>
 
-Embeddable ships with a **full suite of components**, but you can build **anything you need** on top.
+Embeddable ships with [Remarkable Pro](/component-libraries/remarkable-pro/introduction), a full suite of components, but you can build anything you need on top.
 
 Simply **copy and paste** the code below to create a simple, reusable **select menu**.
 
@@ -14,14 +14,14 @@ Every component has two parts: a **standard React component** and an Embeddable-
 
 ### Define your React component
 
-1. Inside `src/components/` in your repo, create a **folder** called `ExampleDropdown`.
-2. Inside this folder, create a file named `index.tsx`.  
+1. Inside `src/embeddable.com` in your [repo](/getting-started/download-repo), create a **folder** called `components`.
+2. Inside this folder, create a new folder called `ExampleDropdown` and a file called `index.tsx`.  
 3. Paste the code below and hit save.
 
 
 <CodeContainer>
 ```ts
-// src/components//ExampleDropdown/index.tsx
+// src/embeddable.com/components/ExampleDropdown/index.tsx
 
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import Spinner from '../Spinner';
@@ -83,12 +83,12 @@ This is just a regular React `<select>` component. Nothing Embeddable-specific y
 
 ### Define your companion `.emb` file
 
-1. In the same folder, create `ExampleDropdown.emb.ts`. 
+1. In the `ExampleDropdown` folder, create a file called `ExampleDropdown.emb.ts`. 
 2. Paste the following code and hit save:
 
 <CodeContainer>
 ```ts
-// src/components//ExampleDropdown/ExampleDropdown.emb.ts
+// src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
 
 import {
   EmbeddedComponentMeta,

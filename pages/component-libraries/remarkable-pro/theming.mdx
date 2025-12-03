@@ -40,7 +40,7 @@ export default themeProvider;
 ```
 
 **Things to notice**
-- While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from Embeddable’s general [theming system](/development/theming).
+- While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from Embeddable’s overall [theming system](/development/theming).
 - Remarkable ships with a **full set of defaults**. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in parent theme, giving you a clean way to extend only what you need.
 - You can pass **dynamic values** via  to your theme at run-time via **Client Context** (e.g. client-specific colors, or the name of a theme to apply), as well as create presets for testing in the builder. [Learn more here](/getting-started/theme-components).
 - The `themeProvider` has one job: take the incoming client context and decide which values to apply to the theme.
