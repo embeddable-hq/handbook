@@ -52,14 +52,14 @@ You can define as many themes as you like (e.g. light/dark mode or even a single
 //embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-    const myTheme: DeepPartial<Theme> = {
-        charts: {
-            backgroundColors: clientContext.colors, //defined dynamically based on the client context
-            borderColors: ['#555d8e','#566f94','#56819b'] //hard-coded in the theme
-        },
-    };
-    const theme = defineTheme(parentTheme, myTheme) as Theme;
-    return theme;
+
+  return defineTheme(parentTheme, {
+    charts: {
+        backgroundColors: clientContext.colors, //defined dynamically based on the client context
+        borderColors: ['#555d8e','#566f94','#56819b'] //hard-coded in the theme
+    }
+  });
+
 };
  
 export default themeProvider;
