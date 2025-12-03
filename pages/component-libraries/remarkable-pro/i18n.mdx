@@ -26,7 +26,8 @@ In Remarkable, you can localize language via theming, including:
 //embeddable.theme.ts
 
 const themeProvider = (clientContext, parentTheme) => {
-    const myTheme: DeepPartial<Theme> = {
+
+	return defineTheme(parentTheme, {
         i18n: {
             language: clientContext?.language || "en",
             translations: { 
@@ -41,9 +42,8 @@ const themeProvider = (clientContext, parentTheme) => {
                     },
                 },    
             },
-        },
-    };
-	return defineTheme(parentTheme, myTheme);
+        }
+    });
 };
 ```
 
@@ -59,7 +59,8 @@ const themeProvider = (clientContext, parentTheme) => {
 //embeddable.theme.ts
 
 const themeProvider = (clientContext, parentTheme) => {
-    const myTheme: DeepPartial<Theme> = {
+  
+    return defineTheme(parentTheme, {
         i18n: {
             language: clientContext.language,
             translations: {
@@ -68,9 +69,8 @@ const themeProvider = (clientContext, parentTheme) => {
                 },
             },
         },
-    };
+    });
 
-  return defineTheme(parentTheme, myTheme);
 };
 ```
 
@@ -164,6 +164,7 @@ translations: {
             },
         },    
     },
+}
 ```
 
 ## Translate database values

@@ -36,7 +36,7 @@ type DateRangeOption = {
   value: string;              // e.g. 'date-range-yesterday'
   label: string;              // e.g. 'defaults.dateRangesOptions.yesterday | Yesterday'
   dateFormat: string;         // e.g. 'MMM DD'
-  getRange: () => TimeRange;  // how the range is calculated
+  getRange: () => TimeRange;  // return a UTC-based TimeRange
 };
 ```
 
@@ -47,15 +47,15 @@ You typically start from the defaults in the `parentTheme`, then adjust them as 
 // embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const dateRangeOptions = parentTheme.defaults.dateRangesOptions as DateRangeOption[];
+  const dateRangeOptions = parentTheme.defaults.dateRangesOptions;
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme = {
     defaults: {
       dateRangesOptions: dateRangeOptions,
     },
   };
 
-  const theme = defineTheme(parentTheme, myTheme) as Theme;
+  const theme = defineTheme(parentTheme, myTheme);
   return theme;
 };
 ```
@@ -76,13 +76,13 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     .filter((option) => option.value !== 'Today')
     .map(option => option);
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme =  {
     defaults: {
       dateRangesOptions: myRanges,
     },
   };
 
-  return defineTheme(parentTheme, myTheme) as Theme;
+  return defineTheme(parentTheme, myTheme);
 };
 ```
 
@@ -111,13 +111,13 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     return option;
   });
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme = {
     defaults: {
       dateRangesOptions: myRanges,
     },
   };
 
-  return defineTheme(parentTheme, myTheme) as Theme;
+  return defineTheme(parentTheme, myTheme);
 };
 ```
 
@@ -132,23 +132,23 @@ All we need to do is append a new DateRangeOption to the existing list, or inser
 // embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const myRanges: DateRangeOption[] = [
+  const myRanges = [
     ...parentTheme.defaults.dateRangesOptions,
     {
       value: 'month-to-date',
       label: 'customOptions.monthToDate | Month to date',
       dateFormat: 'MMM DD',
-      getRange: () => myCustomRangeFunction(),
+      getRange: () => myCustomRangeFunction(), // must return a UTC-based TimeRange
     },
   ];
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme = {
     defaults: {
       dateRangesOptions: myRanges,
     },
   };
 
-  return defineTheme(parentTheme, myTheme) as Theme;
+  return defineTheme(parentTheme, myTheme);
 };
 ```
 

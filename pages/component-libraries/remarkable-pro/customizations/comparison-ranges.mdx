@@ -46,11 +46,10 @@ You can access the defaults from the `parentTheme` like so:
 // embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const myOptions = parentTheme.defaults.comparisonPeriodsOptions as ComparisonPeriodOption[];
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme = {
     defaults: {
-      comparisonPeriodsOptions: myOptions,
+      comparisonPeriodsOptions: parentTheme.defaults.comparisonPeriodsOptions,
     },
   };
 
@@ -72,7 +71,7 @@ Here’s a simple example that changes the order of the options (for example, pu
 // embeddable.theme.ts
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const defaults = parentTheme.defaults.comparisonPeriodsOptions as ComparisonPeriodOption[];
+  const defaults = parentTheme.defaults.comparisonPeriodsOptions;
 
   const myOptions = [
     // ensure 'previous-month' goes first if it exists
@@ -81,7 +80,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     ...defaults.filter((option) => option.value !== 'previous-month'),
   ];
 
-  const myTheme: DeepPartial<Theme> = {
+  const myTheme = {
     defaults: {
       comparisonPeriodsOptions: myOptions,
     },
