@@ -1,27 +1,28 @@
 # Build your own component
 
-Let's create a **dropdown component** to add to the dashboard that we [created earlier](/getting-started/first-embeddable).
+<Pill>Takes ~5 mins</Pill>
 
-<ImageGrid width="50%" images={["/img/dropdown.png"]} />
+Embeddable ships with [Remarkable Pro](/component-libraries/remarkable-pro/introduction), a full suite of components, but you can build anything you need on top.
+
+Simply **copy and paste** the code below to create a simple, reusable **select menu**.
+
+<Callout emoji="💡">
+Every component has two parts: a **standard React component** and an Embeddable-specific **companion file** that tells the no-code builder how to use it.
+</Callout>
 
 <Steps>
 
-### Create a new folder for our component
+### Define your React component
 
-Inside `src/embeddable.com/components/examples` let's create a **folder** called `ExampleDropdown`.
+1. Inside `src/embeddable.com` in your [repo](/getting-started/download-repo), create a **folder** called `components`.
+2. Inside this folder, create a new folder called `ExampleDropdown` and a file called `index.tsx`.  
+3. Paste the code below and save.
 
-### Add the React.js component code
 
-Inside this folder create a file named `index.tsx` (`src/embeddable.com/components/examples/ExampleDropdown/index.tsx`).
+<CodeContainer>
+```ts
+// src/embeddable.com/components/ExampleDropdown/index.tsx
 
-This will contain the React.js logic for our component.
-
-Use the following content:
-
-```tsx
-//
-// src/embeddable.com/components/examples/ExampleDropdown/index.tsx
-//
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import Spinner from '../Spinner';
 import Error from '../Error';
@@ -76,28 +77,19 @@ const DropdownSelect: React.FC<Props> = ({ defaultValue, onChange, results, valu
 
 export default DropdownSelect;
 ```
+</CodeContainer>
 
-There is nothing Embeddable-specific here (except some convenient typescript type definitions).  This is just a standard React `select` component that fires the provided `onChange` listener if the user interacts with it.
+This is just a regular React `<select>` component. Nothing Embeddable-specific yet.
 
+### Define your companion `.emb` file
 
-### Tell Embeddable about our component
+1. In the `ExampleDropdown` folder, create a file called `ExampleDropdown.emb.ts`. 
+2. Paste the following code and save:
 
-Inside the ExampleDropdown folder let's now create a file named `ExampleDropdown.emb.ts` (`src/embeddable.com/components/examples/ExampleDropdown/ExampleDropdown.emb.ts`).
-
-<Callout emoji="💡">
-The `.emb.ts` file is a special **companion file** that Embeddable looks for.  Embeddable will only pay attention to files that are reachable from `.emb.ts` files.
-</Callout>
-
-This file tells Embeddable that this is a component that should be usable in the Embeddable platform.  It also tells Embeddable what input choices should be made available to the user of your component.
-
-<ImageGrid width="50%" images={["/img/dropdown-inputs.png"]} />
-
-Put the following content in the file:
-
+<CodeContainer>
 ```ts
-//
-// src/embeddable.com/components/examples/ExampleDropdown/ExampleDropdown.emb.ts
-//
+// src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
+
 import {
   EmbeddedComponentMeta,
   Inputs,
@@ -178,29 +170,44 @@ export default defineComponent(Component, meta, {
   }
 });
 ```
+</CodeContainer>
 
-<Callout emoji="💡">
-Learn more about [defining components](/development/defining-components), [loading data](/development/loading-data) and [adding interactivity](/development/interactivity).
+<Callout emoji="🚀">
+**Success!** Your component is ready to try out.  
 </Callout>
-
-### Test your component using `embeddable:dev`
-
-Now to test out your new dropdown component you could `build` and `push` it to your workspace, but this is a time-consuming way to iterate on components.
-
-That's why Embeddable offers `embeddable:dev`.
-
-Simply run `npm run embeddable:dev` from the root of your repo and it should spin up a special "local" workspace that allows you to build dashboards using your **local** components and models ([learn more](/development/local-environment)).
-
-Any changes you make to your **components** or **models** in this `embeddable:dev` workspace should cause the workspace to refresh and instantly show you the effect of the latest changes 🚀.
-
-<ImageGrid images={["/img/dropdown-inputs.png", "/img/dropdown.png"]} />
 
 </Steps>
 
-Congratulations!  You've created your first Embeddable component 🎉.
+### Test your component in Embeddable
 
-## Next steps
+<Steps>
 
-<CardGrid>
-  <LinkCard title="Import starter components" href="./install-starter-kit" icon=""/>
-</CardGrid>
+### From the root of your repo, run: 
+
+`npm run embeddable:dev`
+
+This spins up a **local workspace** that uses your *local components and models* ([learn more](/development/local-environment)). 
+
+### Add your component to a dashboard
+
+1. Create a new dashboard, or open the one you made in the [previous step](/getting-started/first-embeddable). 
+2. Click the **Add component** button. You should now see your dropdown there! 
+
+<Callout emoji="🎉">
+**Congratulations!** You've created your first Embeddable component.
+</Callout>
+
+<ImageGrid images={["/img/dropdown-inputs.png", "/img/dropdown.png"]} />
+
+Any changes you make to your **components** or **data models** while developing locally and running `embeddable:dev` should cause the workspace to refresh and instantly show you the effect of those changes 🚀.
+
+</Steps>
+
+Whenever you've finished testing components locally, you can `build` and `push` them to your Embeddable workspace:
+
+```bash
+npm run embeddable:build
+npm run embeddable:push
+```
+
+Learn more about [defining components](/development/defining-components), [loading data](/development/loading-data) and [adding interactivity](/development/interactivity).

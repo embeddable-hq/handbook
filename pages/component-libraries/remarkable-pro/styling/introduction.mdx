@@ -1,0 +1,65 @@
+# How Styling Works
+
+Remarkable Pro gives you very **granular control** over styling. 
+
+It uses design tokens (CSS variables behind the scenes) that can be updated via the theme. 
+
+Theme namespace: `theme.styles`
+
+- `theme.styles` is a flat, strongly-typed list of style tokens that map to CSS values.  
+- Only tokens defined in the underlying theme can be overridden.
+
+**Example**
+
+```tsx
+// embeddable.theme.ts
+
+const myTheme: DeepPartial<Theme> = {
+  styles: {
+    '--em-background-color-default': 'f1f1f1',
+    '--em-foreground-color-default': '#000',
+    '--em-background-color-neutral': '#fff'
+  }
+}
+```
+
+<CardGrid>
+  <LinkCard title="Get set up by following our quick-start styling guide" href="/component-libraries/remarkable-pro/styling/quick-start" icon="🎨"/> 
+</CardGrid>
+
+## How CSS tokens are structured
+
+Remarkable’s design system is built on **three layers** of [tokens](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/styles/global.css). You can override tokens at any layer, but each serves a different purpose.
+
+### 1. [Core tokens](/component-libraries/remarkable-pro/styling/core-tokens)
+
+These are the raw **design primitives**:
+- e.g. color scales
+- e.g. spacing scales
+- e.g. typography scales
+
+You *can* override core tokens if you’re building your own design system or want full control over the fundamentals. However, most teams leave the base layer alone and customise the higher layers instead. 
+
+### 2. [Semantic tokens](/component-libraries/remarkable-pro/styling/semantic-tokens)
+
+These control **global visual-level styling** and are usually where most teams start when applying their brand:
+- text colors
+- surface/background colors
+
+By default, semantic tokens reference core tokens, but they can also reference any valid CSS value. 
+
+### 3. [Component tokens](/component-libraries/remarkable-pro/styling/component-tokens)
+
+These apply to **specific components** (charts, cards, dropdowns, etc). They let you fine-tune details without affecting the entire system.
+
+By default, most component tokens reference semantic tokens (or core tokens when appropriate), but  they can also reference any valid CSS value. 
+
+### When to modify each
+
+This layered structure keeps theming flexible and predictable. 
+
+| **Variable type** | **When to use** |
+| --- | --- |
+| **Core** | When redefining the core design foundations (colors, spacing scale, typography scale, radius, shadows, motion). |
+| **Semantic** | When applying visual-design across the entire product (global backgrounds and text colors). |
+| **Component** | When making targeted, isolated tweaks to a specific component (e.g. dropdown padding, card title color). |
