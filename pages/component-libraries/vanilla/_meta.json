@@ -1,3 +1,11 @@
-{   
-    "introduction": "Introduction"
+{
+  "introduction": "Introduction",
+  "theming": "Theming",
+  "theme-welcome": {
+    "display": "hidden"
+  },
+  "theme-upgrading": {
+    "display": "hidden"
+  },
+  "patch-notes": "Patch Notes"
 }
