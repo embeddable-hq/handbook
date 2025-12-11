@@ -1,10 +1,10 @@
 # Theming
 
-
+Embeddable provides a powerful theming system that allows you to customize the look and feel of your components to match your brand and design requirements. It's controlled by the `embeddable.theme.ts` file in your repository, which contains the logic for defining and applying themes (and merging them with default values). This allows you the flexibility to have a single theme, or to switch between multiple themes based on your needs. We'll cover both approaches here.
 
 ### The Basics
 
-Our two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable’s theming system to provide a consistent look and feel across all components. The theme is defined in your repo in `embeddable.theme.ts` at the root level, and is where you can set colors, fonts, and other styling options that will apply globally to all components.
+Themes are essentially objects that allow you to control the global configuration of your components. Our two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable’s theming system to provide a consistent look and feel across all components. Remarkable Pro also allows you to use the theme to control date ranges, internationalization, and component functionality.
 
 <Callout icon="⚠️">
 The rest of this documentation assumes you're using [Remarkable Pro](/component-libraries/remarkable-pro/introduction). If you'd like to learn more about theming in [Vanilla Components](/component-libraries/vanilla/introduction), please see the [Vanilla Components Theming documentation](/component-libraries/vanilla/theming).
