@@ -4,7 +4,7 @@ Embeddable provides a powerful theming system that allows you to customize the l
 
 If you're using one of our default component sets, you'll get a default theme out of the box. You can apply your own themes on top of this, changing as many or as few properties as you like in order to achieve your desired results.
 
-### The Basics
+## The Basics
 
 Themes are essentially objects that allow you to control the global configuration of your components. Our two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable’s theming system to provide a consistent look and feel across all components. Remarkable Pro also allows you to use the theme to control date ranges, internationalization, and component functionality.
 
@@ -12,7 +12,7 @@ Themes are essentially objects that allow you to control the global configuratio
 The rest of this documentation assumes you're using [Remarkable Pro](/component-libraries/remarkable-pro/introduction). If you'd like to learn more about theming in [Vanilla Components](/component-libraries/vanilla/introduction), please see the [Vanilla Components Theming documentation](/component-libraries/vanilla/theming).
 </Callout>
 
-### Single Theme
+## Single Theme
 
 If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate). It should look something like this:
 
@@ -42,7 +42,7 @@ We then return the merged theme using `defineTheme(parentTheme, newTheme)`, whic
 Want more detail on Remarkable Pro's theming system? Check out the [Remarkable Pro Theming documentation](/component-libraries/remarkable-pro/theming) for a deeper dive.
 </Callout>
 
-### Multiple Themes With Client Context
+## Multiple Themes With Client Context
 
 If you’re looking to support multiple themes, there are two separate approaches you can take: create multiple theme files, import them, and switch between them based on [client context](/development/client-context), or pass the theme values directly in client context.
 
