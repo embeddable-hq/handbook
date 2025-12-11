@@ -1,0 +1,31 @@
+# Embeddable Quick Hits - Datasets
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefore at times makes reference to things you can see on screen.
+</Callout>
+
+<ExternalVideo src="https://www.youtube.com/embed/N-bkf2oZO1I?si=nh0KC7a44YqEWuRI"/>
+
+Hi, welcome to Embeddable Quick Hits. In this video, we're going to talk about Datasets. Datasets are a powerful feature that allow you to leverage your data models in different ways without having to recreate to model. In this tutorial, we're going to show a basic Dataset, and a filtered Dataset, both using the same underlying model and each powering a different chart. Let's get started!
+
+As you can see, I've got a brand new Embeddable dashboard here. If you want to follow along, I recommend starting from scratch like this, but every dashboard uses Datasets, so this information all applies to any you've already built as well.
+
+Datasets act as a connection between your models and your dashboard. There are two key things to understand here. The first is that a dashboard can have any number of Datasets, and the second is that you can have multiple datasets connecting to the same model.
+
+The first thing we're going to do is define two different Datasets using two different models. I'm going to do this by clicking the plus button, naming my Dataset “Orders” and choosing my “Orders” model. Then I'm going to repeat the process, but I will choose the “My Customers” model and name the Dataset “Customers”
+
+That seems straightforward enough. Let's connect a Default Bar Chart to each of the two Datasets. For the purpose of this exercise, we're going to pretend that there are no joins in the models. That is to say, we'll pretend that Orders can only see order data, and Customers can only see customer data.
+
+For our first Bar Chart, we'll click “Add Component” and choose the Bar Chart. The we'll choose the Customers Dataset. We'll set the Measure to “Number of Customers” and the X-Axis to “Country of Origin.” We'll change the limit to 1,000 just to make sure we have plenty of data, and we'll add a title, “Customers by Country.” We'll click save to finish.
+
+With that done, let's add another Bar Chart. Same process, but this time we'll choose the Orders Dataset. For the Measure we'll choose “Number of Orders” and for the X-Axis we'll choose “Created At.” We'll leave the limit at 100, and we'll change the title to “Orders by Date.” Hit save and we get another bar chart. This chart is sorted by total orders, descending. We could change that if we wanted, but let's stay focused on Datasets!
+
+Speaking of which, we're going to add a third dataset. We'll hit the plus icon again, and this time we're going to choose **the same model** we already used for one of our other Datasets. Specifically, “My Customers”. We're going to set the name to “Customers - Filtered” and this time we'll click the “Add Filter” button. We'll choose “Number of Customers”, then the “Less Than” sign (`<`), and then “15”. We'll then click the “Add Filter” button again, choose “Number of Customers” again, then the “Greater Than” sign (`>`), and then “5”. Once we click confirm, we'll see the dataset show up.
+
+Now we'll take our first bar chart, mouse over it, and click the “Edit” icon. The **only** thing we're going to change is the Dataset. Everything else remains exactly the same. Let's choose “Customers - Filtered” and click save. Now we can see that our data has changed significantly, as our chart is only showing three countries!
+
+This demonstrates the power of datasets. Using the same model, we're able to have two different data returns based on the filters we set. There are many ways you can apply this, but it allows you a level of fine-grained control over the data you make available to each dashboard, without requiring you to make multiple models that all connect to the same database table. This approach, one model in code, multiple datasets in the dashboard, helps keep your code readable and easy to understand.
+
+If you'd like more information about Datasets, you can [check out our documentation](https://docs.embeddable.com/dashboards/building-dashboards#datasets). We've also got a [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) you can join, where we're happy to answer your questions.
+
+See you next time!

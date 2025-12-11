@@ -1,0 +1,27 @@
+# Embeddable Quick Hits - Variables
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefore at times makes reference to things you can see on screen.
+</Callout>
+
+<ExternalVideo src="https://www.youtube.com/embed/LXffnwZHRz0?si=yzlnVSbla39J9-tS"/>
+
+Hi, welcome to Embeddable Quick Hits. In this video, we're going to talk about Embeddable variables, which are key to adding interactivity to your dashboards. For example, when a user selects something from a dropdown list, that value is stored in a variable, and other components can be configured to respond to that variable and its changes. We'll show you how variables work in Embeddable, and how they unlock the power of your dashboard. We'll add a component to our dashboard and observe the variables that automatically get created, then tie another component to those variables in order to create an interaction. Let's get started!
+
+As you can see, I've got a brand new Embeddable dashboard here. If you want to follow along, I recommend starting from scratch like this, but if you're using an existing dashboard, that's okay too. We'll only be working with two components.
+
+First, let's talk about datasets very quickly. All Embeddables use datasets to manage data. If you'd like to learn more about them, good news! We've got [another Embeddable Quick Hit](/video-tutorials/quick-hits/datasets) on that exact subject. For now, I'm just going to quickly create an “Orders” dataset using Embeddable's sample data.
+
+With that done, let's add a Default Bar Chart. We're going to select “Orders” for the dataset, “Number of Orders” for the measure, and “Country of Origin” (which is available via a join on our Customers model) for the X-Axis. We'll adjust the limit to one thousand to make sure we have plenty of data, and then go ahead and save that. This gives us a basic bar chart of orders per country.
+
+Now let's add a Multi-Select Field dropdown component. This is where the variables come in. We're going to select “Orders” as our dataset, and “Country of Origin” again, for the dimension. That's the only thing we need to change in the entire set of inputs, but let's take a look down at the “Pre-configured Variables” section, where you can see that by default, this component creates a variable called “Multi-Select Values.” If you already have a variable with that name, it will create one called “Multi-Select Values 2,” and then “Multi-Select Values 3,” and so forth. We **strongly recommend** renaming your variables for clarity, as dashboards can get a little confusing if you have a lot of filters impacting a lot of different variables! We'll rename ours in a second. First we need to click “Save.”
+
+Now you can see that the variable has shown up in the “Variables” list in the right-hand column. Click the edit icon and let's rename it to “Country Select Dropdown Choices.” Then click “Confirm.”
+
+With that done, it's time to wire our bar chart up to be filtered by the select box. Mouse over the bar chart and choose the pencil icon to edit its settings. We're going to add a filter, so we'll click the “Filter” button. The we'll choose “Country of Origin” once again. We can leave the default equals sign, but instead of typing in something, for example “Germany”, which would force-filter the results to only Germany, we're going to click the link icon and link our variable. Once that's done, click “Save.”
+
+Now we can head into preview mode to test. Click the “Preview” button at the top, and you'll switch modes. From here, we can select as many options in the dropdown as we want, and see the bar chart update when we hit apply! This is the power of Embeddable variables in action. They let components “talk” to each other, and as one component's variable changes, another component's data updates to reflect that change. You can also link a variable to a Dataset filter, which is incredibly powerful, as it means you can change a single variable and have any component using that Dataset also change, without having to tie every single component to the variable!
+
+Have questions or concerns about Embeddable variables? [Check out our documentation](https://docs.embeddable.com/dashboards/interactivity) for lots more detail, and you can always join our [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) and ask questions there. We're standing by to help.
+
+See you next time!
