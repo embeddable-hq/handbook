@@ -1,0 +1,124 @@
+# Theming
+
+Embeddable provides a powerful theming system that allows users to customize the look and feel of components to match brand and design requirements. It's controlled by the `embeddable.theme.ts` file, which contains the logic for defining and applying themes. This allows the flexibility to have a single theme, or to switch between multiple themes.
+
+## The Basics
+
+Themes are objects that allow Embeddable users to control the global configuration of their components. Embeddable's two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable's theming system to provide a consistent look and feel across all components. Remarkable Pro also allows the theme to control date ranges, internationalization, and some component functionality.
+
+<Callout icon="⚠️">
+The rest of this documentation assumes you're using [Remarkable Pro](/component-libraries/remarkable-pro/introduction). If you'd like to learn more about theming in [Vanilla Components](/component-libraries/vanilla/introduction), please see the [Vanilla Components Theming documentation](/component-libraries/vanilla/theming).
+</Callout>
+
+## themeProvider
+
+`embeddable.theme.ts` defines and exports a `themeProvider` function. The role of `themeProvider` is to decide which values to apply to the theme based on the incoming [Client Context](/development/client-context), and return the merged theme using `defineTheme(parentTheme, newTheme)`, which combines customizations with the existing theme.
+
+There are different ways to implement `themeProvider` depending on whether a single theme or multiple themes are required.
+
+## Single Theme
+
+To work with a single theme, define custom theme values directly in the `embeddable.theme.ts` file. To do this, create a `DeepPartial<Theme>` object that contains only the properties that will be overridden from the default theme.
+
+```tsx
+//embeddable.theme.ts
+import { defineTheme } from "@embeddable.com/core";
+import { Theme, DeepPartial } from "@embeddable.com/remarkable-pro";
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const newTheme: DeepPartial<Theme> = {
+    // Custom theme values here
+  }
+  const theme = defineTheme(parentTheme, newTheme) as Theme;
+  return theme;
+};
+
+export default themeProvider;
+```
+
+**Things to Note:**
+
+1. It's not necessary to use Client Context when working with a single theme. It's included in the `themeProvider` parameters to enable the possibility of multiple themes.
+2. The `newTheme` object only needs to contain properties that are changing. The `defineTheme` function deep-merges changes with the existing default theme, so any unspecified properties will fall back to the default values.
+
+<Callout emoji="💡">
+Want more detail on Remarkable Pro's theming system? Check out the [Remarkable Pro Theming documentation](/component-libraries/remarkable-pro/theming) for a deeper dive.
+</Callout>
+
+## Multiple Themes With Client Context
+
+To support multiple themes, there are two possible approaches: create multiple theme files, import them, and switch between them based on Client Context, or pass the theme values directly in Client Context.
+
+### Using Theme File Imports
+
+This is the approach taken in the boilerplate repo above. Each theme file should export a `DeepPartial<Theme>` object. Use Client Context to determine which theme to apply, then merge it with the parent theme using `defineTheme`. For example:
+
+```tsx
+//embeddable.theme.ts
+import { defineTheme } from "@embeddable.com/core";
+import { Theme, DeepPartial } from "@embeddable.com/remarkable-pro";
+import { darkTheme } from "./dark-theme";
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const newTheme: DeepPartial<Theme> =
+    clientContext.theme === "dark" ? darkTheme : {};
+  const theme = defineTheme(parentTheme, newTheme) as Theme;
+  return theme;
+};
+
+export default themeProvider;
+```
+
+**Tips:**
+1. Adjust the `ClientContext` interface to include any other values passed in via Client Context for better type safety.
+2. This approach can be expanded to support as many themes as needed by adding more imports
+
+### Sending Theme Objects Via Client Context
+
+Some users may want to support a large number of themes without creating a separate file for each one, or may have theme data already stored elsewhere and want to repurpose it.
+
+Because Client Context is arbitrary JSON, theme data can be sent directly in the Client Context object, and merged in via the `themeProvider`. For example:
+
+```tsx
+// Front-end code
+<em-beddable token={{securityToken}} clientContext={{
+  theme: {
+    // Various theme values as described in the Remarkable Pro theming docs
+  }
+}} />
+```
+
+```tsx
+// embeddable.theme.ts
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const { theme } = clientContext;
+	return defineTheme(parentTheme, theme);
+};
+
+export default themeProvider;
+```
+
+This approach would support as many themes as needed. The theme objects can be a few overrides or all of the data needed to completely change every aspect of the theme.
+
+## Using Theme Values in Components
+
+The theme provider allows users to get values from the current theme and use them in their own components. Embeddable provides a `useTheme` hook for this purpose. Use the hook to set a `theme` object, then reference the properties on that object. Here is an abbreviated example:
+
+```tsx
+import { useTheme } from '@embeddable.com/react';
+
+type Theme = {
+  // Theme shape here
+}
+
+const MyComponent = () => {
+  const theme: Theme = useTheme() as Theme;
+  const dateRangeOptions = theme.defaults.dateRangesOptions;
+  // Use dateRangeOptions in the component
+  return <div>...</div>;
+};
+```
+
+Please note: `useTheme` runs before render, unlike most React hooks, so it will *always* have access to a theme if one has been defined.
