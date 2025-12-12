@@ -1,20 +1,57 @@
 # Theming
 
-Embeddable provides a powerful theming system that allows you to customize the look and feel of your components to match your brand and design requirements. It's controlled by the `embeddable.theme.ts` file in your repository, which contains the logic for defining and applying themes. This allows you the flexibility to have a single theme, or to switch between multiple themes based on your needs. We'll cover both approaches here.
-
-If you're using one of our default component sets, you'll get a default theme out of the box. You can apply your own themes on top of this, changing as many or as few properties as you like in order to achieve your desired results.
+Embeddable provides a powerful theming system that allows users to customize the look and feel of components to match brand and design requirements. It's controlled by the `embeddable.theme.ts` file, which contains the logic for defining and applying themes. This allows the flexibility to have a single theme, or to switch between multiple themes.
 
 ## The Basics
 
-Themes are essentially objects that allow you to control the global configuration of your components. Our two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable’s theming system to provide a consistent look and feel across all components. Remarkable Pro also allows you to use the theme to control date ranges, internationalization, and component functionality.
+Themes are objects that allow Embeddable users to control the global configuration of their components. Embeddable's two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable's theming system to provide a consistent look and feel across all components. Remarkable Pro also allows the theme to control date ranges, internationalization, and some component functionality.
 
 <Callout icon="⚠️">
 The rest of this documentation assumes you're using [Remarkable Pro](/component-libraries/remarkable-pro/introduction). If you'd like to learn more about theming in [Vanilla Components](/component-libraries/vanilla/introduction), please see the [Vanilla Components Theming documentation](/component-libraries/vanilla/theming).
 </Callout>
 
+## themeProvider
+
+`embeddable.theme.ts` defines and exports a `themeProvider` function. The role of `themeProvider` is to decide which values to apply to the theme based on the incoming [Client Context](/development/client-context), and return the merged theme using `defineTheme(parentTheme, newTheme)`, which combines customizations with the existing theme.
+
+There are different ways to implement `themeProvider` depending on whether a single theme or multiple themes are required.
+
 ## Single Theme
 
-If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate). It should look something like this:
+To work with a single theme, define custom theme values directly in the `embeddable.theme.ts` file. To do this, create a `DeepPartial<Theme>` object that contains only the properties that will be overridden from the default theme.
+
+```tsx
+//embeddable.theme.ts
+import { defineTheme } from "@embeddable.com/core";
+import { Theme, DeepPartial } from "@embeddable.com/remarkable-pro";
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const newTheme: DeepPartial<Theme> = {
+    // Custom theme values here
+  }
+  const theme = defineTheme(parentTheme, newTheme) as Theme;
+  return theme;
+};
+
+export default themeProvider;
+```
+
+**Things to Note:**
+
+1. It's not necessary to use Client Context when working with a single theme. It's included in the `themeProvider` parameters to enable the possibility of multiple themes.
+2. The `newTheme` object only needs to contain properties that are changing. The `defineTheme` function deep-merges changes with the existing default theme, so any unspecified properties will fall back to the default values.
+
+<Callout emoji="💡">
+Want more detail on Remarkable Pro's theming system? Check out the [Remarkable Pro Theming documentation](/component-libraries/remarkable-pro/theming) for a deeper dive.
+</Callout>
+
+## Multiple Themes With Client Context
+
+To support multiple themes, there are two possible approaches: create multiple theme files, import them, and switch between them based on Client Context, or pass the theme values directly in Client Context.
+
+**Using Theme File Imports**
+
+This is the approach taken in the boilerplate repo above. Each theme file should export a `DeepPartial<Theme>` object. Use Client Context to determine which theme to apply, then merge it with the parent theme using `defineTheme`. For example:
 
 ```tsx
 //embeddable.theme.ts
@@ -32,32 +69,18 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 export default themeProvider;
 ```
 
-Let’s break down what’s happening here. We're importing `defineTheme`, which is a helper function that merges your custom theme values with the default theme provided by Embeddable. This way, you only need to specify the values you want to change, and the rest will fall back to the defaults.
-
-To create your own theme, you’ll want to modify the `newTheme` object. This is where you can specify your custom styles, or import a separate theme file if you prefer to keep things organized.
-
-We then return the merged theme using `defineTheme(parentTheme, newTheme)`, which combines your customizations with the existing theme. This allows you to overwrite as many or as few properties as you like.
-
-<Callout emoji="💡">
-Want more detail on Remarkable Pro's theming system? Check out the [Remarkable Pro Theming documentation](/component-libraries/remarkable-pro/theming) for a deeper dive.
-</Callout>
-
-## Multiple Themes With Client Context
-
-If you’re looking to support multiple themes, there are two separate approaches you can take: create multiple theme files, import them, and switch between them based on [client context](/development/client-context), or pass the theme values directly in client context.
-
-**Using Theme File Imports**
-
-This is the approach taken in the boilerplate repo above. You can create as many theme files as you like, each exporting a `DeepPartial<Theme>` object. You can then use client context to determine which theme to apply.
-
-We encourage you to adjust the `ClientContext` interface to include any other values you’re passing in via Client Context, especially if you intend to use them in this file in any way (for example, you could pass a set of chart colors via Client Context and then plug them into the theme, for a hybrid between this approach and the one below).
+**Tips:**
+1. Adjust the `ClientContext` interface to include any other values passed in via Client Context for better type safety.
+2. This approach can be expanded to support as many themes as needed by adding more imports
 
 **Sending Theme Objects Via Client Context**
 
-If you’re going to support more than a handful of themes, for example, if you want to have a theme for each of your own clients, it will likely be a lot of work to create and support a large number of theme files. You may also already have theme data for clients stored in a database, or other location, and want to repurpose that data rather than manually crafting themes. In either case, the great thing about [Client Context](/development/client-context) is it’s just arbitrary JSON, and our theme files are just a JavaScript object, so it’s very straightforward to combine the two. Here’s what it might look like:
+Some users may want to support a large number of themes without creating a separate file for each one, or may have theme data already stored elsewhere and want to repurpose it.
+
+Because Client Context is arbitrary JSON, theme data can be sent directly in the Client Context object, and merged in via the `themeProvider`. For example:
 
 ```tsx
-// your front-end code
+// Front-end code
 <em-beddable token={{securityToken}} clientContext={{
   theme: {
     // Various theme values as described in the Remarkable Pro theming docs
@@ -77,30 +100,25 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 export default themeProvider;
 ```
 
-This approach would support as many themes as you’d like, and the theme objects you send can be a few overrides or all of the data needed to completely change every aspect of the theme! 
+This approach would support as many themes as needed. The theme objects can be a few overrides or all of the data needed to completely change every aspect of the theme.
 
 **Theme Provider**
 
-If you’re writing your own components, or if you’ve modified our existing components and need to bring them in as overrides (as described above), you’ll need to use the theme provider to get values from your theme.
-
-Many charts and graphs need to be provided with direct values rather than CSS. Fortunately, that’s no problem. With this change comes a new hook you can use in your components, the aptly-named `useTheme`. Here’s an abbreviated version of how to use it.
+The theme provider allows users to get values from the current theme and use them in their own components. Embeddable provides a `useTheme` hook for this purpose. Use the hook to set a `theme` object, then reference the properties on that object. Here is an abbreviated example:
 
 ```tsx
 import { useTheme } from '@embeddable.com/react';
 
 type Theme = {
-  // Your theme shape here
+  // Theme shape here
 }
-
 
 const MyComponent = () => {
   const theme: Theme = useTheme() as Theme;
   const dateRangeOptions = theme.defaults.dateRangesOptions;
-  // Use dateRangeOptions in your component
+  // Use dateRangeOptions in the component
   return <div>...</div>;
 };
 ```
 
-As you can see, accessing theme values in your own components is simple: use the hook to set a `theme` object, then reference the properties on that object as you’d expect.
-
-Please note: `useTheme` runs before render, unlike most React hooks, so you will *always* have access to a theme if you have one defined.
+Please note: `useTheme` runs before render, unlike most React hooks, so it will *always* have access to a theme if one has been defined.
