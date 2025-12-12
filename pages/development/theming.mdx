@@ -49,7 +49,7 @@ Want more detail on Remarkable Pro's theming system? Check out the [Remarkable P
 
 To support multiple themes, there are two possible approaches: create multiple theme files, import them, and switch between them based on Client Context, or pass the theme values directly in Client Context.
 
-**Using Theme File Imports**
+### Using Theme File Imports
 
 This is the approach taken in the boilerplate repo above. Each theme file should export a `DeepPartial<Theme>` object. Use Client Context to determine which theme to apply, then merge it with the parent theme using `defineTheme`. For example:
 
@@ -73,7 +73,7 @@ export default themeProvider;
 1. Adjust the `ClientContext` interface to include any other values passed in via Client Context for better type safety.
 2. This approach can be expanded to support as many themes as needed by adding more imports
 
-**Sending Theme Objects Via Client Context**
+### Sending Theme Objects Via Client Context
 
 Some users may want to support a large number of themes without creating a separate file for each one, or may have theme data already stored elsewhere and want to repurpose it.
 
