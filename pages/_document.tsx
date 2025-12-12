@@ -19,6 +19,11 @@ class MyDocument extends Document {
               }}
             />
           )}
+          <script
+            src="https://cdn.jsdelivr.net/npm/@inkeep/cxkit-js@0.5/dist/embed.js"
+            defer
+            type="module"
+          />
         </Head>
         <body>
           <noscript>

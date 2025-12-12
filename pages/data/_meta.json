@@ -1,9 +1,10 @@
 {
-    "connect-your-database": "Connect your database",
-    "credentials": "Database credentials",
-    "environments": "Set up Environments",
-    "troubleshooting": "Troubleshooting",
-    "bring-your-own-cube": "Bring your own Cube",
-    "cube-cloud": "Cube Cloud",
-    "using-cube-cloud-with-dbt": "Using Cube Cloud with dbt"
+  "connect-your-database": "Connect your database",
+  "credentials": "Database credentials",
+  "environments": "Set up Environments",
+  "troubleshooting": "Troubleshooting",
+  "bring-your-own-cube": "Bring your own Cube",
+  "cube-cloud": "Cube Cloud",
+  "using-cube-cloud-with-dbt": "Using Cube Cloud with dbt",
+  "generate-data-models": "Generate Data Models"
 }
