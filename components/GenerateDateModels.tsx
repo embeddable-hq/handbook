@@ -22,6 +22,25 @@ export default function GenerateDataModels() {
       colorMode: {
         forcedColorMode: isDarkMode ? "dark" : "light",
       },
+      theme: {
+        styles: [
+          {
+            key: "custom-theme",
+            type: "style",
+            value: `
+              .ikp-ai-chat-wrapper {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                border: 1px solid #eeeeee;
+              }
+              .ikp-ai-chat-content {
+                justify-content: start;
+              }
+            `,
+          },
+        ],
+      },
     },
     aiChatSettings: {
       aiAssistantAvatar:
@@ -41,11 +60,11 @@ export default function GenerateDataModels() {
       style={{
         display: "flex",
         justifyContent: "center",
-        height: "calc(100vh - 16px)",
+        height: "700px",
         paddingTop: 30,
       }}
     >
-      <div style={{ maxHeight: "600px", height: "100%", width: "100%" }}>
+      <div style={{ width: "100%", height: 600 }}>
         <InkeepEmbeddedChat {...embeddedChatProps} />
       </div>
     </div>
