@@ -3,7 +3,7 @@ import { useTheme } from "next-themes";
 import {
   InkeepEmbeddedChat,
   type InkeepEmbeddedChatProps,
-} from "@inkeep/agents-ui";
+} from "@inkeep/cxkit-react";
 
 export default function GenerateDataModels() {
   const [showChild, setShowChild] = useState(false);
@@ -17,13 +17,13 @@ export default function GenerateDataModels() {
 
   const embeddedChatProps: InkeepEmbeddedChatProps = {
     baseSettings: {
+      apiKey: process.env.NEXT_PUBLIC_INKEEP_API_KEY!,
       primaryBrandColor: "#6778DE",
       colorMode: {
         forcedColorMode: isDarkMode ? "dark" : "light",
       },
     },
     aiChatSettings: {
-      apiKey: process.env.NEXT_PUBLIC_INKEEP_API_KEY!,
       aiAssistantAvatar:
         "https://storage.googleapis.com/organization-image-assets/embeddable-botAvatarSrcUrl-1747040031545.png",
       aiAssistantName: "Embeddable Model Generator",
