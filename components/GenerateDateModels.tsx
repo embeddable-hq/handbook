@@ -46,7 +46,7 @@ export default function GenerateDataModels() {
       }}
     >
       <div style={{ maxHeight: "600px", height: "100%", width: "100%" }}>
-        <InkeepEmbeddedChat {...embeddedChatProps} />;
+        <InkeepEmbeddedChat {...embeddedChatProps} />
       </div>
     </div>
   ) : null;
