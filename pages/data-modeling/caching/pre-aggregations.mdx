@@ -648,12 +648,6 @@ cubes:
         granularity: day
 ```
 
-## Indexes
-
-To get the best performance out of your pre-aggregations you will likely want to define indexes too.  
-
-Cube recommends "for most queries, there should be at least one index that makes a particular query scan very little amount of data”.  You can read all about indexes [here](https://cube.dev/docs/product/caching/using-pre-aggregations#using-indexes).
-
 ## Handling incremental data loads
 
 Sometimes your source data is updated incrementally for example: only the last few days are reloaded or updated while older data remains unchanged. In these cases, it’s more efficient to build your pre-aggregations incrementally instead of rebuilding the entire dataset.
@@ -689,6 +683,271 @@ pre_aggregations:
 <Callout> 
 Without `update_window`, Cube refreshes partitions strictly according to `partition_granularity` (in this case, just the last day).
 </Callout>
+
+## Indexes
+  
+Indexes make data retrieval faster. Think of an index as a shortcut that points directly to the relevant rows instead of searching through all the data. This speeds up queries that filter, group, or join on specific fields.
+
+In the context of pre-aggregations, indexes help [Cube Store](https://cube.dev/docs/product/deployment#cube-store) quickly locate and read only the data needed for a query improving performance, especially on large datasets.
+
+Indexes are particularly useful when:
+
+- For larger pre-aggregations, indexes are often required to achieve optimal performance, especially when a query doesn’t use all dimensions from the pre-aggregation.
+- Queries frequently filter on **high-cardinality dimensions**, such as `product_id` or `date`. Indexes help Cube Store find matching rows faster in these cases.
+- You plan to join one pre-aggregation with another, such as in a [`rollup_join`](/data-modeling/caching/pre-aggregations#rollup_join).
+
+<Callout emoji="💡">
+Adding indexes doesn’t change your data, it simply makes Cube Store more efficient at finding it.
+</Callout>
+
+### Using indexes in pre-aggregations
+
+Let’s start with a simple `products` model and define a `products_preagg` pre-aggregation.
+
+Here we add an index on `size` within our pre-aggregation, which Cube Store uses to quickly resolve joins and filters involving that indexed column.
+
+```yaml
+cubes:
+  - name: products
+    sql_table: my_db.main.products
+    data_source: default
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+        public: true
+
+      - name: name
+        sql: name
+        type: string
+
+      - name: size
+        sql: size
+        type: string
+        
+
+    measures:
+      - name: count
+        type: count
+        title: '# of products'
+
+      - name: price
+        type: sum
+        title: Total USD
+        sql: price
+    
+    joins:
+      - name: orders
+        sql: "{CUBE.id} = {orders.product_id}"
+        relationship: one_to_many
+
+    pre_aggregations:
+      - name: products_preagg
+        type: rollup
+        dimensions:
+          - size
+        measures:
+          - count
+          - price
+        indexes:
+          - name: product_index
+            columns:
+              - size
+```
+
+In this example:
+
+- The `products_preagg` pre-aggregation stores aggregated products data by size dimension.
+- The index `product_index` on `size` speeds up queries using that dimension.
+- Make sure the column you’re indexing is also included in the pre-aggregation dimensions; otherwise, Cube will return an error like:
+
+  > Error during create table: Column 'products__id' in index 'products_products_preagg_product_index' is not found in table 'products_products_preagg'
+  >   
+
+<Callout emoji="💡">
+Each index adds to the pre-aggregation build time, since all indexes are created during ingestion. Add only the ones you need.
+</Callout>
+
+Learn more about indexes [here](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#indexes).
+
+## Rollup_join
+
+- Cube can run SQL joins across different data sources. For example, you might have products in [PostgreSQL](/data/credentials#postgres) and orders in [MotherDuck](/data/credentials#motherduck).
+
+- All pre-aggregations so far have been of type rollup (which is the default pre-aggregation type). Cube also supports `rollup_join`, which combines data from two or more rollups coming from different data sources.
+
+- `rollup_join` joins pre-aggregated data inside [cube store](https://cube.dev/docs/product/deployment#cube-store), so you can query it together efficiently.
+
+<Callout>
+You don’t need a rollup_join to join cubes from the same data source. Just include the other cube’s dimensions and measures directly in your rollup definition as mentioned [here](/data-modeling/caching/pre-aggregations#performing-joins-across-cubes-in-your-pre-aggregations)
+</Callout>
+
+Let’s extend the example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source. Since it joins to the orders model on the id column, we’ll need to update the pre-aggregation to include id and name and add an index on it.
+
+```yaml
+
+    pre_aggregations:
+      - name: products_preagg
+        type: rollup
+        dimensions:
+          - id
+          - name
+          - size
+        measures:
+          - count
+          - price
+        indexes:
+          - name: product_index
+            columns:
+              - id
+        refresh_key:
+	        every: 1 hour
+```
+
+The new orders model from MotherDuck data source will be added to show how to run analytics across databases.
+
+
+```yaml
+cubes:
+  - name: orders
+    sql_table: public.orders
+    data_source: motherduck
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: created_at
+        sql: created_at
+        type: time
+      
+      - name: product_id
+        sql: product_id
+        type: number
+        public: false
+
+    measures:
+      - name: count
+        type: count
+        title: "# of orders"
+
+    joins:
+      - name: products
+        sql: "{CUBE.product_id} = {products.id}"
+        relationship: many_to_one
+
+    pre_aggregations:
+      - name: orders_preagg
+        type: rollup
+        dimensions:
+          - product_id
+          - created_at
+        measures:
+          - count
+        time_dimension: CUBE.created_at
+        granularity: day
+        indexes:
+          - name: orders_index
+            columns:
+              - product_id
+        refresh_key:
+	        every: 1 hour
+
+      - name: orders_with_products_rollup
+        type: rollup_join
+        dimensions:
+          - products.name
+          - orders.created_at
+        measures:
+          - orders.count
+        time_dimension: orders.created_at
+        granularity: day
+        rollups:
+          - products.products_preagg
+          - orders_preagg
+```
+
+**Things to notice:**
+
+- `orders` uses the **MotherDuck** data source.
+- `products` uses **default** data source (for example, PostgreSQL). Learn more about connecting to multiple datasources [here](/data/credentials).
+- Always reference dimensions explicitly in your joins between models, especially when using a `rollup_join`:
+    
+    ```yaml
+        joins:
+          - name: products 
+            sql: "{CUBE.product_id} = {products.id}"
+            relationship: many_to_one
+    ```
+    
+    If you use `{CUBE}.product_id` or `{products}.id`, Cube will not recognise them as dimension references and will return an error like:
+    
+    ```
+    From members are not found in [] for join ...
+    Please make sure join fields are referencing dimensions instead of columns.
+    ```
+    
+- Indexes are required when using `rollup_join` pre-aggregations so Cube Store can join multiple pre-aggregations efficiently.
+
+    Without the right index, Cube may fail to plan the join and return an error like:
+    
+    ```
+    Error during planning: Can't find index to join table ...
+    Consider creating index ... ON ... (orders__product_id)
+    ```
+
+    Therefore, notice that we have indexed the **join keys on both sides**:
+    
+    ```
+    - `products.products_preagg` → index on `id`
+    - `orders.orders_preagg` → index on `product_id`
+    ```
+
+- `orders_with_products_rollup` combines both pre-aggregations inside **Cube Store** using the type `rollup_join`.
+    
+    The `rollups:` property lists which pre-aggregations to join together:
+    
+    ```yaml
+    rollups:
+      - products.products_preagg
+      - orders_preagg
+    ```
+    
+- We also added a `time_dimension` with **day-level granularity** in `orders_with_products_rollup`.
+    
+    We expect users to ask questions at a daily level, such as “How many orders were placed per product each day?”. Setting the `time_dimension` to **day** ensures Cube builds and queries this data efficiently.
+    
+<Callout emoji="💡">
+  `rollup_join` is an ephemeral pre-aggregation. It uses the referenced pre-aggregations at query time, so freshness is controlled by them, not the rollup_join itself.
+</Callout>
+
+- Notice that we’ve set the `refresh_key` to **1 hour** on both referenced pre-aggregations (`products_preagg` and `orders_preagg`) to keep the data up to date. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
+
+### How `rollup_join` works in Embeddable
+
+In this example, we’ll find the total **number of orders** for each **product**. The **product name** comes from the `products` model, while the **orders count** comes from the `orders` model.
+
+<VideoComponent
+    src="/video/rollup_join_example.mp4"
+    width="1250"
+    height="854"
+/>
+
+**Things to notice:**
+- The query’s FROM clause references both pre-aggregations. This is how Cube joins pre-aggregated datasets from different data sources inside Cube Store.
+
+### Benefits of using `rollup_join`
+
+- Enables **cross-database joins** inside Cube Store
+- Leverages **indexed pre-aggregations** for efficient distributed joins
+- Avoids the need for ETL or database federation
+- Provides consistent, scalable analytics across data sources
+
+Learn more about rollup_join [here](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#rollup_join).
 
 ## Next Steps
 
