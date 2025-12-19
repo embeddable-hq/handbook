@@ -704,7 +704,7 @@ Adding indexes doesn’t change your data, it simply makes Cube Store more effic
 
 Let’s start with a simple `products` model and define a `products_preagg` pre-aggregation.
 
-Here we add an index on `id` within our pre-aggregation, which Cube Store uses to quickly resolve joins and filters involving that indexed column.
+Here we add an index on `size` within our pre-aggregation, which Cube Store uses to quickly resolve joins and filters involving that indexed column.
 
 ```yaml
 cubes:
@@ -747,20 +747,20 @@ cubes:
       - name: products_preagg
         type: rollup
         dimensions:
-          - name
+          - size
         measures:
           - count
           - price
         indexes:
           - name: product_index
             columns:
-              - name
+              - size
 ```
 
 In this example:
 
-- The `products_preagg` pre-aggregation stores aggregated products data by name dimension.
-- The index `product_index` on `name` speeds up queries using that dimension.
+- The `products_preagg` pre-aggregation stores aggregated products data by size dimension.
+- The index `product_index` on `size` speeds up queries using that dimension.
 - Make sure the column you’re indexing is also included in the pre-aggregation dimensions; otherwise, Cube will return an error like:
 
   > Error during create table: Column 'products__id' in index 'products_products_preagg_product_index' is not found in table 'products_products_preagg'
@@ -784,7 +784,7 @@ Learn more about indexes [here](https://cube.dev/docs/product/data-modeling/refe
 You don’t need a rollup_join to join cubes from the same data source. Just include the other cube’s dimensions and measures directly in your rollup definition as mentioned [here](/data-modeling/caching/pre-aggregations#performing-joins-across-cubes-in-your-pre-aggregations)
 </Callout>
 
-Let’s build on the example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source. Since it joins to the orders model on the id column, we’ll update the pre-aggregation to include id and add an index on it.
+Let’s extend the example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source. Since it joins to the orders model on the id column, we’ll need to update the pre-aggregation to include id and name and add an index on it.
 
 ```yaml
 
@@ -794,6 +794,7 @@ Let’s build on the example from the [indexes](/data-modeling/caching/pre-aggre
         dimensions:
           - id
           - name
+          - size
         measures:
           - count
           - price
@@ -890,25 +891,22 @@ cubes:
     Please make sure join fields are referencing dimensions instead of columns.
     ```
     
-- `orders_preagg` is our **daily level rollup** in orders model. Notice that we’ve included `product_id` as a dimension in this.
-- An [index](/data-modeling/caching/pre-aggregations#indexes) `order_index` is created on `product_id`, which will be used to join with the **products** model later in the `rollup_join`.
-    
-    So the **join keys will be indexed on both sides**:
-    
-    - `products.products_preagg` → index on `id`
-    - `orders.orders_preagg` → index on `product_id`
-    
-    <Callout emoji="💡">
-    Indexes are required when using `rollup_join` pre-aggregations so Cube Store can join multiple pre-aggregations efficiently.
-    </Callout>
-    
+- Indexes are required when using `rollup_join` pre-aggregations so Cube Store can join multiple pre-aggregations efficiently.
+
     Without the right index, Cube may fail to plan the join and return an error like:
     
     ```
     Error during planning: Can't find index to join table ...
     Consider creating index ... ON ... (orders__product_id)
     ```
+
+    Therefore, notice that we have indexed the **join keys on both sides**:
     
+    ```
+    - `products.products_preagg` → index on `id`
+    - `orders.orders_preagg` → index on `product_id`
+    ```
+
 - `orders_with_products_rollup` combines both pre-aggregations inside **Cube Store** using the type `rollup_join`.
     
     The `rollups:` property lists which pre-aggregations to join together:
