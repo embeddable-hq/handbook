@@ -47,10 +47,10 @@ export default function GenerateDataModels() {
         "https://storage.googleapis.com/organization-image-assets/embeddable-botAvatarSrcUrl-1747040031545.png",
       aiAssistantName: "Embeddable Model Generator",
       introMessage:
-        "👋 Hi, Paste your SQL query below and I’ll turn it into a Cube.js model ⚡?",
+        "👋 Hi, Paste your SQL query below and I’ll turn it into a Cube.js model ⚡",
       exampleQuestions: [
         "Can you help me convert my SQL into data models?",
-        "Can you help me convert my table ddl/schema into data models?",
+        "Can you help me convert my table ddl/schema into data models?"
       ],
     },
   };
