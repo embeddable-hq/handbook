@@ -16,9 +16,9 @@ Theme namespace: `theme.styles`
 
 const myTheme: DeepPartial<Theme> = {
   styles: {
-    '--em-background-color-default': 'f1f1f1',
-    '--em-foreground-color-default': '#000',
-    '--em-background-color-neutral': '#fff'
+    '--em-sem-text': '#000',
+    '--em-sem-background': 'f1f1f1',
+    '--em-sem-background--neutral': '#fff'
   }
 }
 ```
@@ -38,7 +38,7 @@ These are the raw **design primitives**:
 - e.g. spacing scales
 - e.g. typography scales
 
-You *can* override core tokens if you’re building your own design system or want full control over the fundamentals. However, most teams leave the base layer alone and customise the higher layers instead. 
+If you already have an established design system with core tokens, you can override them to retain full control over the fundamentals. However, most teams leave the core layer alone and customise the higher layers instead. 
 
 ### 2. [Semantic tokens](/component-libraries/remarkable-pro/styling/semantic-tokens)
 
