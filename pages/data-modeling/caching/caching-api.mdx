@@ -1,6 +1,6 @@
 # Caching API
 
-Use Embeddable’s Caching API to tell Embeddable which security contexts and pre-aggregations to refresh and how often.
+Use Embeddable’s Caching API to tell Embeddable which security contexts need refreshing. The refresh frequency comes from the [refresh_key](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations) you set in your [pre-aggregations](/data-modeling/caching/pre-aggregations) within the data model.
 
 <Bruno/>
    
@@ -13,7 +13,6 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
     'Authorization': `Bearer ${apiKey}` // Keep your API key secure
   },
   body: JSON.stringify({
-    refreshInterval: "30 minutes",
     embeddables: [
       {
         embeddableId: "4beec55e-11f5-489a-8417-eb77c6a3c6c3",
@@ -49,13 +48,17 @@ Status 204 (No Content)
 
    - `region`: your deployment region ([learn more](/deployment/deployment-regions)). 
    - `apiKey`: your [API key](/getting-started/set-up-your-workspace#retrieve-your-api-key)
-   - `refreshInterval`: (required) the refresh interval, in `minutes`, `hours`, or `days` (must be `30 minutes` or larger, currently).
     - `embeddables`: (required) a list of Embeddables to refresh. Each object must contain:
       - `id`: the unique identifier of the Embeddable dashboard.
       - `savedVersions`: (optional) an array of saved versions to refresh. If not provided, the latest saved version will be used by default.
-   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. 
+   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
    - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
+   - `timezone` is the timezone you want the pre-aggregation to be built for.  When your components call [loadData](/development/loading-data), they can **only** use pre-aggregations that match their `timezone`.  Timezone must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC' if omitted.
 
 If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.  Cube will therefore build the requested pre-aggregation on-demand, which may take some time.
+
+<Callout emoji="💡">
+`Non-scheduled` security contexts are built once. Cube won’t refresh them or check their refresh keys.
+</Callout>
 
 Each time you call this it will **override** the previous settings. For example, if you want to stop a security context from refreshing, just call the API again with all security contexts except the one you want to stop.

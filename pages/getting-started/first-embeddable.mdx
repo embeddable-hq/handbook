@@ -1,6 +1,8 @@
 # Build your first Embeddable
 
-You're ready to start building! Let’s walk through creating a **basic dashboard** in Embeddable - from adding your first component to embedding the result.
+<Pill>Takes ~6 mins</Pill>
+
+**Create** and **deploy** your first Embeddable dashboard.
 
 <Callout emoji="💡">
   An **Embeddable** is an interactive dashboard that you embed in your web application.
@@ -9,81 +11,91 @@ You're ready to start building! Let’s walk through creating a **basic dashboar
 <Steps>
 
 ### **Create a New Embeddable**
-- On your workspace homepage, click **Create new Embeddable** to create a fresh dashboard.
-
-### **Add a Text Component**
-1. Click **Add component** (top right).
-2. Scroll down and choose the **Hello World** component.
-3. Fill in **Title** and **Body**, then hit **Save**.
-
-<VideoComponent
-    src="/video/add-text-component.mp4"
-    width="1250"
-    height="872"
-/>
-
-<Callout emoji="💡">
-  The available components come from [the code repository you downloaded in Part One](/getting-started/download-repo) and will be augmented in a later step by bringing in additional components we provide via an NPM import.
-</Callout>
+On your workspace homepage, click **Create new Embeddable** to create a fresh dashboard.
 
 ### **Add a Dataset**
-1. In the **Datasets** panel (bottom right), click the **+** icon.
+
+Datasets are how you access data on a dashboard. 
+
+Your workspace is linked to our sample database. 
+
+<VideoComponent
+    src="/video/create-new-dataset-example.mp4"
+    width="1100"
+    height="746"
+/>
+
+1. In the **Datasets Panel** in the bottom right, click the **+** icon.
 2. Name your dataset.
 3. Select **My customers** (or any other sample data model), then **Save**.
 
+### **Add a Donut Chart**
+
+Build your dashboard by adding components to the canvas. 
+
 <VideoComponent
-    src="/video/add-dataset.mp4"
-    width="1250"
-    height="872"
+    src="/video/create-pie-chart.mp4"
+    width="1100"
+    height="746"
 />
 
-### **Add a Pie Chart**
-1. Click **Add component** again. Pick **Pie Chart**.
+1. Click **Add component**. Pick **Donut Chart**.
 2. In the edit panel, set **Dataset to display** to the dataset you just created.
-3. Select your preferred **Slice** and **Metric**.
-4. **Save** and position your pie chart on the canvas.
+3. Select your preferred **Measure** and **Dimension**.
+4. Hit **Save**.
 
-<VideoComponent
-    src="/video/add-pie-chart.mp4"
-    width="1250"
-    height="872"
-/>
+<Callout emoji="⚡️">
+**Bonus**: check the **console** in the right sidebar to see what's happening behind the scenes. 
+</Callout>
 
 ### **Add Interactivity**
 
-It's really simple to make your dashboards interactive. 
+Adding interactivity is quick and easy. 
 
-Let's add a **search input** that filters the data. Watch and follow this quick video to see how:
+<VideoComponent
+    src="/video/Add-interactivity-remarkable.mp4"
+    width="1100"
+    height="746"
+/>
 
-<ExternalVideo src="https://www.loom.com/embed/041f9947644245d5bed940a2d46bc6ca?sid=b3d41e99-9f69-440c-8e93-4174e95c0f60"/>
+1. Click **Add component**, choose **Date Range Select Field**, then hit **Save**.  
+
+<Callout emoji="⚡️">
+In the right-hand Variables panel in the Builder, you’ll see a new variable appear: **date-range value**. Variables store outputs from interactive components (like date pickers) and can be passed around the dashboard.
+</Callout>
+
+2. Edit your **Donut Chart**.  
+3. Click **Filter** (under the Dataset input) and, from the dropdown, choose the **Signed up at** Dimension.  
+4. Next to the filter operator (“In date range”), click the **link** icon. 
+5. Select the **date-range value** variable, then hit **Save**.
+
+</Steps>
+
+<Callout emoji="🥳">
+**Success!** Switch to Preview mode in the top bar to test the interaction.
+</Callout>
 
 ### Embed your dashboard
 
-Now let's test Embedding your dashboard in a simple HTML page.
+As a final step, embed your dashboard using the `embedding-preview` script. 
+
+<Steps>
+
+### Save a version
 
 1. Click **'Save version'** at the top of your dashboard.
+2. Enter a simple **description** and click **'Save new version'**. 
 
-<ImageGrid width='40%' images={['/img/save-version-button.png']} />
+### Publish the dashboard
+3. Click the **'Publish'** button in the top bar. 
+4. Select the **'Production'** environment (the green box). 
+5. Grab your **API Key** and **Embeddable ID** from the **'How to embed'** section at the bottom of the modal. 
+6. Click **'Publish'** to publish your saved version. 
 
-2. Enter a **description** of your changes so far and click **'Save new version'** to save your dashboard as it is.
+### Test embedding
+7. Head to your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs)).  
+8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard. Then run:  
 
-<ImageGrid width='75%' images={['/img/dashboard-versions-save.png']} />
-
-3. Click **'Publish'** to open the Publish modal.
-
-<ImageGrid width='75%' images={['/img/dashboard-versions-save-success.png']} />
-
-4. Select **'Production'** and then click **'Publish'** again to publish your newly saved version to the Production environment.
-
-<ImageGrid width='75%' images={['/img/publish-dialog.png']} />
-
-5. Before closing the **Publish modal**, grab your **API Key** and **Embeddable ID** from the **'How to embed'** section at the bottom of the modal.
-
-<ImageGrid width='75%' images={['/img/how-to-embed.png']} />
-
-6. In your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs)).  
-7. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard.  
-8. Run:
    ```bash
    node src/embeddable.com/scripts/embedding-preview.cjs
    ```
@@ -98,8 +110,7 @@ Congratulations! You've built your first Embeddable - now you're well on your wa
 ## Next Steps
 
 <CardGrid>
-  <LinkCard title="Build your own component" href="/getting-started/first-component" icon=""/> 
-  <LinkCard title="Import starter components" href="/getting-started/install-starter-kit" icon=""/> 
+  <LinkCard title="Try switching the theme" href="/getting-started/theme-components" icon="4️⃣"/> 
 </CardGrid>
 
 

@@ -9,6 +9,9 @@ Whenever a user accesses an Embeddable dashboard in your app, you should fetch a
 **Important**: Always call this **server-side**—never from client code, to avoid exposing your API key.
 
 ```ts
+//
+// for security reasons: always call this from your server-side - never from client code
+//
 fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   method: 'POST',
   headers: {
@@ -17,24 +20,17 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     'Authorization': `Bearer ${apiKey}` // Keep your API key secure
   },
   body: JSON.stringify({
-    embeddableId: "<dashboard-id>", //the id of the dashboard you want to load
-    savedVersion: "production", // or "development" or "staging", etc.
+    embeddableId: '<dashboard-id>', // the id of the dashboard you want to load
+    savedVersion: 'production', // or 'development' or 'staging', etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
       regions: ['us-east', 'eu-west']
     },
-    user: 'sina@embeddable.com', // unique key (e.g. email or user_id) representing current user
-
-    // optional fields
-    dashboardState: 'team1-dashboard7', // optional key used by "custom canvas" functionality to store dashboard state
-
-    // managed Cube
-    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
-    roles: ["manager"], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
-
-    // external Cube 
-    dataProvider: 'my-cube-deployment' // tells Embeddable which external Cube deployment to connect to
+    user: 'example@domain.com', // unique key (e.g. email or user_id) representing current user
+    //
+    // for more fields, see "Comprehensive example" below
+    //
   })
 })
 .then((resp) => resp.json())
@@ -54,6 +50,57 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 You would then use this `token` in your `<em-beddable>` element, as explained in [Embedding an Embeddable](/deployment/embedding#how-it-works).
 
 Learn more about `region` [here](/deployment/deployment-regions).
+
+## Comprehensive example
+
+```ts
+//
+// for security reasons: always call this from your server-side - never from client code
+//
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    //
+    // required fields
+    //
+    embeddableId: '<dashboard-id>', //the id of the dashboard you want to load
+    savedVersion: 'production', // or 'development' or 'staging', etc.
+    expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
+    securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
+      userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
+      regions: ['us-east', 'eu-west']
+    },
+    user: 'example@domain.com', // unique key (e.g. email or user_id) representing current user
+
+    //
+    // optional fields
+    //
+    customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user custom dashboard state
+    customCanvasReadOnly: false, // turns off custom dashboard editing for your end-user (if "custom canvas" is enabled)
+
+    //
+    // managed Cube (default)
+    //
+    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
+    roles: ['manager'], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
+
+    //
+    // external Cube (e.g. Cube Cloud)
+    //
+    dataProvider: 'my-cube-deployment' // tells Embeddable which external Cube deployment to connect to
+  })
+})
+.then((resp) => resp.json())
+.then(({ token }) => {
+  // 'token' is the security token your `<em-beddable token={token}.../>` web component needs
+  console.log(token);
+});
+```
 
 
 ### Parameters
@@ -88,16 +135,12 @@ Learn more about `region` [here](/deployment/deployment-regions).
     - **micro service architecture**, where your data is spread across multiple databases.
 
 - **`dataProvider`** is required if (and only if) you are [bringing your own Cube deployment](/data/bring-your-own-cube). Specifies which external Cube deployment Embeddable should connect to. This must match a data provider you have created using the [**Data Provider API**](/data/cube-cloud#data-provider-api) (for example, `my-cube-deployment`). 
-<Callout emoji="💡">
-  Note that the `dataProvider` parameter is only required when connecting to an external Cube deployment.
-</Callout>
 
 - **`expiryInSeconds`** is the number of seconds until the token expires. The default is 7 days (60 * 60 * 24 * 7). Tokens are standard JWTs, and contain `iat` and `exp` when decoded. On your front-end, you can keep track of the token expiry and refresh it as needed with a call to the Embeddable Tokens API, without needing to reload the page.
 
-- **`dashboardState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). We basically store a custom canvas layout (per `embeddableId`) for each unique value of `dashboardState` that you pass to the Tokens API.  So all you have to do is generate some unique string id (e.g. 'dashboard-12') every time you want a fresh new custom canvas and pass that to `dashboardState`.  Then next time they want to see that custom canvas again, just pass the same unique id ('dashboard-12') to `dashboardState` and Embeddable will automatically display the latest state of that custom canvas.
-<Callout emoji="💡">
-  Note that `dashboardState` is per `embeddableId`, so if you want different custom canvas states per environment too (dev vs qa vs prod) then make sure to include the environment name as a prefix or suffix of the `dashboardState`.
-</Callout>
+- **`customCanvasState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field [here](./custom-canvas).  
+
+- **`customCanvasReadOnly`** is also only needed if you are using [Custom Canvas](/dashboards/custom-canvas).  If `true` the end-user will only be able to view (and interact with) the dashboard, but not edit it (add/remove/move/resize charts). It defaults to `false`.  Learn more [here](./custom-canvas).
 
 ## Testing Security Contexts
 

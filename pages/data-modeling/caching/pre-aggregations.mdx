@@ -6,7 +6,7 @@ In addition to the Level 1 [in-memory cache](/data-modeling/caching/in-memory),
 
 Pre-aggregations allow you to compute and store aggregations (like sums, averages, and counts, but also a set of dimensions) in advance rather than calculating them on the fly for each query. When a query can be fully answered from a pre-aggregation, results are retrieved directly from the pre-aggregated table instead of scanning raw data, significantly speeding up response times (and reducing cost and load on your databases).  This also means that multiple components + charts on your dashboard can retrieve data from just one or a few pre-aggregations (meaning fewer queries).
 
-> **Pre-aggregations**: You can think of a pre-aggregation as a simple **temporary table** (or **materialized view**) but managed and stored automatically by Embeddable, rather than in your database.  You control how often each pre-aggregation is refreshed using the [Caching API](/data-modeling/caching/caching-api)
+> **Pre-aggregations**: You can think of a pre-aggregation as a simple **temporary table** (or **materialized view**) but managed and stored automatically by Embeddable, rather than in your database.  You control how often each pre-aggregation is refreshed using the **refresh_key**. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations)  
 > 
 
 ## Why use pre-aggregations?
@@ -29,11 +29,13 @@ As an example, users may want to see their data by month or week.  Going through
 Pre-aggregations can currently only be defined in code, not in the in-platform **Data Model Editor**.  To add pre-aggregations, please export it from the Data Model Editor and add it to your code repository instead (learn how [here](/data-modeling/getting-setup#defining-models-in-code)).
 </Callout>
 
-To set up a pre-aggregation you need to do two simple steps:
+To set up a pre-aggregation you need to do three simple steps:
 
 1. define any pre-aggegregations directly in your model files (see example below)
 
-2. define a refresh schedule using the [Caching API](/data-modeling/caching/caching-api).  
+2. define a refresh schedule using the **refresh_key** within your pre-aggregation. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
+
+3. setup embeddable’s [caching api](/data-modeling/caching/caching-api) to refresh pre-aggregations for each of your security contexts. 
 
 Each pre-aggregation is a list of dimensions and measures that you want to pre-aggregate.  E.g. see the `pre_aggregation` defined at the bottom of this model file:
 
@@ -88,15 +90,6 @@ and the results will be stored as “a pre-aggregation”:
 | Germany |
 | … |
 
-## Refreshing pre-aggregations
-
-**You need to** use Embeddable’s [Caching API](/data-modeling/caching/caching-api) to set up a schedule for refreshing your pre-aggregations. Without the [Caching API](/data-modeling/caching/caching-api), your pre-aggregation will run only once (upon “publish”) and the data will not be refreshed.  i.e. Your customers will only see the data from the initial pre-aggregation.
-
-> If you’ve read [Cube’s documentation](https://cube.dev/docs/reference/data-model/pre-aggregations#refresh_key) you will find reference to the `refreshKey` .  This **is not supported** for pre-aggregations in Embeddable (it is only supported for the in-memory cache).
-
-Instead, please use our [Caching API](/data-modeling/caching/caching-api) to define the schedule for your pre-aggregations.
-> 
-
 ## How do pre-aggregations work?
 
 Now that a pre-aggregation exists, any incoming data requests from your components will first look to see if there are any **relevant** pre-aggregations that it can use:  
@@ -138,6 +131,39 @@ Whereas the below query is asking for the same data (`customers.country`), but i
     }
 }
 ```
+## How to know if my pre-aggregation is being used?
+
+You can verify whether your pre-aggregation is being used by checking the generated SQL in the **Embeddable [Data Playground](/data-modeling/testing-models)** or in your Chart’s Query.
+
+When a query uses a pre-aggregation, the SQL will reference the pre-aggregation table name instead of the underlying source table. For example:
+
+```sql
+FROM
+p565c35d4728de3a1d2942475fe26095d2b0b7224de.user_actions_total_daily_action_count_last8d AS `user_actions__total_daily_action_count_last8d`
+```
+
+**Things to notice:**
+
+- The `p<hash>.<pre_aggregation_name>` pattern indicates the query is pulling data from the pre-aggregation rather than the underlying base table.
+- The hash prefix (e.g., `p565c35d4728de3a1d2942475fe26095d2b0b7224de`) is automatically generated using your **workspace id**, [**model version**](/dashboards/saving#models-version), [**security context**](/data-modeling/row-level-security#security-tokens-and-security-context) and [**environment**](/data/environments).
+
+### In the Data Playground
+
+In the **Embeddable [Data Playground](https://docs.embeddable.com/data-modeling/testing-models)**, the generated SQL preview will show the pre-aggregation table name in the `FROM` clause. This confirms that your query is using the pre-aggregated table.
+
+<ImageGrid images={["/img/dataplayground_preaggregation-min.png"]}/>
+
+### In your Embeddable chart
+
+If you’ve built an Embeddable that uses a dataset containing a pre-aggregation, you can confirm it’s being used by inspecting the chart’s SQL.
+
+In the video below, you’ll see that the **TableChart** we created shows the same `FROM` clause pattern in its query, confirming that the chart is using the pre-aggregation rather than querying the base table directly.
+
+<VideoComponent
+    src="/video/pre_aggregations_sqlChart-min.mp4"
+    width="1920"
+    height="1080"
+/>
 
 ## Why do queries sometimes not use my pre-aggregations?
 
@@ -520,6 +546,79 @@ There are a few workarounds:
     - unfortunately not all database types support `count_distinct_approx`.  Check your specific database (e.g. [here](https://cube.dev/docs/product/configuration/data-sources/mysql#count_distinct_approx) you can see that MySQL doesn’t support it)
 3. And finally, you **can** use non-additive measures in pre-aggregations confidently as long as your queries match the row granularity of your pre-aggregations perfectly.  E.g. if your pre-aggregation shows `count_distinct` by `week` and your query requests that `count_distinct` measure for a particular week, Cube will use the pre-aggregation and return a perfectly accurate number.
 
+## Refreshing pre-aggregations
+
+Now that we’ve added pre-aggregations to the model, the next step is deciding how to keep the data fresh. This is done with the [refresh_key](https://cube.dev/docs/reference/data-model/pre-aggregations#refresh_key) property, which controls when Cube rebuilds a pre-aggregation.
+
+### Default refresh key
+
+If you don’t define a [refresh_key](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#refresh_key), Cube refreshes the pre-aggregation **once** per hour. This is a sensible default for most use cases, but you can override it if your data changes more or less frequently.
+
+### Refreshing on an interval
+
+For predictable schedules, use the **`every`** property. This lets you define how often Cube should rebuild the pre-aggregation:
+
+```yaml
+    pre_aggregations:
+      - name: customer_countries
+        dimensions:
+          - CUBE.country
+        refresh_key:
+          every: 1 day
+```
+
+In this example, the pre-aggregation is refreshed once per day. This accepts time expressions like  `1 second`, `30 minutes`, `2 hours`, `1 day`, `1 week`, `1 month`, `1 year`.
+
+For example `every: 30 minutes` or `every: 2 hours`.
+
+You can also be more precise with a CRON string:
+
+```yaml
+    pre_aggregations:
+      - name: customer_countries
+        dimensions:
+          - CUBE.country
+        refresh_key:
+          every: "0 8 * * *"
+```
+
+This runs every day at 08:00. See the [supported CRON formats](https://cube.dev/docs/product/data-modeling/reference/cube#supported-cron-formats) for more options.
+
+### Refreshing with SQL
+
+Sometimes you only want to rebuild a pre-aggregation when the source data changes. In that case, use the `sql` property to define a query that checks for updates:
+
+```yaml
+    pre_aggregations:
+      - name: customer_countries
+        dimensions:
+          - CUBE.country
+        refresh_key:
+          sql: SELECT MAX(created_at) FROM public.customers
+```
+
+As we haven’t defined `every`, so when using the `sql` parameter the default interval is **10 seconds** for `every` property. If the result changes, the pre-aggregation is refreshed.
+
+### Combining SQL with an interval
+
+You can also combine SQL with your specific time interval. This lets Cube check for changes on a schedule:
+
+```yaml
+    pre_aggregations:
+      - name: customer_countries
+        dimensions:
+          - CUBE.country
+        refresh_key:
+          every: 1 hour
+          sql: SELECT MAX(created_at) FROM public.customers
+```
+
+In this example the query every hour. If the result has changed since the last run, the pre-aggregation is refreshed.
+
+<Callout emoji="💡">
+You can’t combine a CRON string with `sql` in the same refresh key. Doing so will cause a compilation error.
+</Callout>
+
 ## Performing joins across cubes in your pre-aggregations
 
 All the examples so far have shown pre-aggregations using just the dimensions and measures from the cube in which it is defined.  This is, however, not a requirement at all.  You can easily define a pre-aggregation that uses dimensions and measures from multiple cubes, as long as the appropriate `joins` have been defined.
@@ -549,8 +648,307 @@ cubes:
         granularity: day
 ```
 
+## Handling incremental data loads
+
+Sometimes your source data is updated incrementally for example: only the last few days are reloaded or updated while older data remains unchanged. In these cases, it’s more efficient to build your pre-aggregations incrementally instead of rebuilding the entire dataset.
+
+Using the `customers` cube example:
+
+```yaml
+pre_aggregations:
+  - name: daily_count_by_countries
+    measures:
+      - CUBE.count
+    dimensions:
+      - CUBE.country
+    time_dimension: CUBE.signed_up_at
+    granularity: day
+    partition_granularity: day
+    build_range_start:
+      sql: SELECT NOW() - INTERVAL '365 day'
+    build_range_end:
+      sql: SELECT NOW()
+    refresh_key:
+      every: 1 day
+      incremental: true
+      update_window: 3 day
+```
+
+**Things to notice:**
+
+- Most queries focus on the past year, so we limit the build range to 365 days using `build_range_start` and `build_range_end`. Learn more [here](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#build_range_start-and-build_range_end).
+- `partition_granularity: day` splits the pre-aggregation into daily partitions, making it possible to refresh only the days that change instead of rebuilding the whole year.
+- Partitioned pre-aggregations require both a `time_dimension` and a `granularity`. See the Cube docs on [supported values](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#partition_granularity).
+- With `incremental: true` and `update_window: 3 day`, Cube refreshes only the last three partitions each day. Learn more about [`update_window`](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#update_window) and [`incremental`](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#incremental) .
+<Callout> 
+Without `update_window`, Cube refreshes partitions strictly according to `partition_granularity` (in this case, just the last day).
+</Callout>
+
 ## Indexes
+  
+Indexes make data retrieval faster. Think of an index as a shortcut that points directly to the relevant rows instead of searching through all the data. This speeds up queries that filter, group, or join on specific fields.
 
-To get the best performance out of your pre-aggregations you will likely want to define indexes too.  
+In the context of pre-aggregations, indexes help [Cube Store](https://cube.dev/docs/product/deployment#cube-store) quickly locate and read only the data needed for a query improving performance, especially on large datasets.
 
-Cube recommends "for most queries, there should be at least one index that makes a particular query scan very little amount of data”.  You can read all about indexes [here](https://cube.dev/docs/product/caching/using-pre-aggregations#using-indexes).
+Indexes are particularly useful when:
+
+- For larger pre-aggregations, indexes are often required to achieve optimal performance, especially when a query doesn’t use all dimensions from the pre-aggregation.
+- Queries frequently filter on **high-cardinality dimensions**, such as `product_id` or `date`. Indexes help Cube Store find matching rows faster in these cases.
+- You plan to join one pre-aggregation with another, such as in a [`rollup_join`](/data-modeling/caching/pre-aggregations#rollup_join).
+
+<Callout emoji="💡">
+Adding indexes doesn’t change your data, it simply makes Cube Store more efficient at finding it.
+</Callout>
+
+### Using indexes in pre-aggregations
+
+Let’s start with a simple `products` model and define a `products_preagg` pre-aggregation.
+
+Here we add an index on `size` within our pre-aggregation, which Cube Store uses to quickly resolve joins and filters involving that indexed column.
+
+```yaml
+cubes:
+  - name: products
+    sql_table: my_db.main.products
+    data_source: default
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+        public: true
+
+      - name: name
+        sql: name
+        type: string
+
+      - name: size
+        sql: size
+        type: string
+        
+
+    measures:
+      - name: count
+        type: count
+        title: '# of products'
+
+      - name: price
+        type: sum
+        title: Total USD
+        sql: price
+    
+    joins:
+      - name: orders
+        sql: "{CUBE.id} = {orders.product_id}"
+        relationship: one_to_many
+
+    pre_aggregations:
+      - name: products_preagg
+        type: rollup
+        dimensions:
+          - size
+        measures:
+          - count
+          - price
+        indexes:
+          - name: product_index
+            columns:
+              - size
+```
+
+In this example:
+
+- The `products_preagg` pre-aggregation stores aggregated products data by size dimension.
+- The index `product_index` on `size` speeds up queries using that dimension.
+- Make sure the column you’re indexing is also included in the pre-aggregation dimensions; otherwise, Cube will return an error like:
+
+  > Error during create table: Column 'products__id' in index 'products_products_preagg_product_index' is not found in table 'products_products_preagg'
+  >   
+
+<Callout emoji="💡">
+Each index adds to the pre-aggregation build time, since all indexes are created during ingestion. Add only the ones you need.
+</Callout>
+
+Learn more about indexes [here](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#indexes).
+
+## Rollup_join
+
+- Cube can run SQL joins across different data sources. For example, you might have products in [PostgreSQL](/data/credentials#postgres) and orders in [MotherDuck](/data/credentials#motherduck).
+
+- All pre-aggregations so far have been of type rollup (which is the default pre-aggregation type). Cube also supports `rollup_join`, which combines data from two or more rollups coming from different data sources.
+
+- `rollup_join` joins pre-aggregated data inside [cube store](https://cube.dev/docs/product/deployment#cube-store), so you can query it together efficiently.
+
+<Callout>
+You don’t need a rollup_join to join cubes from the same data source. Just include the other cube’s dimensions and measures directly in your rollup definition as mentioned [here](/data-modeling/caching/pre-aggregations#performing-joins-across-cubes-in-your-pre-aggregations)
+</Callout>
+
+Let’s extend the example from the [indexes](/data-modeling/caching/pre-aggregations#indexes) section. We’ll keep the products model from the PostgreSQL (default) data source. Since it joins to the orders model on the id column, we’ll need to update the pre-aggregation to include id and name and add an index on it.
+
+```yaml
+
+    pre_aggregations:
+      - name: products_preagg
+        type: rollup
+        dimensions:
+          - id
+          - name
+          - size
+        measures:
+          - count
+          - price
+        indexes:
+          - name: product_index
+            columns:
+              - id
+        refresh_key:
+	        every: 1 hour
+```
+
+The new orders model from MotherDuck data source will be added to show how to run analytics across databases.
+
+
+```yaml
+cubes:
+  - name: orders
+    sql_table: public.orders
+    data_source: motherduck
+
+    dimensions:
+      - name: id
+        sql: id
+        type: number
+        primary_key: true
+
+      - name: created_at
+        sql: created_at
+        type: time
+      
+      - name: product_id
+        sql: product_id
+        type: number
+        public: false
+
+    measures:
+      - name: count
+        type: count
+        title: "# of orders"
+
+    joins:
+      - name: products
+        sql: "{CUBE.product_id} = {products.id}"
+        relationship: many_to_one
+
+    pre_aggregations:
+      - name: orders_preagg
+        type: rollup
+        dimensions:
+          - product_id
+          - created_at
+        measures:
+          - count
+        time_dimension: CUBE.created_at
+        granularity: day
+        indexes:
+          - name: orders_index
+            columns:
+              - product_id
+        refresh_key:
+	        every: 1 hour
+
+      - name: orders_with_products_rollup
+        type: rollup_join
+        dimensions:
+          - products.name
+          - orders.created_at
+        measures:
+          - orders.count
+        time_dimension: orders.created_at
+        granularity: day
+        rollups:
+          - products.products_preagg
+          - orders_preagg
+```
+
+**Things to notice:**
+
+- `orders` uses the **MotherDuck** data source.
+- `products` uses **default** data source (for example, PostgreSQL). Learn more about connecting to multiple datasources [here](/data/credentials).
+- Always reference dimensions explicitly in your joins between models, especially when using a `rollup_join`:
+    
+    ```yaml
+        joins:
+          - name: products 
+            sql: "{CUBE.product_id} = {products.id}"
+            relationship: many_to_one
+    ```
+    
+    If you use `{CUBE}.product_id` or `{products}.id`, Cube will not recognise them as dimension references and will return an error like:
+    
+    ```
+    From members are not found in [] for join ...
+    Please make sure join fields are referencing dimensions instead of columns.
+    ```
+    
+- Indexes are required when using `rollup_join` pre-aggregations so Cube Store can join multiple pre-aggregations efficiently.
+
+    Without the right index, Cube may fail to plan the join and return an error like:
+    
+    ```
+    Error during planning: Can't find index to join table ...
+    Consider creating index ... ON ... (orders__product_id)
+    ```
+
+    Therefore, notice that we have indexed the **join keys on both sides**:
+    
+    ```
+    - `products.products_preagg` → index on `id`
+    - `orders.orders_preagg` → index on `product_id`
+    ```
+
+- `orders_with_products_rollup` combines both pre-aggregations inside **Cube Store** using the type `rollup_join`.
+    
+    The `rollups:` property lists which pre-aggregations to join together:
+    
+    ```yaml
+    rollups:
+      - products.products_preagg
+      - orders_preagg
+    ```
+    
+- We also added a `time_dimension` with **day-level granularity** in `orders_with_products_rollup`.
+    
+    We expect users to ask questions at a daily level, such as “How many orders were placed per product each day?”. Setting the `time_dimension` to **day** ensures Cube builds and queries this data efficiently.
+    
+<Callout emoji="💡">
+  `rollup_join` is an ephemeral pre-aggregation. It uses the referenced pre-aggregations at query time, so freshness is controlled by them, not the rollup_join itself.
+</Callout>
+
+- Notice that we’ve set the `refresh_key` to **1 hour** on both referenced pre-aggregations (`products_preagg` and `orders_preagg`) to keep the data up to date. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/pre-aggregations#refreshing-pre-aggregations).
+
+### How `rollup_join` works in Embeddable
+
+In this example, we’ll find the total **number of orders** for each **product**. The **product name** comes from the `products` model, while the **orders count** comes from the `orders` model.
+
+<VideoComponent
+    src="/video/rollup_join_example.mp4"
+    width="1250"
+    height="854"
+/>
+
+**Things to notice:**
+- The query’s FROM clause references both pre-aggregations. This is how Cube joins pre-aggregated datasets from different data sources inside Cube Store.
+
+### Benefits of using `rollup_join`
+
+- Enables **cross-database joins** inside Cube Store
+- Leverages **indexed pre-aggregations** for efficient distributed joins
+- Avoids the need for ETL or database federation
+- Provides consistent, scalable analytics across data sources
+
+Learn more about rollup_join [here](https://cube.dev/docs/product/data-modeling/reference/pre-aggregations#rollup_join).
+
+## Next Steps
+
+The next step is to setup Embeddable’s [Caching API](/data-modeling/caching/caching-api) to refresh pre-aggregations for each of your security contexts.

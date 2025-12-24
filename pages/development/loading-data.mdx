@@ -106,12 +106,14 @@ Below are the main parameters relevant to `loadData(...)`, with examples. For ea
 
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
-| `from`           | `Dataset`             | **Yes**                                         | —                 |
+| `from`           | `Dataset`              | **Yes**                                         | —                 |
 | `select`         | `(Dimension\|Measure\|TimeDimension)[]`        | At least one dimension measure or time dimension is required   | `[]`              |
-| `orderBy`        | `OrderBy[]`           | No                                              | none              |
-| `limit`          | `number`              | No                                              | `100`             |
-| `offset`         | `number`              | No                                              | `0`               |
-| `filters`        | `QueryFilter[]`       | No                                              | `[]`              |
+| `orderBy`        | `OrderBy[]`            | No                                              | none              |
+| `limit`          | `number`               | No                                              | `100`             |
+| `offset`         | `number`               | No                                              | `0`               |
+| `filters`        | `QueryFilter[]`        | No                                              | `[]`              |
+| `timezone`       | `string`               | No                                              | `UTC`             |
+| `countRows`      | `boolean`              | No                                              | `false`           |
 
 `loadData` effectively builds an **SQL statement** under the hood, using the parameters above:
 
@@ -126,24 +128,25 @@ LIMIT <limit>
 OFFSET <offset>
 ```
 
-### Types
+### Params
 
-- `Dataset` is a defined dataset in the no-code builder that's based on a [data model](/data-modeling/defining-models), possibly with pre-defined filters.
+- `from` is a `Dataset` which is defined in the no-code builder.  It defines which [data model](/data-modeling/defining-models) to use, as well as any filters that should be applied to the query.
 
-- `select` is an array of [dimensions](/data-modeling/dimensions-and-measures#dimensions), [measures](/data-modeling/dimensions-and-measures#dimensions) and *timeDimensions* (time-based dimensions, often paired with a **granularity**).
+
+- `select` is an array of [dimensions](/data-modeling/dimensions-and-measures#dimensions), [measures](/data-modeling/dimensions-and-measures#dimensions) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
 
   ```ts
   select: [
     inputs.groupBy, // one or more dimensions
     inputs.count, // one or more measures
-    // example of timeDimension
+    // example of a time dimension
     {
-      dimension: inputs.xAxis?.name, //pass just the dimension name
-      granularity: inputs.granularity
+      dimension: inputs.xAxis?.name, // pass just the dimension name (e.g. 'orders.created_at')
+      granularity: inputs.granularity // e.g. 'week'
     }
   ]
   ```
-- `OrderBy` is an array of sorting objects containing a `property` (`dimension` or `measure`) and a `direction` (`asc` or `desc`). This is also available as a native input in the no-code builder, but you can define it if your component needs custom sorting.
+- `orderBy` is an array of `OrderBy` objects containing a `property` (`dimension` or `measure`) and a `direction` (`asc` or `desc`). This is also available as a native input in the no-code builder, but you can define it here if your component needs custom sorting.
 
   ```ts
   orderBy: [
@@ -168,6 +171,12 @@ OFFSET <offset>
     }
   ],
   ```
+
+- `timezone` is the time zone you want to aggregate the **time dimensions** by.  Must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC'.  If you're using [Caching API](/data-modeling/caching/caching-api), note that [pre-aggregations](/data-modeling/caching/pre-aggregations) are time zone aware, and so, for example, a query run with timezone 'Europe/Paris' cannot use a pre-aggregation built with time zone 'America/New_York'.<br/><br/>Our [Vanilla Components library](https://github.com/embeddable-hq/vanilla-components-v1/) now supports time zones out of the box as of version `1.2.1`. All components that may have time/date-related data (e.g. line charts, date pickers, etc.) have been updated to accept time zones via Client Context. This allows you to set a time zone on a per-user basis from your application.
+
+<Callout emoji="💡">Note that the JavaScript `Date` object operates in the local time zone of the user's environment or in UTC and doesn't natively support time zones. When developing your own components, it's easy for dates to accidentally get converted out of the intended time zone, so it's important to check thoroughly to be sure they're passing the correct timestamp and time zone combination to `loadData`.</Callout>
+
+- `countRows` is a boolean indicating whether to return the total number of rows matching the query (ignoring `limit` and `offset`). This is useful for pagination UIs. When set to `true`, the returned `results` object includes a `total` property. Please note that with large datasets, counting rows can impact performance.
 
 #### Available Filter Operators
 

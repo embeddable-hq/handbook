@@ -15,6 +15,10 @@ To connect Cube Cloud, you’ll need to provide your `REST API Endpoint` and `AP
 1. **REST API Endpoint**  
     - You can find your endpoint in the **Integrations** tab in the Cube Cloud platform, accessible from the left side menu. Once you’re there, select the tab **REST API** and copy your API credentials under **Endpoint**.
 
+    <Callout emoji="💡">
+      Copy only the URL segment before cubejs-api/v1.
+    </Callout>
+
     <ImageGrid images={["/img/cube-api-credentials-min.png"]}/>
 
 2. **API Secret**  
@@ -58,8 +62,9 @@ fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
     - **instanceUrl** – your REST API Endpoint.
 - **region**: Learn more about `region` [here](/deployment/deployment-regions).
 
+### Test your Data Provider
 
-For example, if we set **name** = **"main-instance"** when connecting to Cube using the Data Provider API, we'll need to update our [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
+You can then test it in Embeddable by updating your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
 
 ```yaml
 - name: Example customer 1
@@ -67,6 +72,18 @@ For example, if we set **name** = **"main-instance"** when connecting to Cube us
     country: United States
     userid: 123
   dataProvider: main-instance 
+```
+
+and you can [embed your dashboard](/deployment/embedding) by calling the [Tokens API](/deployment/tokens-api#comprehensive-example) like this:
+
+```bash
+POST /api/v1/security-token
+  embbeddableId: '...',
+  securityContext: { /* ... */ },
+  #
+  # other fields...
+  #
+  dataProvider: 'main-instance'
 ```
 
 ### Use Your Cube Models in Embeddable
@@ -124,6 +141,11 @@ Each **staging branch** in Cube Cloud has its own **unique staging URL**, which 
 To set it up, you’ll need two things:
 
 1. **Staging URL** – Go to **Settings → Staging Environments** to find the URL for your branch.
+
+    <Callout emoji="💡">
+      Copy only the URL segment before cubejs-api/v1.
+    </Callout>
+
 2. **Secret Key** – Go to **Settings → Environment Variables → `CUBEJS_API_SECRET`** to find the key.
 
 <VideoComponent

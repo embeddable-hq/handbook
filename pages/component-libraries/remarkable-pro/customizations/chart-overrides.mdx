@@ -1,0 +1,142 @@
+# Chart-specific overrides
+
+Theme namespace: `theme.charts`
+
+Embeddable’s charts use **Chart.js** behind the scenes. Each chart type exposes a Chart.js `options` object, which controls things like:
+
+- tooltip content and formatting  
+- legend visibility and placement  
+- how lines, bars, and points are rendered  
+- animations and transitions  
+
+You can override these options per chart-variant directly through the theme.
+
+## Example: hide data points on line charts
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+  const myTheme: DeepPartial<Theme> = {
+    charts: {
+      lineChartGroupedPro: {
+        options: {
+          elements: {
+            point: {
+              radius: 0,      // hides visible circles
+              hoverRadius: 4, // still shows hover feedback
+              hitRadius: 8,   // keeps tooltip trigger area generous
+            },
+          },
+        },
+      },
+    },
+  };
+
+  return defineTheme(parentTheme, myTheme) as Theme;
+};
+```
+
+**Things to notice:**
+- Overrides are applied **per chart variant**. If you want this behavior for all line-chart variants, apply the same override to each one.
+- Behind the scenes, the options object you pass in will be merged with the default. 
+
+## Example: Change legend visibility or position
+
+```ts
+//theme.charts
+
+barChartGroupedPro: {
+  options: {
+    plugins: {
+      legend: {
+        display: false,
+        // or position: 'bottom'
+      },
+    },
+  },
+}
+```
+
+## Example: Customise tooltip text and formatting
+
+```ts
+//theme.charts
+
+lineChartPro: {
+  options: {
+    plugins: {
+      tooltip: {
+        displayColors: false,
+        callbacks: {
+          label: (ctx) => `Value: ${ctx.formattedValue}`,
+          title: (items) => `Date: ${items[0].label}`,
+        },
+      },
+    },
+  },
+}
+```
+
+## Example: Adjust line smoothness (tension)
+
+```ts
+//theme.charts
+
+lineChartGroupedPro: {
+  options: {
+    elements: {
+      line: {
+        tension: 0.4, // smooth curves
+      },
+    },
+  },
+}
+```
+
+## Example: Modify bar styling (corner radius, thickness)
+
+```ts
+//theme.charts
+
+barChartPro: {
+  options: {
+    datasets: {
+      bar: {
+        borderRadius: 6,
+        barThickness: 18,
+      },
+    },
+  },
+}
+```
+
+## Example: Custom donut thickness (cutout)
+
+```ts
+//theme.charts
+
+donutChartPro: {
+  options: {
+    cutout: '60%', // thicker donut ring
+  },
+}
+```
+
+## Example: Disable or customise animations
+
+```ts
+//theme.charts
+
+lineChartPro: {
+  options: {
+    animation: {
+      duration: 0, // disable animations for fast-refresh dashboards
+    },
+  },
+}
+```
+
+## Limitations
+- Some Chart.js options rely on specific plugins. If a plugin is not used by Remarkable, options related to that plugin will not work. You can see exactly which plugins are included [here](https://github.com/embeddable-hq/remarkable-ui/blob/main/package-lock.json).
