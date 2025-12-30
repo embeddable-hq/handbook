@@ -25,6 +25,15 @@ const variables = {
 <Embeddable token={securityToken} variables={variables} />
 ```
 
+If you're not using a React wrapper, you can pass variables directly to the web component like this:
+
+```html
+<em-beddable
+  token="YOUR_SECURITY_TOKEN_HERE"
+  variables='{"Country": "Germany", "Date range": {"from": "2024-02-12T00:00:00.000Z", "to": "2024-06-01T00:00:00.000Z"}}'
+></em-beddable>
+```
+
 Note that variable names must exactly match the variable names defined in your dashboard. You can learn more about dashboard variables [here](/dashboards/interactivity).
 
 If you update these variables in your client application, the Embeddable will refresh and display data based on the new values. For example, you could have a dropdown in your app that allows users to select a country, and when they select a new country, you update the `Country` variable in your Embeddable.
@@ -33,7 +42,7 @@ This flow is bi-directional. If a user interacts with the dashboard and changes 
 
 ## Listen to Variable Changes
 
-You can listen to variable changes in your Embeddable by adding an event listener for the `onVariablesChange` event. This event is fired each time a variable inside your Embeddable updates (e.g., user selects a new country). The event detail contains an array of objects with the variable name and its new value.
+You can listen to variable changes in your Embeddable by adding an event listener for the `variablesChange` event. This event is fired each time a variable inside your Embeddable updates (e.g., user selects a new country). The event detail contains an array of objects with the variable name and its new value.
 
 Here is an example of how to listen to variable changes in your Embeddable:
 
@@ -54,6 +63,13 @@ function handleVariableChange(e) {
   token={securityToken}
   onVariablesChange={handleVariableChange}
 />
+```
+
+Note that in the above example, we're passing a callback to the Embeddable React wrapper component (see complete example below) but `variablesChange` itself does not require a callback. It's an event emitted by Embeddable whenever the variables change, and you can listen for it directly, like this:
+
+```tsx
+const embeddableElement = document.querySelector('em-beddable');
+embeddableElement.addEventListener('variablesChange', handleVariableChange);
 ```
 
 ## Handle Component Errors
