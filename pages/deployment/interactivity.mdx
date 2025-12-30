@@ -47,27 +47,9 @@ You can listen to variable changes in your Embeddable by adding an event listene
 Here is an example of how to listen to variable changes in your Embeddable:
 
 ```tsx
-const securityToken = await getSecurityTokenFromYourBackend();
-function handleVariableChange(e) {
+const handleVariableChange = (e) => {
   console.log('Variables changed:', e.detail);
-  // e.detail is an array of { variableName, newValue }
-  // eg:
-  // detail: [
-  //   { variableName: 'Country', newValue: 'France' },
-  //   { variableName: 'Date range', newValue: { from: '2024-01-01', to: '2024-12-31' } }
-  // ]
-}
-
-// Embeddable React component defined as per example below
-<Embeddable
-  token={securityToken}
-  onVariablesChange={handleVariableChange}
-/>
-```
-
-Note that in the above example, we're passing a callback to the Embeddable React wrapper component (see complete example below) but `variablesChange` itself does not require a callback. It's an event emitted by Embeddable whenever the variables change, and you can listen for it directly, like this:
-
-```tsx
+};
 const embeddableElement = document.querySelector('em-beddable');
 embeddableElement.addEventListener('variablesChange', handleVariableChange);
 ```
@@ -79,22 +61,11 @@ You can listen to errors that occur in your Embeddable by adding an event listen
 Here is an example of how to listen to errors in your Embeddable:
 
 ```tsx
-const securityToken = await getSecurityTokenFromYourBackend();
-function handleEmbeddableError(e) {
+const handleEmbeddableError = (e) => {
   console.error('Embeddable error:', e.detail);
-  // e.detail is an object with errorMessage and errorDetail
-  // eg:
-  // detail: {
-  //   errorMessage: 'Network error',
-  //   errorDetail: 'Failed to fetch data from API'
-  // }
-}
-
-// Embeddable React component defined as per example below
-<Embeddable
-  token={securityToken}
-  onEmbeddableError={handleEmbeddableError}
-/>
+};
+const embeddableElement = document.querySelector('em-beddable');
+embeddableElement.addEventListener('embeddableError', handleEmbeddableError);
 ```
 
 You can use this to log errors, show error messages to users, or take other actions in response to errors. You could also use this to send the error details to your back-end for further processing, such as alerting or logging.
@@ -108,20 +79,11 @@ This event fires once all of the Embeddable's components have loaded and rendere
 Here is an example of how to listen to the components load event in your Embeddable:
 
 ```tsx
-const securityToken = await getSecurityTokenFromYourBackend();
-const [isLoading, setIsLoading] = React.useState(true);
-function handleComponentsLoad() {
-  setIsLoading(false);
-}
-
-// Embeddable React component defined as per example below
-<>
-  {isLoading && <div>Loading...</div>}
-  <Embeddable
-    token={securityToken}
-    onComponentsLoad={handleComponentsLoad}
-  />
-</>
+const handleComponentsLoad = () => {
+  console.log('Embeddable components have loaded');
+};
+const embeddableElement = document.querySelector('em-beddable');
+embeddableElement.addEventListener('componentsLoad', handleComponentsLoad);
 ```
 
 ## Pass Client Context
