@@ -92,7 +92,9 @@ Client Context allows you to pass information about the user or environment to y
  
 ## Complete Example
 
-Here is a complete example of a React component that uses the Embeddable component and demonstrates all of the above features. First is the main `Dashboard` component that uses the `Embeddable` component:
+Here is a complete example of a React wrapper component (`Dashboard`) that uses the `Embeddable` component and demonstrates all of the above features. Note that the Dashboard component passes in callback functions to handle variable changes, component load events, and errors, while the Embeddable component wires up the event listeners to the web component.
+
+First is the main `Dashboard` component that uses the `Embeddable` component:
 
 ```tsx
 import React from 'react';
@@ -129,7 +131,7 @@ const Dashboard: React.FC<Props> = ({ securityToken }) => {
 export default Dashboard;
 ```
 
-Below is the **Embeddable** component, which wraps `<em-beddable>` and wires up event listeners:
+Below is the `Embeddable` component, which wraps `<em-beddable>` and wires up event listeners - its helper functions then use the callback props passed from the `Dashboard` component:
 
 ```tsx
 import React, { type Dispatch, type SetStateAction } from 'react';
