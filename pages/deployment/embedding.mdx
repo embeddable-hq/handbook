@@ -178,18 +178,18 @@ Learn how to generate a `token` [here](/deployment/tokens-api).
 
 ## Common Pitfalls
 
-- **Security Token**: Must be retrieved server-side to avoid exposing secrets. See our [Tokens API](/deployment/tokens-api) docs.
+  - **Security Token**: Must be retrieved server-side to avoid exposing secrets. See our [Tokens API](/deployment/tokens-api) docs.
 
-- **Z-Index Issues**: If you are embedding multiple dashboards on a single page, you may run into z-index conflicts, as each web component uses its own shadow DOM. To resolve this, ensure that each `<em-beddable>` element has appropriate `z-index` settings and is set to `position: relative`. The Embeddables that appear higher on the page must have a higher `z-index` value than those that appear lower on the page, like in this example:
+  - **Z-Index Issues**: When embedding multiple dashboards on a single page, z-index conflicts can happen if the value isn't explicitly set. To resolve this, ensure that each `<em-beddable>` element has appropriate `z-index` settings and is set to `position: relative`. The Embeddables that appear higher on the page must have a higher `z-index` value than those that appear lower on the page, like in this example:
 
-```html
-<div class="container">
-  <!-- First dashboard with higher z-index -->
-  <em-beddable token="..." style="position: relative; z-index: 2"></em-beddable>
-  <!-- Second dashboard with lower z-index -->
-  <em-beddable token="..." style="position: relative; z-index: 1"></em-beddable>
-</div>
-```
+  ```html
+  <div class="container">
+    <!-- First dashboard with higher z-index -->
+    <em-beddable token="..." style="position: relative; z-index: 2"></em-beddable>
+    <!-- Second dashboard with lower z-index -->
+    <em-beddable token="..." style="position: relative; z-index: 1"></em-beddable>
+  </div>
+  ```
 
 ## Complete Working Example
 
