@@ -27,7 +27,7 @@ Ok, the first thing we need to do is add another value to our dropdown menu in t
 ```yaml
 - name: Nebula Industries
   clientContext:
-    theme: 'nebula'
+    theme: "nebula"
 ```
 
 Save the file. The next thing we need to do is establish a Nebula theme. The nice thing about Client Context is you can do this in different ways. Since Client Context is an arbitrary JSON string, you could just pass the entire theme object—which we’ll talk about more in a second—to your Embeddable and then parse it that way. I prefer to take a file-based approach, so that’s what we’re going to do here. Let’s create a folder in `/src` called `themes` (I’ve already got that folder), and in it create a file called `nebula.theme.ts`. For starters, just to establish that there’s something there we can import, we’ll add this code which creates a partial theme object:
