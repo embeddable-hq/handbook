@@ -1,0 +1,31 @@
+# Embeddable Quick Hits - Filtering Datasets with a Drop-Down
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefore at times makes reference to things you can see on screen.
+</Callout>
+
+<ExternalVideo src="https://www.youtube.com/embed/hTDR_DX684o?si=NjiLNA8GnQq1fSRM"/>
+
+## Video Transcript
+
+Hi, welcome to Embeddable Quick Hits. In this video, we're going to talk about filtering your Datasets dynamically. We'll be using a drop-down in this example, but you could also use the Date Picker, or any other controls that use events to change a variable, including custom components you build. Not familiar with Datasets yet? We've got an entire quick hit on the subject that you can check out.
+
+Let's get started! As you can see, I've got a brand new Embeddable dashboard here. For the purposes of following along, we recommend starting fresh like this, but you could also use an existing dashboard. Filtering can be added to Datasets at any time.
+
+First, we're going to create a Dataset. We'll click the grey plus icon, then name our Dataset "Orders," and then choose the Orders model. Then we'll click the "confirm" button. As you can see, we now have an Orders dataset in our list. We'll filter it in just a minute, but first let's create the grop-down.
+
+We'll click the "add component" button and choose "Single select field" from the list of drop-downs. Then we'll set our Dataset to orders, and our Dimension to "country of origin", which is available via a join to the "My Customers" model. For the title, we'll put "Country of Origin." Note that this component automatically creates a variable named "single-select value" &hellip; if you had multiple drop-downs on a page, each would create a similarly named variable, just with a number appended, so "single-select value 2," and "single-select value 3," and so forth. This can get confusing on larger dashboards so we **strongly recommend** renaming your variables.
+
+So, let's do that! We'll click "save" and then we can see that our drop-down has appeared in our dashboard, and also that our variable has appeared in the list of variables. Click the gear icon next to it, and let's rename it to "Country Select Drop-Down." We can leave everything else unchanged and just click "Confirm." We don't need to go back into the drop-Down controls and reselect the variable. Embeddable handles the change automatically!
+
+We won't really be able to see that our data is changing unless we have an accompanying chart, so let's add one. We'll click "Add Component" again, and then choose the Default Bar Chart. We'll choose "Orders" for our dataset, "Number of Orders" for our Measure, and "Created At" for our X-Axis. We'll set our granularity to "week." Let's also set a limit of 1,000 so that we have lots of data to work with. Let's set our title to "Orders by Date," and we're all set, so we'll click "Save."
+
+Now we've got a chart, a drop-down, and a Dataset &hellip; but we're not filtering anything with the drop-down yet. We *could* filter the chart directly, but instead let's filter the Dataset. This is useful if you want to connect multiple charts to a single Dataset and then have all of them respond to the filter, without having to connect each chart individually to the variable.
+
+We'll click the gear icon next to the "Orders" Dataset, and then click the "Add Filter" button. This brings up a select box, and we're going to choose "Country of Origin." We can leave the equals sign as is, and then instead of filling in a hard-coded value in the text box (which would limit the data set to that one country), we'll click the link icon and connect the filter to our "Country Select Drop-Down" variable.
+
+Click "Confirm" and you're all set! Your Dataset is now filtered by the Country of Origin drop-down. Let's switch over to preview mode and test it out. As you can see, the Bar Chart automatically changes as you select different countries, because the filter on the Dataset is changing, causing the data to reload based on which country you've selected.
+
+If you'd like more information about Datasets, filtering, or variables, you can [check out our documentation](https://docs.embeddable.com/dashboards/building-dashboards#datasets). We've also got a [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) you can join, where we're happy to answer your questions.
+
+See you next time!
