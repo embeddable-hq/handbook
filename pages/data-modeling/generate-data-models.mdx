@@ -1,0 +1,25 @@
+import GenerateDataModels from "../../components/GenerateDateModels";
+
+# Generate Data Models
+
+With our AI input below, you can effortlessly generate [Cube.js data models](/data-modeling/introduction) from your existing SQL queries / Database table definitions **right on this page**. This feature streamlines the process of creating data models, allowing you to get up and running quickly (you can always continue to refine them later).
+
+Copy and paste the following SQL into the AI Model Generator to see how it processes a query with multiple dimensions and measures.
+
+```SQL
+SELECT
+  c.country AS "c.country",
+  c.signup_source AS "c.signup_source",
+  COUNT(DISTINCT c.id) AS "no_of_customers",
+  MIN(c.created_at) AS "first_signup_date",
+  MAX(c.created_at) AS "last_signup_date"
+FROM public.customers AS c
+GROUP BY
+  c.country,
+  c.signup_source
+ORDER BY
+  count_customers DESC;
+``` 
+
+<GenerateDataModels />
+

@@ -1,0 +1,97 @@
+# CSS Tokens – Components
+
+Component tokens are the most granular layer in Remarkable’s design system. They allow you to style **specific UI components and their internal parts**, giving you precise control without affecting anything else.
+
+**For example**
+
+```ts
+'--em-tablechart-font-size': 'var(--em-core-font-size--xs)',
+'--em-selectfield-content-max-width': '400px',
+'--em-kpichart-trend-color--negative': 'var(--em-sem-status-error-text)',
+``` 
+
+Use Component tokens when you want to adjust a single component’s appearance.
+
+- Use **semantic tokens** for broad, visual-design changes to colors.  
+- Modify **core tokens** only if you are redefining your entire design foundation.
+
+## Pattern for Component tokens
+
+```ts
+'--em-{component}-{property}'
+'--em-{component}-{property}[--{variant}]'
+'—-em-{component}-{property}[—-{state}]'
+'—-em-{component}-{slot}-{property}'
+'—-em-{component}-{slot}-{property}[—-{variant}]'
+'—-em-{component}-{slot}-{property}[—-{state}]'
+'—-em-{component}-{slot}-{property}[—-{size}]'
+```
+
+## Pattern breakdown
+
+`em` - the Embeddable design system namespace.
+
+`{component}` - the name of the UI component these tokens style.
+
+**For example**
+
+- button  
+- input  
+- card  
+- toast  
+- modal  
+- selectfield  
+- textfield  
+- kpichart  
+
+`{slot}` (optional) - tokens may target an internal part (“slot”) of a component.
+
+**For example**
+
+- icon (icon inside a button)  
+- label (text inside a tag or button)  
+- container (main wrapper)  
+- thumb (slider thumb)  
+- track (slider track)  
+
+Slots let you style just one part of a component without touching the rest.
+
+`{property}` - the styling attribute being controlled. Always appears after the component or slot name, before any modifier.
+
+**For example**
+
+- background  
+- color  
+- border-color  
+- padding-top  
+- padding-inline  
+- radius  
+- shadow  
+- height  
+- gap  
+- font-size  
+
+`{variant}` (optional) - modifiers defining component variants (e.g. primary, secondary).  Always use `--`.
+
+**For example**
+
+- primary  
+- secondary  
+- subtle  
+
+`{state}` (optional) - state-based modifiers (consistent with Core and Semantic tokens).
+
+**For example**
+
+- hover  
+- active  
+- focus  
+- disabled  
+
+`{size}` (optional) - size modifiers, also using `--`.
+
+**For example**
+
+- small  
+- medium  
+- large  

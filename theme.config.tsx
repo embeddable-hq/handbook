@@ -2,6 +2,7 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 import ImageGrid from './components/ImageGrid'
 import LinkCard from './components/LinkCard'
+import Pill from './components/Pill'
 import VideoComponent from './components/Video'
 import { Steps } from 'nextra/components'
 import { Callout } from 'nextra-theme-docs'
@@ -9,6 +10,7 @@ import CardGrid from './components/CardGrid'
 import ExternalVideo from './components/ExternalVideo'
 import Bruno from './components/Bruno'
 import { InkeepChat } from './components/InkeepChatButton'
+import CodeContainer from './components/CodeContainer'
 
 const config: DocsThemeConfig = {
   logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
@@ -27,7 +29,9 @@ const config: DocsThemeConfig = {
     'VideoComponent': VideoComponent,
     'Steps': Steps,
     'Callout': Callout,
-    'ExternalVideo': ExternalVideo
+    'ExternalVideo': ExternalVideo,
+    'Pill': Pill,
+    'CodeContainer': CodeContainer
   },
   useNextSeoProps: () => {
     return {

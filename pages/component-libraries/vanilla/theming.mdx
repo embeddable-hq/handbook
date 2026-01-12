@@ -1,0 +1,318 @@
+# Theming
+
+Theming Vanilla Components is a straightforward approach to styling your dashboard that allows you to control a large number of values in a single TypeScript object.
+
+<VideoComponent
+    src="/video/theme-example.mp4"
+    width="800"
+    height="450"
+/>
+
+<Callout emoji="⚠️">
+  Were you working with the previous version of Vanilla components that required you to clone that entire repo? [Go here for full instructions on switching!](theme-welcome.mdx)
+</Callout>
+
+### The Basics
+
+If you use Vanilla Components, you will be provided with a complete default theme under the hood (the same colors and appearance you can see on [our example components page](https://embeddable.com/components)), and can then override as many or as few values as you want, within what the theme supports. It doesn't have to be complicated, though! If all you want to do is change a few chart colors and the font, your theme object could look like this:
+
+```tsx
+{
+  charts: {
+    colors: ["#c5fae2", "#7ef2be", "#2ce391", "#00cc70", "#009954", "#008348"],
+  },
+  font: {
+    family: "Inter",
+  },
+}
+```
+
+That would apply the Inter font across the entire site and change all of the chart colors. We handle applying any javascript color values (which are mostly used for charts) and we also generate CSS Variables from the theme file which are then used by our controls, inputs, etc.
+
+### Single Theme
+
+If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate). Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
+
+```tsx
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme =>
+	defineTheme(parentTheme, {
+    brand: {
+      primary: '#008348',
+      secondary: '#BA9653',
+    },
+    charts: {
+      colors: [
+        '#c5fae2',
+        '#7ef2be',
+        '#2ce391',
+        '#00cc70',
+        '#009954',
+        '#008348',
+        '#006638',
+        '#004d2a',
+      ],
+    },
+    font: {
+      family: 'Inter',
+    },
+  });
+
+export default themeProvider;
+
+```
+
+Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in [`Theme`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts) which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
+
+<Callout emoji="💡">
+You can find the full list of available `Theme` properties (and their default values) [here](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts).
+</Callout>
+
+Once you’ve changed `embeddable.theme.ts`, save it, and you should be set. Your theme changes will show up across all of the Vanilla Components. [Try it out](/development/defining-components#push-to-embeddable) using `npm run embeddable:dev`!
+
+### Multiple Themes With Client Context
+
+If you’re looking to support multiple themes, there are two separate approaches you can take: create multiple theme files, import them, and switch between them based on [client context](/development/client-context), or pass the theme values directly in client context.
+
+**Using Theme File Imports**
+
+Let’s show an example of how you might use multiple theme files by enabling light and dark mode. First, in `/src/themes/` we’ll created `light.theme.ts` and `dark.theme.ts` which might look like this:
+
+```tsx
+// src/themes/light.theme.ts
+import { Theme } from '@embeddable.com/vanilla-components';
+const lightTheme: Theme = {
+  controls: {
+    borders: {
+      colors: {
+			  primary: '#444444',
+			  secondary: '#888888',
+			},
+    };
+  },
+  font: {
+    color: '#444444',
+    family: 'Inter',
+  };
+  svg: {
+    fill: '#444444',
+    fillBkg: '#FFFFFF',
+    stroke: '#444444',
+  };
+};
+export default lightTheme;
+```
+
+```tsx
+// src/themes/dark.theme.ts
+import { Theme } from '@embeddable.com/vanilla-components';
+const darkTheme: Theme = {
+  controls: {
+    borders: {
+      colors: {
+			  primary: '#EEEEEE',
+			  secondary: '#AAAAAA',
+			},
+    };
+  },
+  font: {
+    color: '#EEEEEE',
+    family: 'Inter',
+  };
+  svg: {
+    fill: '#EEEEEE',
+    fillBkg: '#000000',
+    stroke: '#EEEEEE',
+  };
+};
+export default darkTheme;
+```
+
+```tsx
+// embeddable.theme.ts
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+import lightTheme from './src/themes/light.theme';
+import darkTheme from './src/themes/dark.theme';
+
+interface ClientContext {
+  [key: string]: any;
+  theme: string;
+}
+
+const themeProvider = (clientContext: ClientContext, parentTheme: Theme): Theme => {
+  const { theme } = clientContext;
+  let currentTheme = lightTheme;
+  if (theme === 'dark') {
+    currentTheme = darkTheme;
+  }
+	return defineTheme(parentTheme, currentTheme);
+};
+
+export default themeProvider;
+```
+
+As you can see, we’re still merging themes with the default, but in this case we’re checking for a string value named `theme` passed in via Client Context. We then swap our current theme based on the string value and merge it into the default. On your application side, all you’d need to do is have a toggle that changes the Client Context of any Embeddables from `light` to `dark` to switch between the two.
+
+We encourage you to adjust the `ClientContext` interface to include any other values you’re passing in via Client Context, especially if you intend to use them in this file in any way (for example, you could pass a set of chart colors via Client Context and then plug them into the theme, for a hybrid between this approach and the one below).
+
+**Sending Theme Objects Via Client Context**
+
+If you’re going to support more than a handful of themes, for example, if you want to have a theme for each of your own clients, it will likely be a lot of work to create and support a large number of theme files. You may also already have theme data for clients stored in a database, or other location, and want to repurpose that data rather than manually crafting themes. In either case, the great thing about [Client Context](/development/client-context) is it’s just arbitrary JSON, and our theme files are just a JavaScript object, so it’s very straightforward to combine the two. Here’s what it might look like:
+
+```tsx
+// your front-end code
+<em-beddable token={{securityToken}} clientContext={{
+  theme: {
+    brand: {
+      primary: '#0066FF',
+      secondary: '#FF6600',
+    },
+    font: {
+      family: 'Consolas',
+    },
+  }
+}} />
+```
+
+```tsx
+// embeddable.theme.ts
+import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const { theme } = clientContext;
+	return defineTheme(parentTheme, theme);
+};
+
+export default themeProvider;
+```
+
+This approach would support as many themes as you’d like, and the theme objects you send can be a few overrides or all of the data needed to completely change every aspect of the theme! 
+
+### A Note About Custom Fonts
+
+We support two methods for importing custom fonts. The first is to use the `urls` array of the `font` property in the theme object, which allows you to specify URLs as strings to any custom font you want to use, and then reference it in the `family` property. Here’s an example of how that might look:
+
+```tsx
+font: {
+  color: '#888888',
+  colorNormal: '#333942',
+  colorSoft: '#e3e3e3',
+  family: '"Charlie Display", Helvetica, Arial, sans-serif',
+  size: '14px',
+  weight: 400,
+  urls: [
+    'https://assets.ctfassets.net/rz1oowkt5gyp/6EnDcOBYnO67MYVJcpQLUc/85d36587de9855f3cd9f4e23f2119cf8/Charlie_Display-Thin.woff2',
+    'https://assets.ctfassets.net/rz1oowkt5gyp/5Bpl6vErvLYCi1EdOqI2IK/b57fbec62ffab536b59e311837de9042/Charlie_Display-Thin.woff',
+  ],
+},
+```
+
+The second method lets you use any font that [Google Fonts](https://fonts.google.com/) supports by simply specifying the font family in the `family` property of the `font` object. For example:
+
+```tsx
+font: {
+  color: '#888888',
+  colorNormal: '#333942',
+  colorSoft: '#e3e3e3',
+  family: '"Charlie Display", Inter, Helvetica, Arial, sans-serif',
+  size: '14px',
+  weight: 400,
+  urls: [],
+},
+```
+
+**Important Note**: if your font names contain a space, you must wrap them in double-quotes (eg `"Example Font"`) inside the single quotes of the family string, as shown above, otherwise the font will not be applied correctly. Additionally, the name must match exactly what Google fonts is looking for &ndash; note that the titles on their website are not always the same as the actual font family name.
+
+Under the hood, our theme provider attempts to find any custom fonts you define in `theme.font.family` via Google Fonts. If they support it, we load it into the Embeddable and apply it to your theme.
+
+<Callout emoji="🚧">
+  Currently, your font choice impacts the entire dashboard. In the future, with [Remarkable Pro](/component-libraries/remarkable-pro/introduction), we may support per-component and other overrides.
+</Callout>
+
+
+### Using Themes In Your Own Components
+
+There are two ways to access themes in your components. The first is through CSS variables, and the second is through the Theme Provider, which is a simple hook that allows you access to all the values.  Let’s cover both.
+
+**CSS Variables**
+
+The good news is: you don’t have to create or update all of these yourself. In fact, you don’t have to update *any* of them yourself. They’re auto-generated. All of these variables are prefaced with `embeddable` to help avoid conflicts, and they are structured exactly like the theme object. Here is a very small example of them:
+
+```css
+--embeddable-brand-primary: '#0066FF';
+--embeddable-controls-backgrounds-colors-transparent: 'transparent';
+--embeddable-controls-buttons-fontSize: '14px;
+--embeddable-font-color: '#888888';
+```
+
+These variables are injected into the Embeddable at build time and are available to all components, whether they come from our Vanilla library or are custom-written by your team. You can leverage these variables using Tailwind, like the Vanilla Components do, or in any other capacity you’d like.
+
+**Theme Provider**
+
+If you’re writing your own components, or if you’ve modified our existing components and need to bring them in as overrides (as described above), you’ll need to use the theme provider to get values from your theme.
+
+Many charts and graphs need to be provided with direct values rather than CSS. Fortunately, that’s no problem. With this change comes a new hook you can use in your components, the aptly-named `useTheme`. Here’s an abbreviated version of how to use it in a ChartJS Pie Chart
+
+```tsx
+// src/components/vanilla/charts/PieChart/index.ts
+import { useTheme } from '@embeddable.com/react';
+import { Theme } from '../../../../themes/theme';
+
+export default (props: Props) => {
+  const theme: Theme = useTheme() as Theme;
+  const updatedProps = {
+    ...props,
+    theme
+  }
+
+  // Set ChartJS defaults
+  setChartJSDefaults(theme, 'pie');
+
+  // Check for color overrides in the theme
+  let chartColors = theme.charts.colors;
+  if (theme.charts.pie.colors) {
+    chartColors = theme.charts.pie.colors;
+  }
+  
+  const options = getChartOptions(updatedProps);
+  const data = formatChartData(updatedProps, chartColors);
+  
+  return (
+    <Pie
+      height="100%"
+      options={options}
+      data={data}
+      onClick={() => null}
+    />
+  );
+};
+```
+
+Here’s the `setChartJsDefaults` function, which takes in the theme and a chart type and adjusts some global Chart JS values based on them.
+
+```tsx
+export const setChartJSDefaults = (theme: Theme, chartType?: ChartType) => {
+  if (!theme || !theme.charts) {
+    return;
+  }
+
+  // Some charts vary, so we check for chart type and if it exists, set some values
+
+  // remove 'px' from the font size and convert to a number
+  let fontSize = parseInt(theme.font.size.replace('px', ''), 10);
+  if (chartType && theme.charts[chartType]) {
+    fontSize = theme.charts[chartType].font.size;
+  }
+  // We don't need to return anything as we are mutating the global object
+  ChartJS.defaults.font.size = fontSize;
+  ChartJS.defaults.color = theme.font.color;
+  ChartJS.defaults.font.family = theme.font.family;
+  ChartJS.defaults.plugins.tooltip.enabled = theme.charts.options.toolTipEnabled;
+  ChartJS.defaults.plugins.tooltip.usePointStyle = true;
+};
+```
+
+As you can see, accessing theme values in your own components is simple: use the hook to set a `theme` object, then reference the properties on that object as you’d expect.
+
+Please note: `useTheme` runs before render, unlike most React hooks, so you will *always* have access to a theme if you have one defined (if you don’t use vanilla components at all, you’ll need to define one. We’ll have separate documentation on that soon).

@@ -3,7 +3,6 @@
     "download-repo": "1: Set up your repo",
     "set-up-your-workspace": "2: Set up your workspace",
     "first-embeddable": "3: Build an Embeddable",
-    "first-component": "4: Build a component",
-    "install-starter-kit": "5: Starter components",
-    "theme-components": "6. Theme your components"
+    "theme-components": "4. Switch the theme",
+    "first-component": "5: Build a component"
 }

@@ -36,48 +36,48 @@ const cfg: InkeepChatButtonProps = {
   aiChatSettings: {
     aiAssistantName: "Embeddabot",
     getHelpOptions: [
-		{
-		  icon: { builtIn: 'IoChatbubblesOutline' },
-		  name: 'Contact us',
-		  action: {
-			type: 'open_link',
-			url: `mailto:support@embeddable.com`,
-		  },
-		},
-		{
-		  icon: { builtIn: 'FaSlack' },
-		  name: 'Slack Community',
-		  action: {
-			type: 'open_link' as const,
-			url: 'https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA',
-		  },
-		},
-		{
-		  icon: { builtIn: 'LuCalendar' },
-		  name: 'Data modeling Office Hours',
-		  action: {
-			type: 'open_link',
-			url: `https://calendly.com/d/cwvv-j2y-pr3/embeddable-office-hours-data`,
-		  },
-		},
-		{
-		  icon: { builtIn: 'LuCalendar' },
-		  name: 'Frontend / component Office Hours',
-		  action: {
-			type: 'open_link',
-			url: 'https://calendly.com/d/cs3x-dyg-c27/embeddable-office-hours-fe',
-		  },
-		},
-		{
-		  icon: { builtIn: 'IoHelpBuoyOutline' },
-		  name: 'Submit a ticket',
-		  action: {
-			type: 'open_link',
-			url: 'https://trevorio.atlassian.net/servicedesk/customer/portal/1/group/1/create/1',
-		  },
-		},
-	  ],
-	},
+      {
+        icon: { builtIn: "IoChatbubblesOutline" },
+        name: "Contact us",
+        action: {
+          type: "open_link",
+          url: `mailto:support@embeddable.com`,
+        },
+      },
+      {
+        icon: { builtIn: "FaSlack" },
+        name: "Slack Community",
+        action: {
+          type: "open_link" as const,
+          url: "https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA",
+        },
+      },
+      {
+        icon: { builtIn: "LuCalendar" },
+        name: "Data modeling Office Hours",
+        action: {
+          type: "open_link",
+          url: `https://calendly.com/d/cwvv-j2y-pr3/embeddable-office-hours-data`,
+        },
+      },
+      {
+        icon: { builtIn: "LuCalendar" },
+        name: "Frontend / component Office Hours",
+        action: {
+          type: "open_link",
+          url: "https://calendly.com/d/cs3x-dyg-c27/embeddable-office-hours-fe",
+        },
+      },
+      {
+        icon: { builtIn: "IoHelpBuoyOutline" },
+        name: "Submit a ticket",
+        action: {
+          type: "open_link",
+          url: "https://trevorio.atlassian.net/servicedesk/customer/portal/1/group/1/create/1",
+        },
+      },
+    ],
+  },
   label: "Ask AI",
   avatar: "/img/embeddable_icon_svg.svg",
 };

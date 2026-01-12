@@ -1,0 +1,80 @@
+# Chart Colors
+
+You can control chart colors globally via the [theme](/component-libraries/remarkable-pro/theming).
+
+Theme namespace: `theme.charts`
+
+**Example:**
+
+```tsx
+// embeddable.theme.ts
+
+backgroundColors?: string[]; // used for fills: bars, areas, pie/donut segments, etc.
+borderColors?: string[]; // used for strokes: bar/area outlines, line strokes, segment borders
+
+const myTheme = {
+  charts: {
+    backgroundColors: ["#d2ecfd", "#a3d4fa", "#6bb7f5"],
+    borderColors: ["#86bdf2", "#5aa1ef", "#2e82ea"] // slightly darker for definition
+  }
+}
+```
+
+**Things to notice**
+
+- You can pass **any length** arrays; we’ll cycle if there are more categories than colors.
+- Values can be **hex**, **rgb(a)**, **hsl(a)**, or **CSS variables**, e.g. "var(--em-chart-color-1)".
+- If backgroundColors and borderColors are identical, borders will effectively disappear (this can be desirable for minimalist styles).
+- If backgroundColors and borderColors are omitted, Remarkable Pro's default colors will apply. 
+
+## Color assignment
+
+- For charts where multiple categories/series are shown (e.g. **pie/donut**, **grouped/stacked bars**, **multi-line**), colors are **assigned to dimension values deterministically**. This means the same category label gets the same color across components (e.g. United States → always blue), improving cross-chart scanability.
+
+- For charts that, by convention, use a **single color** (to emphasise shape, not category), colors are assigned to **measures**.This means the same measure gets the same color across components (e.g. Total USD → always green). Typical single-color cases:
+    - Bar (one measure, one dimension)
+    - Line (single series)
+    - Area (single series)
+
+## Cycling & overflow
+
+- If your data has more unique values than colors in the array, we **cycle** through the palette in order.
+- Best practice: provide enough colors to cover your expected maximum legend cardinality for a dashboard.
+
+## Manual color assignment
+
+For charts with a single color, you can select the color manually via the no-code builder. 
+
+We will shortly enable you to manually assign colors to values for category charts too, via theming e.g. the value "positive" should always be green. 
+
+## Practical tips
+
+- **Dark/light themes:**
+    Create **separate theme objects** (e.g. lightTheme, darkTheme) and swap them via [client-context](/getting-started/theme-components). Keep the **order** of colors identical across themes so value→color mapping stays consistent.
+- **Colors per customer / tenant:** You can inject colors per user via client-context and merge them. If your theme expects separate fill/stroke arrays, map them explicitly:
+        
+```jsx
+<em-beddable
+    token="${json.token}"
+    client-context='${JSON.stringify({
+        colors: ["#555d8e", "#566f94", "#56819b"]
+    })}'
+></em-beddable>
+```
+
+```tsx
+// embeddable.theme.ts
+
+export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+    const colors: string[] | undefined = clientContext?.colors;
+
+    const overrides = colors
+        ? { 
+            charts: {
+                backgroundColors: colors,     
+            }
+        } : {};
+
+    return defineTheme(parentTheme, overrides) as Theme;
+};
+```

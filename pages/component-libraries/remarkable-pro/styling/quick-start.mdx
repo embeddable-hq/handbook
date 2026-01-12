@@ -1,0 +1,117 @@
+# Quick start styling guide
+
+<Pill>Takes ~5 mins</Pill>
+
+Follow these steps to style Remarkable Pro **for the first time**. 
+
+We recommend spinning up your [local environment](/development/local-environment) while making these changes so you can see the impact of each adjustment in real time.
+
+<Steps>
+
+### Open your theme file
+
+1. Open `embeddable.theme.ts` inside your repo. 
+2. Add an empty `styles` object to a new or existing theme. 
+
+```tsx
+//embeddable.theme.ts
+
+export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+    const myTestStyles: DeepPartial<Theme> = {
+        styles: {
+            //your styles will go here
+        }
+    }
+
+    return defineTheme(parentTheme, myTestStyles) as Theme;
+};
+```
+
+### Set your text colors
+These tokens control all major text roles across Remarkable. Replace the CSS values with your own. 
+
+`'--em-sem-text': '#000'` 
+
+- Updates primary text throughout the UI: titles, table text, dropdown labels, x-axis labels, KPI values, tooltip text, and icons.
+
+`'--em-sem-text--muted': '#888'`  
+
+-   Updates other text elements like descriptions, y-axis labels, legend categories, and subtle UI text.
+
+```tsx
+//theme.styles
+
+styles: {
+    `'--em-sem-text': '#000'`,
+    `'--em-sem-text--muted': '#888'` 
+}
+
+```
+
+### Set your background colours  
+
+These tokens define the core surfaces used throughout the product.
+
+`'--em-sem-background': '#fff'`
+
+- Controls chart card backgrounds and many hover surfaces (e.g. table row hover, dropdown item hover).
+
+`'--em-sem-background--neutral': '#ccc'`  
+
+- Controls neutral surfaces such as SelectField triggers, dropdown panels, table-chart backgrounds, and chart-label values.
+
+### Set your border radius
+Adjust how rounded the UI should feel. You can set a single system-wide radius or tweak components individually.
+
+`'--em-card-border-radius': '0px'`  
+
+- Updates border radius for chart cards.
+
+`'--em-selectfield-trigger-border-radius': '0px'`
+
+`'--em-selectfield-content-border-radius': '0px'`  
+
+- Updates SelectField buttons and dropdown panels.
+
+</Steps>
+
+## Example theme
+
+Here's the example theme you might end up with after following the steps above. 
+
+```tsx
+//embeddable.theme.ts
+
+export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+
+    const myTestStyles: DeepPartial<Theme> = {
+        styles: {
+            '--em-sem-text': '#000' 
+            '--em-sem-text--muted': '#888'  
+            '--em-sem-background': '#fff'
+            '--em-sem-background--neutral': '#ccc' 
+            '--em-card-border-radius': '0px'  
+            '--em-selectfield-trigger-border-radius': '0px'
+            '--em-selectfield-content-border-radius': '0px'  
+            '--em-core-font-family--base': 'Open Sans'
+        }
+    }
+
+    return defineTheme(parentTheme, myTestStyles) as Theme;
+};
+```
+
+## Refining individual components
+
+Once the basics are in place, you can start making more specific adjustments. Most teams do this gradually as they get familiar with the system.
+
+A few tips to help you dig deeper:
+
+- **Inspect elements in the browser** to see exactly which component tokens a UI part is using. This is the fastest way to learn what controls what.
+- **Browse the [Component token lists](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/styles/global.css)** in the Remarkable UI repo to understand everything that can be customized for each component.
+- **Use [Storybook](https://remarkable-ui.storybook.embeddable.com/)** to preview components in isolation and test different styling overrides.
+- **Refer to the Figma files** (coming soon) for naming, hierarchy, and intended design behaviour—Figma and the token structure are tightly aligned.
+
+With these tools, you can fine-tune styles on a per-component basis and get as granular as you need, without losing the consistency provided by your broader theme.
+

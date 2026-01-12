@@ -1,0 +1,12 @@
+{
+  "introduction": "Introduction",
+  "theming": "Theming",
+  "theme-welcome": {
+    "display": "hidden"
+  },
+  "theme-upgrading": {
+    "display": "hidden"
+  },
+  "styling-custom-canvas": "Style Custom Canvas",
+  "patch-notes": "Patch Notes"
+}

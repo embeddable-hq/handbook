@@ -1,7 +1,7 @@
 {
-  "name": "nextra-docs-template",
+  "name": "embeddable-handbook",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "Embeddable Handbook",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,15 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+    "url": "git+https://github.com/embeddable-hq/handbook.git"
   },
-  "author": "Shu Ding <g@shud.in>",
+  "author": "Team Embeddable",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/embeddable-hq/handbook/issues"
   },
   "homepage": "https://github.com/embeddable-hq/handbook#readme",
   "dependencies": {
+    "@inkeep/agents-ui": "^0.15.4",
     "@inkeep/cxkit-react": "^0.5.76",
     "next": "^13.5.11",
     "next-sitemap": "^4.2.3",
