@@ -1,6 +1,7 @@
 {   
     "introduction": "Introduction",
     "quick-start": "Quick start guide",
+    "token-reference": "Token list",
     "core-tokens": "Core tokens",
     "semantic-tokens": "Semantic tokens",
     "component-tokens": "Component tokens"
