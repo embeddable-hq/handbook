@@ -137,7 +137,61 @@ declare module 'react' {
 This code ensures the `<em-beddable>` tag is recognized by TypeScript,
 and that you get correct type-checking on its props.
 
----
+## Embedding in an Angular App
+
+In Angular, you can use the `<em-beddable>` element in your templates. For example:
+
+```html
+<em-beddable
+  token=" eyJhbGciOiJI..."
+></em-beddable>
+```
+
+Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+
+```html
+<script
+  type="module"
+  src="https://embed.embeddable.com/js/v1/?region=<region>">
+</script>
+```
+
+Learn more about `region` [here](/deployment/deployment-regions).
+
+Learn how to generate a `token` [here](/deployment/tokens-api).
+
+Angular by default sanitizes unknown attributes on elements, which can interfere with passing attributes to your embeddable (eg it may remove the `client-context` attribute). There are several ways to work around this, but we recommend either using Angular's [DomSanitizer](https://angular.io/api/platform-browser/DomSanitizer) to bypass security for the specific attributes you need, or creating a custom directive to handle setting the attributes on the `<em-beddable>` element, like this:
+
+```ts
+// App.ts
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  imports: [RouterOutlet],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  selector: 'app-root',
+  templateUrl: './app.html',
+})
+export class App {
+  /* Methods */
+  protected readonly clientContext = signal(
+    JSON.stringify({ theme: 'light' })
+  );
+}
+```
+
+```html
+<!-- app.html -->
+<!-- ... -->
+<em-beddable
+  token="eyJhbGciOi..."
+  [attr.client-context]="clientContext()"
+  style="width: 100%">
+</em-beddable>
+<!-- ... -->
+```
+
 
 ## Embedding in a Vue App
 
@@ -174,7 +228,7 @@ Learn more about `region` [here](/deployment/deployment-regions).
 
 Learn how to generate a `token` [here](/deployment/tokens-api).
 
----
+Vue by default sanitizes user input, which can interfere with passing attributes to your embeddable (eg it may remove values you're passing to the `client-context` attribute). To avoid this, Vue offers [several methods to bind attributes safely](https://v2.vuejs.org/v2/guide/security).
 
 ## Common Pitfalls
 
