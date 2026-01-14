@@ -96,21 +96,21 @@ You can create presets to switch between different context objects in the no-cod
 # src/embeddable/presets/client-contexts.cc.yml
 - name: United States
   clientContext:
-    currency: 'dollar'
-    currencySymbol: '$'
-    flag: '🇺🇸'
-    language: 'english'
-    name: 'United States'
+    currency: "dollar"
+    currencySymbol: "$"
+    flag: "🇺🇸"
+    language: "english"
+    name: "United States"
   canvas:
     background: "#fff"
 
 - name: France
   clientContext:
-    currency: 'euro'
-    currencySymbol: '€'
-    flag: '🇫🇷'
-    language: 'français'
-    name: 'France'
+    currency: "euro"
+    currencySymbol: "€"
+    flag: "🇫🇷"
+    language: "français"
+    name: "France"
   canvas:
     background: "#fff"
 ```
@@ -118,6 +118,26 @@ You can create presets to switch between different context objects in the no-cod
 Each entry shows up as a selectable context in your dashboards in your Embeddable workspace. Switching contexts updates your components’ `clientContext` prop immediately.
 
 ---
+
+## Testing Client-Side Variables
+
+You can also send values to your variables in Embeddable from your client application ([learn more](/deployment/interactivity#pass-in-and-update-variables)). To simulate this in the no-code builder, you can add lines to your `client-contexts.cc.yml` file like so:
+
+```yaml
+- name: United States
+  clientContext:
+    currency: 'dollar'
+    currencySymbol: '$'
+  variables:
+    currency: USD
+
+- name: France
+  clientContext:
+    currency: 'euro'
+    currencySymbol: '€'
+  variables:
+    currency: EUR
+```
 
 ## Example Use Case: Localization
 
