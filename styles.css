@@ -23,6 +23,10 @@ ol > li.nx-my-2 {
 }
 
 .nextra-content a.nx-text-primary-600,
-.nextra-content a.nx-text-primary-700 {
+.nextra-content a.nx-text-primary-700, a.nx-text-primary-800 {
   color: var(--nextra-primary);
+}
+
+a.nx-bg-primary-100 {
+  background-color: #E1E4F8;
 }
