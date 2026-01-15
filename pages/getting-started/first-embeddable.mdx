@@ -50,6 +50,8 @@ Build your dashboard by adding components to the canvas.
 
 ### **Add Interactivity**
 
+Interactivity allows user interaction with one component to affect the data shown in another component.  E.g. choosing a value from a dropdown can, for example, affect the data loaded in the charts in the rest of the dashboard.
+
 Adding interactivity is quick and easy. 
 
 <VideoComponent
@@ -58,16 +60,17 @@ Adding interactivity is quick and easy.
     height="746"
 />
 
-1. Click **Add component**, choose **Date Range Select Field**, then hit **Save**.  
+1. Click **Add component**, choose **Date Range Select Field**, then hit **Save** to add it to your canvas.  
 
 <Callout emoji="⚡️">
 In the right-hand Variables panel in the Builder, you’ll see a new variable appear: **date-range value**. Variables store outputs from interactive components (like date pickers) and can be passed around the dashboard.
 </Callout>
 
+Let's now link that variable to our Donut Chart (as shown in video above, and described below).
+
 2. Edit your **Donut Chart**.  
 3. Click **Filter** (under the Dataset input) and, from the dropdown, choose the **Signed up at** Dimension.  
-4. Next to the filter operator (“In date range”), click the **link** icon. 
-5. Select the **date-range value** variable, then hit **Save**.
+4. Next to the filter operator (“In date range”), click the **link** icon, select the **date-range value** variable, then hit **Save**.
 
 </Steps>
 
@@ -77,7 +80,7 @@ In the right-hand Variables panel in the Builder, you’ll see a new variable ap
 
 ### Embed your dashboard
 
-As a final step, embed your dashboard using the `embedding-preview` script. 
+As a final step, embed your dashboard using the [embedding-preview](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs) script. Steps described below:
 
 <Steps>
 
@@ -87,19 +90,23 @@ As a final step, embed your dashboard using the `embedding-preview` script.
 2. Enter a simple **description** and click **'Save new version'**. 
 
 ### Publish the dashboard
-3. Click the **'Publish'** button in the top bar. 
+3. Click the **'Publish'** button. 
 4. Select the **'Production'** environment (the green box). 
-5. Grab your **API Key** and **Embeddable ID** from the **'How to embed'** section at the bottom of the modal. 
-6. Click **'Publish'** to publish your saved version. 
+5. Click **'Publish'** to publish your saved version. 
+6. Grab your **API Key** and **Embeddable ID** from the **'View instructions'** section at the bottom of the modal. 
 
 ### Test embedding
-7. Head to your code repo, open `embedding-preview.cjs` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs)).  
+7. Head to your code repo, open `embedding-preview.cjs` (in your downloaded repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs#L5-L9)).  
 8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard. Then run:  
 
    ```bash
    node src/embeddable.com/scripts/embedding-preview.cjs
    ```
 9. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
+
+<Callout emoji="🥳">
+**Notice:** Embeddable doesn't use iframes.  It uses a [web-component](/deployment/embedding) that embeds as part of your DOM.
+</Callout>
 
 </Steps>
 
