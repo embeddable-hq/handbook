@@ -10,21 +10,31 @@
 
 ### Download our Boilerplate Repo
 
-Download or clone our boilerplate repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate). This includes the **full suite** of **Remarkable Pro components**, our production-ready component library. 
+Download or clone our boilerplate repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate). 
 
 ```bash
 git clone https://github.com/embeddable-hq/remarkable-pro-boilerplate
 ```
+
+This includes:
+ - the **full suite** of **Remarkable Pro components**, our production-ready component library. 
+ - a set of **sample data models** for you to play with.
+
 ### Install Dependencies
 
 Navigate into the cloned directory and install the required dependencies:
 
 ```bash
+cd remarkable-pro-boilerplate
+
 npm i
 ```
+
+If you don't have `npm`, this means you need to install Node.js first ([here](https://nodejs.org/en/download))
+
 ### Set Your Region
 
-In your `embeddable.config.ts` file, depending on [your region](/deployment/deployment-regions), uncomment either:
+In your [embeddable.config.ts](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.config.ts#L7-L15) file, depending on [your region](/deployment/deployment-regions), uncomment either:
 ```js
 region: 'US',
 ```
@@ -42,6 +52,9 @@ Run the following command to build your code bundle:
 ```bash
 npm run embeddable:build
 ```
+
+This bundles up your components and models, ready to be pushed to your Embeddable workspace.
+
 </Steps>
 
 ## Next steps

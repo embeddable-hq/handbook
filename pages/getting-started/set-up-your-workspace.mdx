@@ -17,21 +17,21 @@ On your workspace homepage, look for your **API Key**. You’ll need this shortl
 
 ### Push the Code Bundle
 
-Open a terminal in the directory of your [Boilerplate Repo](/getting-started/download-repo) and run:
+Open a terminal in the directory of your [Boilerplate Repo](/getting-started/download-repo) and run the following to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
 
 ```bash
 npm run embeddable:login
 ```
-Then run:
+Then run the following to push the code bundle (from the [previous step](/getting-started/download-repo#set-your-region)) to your workspace:
 
 ```bash
 npm run embeddable:push
 ```
 
-If you want to include a message (or pass your API key and email explicitly), you can run:
+If you later want to do this via CI/CD, you can use the following:
 
 ```bash
-npm run embeddable:push -- --api-key <API Key> --email <Email> --message <Message>
+npm run embeddable:push -- --api-key <API Key> --email <Email> --message "<Message>"
 ```
 For example:
 ```bash
