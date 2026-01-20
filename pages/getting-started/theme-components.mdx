@@ -4,7 +4,7 @@
 
 **Switch between themes** inside the no-code builder:
 
-1. Open the dashboard you created in [step 3](/getting-started/first-embeddable), or create a new one.
+1. Open the dashboard you created in [the previous step](/getting-started/first-embeddable), or create a new one.
 2. In the top bar, toggle on **Preview** mode. 
 3. In the **View as** dropdown, select **Dark Theme** under *Client Context*. 
 
@@ -14,64 +14,9 @@
     height="664"
 />
 
-This interaction is powered by two things: the **client context** and **theming**.
-
-## Client Context
-[Client context](/development/client-context) lets you pass dynamic values to your dashboards at runtime based on the user, such as:
-- **client-specific theming** (e.g. color schemes)
--  **localization** (e.g. language)
-- **dark/light mode**.
-
-**For example**
-
-```js
-<em-beddable
-  token="${json.token}"
-  client-context="${JSON.stringify({ 
-    colors: ['#555d8e','#566f94','#56819b'],
-    font: 'Noto Serif',
-    borderRadius: 10
-  })}"
-></em-beddable>
-```
-
-**Things to notice**
-- You can pass in anything you like. 
-- Client Context is made available to **both your components and your theme**, enabling you to customise dashboards dynamically for each user.
-- You can define **Client Context presets** to switch between context objects in the builder (as shown in the video above). These live in the [presets folder](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/presets) of your repo.
-
-## Theming
-
-The [theme](/component-libraries/remarkable-pro/theming) is a structured **TypeScript object** that drives your dashboard’s appearance and behaviour. 
-
-You can define as many themes as you like (e.g. light/dark mode or even a single theme per customer). One change to your theme updates the entire interface instantly.
-
-**For example**
-
-```ts
-//embeddable.theme.ts
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-
-  return defineTheme(parentTheme, {
-    charts: {
-        backgroundColors: clientContext.colors, //defined dynamically based on the client context
-        borderColors: ['#555d8e','#566f94','#56819b'] //hard-coded in the theme
-    }
-  });
-
-};
- 
-export default themeProvider;
-
-```
-
-**Things to notice**
-- Your **client contexts** are automatically passed into [the theme](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.theme.ts) via the `themeProvider`.
-- The `themeProvider` has one job: take the incoming **client context** and decide which values to apply to the **theme**.
-- The theme shape used in the example comes from [Remarkable Pro](/component-libraries/remarkable-pro/theming), Embeddable's ready-to-use component suite. 
-
-For an in-depth look at **themes** click [here](/development/theming).
+This interaction is powered by two things: 
+ - **Theming**, which allows you to customise the look and feel of all your components.  Learn more [here](/component-libraries/remarkable-pro/theming).
+ - **Client context**, which allows you to apply behaviour to different clients (e.g. customize the look-and-feel or language for different end-users).  Learn more about Client Context [here](/development/client-context) or click [here](/component-libraries/remarkable-pro/i18n) for Internationalisation (i18n).
 
 ## Next steps
 
