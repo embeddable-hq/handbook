@@ -7,22 +7,41 @@
 
 ## How It Works
 
-Let's imagine you have a **"prod"** environment and a **"staging"** environment and each environment has two databases:
+Let's imagine you have a **"prod"** environment and a **"staging"** environment. Each environment defines mappings for the same two logical data sources.
 
-```yml
-prod:
-  primary_db: prod-postgres
-  warehouse: prod-bigquery
+### Example: Prod and Staging Environments
 
-staging:
-  primary_db: staging-postgres
-  warehouse: staging-bigquery
-```
+#### Prod environment
 
-In this setup, your data models **don't** need to know about `prod-postgres`, `staging-postgres`, etc.  
+The **prod** environment contains two data sources:
 
-They just need to know that they can either connect to the `primary_db` or the `warehouse`.  And then the chosen **environment** will automatically connect the model to the appropriate database.
+**Database 1**
 
+- `data_source`: `primary_db`
+- `connection`: `prod-postgres`
+
+**Database 2**
+
+- `data_source`: `warehouse`
+- `connection`: `prod-bigquery`
+
+#### Staging environment
+
+The **staging** environment defines the same logical data sources, but maps them to different connections:
+
+**Database 1**
+
+- `data_source`: `primary_db`
+- `connection`: `staging-postgres`
+
+**Database 2**
+
+- `data_source`: `warehouse`
+- `connection`: `staging-bigquery`
+
+Because the data_source names are the same across environments, no model changes are required when switching environments. The active **environment** determines which connections are used at query time.
+
+To set this up, follow the steps below, starting with defining your database connections.
 <Steps>
 
 ### **Define Connections**  
