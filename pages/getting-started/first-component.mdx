@@ -20,14 +20,12 @@ Every component has two parts: a **standard React component** and an Embeddable-
 
 
 <CodeContainer>
+
 ```ts
 // src/embeddable.com/components/ExampleDropdown/index.tsx
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import Spinner from '../Spinner';
-import Error from '../Error';
-import { inputStyles } from '../styles';
-import { Dimension, DataResponse } from '@embeddable.com/core';
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Dimension, DataResponse } from "@embeddable.com/core";
 
 type ChangeCallback = (chosen: string | null) => void;
 
@@ -56,15 +54,15 @@ const DropdownSelect: React.FC<Props> = ({ defaultValue, onChange, results, valu
     onChange(newValue === NO_VALUE ? null : newValue);
   };
 
-  // show a spinning loader until we've retrieved the list of values to show from the database.
-  if (isLoading) return <Spinner />;
+  // show a loading indicator until we've retrieved the list of values to show from the database.
+  if (isLoading) return <span> loading... </span>;
 
   // in case there's an error retrieving the list of values, show the error.
-  if (error) return <Error msg={error} />;
+  if (error) return <span> Error! Message: {error} </span>;
 
   // use a standard HTML `select` input for the dropdown.
   return (
-    <select style={inputStyles} value={value} onChange={handleChange}>
+    <select value={value} onChange={handleChange}>
       <option value={NO_VALUE}>--no value--</option>
       {data.map((option, index) => (
         <option key={index} value={option[values.name]}>
@@ -87,6 +85,7 @@ This is just a regular React `<select>` component. Nothing Embeddable-specific y
 2. Paste the following code and save:
 
 <CodeContainer>
+
 ```ts
 // src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
 
