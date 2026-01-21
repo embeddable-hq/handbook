@@ -1,0 +1,72 @@
+# Formatting
+
+When displaying data, you often want control over **how values are presented**, not just the raw numbers.  
+For example:
+- Should small numbers be rounded or shown in full?
+- Should a currency symbol be displayed?
+- Should large values be abbreviated (e.g. `1.2k`, `3.4M`)?
+- Should text be truncated or styled differently?
+
+Remarkable provides formatting controls at **two levels**:
+- In the **no-code builder** (per dashboard / chart)
+- In the **data model** (as sensible defaults)
+
+## Formatting options in the builder
+
+The formatting options shown in the no-code builder depend on the **input type** of the field (e.g. text, number, time).
+
+This ensures users only see options that are relevant.
+
+**Text**
+- Display name
+- Prefix
+- Suffix
+- Maximum number of characters
+
+**Number**
+- Display name
+- Prefix
+- Suffix
+- Decimal places
+- Currency
+- Abbreviate large numbers (e.g. `1.2k`, `3.4M`)
+
+**Time**
+- Granularity
+- Display name
+- Prefix
+- Suffix
+
+## Data model defaults (meta)
+
+Some formatting can be defined at the **data model level** using `meta`.  
+These values act as **defaults** in the builder and are applied automatically.
+
+**Example**
+
+```yaml
+measures:
+  - name: total_revenue
+    sql: SUM(revenue)
+    type: number
+    meta:
+      decimalPlaces: 2
+      currency: USD
+      abbreviateLargeNumber: true
+```
+
+### How this behaves
+
+- The builder will:
+  - Default to **2 decimal places**
+  - Treat the value as **USD**
+  - Abbreviate large values (e.g. `1.25M`)
+- Users can still override these settings in the builder.
+- Manual overrides always take precedence over `meta`.
+
+### Things to notice
+
+- `meta` defines **intent and defaults**, not hard rules
+- Builder overrides always win
+- Removing a manual override reverts to the model’s `meta`
+- This keeps formatting consistent by default, while remaining flexible
