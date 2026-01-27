@@ -1,0 +1,287 @@
+# Prerequisites for pre-aggregations
+
+Before enabling pre-aggregations, it’s recommended to review the performance of these queries. In many cases, straightforward database optimisations are sufficient, and pre-aggregations may not be required.
+
+This guide highlights the areas that most commonly affect query performance and are worth reviewing **before** introducing pre-aggregations.
+
+## Indexes
+
+Indexes are the single most effective way to improve query performance. They allow the database to locate rows efficiently without scanning the entire table.
+
+### What is an index?
+
+Without an index, the database scans every row to find matches:
+
+```
+events table
+-------------------------
+id | account_id | status
+1  | 42         | active
+2  | 17         | active
+3  | 42         | inactive
+4  | 99         | active
+```
+
+```sql
+WHERE account_id = 42
+```
+
+**Things to notice:**
+
+- Every row is checked. 
+
+- With an index on `account_id`, the database uses a lookup structure to jump directly to matching values instead of scanning rows one by one.
+
+- Indexes are **sorted**, which allows the database to navigate efficiently.
+
+#### Conceptual example
+
+Assume an index on `account_id` with these values:
+
+```
+12, 17, 42, 42, 58, 73, 99
+```
+
+```
+                [42]
+              /      \
+         [17]          [73]
+        /    \        /    \
+     [12]   [42]   [58]   [99]
+```
+
+```sql
+WHERE account_id = 58
+```
+
+- The database follows the sorted structure and reaches `58` in a small number of comparisons.
+
+- The database does **not** scan values sequentially.
+
+#### Why this matters
+
+- Full table scans check every row
+- Index lookups follow a small number of comparisons
+- Lookup cost remains predictable as data grows
+
+### Which columns should be indexed?
+
+Index columns commonly used in:
+
+#### Filters
+
+```sql
+WHERE account_id = 42 AND status = 'active'
+```
+
+Index:
+
+- `account_id`
+- `status` *(if selective)*
+
+#### Joins
+
+Always join on indexed columns.
+
+```sql
+JOIN users ON events.user_id = users.id
+```
+
+Index:
+
+- `events.user_id`
+- `users.id`
+
+#### Grouping
+
+```sql
+GROUP BY account_id, event_date
+```
+
+Index:
+
+- `account_id`
+- `event_date`
+
+#### Composite indexes
+
+If filters commonly appear together:
+
+```sql
+WHERE account_id = 42 AND created_at >= ?
+```
+
+Create a composite index:
+
+```
+(account_id, created_at)
+```
+
+Column order should match common filter patterns.
+
+### Index pitfalls
+
+#### Too many indexes
+
+- Inserts and updates become slower
+- Storage usage increases
+
+Each index must be maintained as data changes.
+
+#### Indexing low-value columns
+
+Indexes are effective only when they significantly reduce the number of rows scanned.
+
+Avoid indexing columns with very few distinct values, such as:
+
+- Boolean flags
+- Status columns where most rows share the same value
+
+If a filter matches most rows, an index adds overhead without improving performance.
+
+#### Breaking index usage
+
+Functions and casts prevent index usage as it changes the indexed value, forcing the database to evaluate every row instead of using the index.
+
+```sql
+WHERE CAST(user_id AS INTEGER) = 42
+```
+
+```sql
+WHERE LOWER(email) = 'test@example.com'
+```
+
+### Primary key vs explicit indexes
+
+- **Primary key index**
+    - Created automatically
+    - Optimised for point lookups
+    - Rarely helps aggregation queries
+- **Explicit indexes**
+    - Created using `CREATE INDEX`
+    - Used for filters, joins, and groupings
+
+Pre-aggregations typically benefit from explicit indexes, not from the primary key.
+
+## Partitioning Large Tables
+
+Partitioning becomes useful as tables grow and queries filter by time.
+
+### What is partitioning?
+
+Partitioning splits a large table into smaller physical segments, most commonly by time.
+
+#### Example: partitioning a 1M-row table
+
+Assume an `events` table with **1,000,000 rows** spanning one year.
+
+Without partitioning:
+
+```
+events (1,000,000 rows)
+└── All data stored together
+```
+
+A query like:
+
+```sql
+WHERE created_at >= '2024-12-01'
+```
+
+Must scan a large portion of the table.
+
+---
+
+With monthly time-based partitioning:
+
+```
+events
+├── events_2024_01 (~83k rows)
+├── events_2024_02 (~83k rows)
+├── ...
+├── events_2024_12 (~83k rows)
+```
+
+The same query scans only:
+
+```
+events_2024_12
+```
+
+- All other partitions are skipped.
+
+- This behaviour is known as **partition pruning**.
+
+#### Why this matters
+
+- Far fewer rows are scanned
+- Less data is read from disk
+- Performance remains predictable as data grows
+
+Partitioning is especially effective when queries consistently filter by time.
+
+#### Best practices
+
+- Partition by time
+- Use daily or monthly partitions
+- Automate partition creation and cleanup
+
+## Review Query Execution Plans
+
+Indexes and partitioning only help **if the database actually uses them**.
+
+Query execution plans show how a query is executed and are the most reliable way to understand where time and resources are spent.
+
+Most databases support:
+
+```sql
+EXPLAIN <query>
+```
+
+Use execution plans to:
+
+- Confirm indexes are being used
+- Verify partition pruning
+- Identify full table scans
+- Validate performance improvements
+
+### Red flags
+
+```
+Seq Scan on events
+Filter: (created_at >= '2024-01-01' AND status = 'active')
+```
+
+A **sequential scan** means:
+
+- The entire table is read
+- Filters are applied after scanning all rows
+- Query cost grows linearly as the table grows
+
+On large tables, this usually indicates:
+
+- Missing or unusable indexes
+- Functions preventing index usage
+- Partitioning not being applied
+
+Sequential scans are expected on small tables. They are problematic on large, frequently queried tables.
+
+### Good signs
+
+```
+Index Scan using idx_events_created_at on events
+Index Cond: (created_at >= '2024-01-01')
+```
+
+This indicates:
+
+- Indexes are being used
+- Filters are applied early
+- Fewer rows are scanned
+- Performance scales predictably
+
+Execution plans should be reviewed before and after changes to confirm impact.
+
+## Next Steps
+
+Once you have these optimisations in place to improve query performance, the next step is to use [pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations) to further speed up your queries.
