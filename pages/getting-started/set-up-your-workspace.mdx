@@ -2,20 +2,9 @@
 
 <Steps>
 
-### Log in to Embeddable
-
-Depending on which region your deployment is in, login to the appropriate workspace:
-
-- US: [https://app.us.embeddable.com](https://app.us.embeddable.com)
-- EU: [https://app.eu.embeddable.com](https://app.eu.embeddable.com)
-
-### Retrieve Your API Key
-
-On your workspace homepage, look for your **API Key**. You’ll need this shortly to push code from your local machine to your workspace.
-
 ### Push the Code Bundle
 
-Open a terminal in the directory of your [Boilerplate Repo](/getting-started/download-repo) and run the following to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
+Open a Terminal in the local directory of your [boilerplate repository](/getting-started/download-repo) and run the following command to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
 
 ```bash
 npm run embeddable:login
@@ -41,9 +30,31 @@ To learn more about the push command and its options, see [Push Command](/develo
 
 After the push succeeds:
 
-- Go back to your workspace page.
+- Go back to your workspace page ([US](https://app.us.embeddable.com) or [EU](https://app.eu.embeddable.com)).
 - Refresh the page.
-- You should see a **Create new Embeddable** button, which means your workspace is now set up.
+- You should see two **[Example]** Embeddable dashboards and a **Create new embeddable** button, which means your workspace is now set up.
+
+<ImageGrid images={["/img/starter-embeddables.png"]}/>
+
+If you make changes to the code in your [boilerplate repository](/getting-started/download-repo), you'll need to run the `embeddable:build` and `embeddable:push` steps above again, to see them reflected in your workspace.
+
+### Sample Embeddable dashboards
+
+Have a look at the sample dashboards in your workspace. The default view is **builder mode** (see screenshot below) for building and editing your dashboards (we'll cover building dashboards on the [next page](/getting-started/first-embeddable)). 
+
+For now, click **"Preview"**, in the top bar, to switch to **preview mode**, where you can try interacting with the dashboard:
+
+<ImageGrid images={["/img/click-preview.png"]}/>
+
+You can use the **"View as"** dropdown to switch between different [themes](/getting-started/theme-components) (in this case, light and dark mode) and to view the dashboard from the perspective of different users (learn more about row-level security [here](/data-modeling/row-level-security)).
+
+<ImageGrid images={["/img/view-as.png"]}/>
+
+The second example dashboard uses [Custom Canvas](/dashboards/custom-canvas), which allows your users to build their own dashboards.
+
+<ImageGrid images={["/img/example-custom-canvas.png"]}/>
+
+Next up, we'll explore **builder mode**.
 
 </Steps>
 
