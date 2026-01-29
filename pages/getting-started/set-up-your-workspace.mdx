@@ -1,15 +1,13 @@
 # Set up your Workspace
 
-<Pill>Takes ~5 mins</Pill>
-
 <Steps>
 
 ### Log in to Embeddable
 
-Depending on which region your deployment is in, login to the appropriate **workspace**:
+Depending on which region your deployment is in, login to the appropriate workspace:
 
-   - US: [https://app.us.embeddable.com](https://app.us.embeddable.com)
-   - EU: [https://app.eu.embeddable.com](https://app.eu.embeddable.com)
+- US: [https://app.us.embeddable.com](https://app.us.embeddable.com)
+- EU: [https://app.eu.embeddable.com](https://app.eu.embeddable.com)
 
 ### Retrieve Your API Key
 
@@ -22,32 +20,27 @@ Open a terminal in the directory of your [Boilerplate Repo](/getting-started/dow
 ```bash
 npm run embeddable:login
 ```
-Then run the following to push the code bundle (from the [previous step](/getting-started/download-repo#set-your-region)) to your workspace:
+
+Next, bundle the boilerplate repository, by running:
+
+```sh
+npm run embeddable:build
+```
+
+Then run the following to push the code bundle to your workspace:
 
 ```bash
 npm run embeddable:push
 ```
 
-If you later want to do this via CI/CD, you can use the following:
+This uploads your **data models** and **components** to your team workspace so you can use them in the Embeddable platform to build a dashboard.
 
-```bash
-npm run embeddable:push -- --api-key <API Key> --email <Email> --message "<Message>"
-```
-For example:
-```bash
-npm run embeddable:push -- --api-key c26624b --email my@email.com --message "My first components and models"
-```
-
-Note: if you're using Powershell, you may need to put the `--` in double quotes, like so:
-```bash
-npm run embeddable:push "--" --api-key c26624b --email my@email.com --message "My first components and models"
-```
-
-This uploads your **data models** and **components** to your team **workspace** so you can use them in the Embeddable platform to build a dashboard. 
+To learn more about the push command and its options, see [Push Command](/development/pushing-code#push-command).
 
 ### Refresh Your Workspace
 
 After the push succeeds:
+
 - Go back to your workspace page.
 - Refresh the page.
 - You should see a **Create new Embeddable** button, which means your workspace is now set up.
@@ -57,5 +50,9 @@ After the push succeeds:
 ## Next Steps
 
 <CardGrid>
-  <LinkCard title="Build your first Embeddable" href="/getting-started/first-embeddable" icon="3️⃣"/> 
+  <LinkCard
+    title="Build your first Embeddable"
+    href="/getting-started/first-embeddable"
+    icon="3️⃣"
+  />
 </CardGrid>
