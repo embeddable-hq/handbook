@@ -4,7 +4,7 @@
 
 ### Push the Code Bundle
 
-Open a Terminal in the local directory of your [boilerplate repository](/getting-started/download-repo) and run the following command to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
+Open a Terminal in the local directory of your downloaded [boilerplate repository](/getting-started/download-repo) and run the following command to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
 
 ```bash
 npm run embeddable:login
@@ -22,7 +22,7 @@ Then run the following to push the code bundle to your workspace:
 npm run embeddable:push
 ```
 
-This uploads your **data models** and **components** to your team workspace so you can use them in the Embeddable platform to build a dashboard.
+This uploads your [data models](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/models/cubes) and [components](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.config.ts#L20) to your team workspace so you can use them in the Embeddable platform to build a dashboard.
 
 To learn more about the push command and its options, see [Push Command](/development/pushing-code#push-command).
 
@@ -36,7 +36,7 @@ After the push succeeds:
 
 <ImageGrid images={["/img/starter-embeddables.png"]}/>
 
-If you make changes to the code in your [boilerplate repository](/getting-started/download-repo), you'll need to run the `embeddable:build` and `embeddable:push` steps above again, to see them reflected in your workspace.
+As you add models and components to your **boilerplate repository**, you'll need to run the `embeddable:build` and `embeddable:push` steps above again, to see them reflected in your workspace.
 
 ### Sample Embeddable dashboards
 
@@ -50,7 +50,7 @@ You can use the **"View as"** dropdown to switch between different [themes](/get
 
 <ImageGrid images={["/img/view-as.png"]}/>
 
-The second example dashboard uses [Custom Canvas](/dashboards/custom-canvas), which allows your users to build their own dashboards.
+The second example dashboard uses [Custom Canvas](/dashboards/custom-canvas), which allows your users to build their own dashboards.  Again, click **Preview** to try it out:
 
 <ImageGrid images={["/img/example-custom-canvas.png"]}/>
 
