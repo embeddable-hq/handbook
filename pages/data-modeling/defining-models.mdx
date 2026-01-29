@@ -110,7 +110,7 @@ You can also define other parameters, including [joins](./joins) between models 
 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 
-- `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/pre-aggregations). Note that pre-aggregations are **not** currently supported in the **Data Model Editor**.  To use them, please export your data models and add them to your code repository (learn more [here](/data-modeling/getting-setup#defining-models-in-code)).
+- `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/level-2-cache/pre-aggregations). Note that pre-aggregations are **not** currently supported in the **Data Model Editor**.  To use them, please export your data models and add them to your code repository (learn more [here](/data-modeling/getting-setup#defining-models-in-code)).
 
  - `views`: Views are very useful if you want to create different subsets of your cube models for different use-cases, or if you want fine-grained control of which join path should be used when.  Learn more [here](https://cube.dev/docs/product/data-modeling/concepts#views).
 
