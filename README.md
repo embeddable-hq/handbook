@@ -40,6 +40,8 @@ Then, run `pnpm dev` to start the development server and visit `https://localhos
 
 Resize images and videos to be no more than 1250px wide.
 
+To compress (ideally to under 5mb per video) use a tool like [Handbrake](https://handbrake.fr/).  Suggested Preset: Web->Creator
+
 ## Testing final app
 
 Run `pnpm build` to build the app
