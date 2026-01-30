@@ -8,7 +8,7 @@ const CodeContainer = ({ children, language }) => {
     <>
       <div className={"code-container"}>
         <div
-            style={{ maxHeight: isExtended ? "none" : "300px", overflow: "scroll" }}
+            style={{ maxHeight: isExtended ? "none" : "205px", overflow: "scroll" }}
         >
             {children}
         </div>

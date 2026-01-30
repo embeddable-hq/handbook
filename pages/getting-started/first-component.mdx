@@ -12,8 +12,15 @@ Every component has two parts: a **standard React component** and an Embeddable-
 
 ### Define your React component
 
-1. Inside `src/embeddable.com` in your [repo](/getting-started/download-repo), create a folder called `components`.
-2. Inside this folder, create a new folder called `ExampleDropdown` and a file called `index.tsx`.  
+1. Inside `src/embeddable.com/components` in your [repo](/getting-started/download-repo), create a new folder called `ExampleDropdown`
+```bash
+mkdir src/embeddable.com/components/ExampleDropdown
+```
+2. And create file called `index.tsx`.  
+```bash
+touch src/embeddable.com/components/ExampleDropdown/index.tsx
+```
+
 3. Paste the code below and save.
 
 <CodeContainer>
@@ -78,23 +85,27 @@ This is just a regular React `<select>` component. Nothing Embeddable-specific y
 
 ### Define your companion `.emb` file
 
-1. In the `ExampleDropdown` folder, create a file called `ExampleDropdown.emb.ts`. 
+1. In the `ExampleDropdown` folder, create a second file called `ExampleDropdown.emb.ts`. 
+```bash
+touch src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
+```
 2. Paste the following code and save:
 
 <CodeContainer>
 
 ```ts
 // src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
-
+ 
 import {
   EmbeddedComponentMeta,
   Inputs,
   defineComponent,
+  definePreview,
 } from '@embeddable.com/react';
-import { loadData, Value } from '@embeddable.com/core';
-
+import { loadData, Value, mockDimension, mockDataResponse } from '@embeddable.com/core';
+ 
 import Component from './index'; // the React component we've defined above
-
+ 
 export const meta = {
   name: 'ExampleDropdown', // this name must match the name of the file (before the `.emb.ts` part)
   label: 'Example Dropdown', // human readable name for the component
@@ -103,7 +114,7 @@ export const meta = {
   // the width and height (in px) that the component will default to when added to the canvas
   defaultWidth: 320, 
   defaultHeight: 50,
-
+ 
   // these are the inputs that the user of your component will be able to interact with
   inputs: [
     {
@@ -147,6 +158,21 @@ export const meta = {
     }]
 } as const satisfies EmbeddedComponentMeta;
 
+export const preview = definePreview(Component, {
+  values: mockDimension('country', 'string', { title: 'Country' }),
+  results: mockDataResponse(
+    ['country'],
+    [
+      ['US'],
+      ['GER'],
+      ['UK'],
+      ['FRA'],
+      ['SPA'],
+    ],
+  ),
+  onChange: () => null
+});
+ 
 // `defineComponent` is what tells Embeddable that this is a component
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
