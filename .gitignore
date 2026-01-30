@@ -5,3 +5,4 @@ sitemap-*.xml
 robots.txt
 .env
 .DS_Store
+package-lock.json

@@ -1,11 +1,13 @@
 # Build your first Embeddable
 
-Create and deploy your first Embeddable dashboard.
+Create and embed your first Embeddable dashboard.
 
 <Callout emoji="💡">
   An **Embeddable** is an interactive dashboard that you embed in your web
   application.
 </Callout>
+
+This guide assumes you have already [set up your repo](/getting-started/download-repo) and [set up your workspace](/getting-started/set-up-your-workspace).
 
 <Steps>
 
@@ -17,28 +19,28 @@ On your workspace homepage, click **Create new Embeddable** to create a fresh da
 
 Datasets are how you access data on a dashboard.
 
-Your workspace is linked to our sample database.
+Your workspace is linked to our sample database and uses the sample [data models](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/models/cubes) that you pushed to your workspace from your boilerplate repository.
 
 <VideoComponent
-  src="/video/create-new-dataset-example.mp4"
-  width="1100"
-  height="746"
+  src="/video/add-a-dataset.mp4"
+  width="934"
+  height="720"
 />
 
 1. In the **Datasets Panel** in the bottom right, click the **+** icon.
-2. Name your dataset "**Daily Listens**" (or give it any other name).
+2. Name your dataset "**data**" (or give it any other name).
 3. Select **Daily Listeners Data** (or any other sample data model), then **Save**.
 
 ### Add a Donut Chart
 
 Build your dashboard by adding components to the canvas.
 
-<VideoComponent src="/video/create-pie-chart.mp4" width="1100" height="746" />
+<VideoComponent src="/video/add-pie.mp4" width="934" height="720" />
 
 1. Click **Add component**. Pick **Donut Chart**.
 2. In the edit panel, set **Dataset** to the dataset you just created.
 3. Select the **Measure** "# Total listens (Daily Listeners Data)" and the **Dimension** "Country (Daily Listeners Data)".
-4. Hit **Save**.
+4. Hit **Add to dashboard**.
 
 <Callout emoji="⚡️">
   **Bonus**: check the **console** in the right sidebar to see what's happening
@@ -52,12 +54,12 @@ Interactivity allows user interaction with one component to affect the data show
 Adding interactivity is quick and easy.
 
 <VideoComponent
-  src="/video/Add-interactivity-remarkable.mp4"
-  width="1100"
-  height="746"
+  src="/video/add-interactivity.mp4"
+  width="934"
+  height="720"
 />
 
-1. Click **Add component**, choose **Date-Range Picker - Presets**, then hit **Save** to add it to your canvas.
+1. Click **Add component**, choose **Date-Range Picker - Presets**, then hit **Add to dashboard** to add it to your canvas.
 
 <Callout emoji="⚡️">
   In the right-hand Variables panel in the Builder, you’ll see a new variable
@@ -79,7 +81,13 @@ Let's now link that variable to our Donut Chart (as shown in video above, and de
 
 ### Embed your dashboard
 
-As a final step, embed your dashboard using the [embedding-preview](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs) script. Steps described below:
+As a final step, test embedding your dashboard in a simple HTML page. Steps described below.
+
+<VideoComponent
+  src="/video/publish-version.mp4"
+  width="934"
+  height="720"
+/>
 
 <Steps>
 
@@ -97,19 +105,39 @@ As a final step, embed your dashboard using the [embedding-preview](https://gith
 
 ### Test embedding
 
-7. Head to your code repo, open `embedding-preview.cjs` (in your downloaded repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs#L5-L9)).
-8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard. Then run:
+7. Head to your code repo, open `src/embeddable.com/scripts/preview-in-html.cjs`.
+8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/preview-in-html.cjs#L5-L9)) with the values from your dashboard. Then run:
 
    ```bash
-   node src/embeddable.com/scripts/embedding-preview.cjs
+   node src/embeddable.com/scripts/preview-in-html.cjs
    ```
 
 9. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
 
 <Callout emoji="🥳">
-  **Notice:** Embeddable doesn't use iframes. It uses a
-  [web-component](/deployment/embedding) that embeds as part of your DOM.
+  **Notice:** If you "View page source" you can see that Embeddable doesn't use iframes. It uses a
+  [web-component](/deployment/embedding) that embeds directly as part of your DOM.
 </Callout>
+
+```html
+
+<!doctype html>
+<html>
+  <head>
+    <title>Embedabble</title>
+    <meta charset="utf-8" />
+    <script
+      type="module"
+      src="https://api.<region>.embeddable.com/js/v1/"
+    ></script>
+  </head>
+  <body>
+    <em-beddable token="..."></em-beddable>
+  </body>
+</html>
+```
+
+Learn more about embedding Embeddable dashboards [here](/deployment/embedding).
 
 </Steps>
 
