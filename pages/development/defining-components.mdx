@@ -182,6 +182,78 @@ export default defineComponent(Component, meta, {
 
 The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](./define-component-function) and [loadData](/development/loading-data).
 
+## Adding Component Previews
+
+Embeddable supports real-time previews for all components, **including any you create**. You will see these previews when you click the "Add Component" button in the dashboard builder.
+
+<ImageGrid width='100%' images={["/img/component-previews.png"]}/>
+
+To define your own components, you will need to **provide sample data** for the various inputs you've defined, especially any required inputs. To easily create sample data, you can use the mock data functions provided by the Embeddable core package.
+
+```ts
+// src/components/YourComponent/YourComponent.emb.ts
+import { mockDataResponse, mockDimension, mockMeasure } from '@embeddable.com/core';
+```
+
+To create sample data, you can use the `mockDimension` and `mockMeasure` functions to create mock dimensions and measures, and the `mockDataResponse` function to create a mock data response. You can keep these definitions in the `.emb.ts` file or create a separate sample data file to keep things organized.
+
+```ts
+// src/utils/sampledata.ts
+const dimensionName = 'country';
+const dimensionGroupName = 'category';
+const measureName = 'sales';
+
+const sampleData = {
+  dimension: mockDimension(dimensionName, 'string', { title: 'Country' });
+  dimensionGroup: mockDimension(dimensionGroupName, 'string', { title: 'Category' }),
+  measure: mockMeasure(measureName, 'number', { title: 'Sales' }),
+  const results1Measure2Dimensions = mockDataResponse(
+  [dimensionName, dimensionGroupName, measureName],
+  [
+    ['US', 'Cat 1', 120],
+    ['US', 'Cat 2', 130],
+
+    ['GER', 'Cat 1', 100],
+    ['GER', 'Cat 2', 110],
+
+    ['UK', 'Cat 1', 80],
+    ['UK', 'Cat 2', 95],
+
+    ['FRA', 'Cat 1', 70],
+    ['FRA', 'Cat 2', 60],
+
+    ['SPA', 'Cat 1', 55],
+    ['SPA', 'Cat 2', 35],
+  ],
+);
+};
+```
+
+To tell Embeddable you're creating a preview, you can use the `definePreview` function from the Embeddable React package:
+
+```ts
+// src/components/YourComponent/YourComponent.emb.ts
+import { definePreview } from '@embeddable.com/react';
+```
+
+To define the preview, you can call the `definePreview` function, passing in your component and an object containing the sample data for each input. Note that required inputs must be provided with sample data for the preview to work correctly. Optional components can be left out if desired, though in some cases they may affect the component preview.
+
+```ts
+// src/components/YourComponent/YourComponent.emb.ts
+export const preview = definePreview(Component, {
+  xAxis: sampleData.dimension,
+  segment: sampleData.dimensionGroup,
+  metric: sampleData.measure,
+  results: sampleData.results1Measure2Dimensions,
+  title: '',
+  showLabels: false,
+  enableDownloadAsCSV: false,
+  enableDownloadAsPNG: false,
+});
+```
+
+Best practice is to put this code below the component meta definition, but above the `export default defineComponent(...)` line.
+
 ## Extending Vanilla Components
 
 You can also **extend [existing components](/dashboards/starter-components)** like the Bar Chart or Pivot Table to add custom functionality. This allows you to leverage the existing UI while adding your own logic or data handling. There are two ways to do this:
