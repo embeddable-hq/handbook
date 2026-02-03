@@ -1,10 +1,54 @@
-# Set up your Workspace
+# Set up your workspace
+
+The [boilerplate repository](https://github.com/embeddable-hq/remarkable-pro-boilerplate) is the starting point for this guide. It includes:
+
+- the full suite of [Remarkable Pro](/component-libraries/remarkable-pro/introduction) components, our production-ready component library.
+- a set of sample [data models](/data-modeling/introduction) for you to play with.
 
 <Steps>
 
+### Download our Boilerplate Repo
+
+Clone our boilerplate repo to your machine using the git command:
+
+```bash
+git clone https://github.com/embeddable-hq/remarkable-pro-boilerplate
+```
+or download the repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate).
+
+### Install Dependencies
+
+Navigate into the cloned directory using your Terminal and install the required dependencies:
+
+```bash
+cd remarkable-pro-boilerplate
+```
+
+```bash
+npm i
+```
+
+If you don't have `npm`, this means you need to install `node` first ([here](https://nodejs.org/en/download))
+
+### Set Your Region
+
+Open the [embeddable.config.ts](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.config.ts#L7-L15) file in your code editor. Depending on [your region](/deployment/deployment-regions), set either:
+
+```js
+region: 'US',
+```
+
+or
+
+```js
+region: 'EU',
+```
+
+If you're unsure which `region` you're using, [learn more here](/deployment/deployment-regions) or reach out to us.
+
 ### Push the Code Bundle
 
-Open a Terminal in the local directory of your downloaded [boilerplate repository](/getting-started/download-repo) and run the following command to login to your workspace (make sure the region was set correctly in the [previous step](/getting-started/download-repo#set-your-region)):
+Run the following command to login to your workspace:
 
 ```bash
 npm run embeddable:login
@@ -26,44 +70,10 @@ This uploads your [data models](https://github.com/embeddable-hq/remarkable-pro-
 
 To learn more about the push command and its options, see [Push Command](/development/pushing-code#push-command).
 
-### Refresh Your Workspace
-
-After the push succeeds:
-
-- Go back to your workspace page ([US](https://app.us.embeddable.com) or [EU](https://app.eu.embeddable.com)).
-- Refresh the page.
-- You should see two **[Example]** Embeddable dashboards and a **Create new embeddable** button, which means your workspace is now set up.
-
-<ImageGrid images={["/img/starter-embeddables.png"]}/>
-
-As you add models and components to your **boilerplate repository**, you'll need to run the `embeddable:build` and `embeddable:push` steps above again, to see them reflected in your workspace.
-
-### Sample Embeddable dashboards
-
-Have a look at the sample dashboards in your workspace. The default view is **builder mode** (see screenshot below) for building and editing your dashboards (we'll cover building dashboards on the [next page](/getting-started/first-embeddable)). 
-
-For now, click **"Preview"**, in the top bar, to switch to **preview mode**, where you can try interacting with the dashboard:
-
-<ImageGrid images={["/img/click-preview.png"]}/>
-
-You can use the **"View as"** dropdown to switch between different [themes](/getting-started/theme-components) (in this case, light and dark mode) and to view the dashboard from the perspective of different users (learn more about row-level security [here](/data-modeling/row-level-security)).
-
-<ImageGrid images={["/img/view-as.png"]}/>
-
-The second example dashboard uses [Custom Canvas](/dashboards/custom-canvas), which allows your users to build their own dashboards.  Again, click **Preview** to try it out:
-
-<ImageGrid images={["/img/example-custom-canvas.png"]}/>
-
-Next up, we'll explore **builder mode**.
-
 </Steps>
 
-## Next Steps
+## Next steps
 
 <CardGrid>
-  <LinkCard
-    title="Build your first Embeddable"
-    href="/getting-started/first-embeddable"
-    icon="3️⃣"
-  />
+  <LinkCard title="Welcome to your workspace" href="/getting-started/your-workspace" icon="2️⃣"/>
 </CardGrid>

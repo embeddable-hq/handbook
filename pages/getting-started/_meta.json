@@ -1,7 +1,7 @@
 {
     "quick-start-guide": "0: Quick start guide",
-    "download-repo": "1: Set up your repo",
-    "set-up-your-workspace": "2: Set up your workspace",
+    "set-up-your-workspace": "1: Set up your workspace",
+    "your-workspace": "2: Explore your workspace",
     "first-embeddable": "3: Build an Embeddable",
     "theme-components": "4. Switch the theme",
     "first-component": "5: Build a component"
