@@ -12,14 +12,16 @@ In the Embeddable builder, click **Publish**. This prepares the dashboard for em
 
 ### Insert Our Web Component
 
-Add the following to your page to load the Embeddable custom element:
+Add the following to your page's `<head>` to load the Embeddable custom element:
 
 ```html
-<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
-<script
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 This makes the `<em-beddable>` tag available anywhere on your page.
@@ -187,14 +189,16 @@ In Angular, you can use the `<em-beddable>` element in your templates. For examp
 ></em-beddable>
 ```
 
-Make sure you've loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've added the following to your `index.html`'s `<head>`:
 
 ```html
-<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
-<script
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 Learn more about `region` [here](/deployment/deployment-regions).
@@ -256,14 +260,16 @@ onMounted(() => {
 </script>
 ```
 
-Make sure you've loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've added the following to your `index.html`'s `<head>`:
 
 ```html
-<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
-<script
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 Learn more about `region` [here](/deployment/deployment-regions).
