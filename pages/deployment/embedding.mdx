@@ -25,6 +25,16 @@ This makes the `<em-beddable>` tag available anywhere on your page.
 
 Learn more about `region` [here](/deployment/deployment-regions).
 
+<Callout type="tip">
+**Want your dashboard to load faster? ⚡️**
+
+```html
+<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+```
+
+**Why this helps:** Adding a preconnect hint tells the browser to start the DNS lookup, TCP handshake, and TLS negotiation early before it encounters the script tag. This can save 100-300ms of connection time, making your dashboard appear faster.
+</Callout>
+
 ### Place the `<em-beddable>` Element
 
 Anywhere in your HTML, include:
@@ -49,13 +59,14 @@ The quickest way to test embedding is to use our test script [here](/getting-sta
 <!DOCTYPE html>
 <html>
   <head>
-    <script 
+    <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+    <script
       type="module"
       src="https://embed.embeddable.com/js/v1/?region=<region>">
     </script>
   </head>
   <body>
-    <em-beddable 
+    <em-beddable
       token="eyJhbGciOiJI..."
     ></em-beddable>
   </body>
