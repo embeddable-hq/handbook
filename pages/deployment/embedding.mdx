@@ -148,6 +148,35 @@ declare module 'react' {
 This code ensures the `<em-beddable>` tag is recognized by TypeScript,
 and that you get correct type-checking on its props.
 
+### Using Next.js
+
+Use the `next/head` component to add the preconnect and script to the document head:
+
+```tsx
+import Head from 'next/head';
+
+export default function DashboardPage() {
+  return (
+    <>
+      <Head>
+        <link
+          rel="preconnect"
+          href="https://static-data.<region>.embeddable.com"
+          crossOrigin="anonymous"
+        />
+        <script
+          type="module"
+          src="https://embed.embeddable.com/js/v1/?region=<region>"
+        />
+      </Head>
+      <div>
+        <em-beddable token="eyJhbGciOiJI..." />
+      </div>
+    </>
+  );
+}
+```
+
 ## Embedding in an Angular App
 
 In Angular, you can use the `<em-beddable>` element in your templates. For example:
