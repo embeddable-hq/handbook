@@ -6,4 +6,21 @@ const withNextra = require('nextra')({
   incrementalCacheHandlerPath: false,
 })
 
-module.exports = withNextra()
+module.exports = withNextra({
+  transpilePackages: [
+    '@inkeep/cxkit-react',
+    '@inkeep/cxkit-primitives',
+    '@inkeep/cxkit-styled',
+    '@inkeep/agents-ui'
+  ],
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Fix for ESM/CJS interop issues
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        'use-sync-external-store/shim': false,
+      }
+    }
+    return config
+  }
+})

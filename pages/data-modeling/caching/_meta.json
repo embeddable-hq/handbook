@@ -1,6 +1,5 @@
 {
-    "in-memory": "In-memory cache",
-    "pre-aggregations": "Pre-aggregations",
-    "caching-api": "Caching API"
+    "in-memory": "Level 1 cache: in-memory",
+    "level-2-cache": "Level 2 cache: pre-aggregations"
   }
   

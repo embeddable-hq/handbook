@@ -1,123 +1,154 @@
 # Build your first Embeddable
 
-<Pill>Takes ~6 mins</Pill>
-
-**Create** and **deploy** your first Embeddable dashboard.
+Create and embed your first Embeddable dashboard.
 
 <Callout emoji="💡">
-  An **Embeddable** is an interactive dashboard that you embed in your web application.
+  An **Embeddable** is an interactive dashboard that you embed in your web
+  application.
 </Callout>
+
+This guide assumes you have already [set up your workspace](/getting-started/set-up-your-workspace) and [explored your workspace](/getting-started/your-workspace).
 
 <Steps>
 
-### **Create a New Embeddable**
+### Create a New Embeddable
+
 On your workspace homepage, click **Create new Embeddable** to create a fresh dashboard.
 
-### **Add a Dataset**
+### Add a Dataset
 
-Datasets are how you access data on a dashboard. 
+Datasets are how you access data on a dashboard.
 
-Your workspace is linked to our sample database. 
+Your workspace is linked to our sample database and uses the sample [data models](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/models/cubes) that you pushed to your workspace from your boilerplate repository.
 
 <VideoComponent
-    src="/video/create-new-dataset-example.mp4"
-    width="1100"
-    height="746"
+  src="/video/add-a-dataset.mp4"
+  width="934"
+  height="720"
 />
 
 1. In the **Datasets Panel** in the bottom right, click the **+** icon.
-2. Name your dataset.
-3. Select **My customers** (or any other sample data model), then **Save**.
+2. Name your dataset "**data**" (or give it any other name).
+3. Select **Daily Listeners Data** (or any other sample data model), then **Save**.
 
-### **Add a Donut Chart**
+### Add a Donut Chart
 
-Build your dashboard by adding components to the canvas. 
+Build your dashboard by adding components to the canvas.
 
-<VideoComponent
-    src="/video/create-pie-chart.mp4"
-    width="1100"
-    height="746"
-/>
+<VideoComponent src="/video/add-pie.mp4" width="934" height="720" />
 
 1. Click **Add component**. Pick **Donut Chart**.
-2. In the edit panel, set **Dataset to display** to the dataset you just created.
-3. Select your preferred **Measure** and **Dimension**.
-4. Hit **Save**.
+2. In the edit panel, set **Dataset** to the dataset you just created.
+3. Select the **Measure** "# Total listens (Daily Listeners Data)" and the **Dimension** "Country (Daily Listeners Data)".
+4. Hit **Add to dashboard**.
 
 <Callout emoji="⚡️">
-**Bonus**: check the **console** in the right sidebar to see what's happening behind the scenes. 
+  **Bonus**: check the **console** in the right sidebar to see what's happening
+  behind the scenes.
 </Callout>
 
-### **Add Interactivity**
+### Add Interactivity
 
-Interactivity allows user interaction with one component to affect the data shown in another component.  E.g. choosing a value from a dropdown can, for example, affect the data loaded in the charts in the rest of the dashboard.
+Interactivity allows user interaction with one component to affect the data shown in another component. E.g. choosing a value from a dropdown can, for example, affect the data loaded in the charts in the rest of the dashboard.
 
-Adding interactivity is quick and easy. 
+Adding interactivity is quick and easy.
 
 <VideoComponent
-    src="/video/Add-interactivity-remarkable.mp4"
-    width="1100"
-    height="746"
+  src="/video/add-interactivity.mp4"
+  width="934"
+  height="720"
 />
 
-1. Click **Add component**, choose **Date Range Select Field**, then hit **Save** to add it to your canvas.  
+1. Click **Add component**, choose **Date-Range Picker - Presets**, then hit **Add to dashboard** to add it to your canvas.
 
 <Callout emoji="⚡️">
-In the right-hand Variables panel in the Builder, you’ll see a new variable appear: **date-range value**. Variables store outputs from interactive components (like date pickers) and can be passed around the dashboard.
+  In the right-hand Variables panel in the Builder, you’ll see a new variable
+  appear: **date-range value**. Variables store outputs from interactive
+  components (like date pickers) and can be passed around the dashboard.
 </Callout>
 
 Let's now link that variable to our Donut Chart (as shown in video above, and described below).
 
-2. Edit your **Donut Chart**.  
-3. Click **Filter** (under the Dataset input) and, from the dropdown, choose the **Signed up at** Dimension.  
+2. Edit your **Donut Chart**, by selecting it and then clicking the pencil icon.
+3. Click **Filter** (under the Dataset input) and, from the dropdown, choose the **Data listened (Daily Listeners Data)** Dimension.
 4. Next to the filter operator (“In date range”), click the **link** icon, select the **date-range value** variable, then hit **Save**.
 
 </Steps>
 
 <Callout emoji="🥳">
-**Success!** Switch to Preview mode in the top bar to test the interaction.
+  **Success!** Switch to Preview mode in the top bar to test the interaction.
 </Callout>
 
 ### Embed your dashboard
 
-As a final step, embed your dashboard using the [embedding-preview](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs) script. Steps described below:
+As a final step, test embedding your dashboard in a simple HTML page. Steps described below.
+
+<VideoComponent
+  src="/video/publish-version.mp4"
+  width="934"
+  height="720"
+/>
 
 <Steps>
 
 ### Save a version
 
 1. Click **'Save version'** at the top of your dashboard.
-2. Enter a simple **description** and click **'Save new version'**. 
+2. Enter a simple **description** and click **'Save new version'**.
 
 ### Publish the dashboard
-3. Click the **'Publish'** button. 
-4. Select the **'Production'** environment (the green box). 
-5. Click **'Publish'** to publish your saved version. 
-6. Grab your **API Key** and **Embeddable ID** from the **'View instructions'** section at the bottom of the modal. 
+
+3. Click the **'Publish'** button.
+4. Select the **'Production'** environment (the green box).
+5. Click **'Publish'** to publish your saved version.
+6. Grab your API Key and Embeddable ID from the **'View instructions'** section at the bottom of the modal.
 
 ### Test embedding
-7. Head to your code repo, open `embedding-preview.cjs` (in your downloaded repo [here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/embedding-preview.cjs#L5-L9)).  
-8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` with the values from your dashboard. Then run:  
+
+7. Head to your code repo, open `src/embeddable.com/scripts/preview-in-html.cjs`.
+8. Update the `BASE_URL`, `API_KEY`, and `EMBEDDABLE_ID` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/scripts/preview-in-html.cjs#L5-L9)) with the values from your dashboard. Then run:
 
    ```bash
-   node src/embeddable.com/scripts/embedding-preview.cjs
+   node src/embeddable.com/scripts/preview-in-html.cjs
    ```
+
 9. Go to [http://localhost:8080/](http://localhost:8080/) to see your embedded dashboard in action! 🤩
 
 <Callout emoji="🥳">
-**Notice:** Embeddable doesn't use iframes.  It uses a [web-component](/deployment/embedding) that embeds as part of your DOM.
+  **Notice:** If you "View page source" you can see that Embeddable doesn't use iframes. It uses a
+  [web-component](/deployment/embedding) that embeds directly as part of your DOM.
 </Callout>
+
+```html
+
+<!doctype html>
+<html>
+  <head>
+    <title>Embedabble</title>
+    <meta charset="utf-8" />
+    <script
+      type="module"
+      src="https://api.<region>.embeddable.com/js/v1/"
+    ></script>
+  </head>
+  <body>
+    <em-beddable token="..."></em-beddable>
+  </body>
+</html>
+```
+
+Learn more about embedding Embeddable dashboards [here](/deployment/embedding).
 
 </Steps>
 
 Congratulations! You've built your first Embeddable - now you're well on your way to creating amazing, interactive analytics experiences.
 
----
-
 ## Next Steps
 
 <CardGrid>
-  <LinkCard title="Try switching the theme" href="/getting-started/theme-components" icon="4️⃣"/> 
+  <LinkCard
+    title="Try switching the theme"
+    href="/getting-started/theme-components"
+    icon="4️⃣"
+  />
 </CardGrid>
-
-

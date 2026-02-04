@@ -1,10 +1,8 @@
 # Build your own component
 
-<Pill>Takes ~5 mins</Pill>
-
 Embeddable ships with [Remarkable Pro](/component-libraries/remarkable-pro/introduction), a full suite of components, but you can build anything you need on top.
 
-Simply **copy and paste** the code below to create a simple, reusable **select menu**.
+Simply copy and paste the code below to create a simple, reusable **select menu**.
 
 <Callout emoji="💡">
 Every component has two parts: a **standard React component** and an Embeddable-specific **companion file** that tells the no-code builder how to use it.
@@ -14,20 +12,24 @@ Every component has two parts: a **standard React component** and an Embeddable-
 
 ### Define your React component
 
-1. Inside `src/embeddable.com` in your [repo](/getting-started/download-repo), create a **folder** called `components`.
-2. Inside this folder, create a new folder called `ExampleDropdown` and a file called `index.tsx`.  
+1. Inside `src/embeddable.com/components` in your [repo](/getting-started/set-up-your-workspace), create a new folder called `ExampleDropdown`
+```bash
+mkdir src/embeddable.com/components/ExampleDropdown
+```
+2. And create file called `index.tsx`.  
+```bash
+touch src/embeddable.com/components/ExampleDropdown/index.tsx
+```
+
 3. Paste the code below and save.
 
-
 <CodeContainer>
+
 ```ts
 // src/embeddable.com/components/ExampleDropdown/index.tsx
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import Spinner from '../Spinner';
-import Error from '../Error';
-import { inputStyles } from '../styles';
-import { Dimension, DataResponse } from '@embeddable.com/core';
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Dimension, DataResponse } from "@embeddable.com/core";
 
 type ChangeCallback = (chosen: string | null) => void;
 
@@ -56,15 +58,15 @@ const DropdownSelect: React.FC<Props> = ({ defaultValue, onChange, results, valu
     onChange(newValue === NO_VALUE ? null : newValue);
   };
 
-  // show a spinning loader until we've retrieved the list of values to show from the database.
-  if (isLoading) return <Spinner />;
+  // show a loading indicator until we've retrieved the list of values to show from the database.
+  if (isLoading) return <span> loading... </span>;
 
   // in case there's an error retrieving the list of values, show the error.
-  if (error) return <Error msg={error} />;
+  if (error) return <span> Error! Message: {error} </span>;
 
   // use a standard HTML `select` input for the dropdown.
   return (
-    <select style={inputStyles} value={value} onChange={handleChange}>
+    <select value={value} onChange={handleChange}>
       <option value={NO_VALUE}>--no value--</option>
       {data.map((option, index) => (
         <option key={index} value={option[values.name]}>
@@ -83,22 +85,27 @@ This is just a regular React `<select>` component. Nothing Embeddable-specific y
 
 ### Define your companion `.emb` file
 
-1. In the `ExampleDropdown` folder, create a file called `ExampleDropdown.emb.ts`. 
+1. In the `ExampleDropdown` folder, create a second file called `ExampleDropdown.emb.ts`. 
+```bash
+touch src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
+```
 2. Paste the following code and save:
 
 <CodeContainer>
+
 ```ts
 // src/embeddable.com/components/ExampleDropdown/ExampleDropdown.emb.ts
-
+ 
 import {
   EmbeddedComponentMeta,
   Inputs,
   defineComponent,
+  definePreview,
 } from '@embeddable.com/react';
-import { loadData, Value } from '@embeddable.com/core';
-
+import { loadData, Value, mockDimension, mockDataResponse } from '@embeddable.com/core';
+ 
 import Component from './index'; // the React component we've defined above
-
+ 
 export const meta = {
   name: 'ExampleDropdown', // this name must match the name of the file (before the `.emb.ts` part)
   label: 'Example Dropdown', // human readable name for the component
@@ -107,7 +114,7 @@ export const meta = {
   // the width and height (in px) that the component will default to when added to the canvas
   defaultWidth: 320, 
   defaultHeight: 50,
-
+ 
   // these are the inputs that the user of your component will be able to interact with
   inputs: [
     {
@@ -151,6 +158,21 @@ export const meta = {
     }]
 } as const satisfies EmbeddedComponentMeta;
 
+export const preview = definePreview(Component, {
+  values: mockDimension('country', 'string', { title: 'Country' }),
+  results: mockDataResponse(
+    ['country'],
+    [
+      ['US'],
+      ['GER'],
+      ['UK'],
+      ['FRA'],
+      ['SPA'],
+    ],
+  ),
+  onChange: () => null
+});
+ 
 // `defineComponent` is what tells Embeddable that this is a component
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
@@ -186,12 +208,12 @@ export default defineComponent(Component, meta, {
 
 `npm run embeddable:dev`
 
-This spins up a **local workspace** that uses your *local components and models* ([learn more](/development/local-environment)). 
+This spins up a **local workspace** that uses your local components and models ([learn more](/development/local-environment)). 
 
 ### Add your component to a dashboard
 
 1. Create a new dashboard, or open the one you made in the [previous step](/getting-started/first-embeddable). 
-2. Click the **Add component** button. You should now see your dropdown there! 
+2. Click the **Add component** button. You should now see your "Example dropdown" there! 
 
 <Callout emoji="🎉">
 **Congratulations!** You've created your first Embeddable component.
@@ -211,3 +233,14 @@ npm run embeddable:push
 ```
 
 Learn more about [defining components](/development/defining-components), [loading data](/development/loading-data) and [adding interactivity](/development/interactivity).
+
+## Next Steps
+
+🎉 Congratulations! You have completed the getting started guide, and learned about the core concepts of Embeddable!
+
+Take a break and treat yourself! Once you're back, why not look at one of the following topics:
+
+- [Connect your database](/data/connect-your-database)
+- [Create your first data model](/data-modeling/introduction#data-models) to define and manage data access 
+- [Apply row level security](/data-modeling/row-level-security) so your end-users see the right data 
+- [Set up your theme](/component-libraries/remarkable-pro/theming) to match your brand 
