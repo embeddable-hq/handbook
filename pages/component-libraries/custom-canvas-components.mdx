@@ -1,0 +1,284 @@
+# Custom Canvas Components
+
+[Custom Canvas](/dashboards/custom-canvas) is a feature that lets your users build their own dashboards inside your product.
+
+The UI components powering Custom Canvas (panels, forms, buttons, cards) are built on [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui). These components are *currently* fixed - you can't swap them out or modify their behavior - but you can **style them** to match your brand using CSS variables.
+
+## How to Style Custom Canvas
+
+How you apply styles depends on your component library:
+
+### Remarkable Pro
+
+Add variables to `theme.styles` in your theme:
+
+```ts
+// embeddable.theme.ts
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  return defineTheme(parentTheme, {
+    styles: {
+      '--em-sem-background': '#f8f9fa',
+      '--em-sem-text': '#1a1a2e',
+    },
+  });
+};
+```
+
+For full theming details, see [Theming Remarkable Pro](/component-libraries/remarkable-pro/theming) and [How Styling Works](/component-libraries/remarkable-pro/styling/introduction).
+
+### Vanilla Components
+
+Add variables to `remarkableVars` in your theme (requires v1.3.1+):
+
+```ts
+// embeddable.theme.ts
+const theme: ThemePartial = {
+  // ... other theme properties ...
+  remarkableVars: {
+    '--em-background-color-default': '#f8f9fa',
+    '--em-foreground-color-default': '#1a1a2e',
+  },
+};
+```
+
+For setup details, see [Theming Vanilla Components](/component-libraries/vanilla/theming).
+
+---
+
+## Common Customizations
+
+Override only what you need. Start with these high-impact variables.
+
+### Brand Colors
+
+Set the main background and text colors that define your look:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `--em-background-color-default` | Main background color | `#ffffff` |
+| `--em-background-color-subtle` | Secondary/muted backgrounds | `#f8f9fa` |
+| `--em-foreground-color-default` | Primary text color | `#1a1a2e` |
+| `--em-primary-btn-background-color-default` | Primary button background | Brand blue |
+
+### Cards
+
+Chart cards are the containers for each visualization:
+
+| Variable | Description |
+|----------|-------------|
+| `--em-card-border-radius-default` | Corner rounding for cards |
+| `--em-card-padding-default` | Inner spacing |
+| `--em-card-title-color-default` | Card title text color |
+| `--em-card-title-font-weight` | Card title boldness |
+| `--em-box-shadow-default-color` | Card shadow color |
+| `--em-box-shadow-default-blur` | Card shadow blur radius |
+
+### Buttons
+
+Style the action buttons throughout the interface:
+
+| Variable | Description |
+|----------|-------------|
+| `--em-primary-btn-background-color-default` | Primary button fill |
+| `--em-primary-btn-background-color-disabled` | Disabled state fill |
+| `--em-secondary-btn-background-color-default` | Secondary button fill |
+| `--em-secondary-btn-background-color-hover` | Secondary button hover |
+| `--em-icon-btn-background-color-default` | Icon button fill |
+| `--em-icon-btn-background-color-hover` | Icon button hover |
+
+### Forms & Inputs
+
+Customize dropdowns, text inputs, and form sections:
+
+| Variable | Description |
+|----------|-------------|
+| `--em-form-background-color-default` | Form panel background |
+| `--em-form-border-radius-default` | Form panel corners |
+| `--em-form-header-font-font-color` | Form section header color |
+| `--em-text-input-label-color-default` | Input label color |
+| `--em-select-menu-label-color-default` | Dropdown label color |
+
+### Typography
+
+Fine-tune font sizes and weights:
+
+| Variable | Description |
+|----------|-------------|
+| `--em-font-size-sm` | Small text size |
+| `--em-font-size-md` | Medium text size |
+| `--em-font-weight-medium` | Medium font weight |
+| `--em-line-height-sm` | Small line height |
+
+---
+
+## Full Variable Reference
+
+Below is the complete list of supported CSS variables, organized by category.
+
+### Backgrounds & Surfaces
+
+```
+--em-background-color-default
+--em-background-color-neutral
+--em-background-color-subtle
+--em-background-inverted
+--em-foreground-color-default
+--em-foreground-color-inverted
+--em-content-inverted
+--em-gray-800
+--em-gray-900
+```
+
+### Cards
+
+```
+--em-card-border-radius-default
+--em-card-padding-default
+--em-card-title-color-default
+--em-card-title-font-weight
+--em-card-title-font-line-height
+--em-card-title-padding-default
+--em-card-subtitle-color-default
+--em-card-subtitle-font-font-family
+--em-card-info-font-font-family
+--em-card-info-font-size
+--em-card-info-font-line-height
+--em-card-info-font-title-weight
+--em-card-empty-title-font-color-default
+--em-card-loader-icon-size-height
+--em-card-loader-icon-size-width
+```
+
+### Buttons
+
+```
+--em-primary-btn-background-color-default
+--em-primary-btn-background-color-disabled
+--em-primary-btn-label-color-disabled
+--em-primary-btn-label-font-small-size
+--em-secondary-btn-background-color-default
+--em-secondary-btn-background-color-hover
+--em-icon-btn-background-color-default
+--em-icon-btn-background-color-hover
+--em-icon-btn-border-radius-default
+--em-icon-btn-icon-color-default
+--em-icon-btn-icon-color-call-to-action
+--em-icon-btn-icon-size-height
+--em-icon-btn-icon-size-width
+--em-icon-btn-size-height
+--em-icon-btn-size-width
+--em-btn-island-background-color-default
+```
+
+### Forms & Inputs
+
+```
+--em-form-background-color-default
+--em-form-border-radius-default
+--em-form-padding-default
+--em-form-padding-small
+--em-form-padding-large
+--em-form-font-font-size-title
+--em-form-font-font-weight
+--em-form-font-line-height
+--em-form-header-font-font-color
+--em-form-header-font-font-family
+--em-form-header-font-font-size
+--em-form-header-font-font-weight
+--em-form-header-font-line-height
+--em-form-header-icon-color-default
+--em-form-section-font-font-color
+--em-form-section-font-font-family
+--em-form-section-font-font-size
+--em-form-section-font-font-weight
+--em-form-section-font-line-height
+--em-form-group-background-color-hover
+--em-form-group-padding-default
+--em-form-group-padding-small
+--em-form-group-icon-size-height
+--em-form-group-icon-size-width
+--em-text-input-label-color-default
+--em-text-input-size-min-width
+--em-select-menu-label-color-default
+--em-select-menu-label-font-size
+--em-select-menu-label-font-weight
+--em-select-list-item-isolate-background-color-default
+--em-select-list-item-isolate-border-radius-default
+--em-select-list-item-isolate-label-color-default
+--em-select-list-item-isolate-label-font-size
+--em-select-list-item-isolate-label-font-weight
+--em-select-list-item-isolate-padding-default
+```
+
+### Typography
+
+```
+--em-font-size-xs
+--em-font-size-sm
+--em-font-size-md
+--em-font-weight-medium
+--em-line-height-sm
+--em-line-height-l
+```
+
+### Borders & Shadows
+
+```
+--em-border-radius-200
+--em-border-radius-400
+--em-border-radius-500
+--em-border-width-0
+--em-border-width-default
+--em-box-shadow-default-blur
+--em-box-shadow-default-color
+--em-box-shadow-default-position-x
+--em-box-shadow-default-position-y
+--em-box-shadow-default-spread
+```
+
+### Spacing
+
+```
+--em-padding-100
+--em-padding-200
+--em-padding-300
+--em-padding-400
+--em-padding-800
+```
+
+### Empty States
+
+```
+--em-empty-state-background-color-default
+--em-empty-state-icon-color-default
+--em-empty-state-icon-size-height
+--em-empty-state-icon-size-width
+--em-empty-state-padding-default
+```
+
+### Lightbox & Overlays
+
+```
+--em-lightbox-font-color-default
+--em-lightbox-font-font-family
+--em-lightbox-font-font-size
+--em-lightbox-font-font-weight
+--em-lightbox-font-line-height
+--em-overlay-z
+```
+
+### Status Colors
+
+```
+--em-status-error
+--em-status-negative-foreground
+--em-switch-thumb-background-color
+```
+
+---
+
+## Tips
+
+- **Override sparingly**: Change only what's needed to match your brand. Fewer overrides means easier maintenance.
+- **Test both themes**: If you support light and dark modes, verify your changes work in both contexts.
+- **Check accessibility**: Ensure sufficient color contrast between text and backgrounds.
