@@ -12,10 +12,11 @@ In the Embeddable builder, click **Publish**. This prepares the dashboard for em
 
 ### Insert Our Web Component
 
-Add a `<script>` tag to your page to load the Embeddable custom element:
+Add the following to your page to load the Embeddable custom element:
 
 ```html
-<script 
+<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+<script
   type="module"
   src="https://embed.embeddable.com/js/v1/?region=<region>">
 </script>
@@ -24,16 +25,6 @@ Add a `<script>` tag to your page to load the Embeddable custom element:
 This makes the `<em-beddable>` tag available anywhere on your page.
 
 Learn more about `region` [here](/deployment/deployment-regions).
-
-<Callout type="tip">
-**Want your dashboard to load faster? ⚡️**
-
-```html
-<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
-```
-
-**Why this helps:** Adding a preconnect hint tells the browser to start the DNS lookup, TCP handshake, and TLS negotiation early before it encounters the script tag. This can save 100-300ms of connection time, making your dashboard appear faster.
-</Callout>
 
 ### Place the `<em-beddable>` Element
 
@@ -98,16 +89,25 @@ export default function DashboardPage() {
 Or using JSX directly:
 
 ```tsx
+import { Helmet } from 'react-helmet';
+
 export default function DashboardPage() {
   return (
     <>
-      <script
-        type="module"
-        src="https://embed.embeddable.com/js/v1/?region=<region>"
-      />
-      <em-beddable
-        token="eyJhbGciOiJI..."
-      />
+      <Helmet>
+        <link
+          rel="preconnect"
+          href="https://static-data.<region>.embeddable.com"
+          crossOrigin="anonymous"
+        />
+        <script
+          type="module"
+          src="https://embed.embeddable.com/js/v1/?region=<region>"
+        />
+      </Helmet>
+      <div>
+        <em-beddable token="eyJhbGciOiJI..." />
+      </div>
     </>
   );
 }
@@ -158,9 +158,10 @@ In Angular, you can use the `<em-beddable>` element in your templates. For examp
 ></em-beddable>
 ```
 
-Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've loaded the script in your `index.html` (or another entry point) to define the custom element:
 
 ```html
+<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
 <script
   type="module"
   src="https://embed.embeddable.com/js/v1/?region=<region>">
@@ -226,10 +227,11 @@ onMounted(() => {
 </script>
 ```
 
-Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've loaded the script in your `index.html` (or another entry point) to define the custom element:
 
 ```html
-<script 
+<link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+<script
   type="module"
   src="https://embed.embeddable.com/js/v1/?region=<region>">
 </script>
