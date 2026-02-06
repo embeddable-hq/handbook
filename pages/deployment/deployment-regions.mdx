@@ -37,22 +37,28 @@ export default defineConfig({
 
 ### Embedding Script Tag
 
-When [embedding](/deployment/embedding), you’ll also need to use the correct `<script>` tag:
+When [embedding](/deployment/embedding), you'll also need to add the correct preconnect and `<script>` tag to your page's `<head>`:
 
-```js
-<script 
-  type="module" 
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+```html
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 where `<region>` is one of `US` or `EU`.  E.g. for `US`:
 
-```js
-<script 
-  type="module" 
-  src="https://embed.embeddable.com/js/v1/?region=US">
-</script>
+```html
+<head>
+  <link rel="preconnect" href="https://static-data.us.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=US">
+  </script>
+</head>
 ```
 
 Learn more about embedding [here](/deployment/embedding).
