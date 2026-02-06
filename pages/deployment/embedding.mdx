@@ -12,13 +12,16 @@ In the Embeddable builder, click **Publish**. This prepares the dashboard for em
 
 ### Insert Our Web Component
 
-Add a `<script>` tag to your page to load the Embeddable custom element:
+Add the following to your page's `<head>` to load the Embeddable custom element:
 
 ```html
-<script 
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 This makes the `<em-beddable>` tag available anywhere on your page.
@@ -49,13 +52,14 @@ The quickest way to test embedding is to use our test script [here](/getting-sta
 <!DOCTYPE html>
 <html>
   <head>
-    <script 
+    <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+    <script
       type="module"
       src="https://embed.embeddable.com/js/v1/?region=<region>">
     </script>
   </head>
   <body>
-    <em-beddable 
+    <em-beddable
       token="eyJhbGciOiJI..."
     ></em-beddable>
   </body>
@@ -87,16 +91,25 @@ export default function DashboardPage() {
 Or using JSX directly:
 
 ```tsx
+import { Helmet } from 'react-helmet';
+
 export default function DashboardPage() {
   return (
     <>
-      <script
-        type="module"
-        src="https://embed.embeddable.com/js/v1/?region=<region>"
-      />
-      <em-beddable
-        token="eyJhbGciOiJI..."
-      />
+      <Helmet>
+        <link
+          rel="preconnect"
+          href="https://static-data.<region>.embeddable.com"
+          crossOrigin="anonymous"
+        />
+        <script
+          type="module"
+          src="https://embed.embeddable.com/js/v1/?region=<region>"
+        />
+      </Helmet>
+      <div>
+        <em-beddable token="eyJhbGciOiJI..." />
+      </div>
     </>
   );
 }
@@ -137,6 +150,39 @@ declare module 'react' {
 This code ensures the `<em-beddable>` tag is recognized by TypeScript,
 and that you get correct type-checking on its props.
 
+### Using Next.js
+
+Use the `next/head` component to add the preconnect and script to the document head:
+
+```tsx
+import Head from 'next/head';
+
+export default function DashboardPage() {
+  return (
+    <>
+      <Head>
+        <link
+          rel="preconnect"
+          href="https://static-data.<region>.embeddable.com"
+          crossOrigin="anonymous"
+        />
+        <script
+          type="module"
+          src="https://embed.embeddable.com/js/v1/?region=<region>"
+        />
+      </Head>
+      <div>
+        <em-beddable token="eyJhbGciOiJI..." />
+      </div>
+    </>
+  );
+}
+```
+
+Learn more about `region` [here](/deployment/deployment-regions).
+
+Learn how to retrieve a `token` [here](/deployment/tokens-api).
+
 ## Embedding in an Angular App
 
 In Angular, you can use the `<em-beddable>` element in your templates. For example:
@@ -147,13 +193,16 @@ In Angular, you can use the `<em-beddable>` element in your templates. For examp
 ></em-beddable>
 ```
 
-Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've added the following to your `index.html`'s `<head>`:
 
 ```html
-<script
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 Learn more about `region` [here](/deployment/deployment-regions).
@@ -215,13 +264,16 @@ onMounted(() => {
 </script>
 ```
 
-Make sure you’ve loaded the script in your `index.html` (or another entry point) to define the custom element:
+Make sure you've added the following to your `index.html`'s `<head>`:
 
 ```html
-<script 
-  type="module"
-  src="https://embed.embeddable.com/js/v1/?region=<region>">
-</script>
+<head>
+  <link rel="preconnect" href="https://static-data.<region>.embeddable.com" crossorigin>
+  <script
+    type="module"
+    src="https://embed.embeddable.com/js/v1/?region=<region>">
+  </script>
+</head>
 ```
 
 Learn more about `region` [here](/deployment/deployment-regions).
@@ -247,4 +299,4 @@ Vue by default sanitizes user input, which can interfere with passing attributes
 
 ## Complete Working Example
 
-See our [web-component-example repo](https://github.com/embeddable-hq/web-component-example/tree/main/client) for a live demonstration, including how to fetch a security token from the Tokens API and embed it in a fully functional page or app.
+See our [web-component-example repo](https://github.com/embeddable-hq/web-component-example) for a live demonstration, including how to fetch a security token from the Tokens API and embed it in a fully functional page or app.
