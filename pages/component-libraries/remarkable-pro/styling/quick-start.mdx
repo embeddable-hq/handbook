@@ -1,10 +1,11 @@
-# Quick start styling guide
+# Quick-start styling guide
 
 <Pill>Takes ~5 mins</Pill>
 
-Follow these steps to style Remarkable Pro **for the first time**. 
+If you want to get set up quickly, follow these steps to style the key elements of Remarkable Pro. 
 
 We recommend spinning up your [local environment](/development/local-environment) while making these changes so you can see the impact of each adjustment in real time.
+
 
 <Steps>
 
@@ -20,7 +21,7 @@ export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => 
 
     const myTestStyles: DeepPartial<Theme> = {
         styles: {
-            //your styles will go here
+            //your style overrides will go here
         }
     }
 
@@ -28,79 +29,110 @@ export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => 
 };
 ```
 
-### Set your text colors
-These tokens control all major text roles across Remarkable. Replace the CSS values with your own. 
+### Set the basics: text and surfaces
 
-`'--em-sem-text': '#000'` 
-
-- Updates primary text throughout the UI: titles, table text, dropdown labels, x-axis labels, KPI values, tooltip text, and icons.
-
-`'--em-sem-text--muted': '#888'`  
-
--   Updates other text elements like descriptions, y-axis labels, legend categories, and subtle UI text.
+Update these [semantic](/component-libraries/remarkable-pro/styling/semantic-tokens) tokens to control **text color** and **background surfaces** across Remarkable. 
 
 ```tsx
-//theme.styles
+// theme.styles
 
 styles: {
-    `'--em-sem-text': '#000'`,
-    `'--em-sem-text--muted': '#888'` 
-}
+  // Text
+  '--em-sem-text': '#000', // Primary text: titles, labels, values, tooltips, icons
+  '--em-sem-text--muted': '#888', // Secondary text: descriptions, axes, legends, subtle UI
 
+  // Backgrounds
+  '--em-sem-background': '#fff', // Chart Cards and hover surfaces
+  '--em-sem-background--neutral': '#ccc', // Panels, selects, table-chart surfaces
+
+}
 ```
 
-### Set your background colours  
+Now we’ll look at **component-level overrides**. These let you customise specific elements without changing your global theme.
 
-These tokens define the core surfaces used throughout the product.
+### Chart Cards
 
-`'--em-sem-background': '#fff'`
+- Chart **Cards** are the background surface for each chart widget. 
 
-- Controls chart card backgrounds and many hover surfaces (e.g. table row hover, dropdown item hover).
+<ImageGrid images={["/img/remarkable-ui/default-theme-card.png", "/img/remarkable-ui/example-themed-card.png"]} />
 
-`'--em-sem-background--neutral': '#ccc'`  
+- The left image above shows the default card. 
+- The right image overrides the card styling using these tokens:
 
-- Controls neutral surfaces such as SelectField triggers, dropdown panels, table-chart backgrounds, and chart-label values.
+```ts
+//Card
+"--em-card-background": "linear-gradient(180deg, #CEFFEE 0%, #B6EEFF 100%)", // default: var(--em-sem-background)
+"--em-card-border-radius": "0px", 
+"--em-card-border-color": "#B6EEFF", 
+"--em-card-border-width": "1px", 
+"--em-card-padding": "16px" 
 
-### Set your border radius
-Adjust how rounded the UI should feel. You can set a single system-wide radius or tweak components individually.
+//Card title
+"--em-card-title-color": "#1A3553", // default: var(--em-sem-text)
+"--em-card-title-font-size": "22px", 
+"--em-card-title-font-weight": "bold", 
 
-`'--em-card-border-radius': '0px'`  
+//Card subtitle
+"--em-card-subtitle-color": "#1A3553", // default: var(--em-sem-text--muted)
+"--em-card-subtitle-font-size": "16px", 
+"--em-card-subtitle-font-weight": "normal", 
+```
+- See the [full list](/component-libraries/remarkable-pro/styling/component-tokens#card) of Card tokens. 
+- You can customise Card styling by overriding these tokens directly (affects only Cards) or by updating the tokens they reference (e.g. `--em-sem-text` or `--em-sem-text--muted`).
 
-- Updates border radius for chart cards.
+### Action Icon
 
-`'--em-selectfield-trigger-border-radius': '0px'`
+- The **Action Icon** is the icon that appears in the top right of the chart Card.
 
-`'--em-selectfield-content-border-radius': '0px'`  
+<ImageGrid images={["/img/remarkable-ui/action-icon-default.png", "/img/remarkable-ui/action-icon-themed.png"]} />
 
-- Updates SelectField buttons and dropdown panels.
+- The left image above shows the default Action Icon. 
+- The right image overrides the styling using these tokens:
+
+```ts
+"--em-actionicon-background": "#0F2A44", // default: var(--em-sem-background--light)
+"--em-actionicon-background--hover": "#0B2E4A",
+"--em-actionicon-color": "#fff", // default: var(--em-sem-text)
+"--em-actionicon-border-radius": "100px",
+"--em-actionicon-width": "36px",
+"--em-actionicon-height": "36px",
+```
+
+- See the [full list](/component-libraries/remarkable-pro/styling/component-tokens#actionicon) of Action Icon tokens. 
+
+### Select Fields
+
+- **Select Fields** are used for most editors e.g. date / granularity / dimension selectors. 
+
+<ImageGrid images={["/img/remarkable-ui/dropdown-default.png", "/img/remarkable-ui/dropdown-themed.png"]} />
+
+- The left image above shows the default Select Field styling (for a date selector). 
+- The right image overrides the styling using these tokens:
+
+```ts
+//trigger i.e. the dropdown button
+"--em-selectfield-trigger-background": "#1A1A1A", // default: var(--em-sem-background--neutral)
+"--em-selectfield-trigger-background--active": "#2A2A2A", // default: var(--em-sem-background--light)
+"--em-selectfield-trigger-background--hover": "#2A2A2A", // default: var(--em-sem-background)
+"--em-selectfield-trigger-border-width": "0px",
+"--em-selectfield-trigger-border-radius": "24px",
+"--em-selectfield-trigger-color": "#fff",
+
+//content i.e. the dropdown panel
+"--em-selectfield-content-background": "#2A2A2A", // default: var(--em-sem-background--neutral)
+"--em-selectfield-content-border-radius": "24px",
+
+//dropdown items
+"--em-selectfield-item-background": "#2A2A2A", // default: var(--em-sem-background--neutral)
+"--em-selectfield-item-background--hover": "#3A3A3A", // default: var(--em-sem-background--light)
+"--em-selectfield-item-label-left-color": "#fff", // default: var(--em-sem-text)
+"--em-selectfield-item-label-right-color": "#ccc", // default: var(--em-sem-text--muted)
+"--em-selectfield-item-icon-color": "#ccc" // default: var(--em-sem-text)
+```
+
+- See the [full list](/component-libraries/remarkable-pro/styling/component-tokens#selectfield) of Select Feld tokens.
 
 </Steps>
-
-## Example theme
-
-Here's the example theme you might end up with after following the steps above. 
-
-```tsx
-//embeddable.theme.ts
-
-export const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-
-    const myTestStyles: DeepPartial<Theme> = {
-        styles: {
-            '--em-sem-text': '#000' 
-            '--em-sem-text--muted': '#888'  
-            '--em-sem-background': '#fff'
-            '--em-sem-background--neutral': '#ccc' 
-            '--em-card-border-radius': '0px'  
-            '--em-selectfield-trigger-border-radius': '0px'
-            '--em-selectfield-content-border-radius': '0px'  
-            '--em-core-font-family--base': 'Open Sans'
-        }
-    }
-
-    return defineTheme(parentTheme, myTestStyles) as Theme;
-};
-```
 
 ## Refining individual components
 
@@ -108,7 +140,7 @@ Once the basics are in place, you can start making more specific adjustments. Mo
 
 A few tips to help you dig deeper:
 
-- Visit the **full list** of [component-specific tokens](/component-libraries/remarkable-pro/styling/token-reference). 
+- Visit the **full list** of [component-specific tokens](/component-libraries/remarkable-pro/styling/component-tokens#reference). 
 - **Use [Storybook](https://remarkable-ui.storybook.embeddable.com/)** to preview components in isolation and test different styling overrides.
 - **Refer to the [Figma files](https://www.figma.com/community/file/1581738195673665795/remarkable-ui)** for naming, hierarchy, and intended design behaviour—Figma and the token structure are tightly aligned.
 

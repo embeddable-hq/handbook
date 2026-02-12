@@ -15,8 +15,6 @@ Use Component tokens when you want to adjust a single component’s appearance.
 - Use **semantic tokens** for broad, visual-design changes to colors.  
 - Modify **core tokens** only if you are redefining your entire design foundation.
 
-See the [full list of component-specific tokens here](/component-libraries/remarkable-pro/styling/token-reference). 
-
 ## Pattern for Component tokens
 
 ```ts
@@ -94,6 +92,436 @@ Slots let you style just one part of a component without touching the rest.
 
 **For example**
 
-- small  
-- medium  
-- large  
+- small
+- medium
+- large
+
+## Reference
+
+Here you'll find the full list of component tokens.
+
+- You can update these in the `styles` namespace of [your theme](/component-libraries/remarkable-pro/theming).
+- View the original list of tokens in the [Remarkable UI repo](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/styles/global.css).
+
+
+### Charts
+
+#### All Charts
+
+Used in `src/components/charts/chartjs.constants.ts`
+
+- `--em-chart-category-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-chart-category-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-chart-category-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-chart-category-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-chart-category-gap` (Default: `var(--em-core-spacing--0100)`)
+- `--em-chart-category-list-gap` (Default: `var(--em-core-spacing--0400)`)
+- `--em-chart-category-size` (Default: `var(--em-core-size--0300)`)
+- `--em-chart-label-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-chart-label-border-radius` (Default: `var(--em-core-border-radius--500)`)
+- `--em-chart-label-color` (Default: `var(--em-sem-text)`)
+- `--em-chart-label-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-chart-label-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-chart-label-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-chart-label-padding-left-right` (Default: `var(--em-core-spacing--0100)`)
+- `--em-chart-label-padding-top-bottom` (Default: `var(--em-core-spacing--0050)`)
+- `--em-chart-tooltip-background` (Default: `var(--em-sem-background--inverted)`)
+- `--em-chart-tooltip-border-radius` (Default: `var(--em-core-border-radius--300)`)
+- `--em-chart-tooltip-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-chart-tooltip-padding` (Default: `var(--em-core-spacing--0400)`)
+- `--em-chart-tooltip-title-color` (Default: `var(--em-sem-text--inverted)`)
+- `--em-chart-tooltip-title-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-chart-tooltip-title-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+
+Used in `src/components/charts/chartjs.cartesian.constants.ts`
+
+- `--em-chart-grid-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-chart-grid-label-color` (Default: `var(--em-sem-text)`)
+- `--em-chart-grid-label-color--muted` (Default: `var(--em-sem-text--muted)`)
+- `--em-chart-grid-label-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-chart-grid-label-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-chart-grid-line-color` (Default: `var(--em-sem-text)`)
+- `--em-chart-grid-line-color--light` (Default: `var(--em-sem-background--light)`)
+- `--em-chart-grid-line-color--subtle` (Default: `var(--em-sem-text--subtle)`)
+- `--em-chart-grid-line-width--thin` (Default: `1px`)
+- `--em-chart-grid-title-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-chart-grid-title-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+
+#### Bar Charts
+
+Used in `src/components/charts/bars/bars.utils.ts`
+
+- `--em-barchart-border-radius` (Default: `var(--em-core-border-radius--150)`)
+
+#### Line Charts
+
+Used in `src/components/charts/lines/lines.utils.ts`
+
+- `--em-linechart-line-width` (Default: `2px`)
+- `--em-linechart-point-size` (Default: `var(--em-core-size--0200)`)
+- `--em-linechart-point-size--hover` (Default: `var(--em-core-size--0300)`)
+
+#### Pie Charts (default, donut, TODO)
+
+Used in `src/components/charts/pies/pies.utils.ts`
+
+- `--em-piechart-donut-color` (Default: `var(--em-sem-text)`)
+- `--em-piechart-donut-label-font-size` (Default: `var(--em-core-font-size--md)`)
+- `--em-piechart-donut-label-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-piechart-donut-label-line-height` (Default: `var(--em-core-line-height--md)`)
+- `--em-piechart-donut-number-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+- `--em-piechart-donut-number-line-height` (Default: `var(--em-core-line-height--xl)`)
+- `--em-piechart-font-family` (Default: `var(--em-core-font-family--base)`)
+
+#### KPI Charts
+
+Used in `src/components/charts/kpis/KpiChart.module.css`
+
+- `--em-kpichart-color` (Default: `var(--em-sem-text)`)
+- `--em-kpichart-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-kpichart-gap` (Default: `var(--em-core-spacing--0400)`)
+- `--em-kpichart-number-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+- `--em-kpichart-trend-font-size` (Default: `var(--em-core-font-size--md)`)
+
+Used in `src/components/charts/kpis/components/KpiChartChange.module.css`
+
+- `--em-kpichart-color` (Default: `var(--em-sem-text)`)
+- `--em-kpichart-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-kpichart-label-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-kpichart-label-gap` (Default: `var(--em-core-spacing--0200)`)
+- `--em-kpichart-trend-background--negative` (Default: `var(--em-sem-status-error-background)`)
+- `--em-kpichart-trend-background--positive` (Default: `var(--em-sem-status-success-background)`)
+- `--em-kpichart-trend-border-radius` (Default: `var(--em-core-border-radius--150)`)
+- `--em-kpichart-trend-color--negative` (Default: `var(--em-sem-status-error-text)`)
+- `--em-kpichart-trend-color--positive` (Default: `var(--em-sem-status-success-text)`)
+- `--em-kpichart-trend-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-kpichart-trend-line-height` (Default: `var(--em-core-line-height--md)`)
+- `--em-kpichart-trend-padding` (Default: `var(--em-core-spacing--0100)`)
+
+#### Table Charts (paginated, pivot)
+
+Used in `src/components/charts/tables/tables.module.css`
+
+- `--em-tablechart-border-color` (Default: `var(--em-sem-background--light)`)
+- `--em-tablechart-border-radius` (Default: `var(--em-core-border-radius--300)`)
+- `--em-tablechart-border-width` (Default: `1px`)
+- `--em-tablechart-cell-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-tablechart-cell-background--hover` (Default: `var(--em-sem-background)`)
+- `--em-tablechart-cell-height` (Default: `var(--em-core-size--1000)`)
+- `--em-tablechart-cell-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-tablechart-color` (Default: `var(--em-sem-text)`)
+- `--em-tablechart-color--muted` (Default: `var(--em-sem-text--muted)`)
+- `--em-tablechart-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-tablechart-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-tablechart-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-tablechart-font-weight--bold` (Default: `var(--em-core-font-weight--bold)`)
+- `--em-tablechart-font-weight--medium` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-tablechart-header-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-tablechart-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-tablechart-padding-left-right` (Default: `var(--em-core-spacing--0100)`)
+- `--em-tablechart-loading-indicator-color` (Default:`var(--em-sem-text--neutral)`)
+- `--em-tablechart-loading-indicator-font-family` (Default:`var(--em-core-font-family--base)`)
+- `--em-tablechart-loading-indicator-font-size` (Default:`var(--em-core-font-size--xs)`)
+- `--em-tablechart-loading-indicator-font-weight` (Default:`var(--em-core-font-weight--bold)`)
+- `--em-tablechart-loading-indicator-padding` (Default:`var(--em-core-spacing--0300)`)
+
+Used in `src/components/charts/tables/HeatMap/HeatMap.utils.ts`
+
+- `--em-tablechart-cell-background` (Default: `var(--em-sem-background--neutral)`)
+
+Used in `src/components/charts/tables/HeatMap/HeatMap.tsx`
+
+- `--em-tablechart-heatmap-color` (Default: `var(--em-sem-chart-color--1)`)
+
+Used in `src/components/charts/tables/Table/components/TableHeader/TableHeader.module.css`
+
+- `--em-tablechart-cell-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-tablechart-color` (Default: `var(--em-sem-text)`)
+- `--em-tablechart-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-tablechart-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-tablechart-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-tablechart-font-weight--medium` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-tablechart-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-tablechart-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-tablechart-padding-left-right` (Default: `var(--em-core-spacing--0100)`)
+
+Used in `src/components/charts/tables/Table/components/TablePagination/TablePagination.module.css`
+
+- `--em-tablechart-cell-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-tablechart-color` (Default: `var(--em-sem-text)`)
+- `--em-tablechart-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-tablechart-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-tablechart-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-tablechart-font-weight--medium` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-tablechart-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-tablechart-pagination-button-gap` (Default: `var(--em-core-spacing--0200)`)
+- `--em-tablechart-pagination-height` (Default: `var(--em-core-size--1200)`)
+- `--em-tablechart-pagination-label-padding-left-right` (Default: `var(--em-core-spacing--0400)`)
+
+Used in `src/components/charts/tables/Table/components/TableBody/TableBody.module.css`
+
+- `--em-tablechart-cell-padding` (Default: `var(--em-core-spacing--0200)`)
+
+---
+
+### Shared components
+
+#### Card
+
+Used in `src/components/shared/Card/Card.module.css`
+
+- `--em-card-background` (Default: `var(--em-sem-background)`)
+- `--em-card-border-radius` (Default: `var(--em-core-border-radius--400)`)
+- `--em-card-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-card-gap` (Default: `var(--em-core-spacing--0800)`)
+- `--em-card-header-gap` (Default: `var(--em-core-spacing--0400)`)
+- `--em-card-padding` (Default: `var(--em-core-spacing--0800)`)
+- `--em-card-subtitle-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-card-subtitle-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-card-subtitle-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-card-subtitle-line-height` (Default: `var(--em-core-line-height--l)`)
+- `--em-card-title-color` (Default: `var(--em-sem-text)`)
+- `--em-card-title-font-size` (Default: `var(--em-core-font-size--md)`)
+- `--em-card-title-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+- `--em-card-title-line-height` (Default: `var(--em-core-line-height--l)`)
+- `--em-card-border-color` (Default: `rgb(255 255 255 / 0%)`)
+- `--em-card-border-width` (Default: `0px`)
+
+
+Used in `src/components/shared/Card/CardFeedback/CardFeedback.module.css`
+
+- `--em-card-feedback-color--error` (Default: `var(--em-sem-status-error-text)`)
+- `--em-card-feedback-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-card-feedback-gap` (Default: `var(--em-core-spacing--0300)`)
+- `--em-card-feedback-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-card-feedback-line-height` (Default: `var(--em-core-line-height--md)`)
+- `--em-card-feedback-subtitle-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-card-feedback-subtitle-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-card-feedback-title-color` (Default: `var(--em-sem-text)`)
+- `--em-card-feedback-title-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+
+#### Field
+
+Used in `src/components/shared/Field/FieldHeader.module.css`
+
+- `--em-field-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-field-header-color` (Default: `var(--em-sem-text)`)
+- `--em-field-header-padding-bottom` (Default: `var(--em-core-spacing--0200)`)
+- `--em-field-header-required-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-field-header-required-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-field-header-required-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-field-header-title-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-field-header-title-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-field-header-title-line-height` (Default: `var(--em-core-line-height--md)`)
+
+Used in `src/components/shared/Field/FieldFeedback.module.css`
+
+- `--em-field-feedback-padding-top` (Default: `var(--em-core-spacing--0200)`)
+
+#### GhostButton
+
+Used in `src/components/shared/GhostButton/GhostButton.module.css`
+
+- `--em-ghostbutton-background--active` (Default: `var(--em-sem-background--light)`)
+- `--em-ghostbutton-background--hover` (Default: `var(--em-sem-background)`)
+- `--em-ghostbutton-border-radius` (Default: `var(--em-core-border-radius--100)`)
+- `--em-ghostbutton-color` (Default: `var(--em-sem-text)`)
+- `--em-ghostbutton-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-ghostbutton-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-ghostbutton-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-ghostbutton-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-ghostbutton-height` (Default: `var(--em-core-size--0500)`)
+- `--em-ghostbutton-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-ghostbutton-label-padding-left` (Default: `var(--em-core-spacing--0100)`)
+- `--em-ghostbutton-label-padding-right` (Default: `var(--em-core-spacing--0100)`)
+- `--em-ghostbutton-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-ghostbutton-padding` (Default: `var(--em-core-spacing--0050)`)
+
+#### Overlay
+
+Used in `src/components/shared/Overlay/Overlay.module.css`
+
+- `--em-overlay-background` (Default: `rgb(33 33 41 / 80%)`)
+
+#### Skeleton
+
+Used in `src/components/shared/Skeleton/Skeleton.module.css`
+
+- `--em-skeleton-border-radius` (Default: `var(--em-core-border-radius--300)`)
+
+#### ActionIcon
+
+Used in `src/components/shared/ActionIcon/ActionIcon.module.css`
+
+- `--em-actionicon-background` (Default: `var(--em-sem-background--light)`)
+- `--em-actionicon-background--active` (Default: `var(--em-sem-background--muted)`)
+- `--em-actionicon-background--hover` (Default: `var(--em-sem-background--subtle)`)
+- `--em-actionicon-border-radius` (Default: `var(--em-core-border-radius--500)`)
+- `--em-actionicon-color` (Default: `var(--em-sem-text)`)
+- `--em-actionicon-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-actionicon-height` (Default: `var(--em-core-size--0800)`)
+- `--em-actionicon-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-actionicon-padding-left-right` (Default: `var(--em-core-spacing--0050)`)
+- `--em-actionicon-padding-top-bottom` (Default: `var(--em-core-spacing--0200)`)
+- `--em-actionicon-width` (Default: `var(--em-core-size--0500)`)
+
+---
+
+### Editors
+
+#### SelectField
+
+Used in `src/components/editors/selects/shared/SelectFieldContent/SelectFieldContent.module.css`
+
+- `--em-selectfield-content-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-selectfield-content-border-radius` (Default: `var(--em-core-border-radius--300)`)
+- `--em-selectfield-content-max-height` (Default: `320px`)
+- `--em-selectfield-content-max-width` (Default: `400px`)
+- `--em-selectfield-content-opacity--loading` (Default: `50px`)
+- `--em-selectfield-content-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-selectfield-content-shadow-blur` (Default: `var(--em-core-shadow-blur)`)
+- `--em-selectfield-content-shadow-color` (Default: `rgb(33 33 41 / 25%)`)
+- `--em-selectfield-content-shadow-position-x` (Default: `var(--em-core-shadow-position-x)`)
+- `--em-selectfield-content-shadow-position-y` (Default: `var(--em-core-shadow-position-y)`)
+- `--em-selectfield-content-shadow-spread` (Default: `var(--em-core-shadow-spread)`)
+
+Used in `src/components/editors/selects/selects.module.css`
+
+- `--em-selectfield-content-gap` (Default: `var(--em-core-spacing--0200)`)
+
+Used in `src/components/editors/selects/shared/SelectFieldTrigger/SelectFieldTrigger.module.css`
+
+- `--em-selectfield-trigger-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-selectfield-trigger-background--active` (Default: `var(--em-sem-background--light)`)
+- `--em-selectfield-trigger-background--filled` (Default: `var(--em-sem-background--inverted)`)
+- `--em-selectfield-trigger-background--hover` (Default: `var(--em-sem-background)`)
+- `--em-selectfield-trigger-border-color` (Default: `var(--em-sem-background--muted)`)
+- `--em-selectfield-trigger-border-color--error` (Default: `var(--em-sem-status-error-text)`)
+- `--em-selectfield-trigger-border-radius` (Default: `var(--em-core-border-radius--200)`)
+- `--em-selectfield-trigger-border-width` (Default: `var(--em-core-border-width--025)`)
+- `--em-selectfield-trigger-border-width--error` (Default: `var(--em-core-border-width--050)`)
+- `--em-selectfield-trigger-color` (Default: `var(--em-sem-text)`)
+- `--em-selectfield-trigger-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-selectfield-trigger-color--filled` (Default: `var(--em-sem-text--inverted)`)
+- `--em-selectfield-trigger-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-selectfield-trigger-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-selectfield-trigger-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-selectfield-trigger-height` (Default: `var(--em-core-size--1000)`)
+- `--em-selectfield-trigger-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-selectfield-trigger-label-padding-left-right` (Default: `var(--em-core-spacing--0200)`)
+- `--em-selectfield-trigger-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-selectfield-trigger-min-width` (Default: `64px`)
+- `--em-selectfield-trigger-padding` (Default: `var(--em-core-spacing--0300)`)
+
+Used in `src/components/editors/selects/shared/SelectFieldContent/SelectFieldOptions/SelectFieldOption/SelectFieldOption.module.css`
+
+- `--em-selectfield-item-background` (Default: `var(--em-sem-background--neutral)`)
+- `--em-selectfield-item-background--active` (Default: `var(--em-sem-background--light)`)
+- `--em-selectfield-item-background--hover` (Default: `var(--em-sem-background)`)
+- `--em-selectfield-item-background--selected` (Default: `var(--em-sem-background--inverted)`)
+- `--em-selectfield-item-border-radius` (Default: `var(--em-core-border-radius--200)`)
+- `--em-selectfield-item-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-selectfield-item-height` (Default: `var(--em-core-size--0800)`)
+- `--em-selectfield-item-icon-color` (Default: `var(--em-sem-text)`)
+- `--em-selectfield-item-icon-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-selectfield-item-icon-color--selected` (Default: `var(--em-sem-text--inverted)`)
+- `--em-selectfield-item-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-selectfield-item-label-left-color` (Default: `var(--em-sem-text)`)
+- `--em-selectfield-item-label-left-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-selectfield-item-label-left-color--selected` (Default: `var(--em-sem-text--inverted)`)
+- `--em-selectfield-item-label-left-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-selectfield-item-label-left-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-selectfield-item-label-left-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-selectfield-item-label-padding-left-right` (Default: `var(--em-core-spacing--0200)`)
+- `--em-selectfield-item-label-right-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-selectfield-item-label-right-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-selectfield-item-label-right-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-selectfield-item-label-right-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-selectfield-item-padding` (Default: `var(--em-core-spacing--0200)`)
+
+Used in `src/components/editors/selects/shared/SelectFieldContent/SelectFieldOptions/SelectFieldCategory/SelectFieldCategory.module.css`
+
+- `--em-selectfield-category-background` (Default: `var(--em-sem-background--subtle)`)
+- `--em-selectfield-category-border-radius` (Default: `var(--em-core-border-radius--150)`)
+- `--em-selectfield-category-color` (Default: `var(--em-sem-text--neutral)`)
+- `--em-selectfield-category-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-selectfield-category-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-selectfield-category-font-weight` (Default: `var(--em-core-font-weight--bold)`)
+- `--em-selectfield-category-line-height` (Default: `var(--em-core-line-height--sm)`)
+- `--em-selectfield-category-padding` (Default: `var(--em-core-spacing--0100)`)
+
+#### DateRangePicker
+(see Charts/Shared above - this component is editor-scoped)
+
+Used in `src/components/editors/dates/DateRangePicker/DateRangePicker.css`
+
+- `--em-daterangepicker-accent-color` (Default: `var(--em-sem-background--inverted)`)
+- `--em-daterangepicker-day-color` (Default: `var(--em-sem-text)`)
+- `--em-daterangepicker-day-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-daterangepicker-day-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-daterangepicker-day-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-daterangepicker-day-outside` (Default: `var(--em-sem-text--subtle)`)
+- `--em-daterangepicker-day-range-background` (Default: `var(--em-sem-background--light)`)
+- `--em-daterangepicker-day-range-limit-border-radius` (Default: `var(--em-core-border-radius--200)`)
+- `--em-daterangepicker-day-range-limit-color` (Default: `var(--em-sem-text--inverted)`)
+- `--em-daterangepicker-day-size` (Default: `var(--em-core-size--0800)`)
+- `--em-daterangepicker-label-color` (Default: `var(--em-sem-text)`)
+- `--em-daterangepicker-label-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-daterangepicker-label-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-daterangepicker-label-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-daterangepicker-weekday-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-daterangepicker-weekday-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-daterangepicker-weekday-font-size` (Default: `var(--em-core-font-size--sm)`)
+- `--em-daterangepicker-weekday-font-weight` (Default: `var(--em-core-font-weight--medium)`)
+
+Used in `src/components/editors/dates/DateRangePicker/DateRangePickerChevron.module.css`
+
+- `--em-daterangepicker-chevron--active` (Default: `var(--em-sem-background--muted)`)
+- `--em-daterangepicker-chevron--hover` (Default: `var(--em-sem-background--subtle)`)
+- `--em-daterangepicker-chevron-background` (Default: `var(--em-sem-background--light)`)
+- `--em-daterangepicker-chevron-border-radius` (Default: `var(--em-core-border-radius--200)`)
+- `--em-daterangepicker-chevron-color` (Default: `var(--em-sem-text)`)
+- `--em-daterangepicker-chevron-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-daterangepicker-chevron-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-daterangepicker-chevron-size` (Default: `var(--em-core-size--0800)`)
+
+#### TextField
+
+Used in `src/components/editors/inputs/shared/InputField/InputField.module.css`
+
+- `--em-textfield-background` (Default: `var(--em-sem-background)`)
+- `--em-textfield-background--active` (Default: `var(--em-sem-background--subtle)`)
+- `--em-textfield-background--disabled` (Default: `var(--em-sem-background--neutral)`)
+- `--em-textfield-background--filled` (Default: `var(--em-sem-background--light)`)
+- `--em-textfield-border-color` (Default: `var(--em-sem-text--subtle)`)
+- `--em-textfield-border-color--error` (Default: `var(--em-sem-status-error-text)`)
+- `--em-textfield-border-radius` (Default: `var(--em-core-border-radius--200)`)
+- `--em-textfield-border-width` (Default: `var(--em-core-border-width--025)`)
+- `--em-textfield-border-width--error` (Default: `var(--em-core-border-width--050)`)
+- `--em-textfield-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-textfield-color--disabled` (Default: `var(--em-sem-text--subtle)`)
+- `--em-textfield-color--filled` (Default: `var(--em-sem-text)`)
+- `--em-textfield-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-textfield-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-textfield-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-textfield-font-weight--filled` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-textfield-height` (Default: `var(--em-core-size--1000)`)
+- `--em-textfield-icon-size` (Default: `var(--em-core-size--0400)`)
+- `--em-textfield-label-padding` (Default: `var(--em-core-spacing--0200)`)
+- `--em-textfield-line-height` (Default: `var(--em-core-line-height--md)`)
+- `--em-textfield-min-width` (Default: `160px`)
+- `--em-textfield-padding` (Default: `var(--em-core-spacing--0200)`)
+
+Used in `src/components/shared/Field/FieldFeedback.module.css`
+
+- `--em-textfield-feedback-color` (Default: `var(--em-sem-text--muted)`)
+- `--em-textfield-feedback-color--error` (Default: `var(--em-sem-status-error-text)`)
+- `--em-textfield-feedback-font-family` (Default: `var(--em-core-font-family--base)`)
+- `--em-textfield-feedback-font-size` (Default: `var(--em-core-font-size--xs)`)
+- `--em-textfield-feedback-font-weight` (Default: `var(--em-core-font-weight--regular)`)
+- `--em-textfield-feedback-font-weight--error` (Default: `var(--em-core-font-weight--medium)`)
+- `--em-textfield-feedback-line-height` (Default: `var(--em-core-line-height--md)`)
+
+Used in `src/components/shared/Card/CardFeedback/CardFeedback.module.css`
+
+- `--em-textfield-feedback-font-family` (Default: `var(--em-core-font-family--base)`)
