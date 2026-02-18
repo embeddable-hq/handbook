@@ -1,0 +1,214 @@
+# Connecting Embeddable to Cube Core
+
+Embeddable works seamlessly with [**Cube Core**](https://cube.dev/docs/product/getting-started/core), letting you pick and visualize your [**Cube models**](https://cube.dev/docs/product/workspace/data-model) right in Embeddable’s no-code builder.
+
+This guide explains how to connect Embeddable to a **self-hosted Cube Core** deployment **using the Data Provider API**.
+
+## **Data Provider API**
+
+To connect Cube Core, you’ll need to provide your `REST API Endpoint` and [JWT](https://cube.dev/docs/product/auth/methods/jwt#generating-json-web-tokens) signed with `CUBEJS_API_SECRET` to Embeddable.
+
+
+<Callout emoji="💡">
+When connecting to **Cube Core**, Embeddable requires a [Json Web Token (JWT)](https://cube.dev/docs/product/auth/methods/jwt#generating-json-web-tokens), not the raw `CUBEJS_API_SECRET`. You must generate a token using the secret and provide that token to Embeddable.
+</Callout>
+
+### 1. Find Your Cube Credentials
+
+#### 1. REST API Endpoint
+
+In production mode, the Cube Core REST API endpoint is accessible at:
+
+```
+http://YOUR_CUBE_SERVER:4000/cubejs-api/v1
+```
+
+Or if you're using HTTPS:
+
+```
+https://YOUR_CUBE_SERVER:4000/cubejs-api/v1
+```
+
+<Callout emoji="💡">
+Copy only the URL segment before /cubejs-api/v1.
+</Callout>
+
+#### 2. Generate a JSON Web Token
+
+Cube Core uses JWT-based authentication. To connect Embeddable, generate a `JWT` signed with your `CUBEJS_API_SECRET`.
+
+You can generate this token inside the container running Cube Core, or on another server where Node.js is available and the same `CUBEJS_API_SECRET` is configured.
+
+  ```bash
+  node -e "
+  const jwt = require('jsonwebtoken'); // Import the jsonwebtoken library
+
+  const token = jwt.sign(
+    { sub: 'docs-user' }, // Token payload (identifier)
+    
+    process.env.CUBEJS_API_SECRET, // Secret key used to sign the token (must match Cube Core config)
+
+    { algorithm: 'HS256' } // Signing algorithm used by Cube Core
+  );
+
+  console.log(token); // Output the generated JWT token
+  "
+  ```
+
+This command outputs a token. Save it — you’ll use it as `secretKey` when creating your data provider.
+
+**Using Docker (optional)**
+
+If your Cube Core is running in Docker, you can run the same command inside the container:
+
+```bash
+docker exec -it cube-core sh -lc '
+node -e "
+const jwt = require(\"jsonwebtoken\"); // Import the jsonwebtoken library
+
+const token = jwt.sign(
+  { sub: \"docs-user\" }, // Token payload (identifier)
+
+  process.env.CUBEJS_API_SECRET, // Secret key from Cube Core environment variables
+
+  { algorithm: \"HS256\" } // Signing algorithm used by Cube Core
+);
+
+console.log(token); // Output the generated JWT token
+"
+'
+```
+
+Learn more about generating JWT in Cube Core [here](https://cube.dev/docs/product/auth/methods/jwt#generating-json-web-tokens).
+
+### **2. Create a Data Provider**
+
+Connect Embeddable to your Cube Core deployment using our Data Provider API, which also allows you to manage single/multiple deployments efficiently.
+
+You can call the Data Provider API directly using tools like [Postman](https://www.postman.com/) or Bruno (link below)
+
+<Bruno/>
+
+The example below shows a CREATE action. Other CRUD operations (list, read, update, delete) are available in our Bruno APIs collection.
+
+```jsx
+fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}` /* keep your API Key secure */,
+    },
+    body: JSON.stringify({
+        name: 'main-instance', // unique name for your cube endpoint
+        type: 'cube', // Data provider type
+        credentials: {
+          secretKey: '<your generated JWT>',
+          instanceUrl: 'http://<CUBE-CORE-PUBLIC-IP>:4000'
+        },
+    }),
+});
+```
+
+- **apiKey**: This is located on the homepage of your workspace.
+- **name**: A unique identifier you'll use to reference your Cube deployment (e.g. `main-instance`)
+- **type**: Always set to `cube` for external cube deployments.
+- **credentials**:
+    - **instanceUrl** – The base URL of your Cube Core REST API (without `/cubejs-api/v1`).
+    - **secretKey** – The `JWT` generated using `CUBEJS_API_SECRET`.
+- **region**: Learn more about `region` [here](/deployment/deployment-regions).
+
+### **3. Test your Data Provider**
+
+You can then test it in Embeddable by updating your [security context](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
+
+```jsx
+- name: Example customer 1
+  securityContext:
+    country: United States
+    userid: 123
+  dataProvider: main-instance 
+```
+
+and you can [embed your dashboard](/deployment/embedding) by calling the [Tokens API](/deployment/tokens-api#comprehensive-example) like this:
+
+```jsx
+POST /api/v1/security-token
+  embbeddableId: '...',
+  securityContext: { /* ... */ },
+  #
+  # other fields...
+  #
+  dataProvider: 'main-instance'
+```
+
+### **4. Use Your Cube Models in Embeddable**
+
+Watch this short video demonstrating Cube Core and Embeddable in action:
+
+<VideoComponent
+    src="/video/byoc-cube-core-demo.mp4"
+    width="1920"
+    height="1080"
+/>
+
+**Things to notice:**
+
+- [0:00] Your cube models, dimensions and measures all appear in Embeddable via **Datasets**.
+- [0:49] If you make changes to your models, just click the **Refresh button** in the Datasets section to bring in your changes.
+- [2:16] You can switch between **security contexts** using the [View As](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) dropdown.
+
+**Notes and best practices**
+
+- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-core#data-provider-api).
+- Use clear names for your data providers (e.g., `main-instance`) so they map directly to your Cube instances.
+- Anything you want to pass from Embeddable to your Cube deployment, ensure it is **inside** the `securityContext`.
+
+## Testing multiple data providers
+
+For **separate deployments**, you'll need to **set up a data provider for each one**. Since each deployment has its **own Rest API Endpoint and JWT**, just repeat the same configuration steps for each deployment as described earlier [**here**](/data/cube-core#find-your-cube-credentials).
+
+### Development and Production Cube Core instances
+
+Lets assume you have **separate** Cube Core instances for **development** and **production.** Each Cube Core instance should have:
+
+- Its own public API endpoint.
+- Its own JWT (generated using its `CUBEJS_API_SECRET`)
+- A unique data provider name
+
+```jsx
+// Development
+fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}` /* keep your API Key secure */,
+    },
+    body: JSON.stringify({
+        name: 'cube-core-dev', // dev data provider
+        type: 'cube', // Data provider type
+        credentials: {
+          secretKey: '<dev JWT>',
+          instanceUrl: 'http://<DEV-CUBE-CORE-PUBLIC-IP>:4000'
+        },
+    }),
+});
+
+// Production
+fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}` /* keep your API Key secure */,
+    },
+    body: JSON.stringify({
+        name: 'cube-core-prod', // prod data provider
+        type: 'cube', // Data provider type
+        credentials: {
+          secretKey: '<prod JWT>',
+          instanceUrl: 'http://<PROD-CUBE-CORE-PUBLIC-IP>:4000'
+        },
+    }),
+});
+```
+
+You can then switch between environments by referencing the appropriate `dataProvider` in your security context or Tokens API request.
