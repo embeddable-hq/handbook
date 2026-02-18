@@ -1,6 +1,6 @@
 # CSS Tokens – Semantic
 
-Semantic tokens form the *main theming layer* for Remarkable. They’re **where most teams start when applying their brand**. 
+Semantic tokens form the *main theming layer* for Remarkable. They’re where most teams start when applying their brand**. 
 
 Instead of focusing on raw colours, semantic tokens describe **what a value is used for** - such as default background, muted text, or error status.
 
@@ -12,21 +12,31 @@ They let you update broad visual-level styling in one place, and every component
 '--em-sem-background': 'var(--em-core-color-gray--0050)',
 '--em-sem-background--muted': 'var(--em-core-color-gray--0300)',
 '--em-sem-text--subtle': 'var(--em-core-color-gray--0400)',
-'--em-sem-status-error-background': 'rgb(246 226 226)',
-'--em-sem-status-error-text': 'rgb(188 16 16)'
 ```
 
-By default, Semantic tokens sit on top of the [Core layer](/component-libraries/remarkable-pro/styling/core-tokens), mapping design primitives into meaningful UI roles. But, you’re not limited to referencing Core tokens. You can assign **any valid CSS value**:
+By default, Semantic tokens sit on top of the [Core layer](/component-libraries/remarkable-pro/styling/core-tokens), mapping design primitives into meaningful UI roles. But, you’re not limited to referencing Core tokens. You can assign **any valid CSS value**.
+
+Here's the full list, including the role each plays:
 
 ```ts
-'--em-sem-background': 'var(--em-core-color-gray--0050)',
-'--em-sem-background--muted': '#f6f6f6',
-'--em-sem-text--subtle': 'rgba(0 0 0 / 40%)',
-'--em-sem-status-error-background': 'rgb(246 226 226)',
-'--em-sem-status-error-text': 'hsl(0 80% 40%)',
-```
+`--em-sem-background` // Used for primary interactive and hover surfaces  
+`--em-sem-background--inverted` // Used for dark or inverted surfaces  
+`--em-sem-background--light` // Used for light emphasis and secondary surfaces  
+`--em-sem-background--muted` // Used for pressed or low-emphasis states  
+`--em-sem-background--neutral` // Used for default container surfaces  
+`--em-sem-background--subtle` // Used for hover and soft emphasis states  
 
-If you’re not used to working with design primitives, this approach can actually feel simpler: you just assign a CSS value to the semantic role you want to change.
+`--em-sem-status-error-background` // Used for negative status backgrounds  
+`--em-sem-status-error-text` // Used for error text and indicators  
+`--em-sem-status-success-background` // Used for positive status backgrounds  
+`--em-sem-status-success-text` // Used for positive status text and indicators  
+
+`--em-sem-text` // Primary text colour  
+`--em-sem-text--inverted` // Text on dark or inverted backgrounds  
+`--em-sem-text--muted` // Secondary or supporting text  
+`--em-sem-text--neutral` // Neutral emphasis states  
+`--em-sem-text--subtle` // Disabled and low-contrast text 
+```
 
 ## Pattern for Semantic tokens
 
@@ -71,3 +81,189 @@ Modifiers always use double-dash `--` and define nuance, state, or palette steps
 - hover  
 - active  
 - disabled  
+
+## Reference
+
+### Background
+
+`--em-sem-background`  
+- **Used for primary interactive and hover surfaces**.  
+- Including:
+  - Card background
+  - GhostButton background--hover
+  - SelectField item-background--hover
+  - SelectField trigger-background--hover
+  - TableChart cell-background--hover
+  - TableChart header-background--hover
+  - TextField background
+
+`--em-sem-background--inverted`  
+- **Used for dark or inverted surfaces**.  
+- Including:
+  - Chart tooltip-background
+  - DateRangePicker accent-color
+  - SelectField item-background--selected
+  - SelectField trigger-background--filled
+  - Switch background--off
+
+`--em-sem-background--light`  
+- **Used for light emphasis and secondary surfaces**.  
+- Including:
+  - ActionIcon background
+  - Button background--disabled
+  - Button background--secondary
+  - ButtonIcon background--primary--disabled
+  - ButtonIcon background--secondary
+  - ButtonIcon background--secondary--disabled
+  - Chart grid-label-color--light
+  - Chart grid-line-color--light
+  - DateRangePicker day-range-background
+  - GhostButton background--active
+  - SelectField item-background--active
+  - SelectField trigger-background--active
+  - Switch thumb-background--disabled
+  - TableChart border-color
+  - TextField background--filled
+
+`--em-sem-background--muted`  
+- **Used for pressed or low-emphasis states**.  
+- Including:
+  - ActionIcon background--active
+  - Button background--secondary--active
+  - ButtonIcon background--secondary--active
+  - SelectField trigger-border-color
+
+`--em-sem-background--neutral`  
+- **Used for default container surfaces**.  
+- Including:
+  - Card loader-background
+  - Chart label-background
+  - SelectField content-background
+  - SelectField item-background
+  - SelectField trigger-background
+  - Switch thumb-background
+  - TableChart cell-background
+  - TableChart header-background
+  - TextField background--disabled
+
+`--em-sem-background--subtle`  
+- **Used for hover and soft emphasis states**.  
+- Including:
+  - ActionIcon background--hover
+  - Button background--secondary--hover
+  - ButtonIcon background--secondary--hover
+  - SelectField category-background
+  - Switch background--disabled
+  - Switch background--on
+  - TextField background--active
+
+### Status
+
+`--em-sem-status-error-background`  
+- **Used for negative status backgrounds**.  
+- Including:
+  - KPIChart trend-background--negative
+
+`--em-sem-status-error-text`  
+- **Used for error text and indicators**.  
+- Including:
+  - Card feedback-color--error
+  - Field feedback-color--error
+  - KPIChart trend-color--negative
+  - SelectField trigger-border-color--error
+  - TextField border-color--error
+  - TextField feedback-color--error
+
+`--em-sem-status-success-background`  
+- **Used for positive status backgrounds**.  
+- Including:
+  - KPIChart trend-background--positive
+
+`--em-sem-status-success-text`  
+- **Used for positive status text and indicators**.  
+- Including:
+  - KPIChart trend-color--positive
+
+### Text
+
+`--em-sem-text`  
+- **Primary text colour**.  
+- Including:
+  - ActionIcon color
+  - Button background--primary--hover
+  - Button color--secondary
+  - ButtonIcon background--primary--hover
+  - ButtonIcon color--secondary
+  - Card feedback-title-color
+  - Card loader-color
+  - Card title-color
+  - Chart grid-label-color
+  - Chart grid-line-color
+  - Chart label-color
+  - DateRangePicker day-color
+  - DateRangePicker label-color
+  - Field header-color
+  - GhostButton color
+  - KPIChart color
+  - PieChart donut-color
+  - SelectField item-icon-color
+  - SelectField item-label-left-color
+  - SelectField trigger-color
+  - Switch label-color
+  - TableChart color
+  - TextField color--filled
+
+`--em-sem-text--inverted`  
+- **Text on dark or inverted backgrounds**.  
+- Including:
+  - Button color--primary
+  - ButtonIcon color--primary
+  - Chart tooltip-title-color
+  - DateRangePicker day-range-limit-color
+  - SelectField item-icon-color--selected
+  - SelectField item-label-left-color--selected
+  - SelectField item-label-right-color--selected
+  - SelectField trigger-color--filled
+
+`--em-sem-text--muted`  
+- **Secondary or supporting text**.  
+- Including:
+  - Button background--primary
+  - ButtonIcon background--primary
+  - Card feedback-subtitle-color
+  - Card subtitle-color
+  - Chart category-color
+  - Chart grid-label-color--muted
+  - DateRangePicker weekday-color
+  - Field feedback-color
+  - SelectField item-label-right-color
+  - Switch thumb-background--off
+  - TableChart color--muted
+  - TextField color
+  - TextField feedback-color
+
+`--em-sem-text--neutral`  
+- **Neutral emphasis states**.  
+- Including:
+  - Button background--primary--active
+  - ButtonIcon background--primary--active
+  - SelectField category-color
+  - TableChart loading-indicator-color
+
+`--em-sem-text--subtle`  
+- **Disabled and low-contrast text**.  
+- Including:
+  - ActionIcon color--disabled
+  - Button color--disabled
+  - ButtonIcon color--disabled
+  - Chart grid-label-color--subtle
+  - Chart grid-line-color--subtle
+  - DateRangePicker day-outside
+  - GhostButton color--disabled
+  - SelectField item-icon-color--disabled
+  - SelectField item-label-left-color--disabled
+  - SelectField item-label-right-color--disabled
+  - SelectField trigger-color--disabled
+  - Switch label-color--disabled
+  - TextField border-color
+  - TextField color--disabled

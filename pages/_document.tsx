@@ -19,6 +19,20 @@ class MyDocument extends Document {
               }}
             />
           )}
+          <script src="https://cdn.eu.amplitude.com/script/b2d53a5c210f08b1de5a2ce1490ed82.js" />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.amplitude.init("b2d53a5c210f08b1de5a2ce1490ed82", {
+                  serverZone: "EU",
+                  fetchRemoteConfig: true,
+                  autocapture: {
+                    pageViews: false
+                  }
+                });
+              `,
+            }}
+          />
           <script
             src="https://cdn.jsdelivr.net/npm/@inkeep/cxkit-js@0.5/dist/embed.js"
             defer

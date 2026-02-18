@@ -22,5 +22,14 @@ module.exports = withNextra({
       }
     }
     return config
+  },
+  async redirects() {
+    return [
+      {
+        source: '/component-libraries/remarkable-pro/styling/token-reference',
+        destination: '/component-libraries/remarkable-pro/styling/component-tokens#reference',
+        permanent: true,
+      },
+    ]
   }
 })
