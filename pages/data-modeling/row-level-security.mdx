@@ -1,158 +1,79 @@
 # Row-level security
 
-For **customer-facing analytics**, each **end-user** should only see the **data they’re allowed to see** and nothing more. That’s why row-level security is a **first-class citizen** in Embeddable.
+For **customer-facing analytics**, each **end-user** should only see the **data they're allowed to see** and nothing more. That's why row-level security is a **first-class citizen** in Embeddable.
 
-There are two ways to do row-level security in Embeddable:
+There are three ways to do row-level security (RLS) in Embeddable:
 
-1. **SQL-based row-level security** – easiest and fastest way to get started. SQL-based row-level security is the topic of the remainder of this page.
-2. **Access Policies** – a more scalable approach to row-level security, and particularly powerful if you start using [Views](/data-modeling/views). Learn more about Access Policies [here](/data-modeling/access-policies).
+1. **Security filters** – the simplest way to ensure row-level security is applied globally across all your data models. Pass filters in the [Tokens API](/deployment/tokens-api) and Embeddable enforces them on every query automatically. If a filter can't be applied, the query fails — so data can never accidentally leak. Read on for details.
+2. **SQL-based row-level security** – the recommended approach if you want fine-grained control of row-level security at the model level. Learn more [here](/data-modeling/sql-based-row-level-security).
+3. **Access Policies** – a more scalable approach to row-level security if you start using [Views](/data-modeling/views) and want role-based security. Learn more about Access Policies [here](/data-modeling/access-policies).
 
-## Security Tokens and Security Context
+## Security Filters
 
-Embeddable dashboards are [embedded](/deployment/embedding) in your site via an HTML web component:
+Security filters are the simplest way to ensure row-level security is applied globally across all your data models. You pass a `filters` array when requesting a security token, and Embeddable automatically applies those filters to every query in the dashboard session — with no changes to your data models required.
 
-```html
-<em-beddable 
-  token="eyJhbGciOiJIUzI..."
-/>
+The key advantage is that enforcement is **guaranteed**: if a filter cannot be applied to a query (for example, because there is no join path to the filtered model), the query fails with an error rather than silently returning unfiltered data. This means non-technical team members can build dashboards freely without risking accidental data exposure.
+
+### Adding security filters
+
+Pass a `filters` array in your [Tokens API](/deployment/tokens-api) request:
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  },
+  body: JSON.stringify({
+    // ...
+    filters: [{
+      member: "customers.id",
+      operator: "equals",
+      values: [5],
+    }]
+  })
+})
 ```
 
-- The `token` parameter (a **security token**) must be retrieved **server-side** from our [Tokens API](/deployment/tokens-api) each time a user accesses your Embeddable dashboard.
+Each filter object has three fields:
 
-- When requesting this security token, you also send a **security context**. This is simply a **JSON object** containing *any fields* you need to pass to your data models:
+- **`member`** — the model field to filter on, in `cube.field` notation (e.g. `customers.id`, `orders.region`).
+- **`operator`** — how the field is compared to the values. See [Access Policies](/data-modeling/access-policies#3-row_level) for the full list of supported operators.
+- **`values`** — an array of values to compare against.
 
-```javascript
-POST /api/v1/security-token
-securityContext: { 
-    userId: 45, 
-    orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
-    countries: ['us-east', 'eu-west']
-}
+## Testing your security setup
 
-Response:
-{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI..." }
-```
-
-The `securityContext` is just arbitrary JSON, and can be nested as deeply as you like.
-
-### How to use the Security Context
-
-The security context is automatically available inside your data models, and is accessed like so:
-
-```yaml
-cubes:
-  - name: orders
-    title: "Orders"
-    sql: >
-      SELECT * FROM public.orders
-      WHERE org_id = '{ COMPILE_CONTEXT.securityContext.orgId }'
-      AND user_id = { COMPILE_CONTEXT.securityContext.userId }
-```
-
-Or, if your customer data is, for example, split by database schema:
-
-```yaml
-cubes:
-  - name: orders
-    title: "Orders"
-    sql_table: "{ COMPILE_CONTEXT.securityContext.orgId }.orders"
-```
-
-If you’re unsure how best to approach data security, reach out to us—we’re here to help.
-
-## Using Jinja for Dynamic SQL
-
-Jinja ([docs](https://jinja.palletsprojects.com/en/3.1.x/templates/)) is used under the hood to compile the models into SQL (given a particular `securityContext`). The `{ ... }` notation in your model files is replaced **before** sending the query to your database. For example:
-
-```yaml
-cubes:
-  - name: customers
-    title: "My customers"
-    sql: >
-      SELECT * 
-      FROM public.customers 
-      WHERE orgId = '{ COMPILE_CONTEXT.securityContext.ordId }'
-```
-with the following `securityContext`:
-```yaml
-securityContext:
-  orgId: abc123
-```
-
-compiles to:
-
-```sql
-SELECT *
-FROM public.customers
-WHERE ordId = 'abc123'
-```
-
-### Conditional SQL
-
-The nice thing about Jinja is that it also allows conditional logic for more advanced scenarios:
-
-```yaml
-cubes:
-  - name: customers
-    title: "My customers"
-    sql: >
-      SELECT * 
-      FROM public.customers
-      {% if COMPILE_CONTEXT.securityContext.superUser %}
-        WHERE 1 = 1
-      {% else %}
-        WHERE organisationId = '{ COMPILE_CONTEXT.securityContext.organisationId }'
-      {% endif %}
-```
-
-For users flagged as `superUser`, the compiled SQL becomes:
-
-```sql
-SELECT *
-FROM public.customers
-WHERE 1 = 1
-```
-
-### Multiple Values
-
-When your security context contains an array (e.g. a list of allowed countries), use the `list` helper:
-
-```yaml
-cubes:
-  - name: customers
-    title: "My customers"
-    sql: >
-      SELECT *
-      FROM public.customers
-      WHERE country IN {{ list(COMPILE_CONTEXT.securityContext.countries) }}
-```
-
-If `countries` is `["United States", "Canada", "Mexico"]`, the resulting SQL looks like:
-
-```sql
-SELECT *
-FROM public.customers
-WHERE country IN ('United States', 'Canada', 'Mexico')
-```
-
-## Testing Security Contexts in Embeddable
-
-To try out different security contexts in the no-code builder, define them in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
+To try out different security configurations in the no-code builder, define presets in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/embeddable-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
 
 ```yaml
 - name: Nike
   securityContext:
     orgId: org5
     userId: 23478
+  filters:
+    - member: customers.id
+      operator: equals
+      values: [ 23478 ]
 
 - name: Adidas
   securityContext:
     orgId: 23
     userId: cmlidXRlIjoiZ2VvaXBf9sZSJ9LHsiYXR0
+  filters:
+    - member: customers.id
+      operator: equals
+      values: [ 'cmlidXRlIjoiZ2VvaXBf9sZSJ9LHsiYXR0' ]
 ```
 
-Each entry appears under the **“View as”** dropdown in the builder:
+Each entry appears under the **"View as"** dropdown in the builder:
 
 <ImageGrid images={["/img/security-context-preset.png"]}/>
 
 Switch between contexts to preview your dashboard as different users.
+
+## Other row-level security methods
+
+- **[SQL-based row-level security](/data-modeling/sql-based-row-level-security)** – the recommended approach if you want fine-grained control of row-level security at the model level.
+- **[Access Policies](/data-modeling/access-policies)** – a more scalable approach, particularly powerful when combined with [Views](/data-modeling/views).

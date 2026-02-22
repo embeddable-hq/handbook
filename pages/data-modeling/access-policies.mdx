@@ -2,10 +2,11 @@
 
 **Access Policies** let you control which rows of data a user can see in Embeddable by defining them in [cube models](/data-modeling/defining-models) or [views](/data-modeling/views). They are applied at query time and affect [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models).
 
-There are two ways to do row-level security in Embeddable:
+There are three ways to do row-level security in Embeddable:
 
-1. **SQL-based row-level security** – easy to get started, full power of SQL. Learn more [here](/data-modeling/row-level-security).
-2. **Access Policies** – reusable in views, applied at run time, support nested filters and role-based logic, and extra protection against SQL injection.
+1. **Security filters** – the simplest way to ensure row-level security is applied globally across all your data models. Pass filters in the [Tokens API](/deployment/tokens-api) and Embeddable enforces them on every query automatically. Learn more [here](/data-modeling/row-level-security#security-filters).
+2. **SQL-based row-level security** – the recommended approach if you want fine-grained control of row-level security at the model level. Learn more [here](/data-modeling/sql-based-row-level-security).
+3. **Access Policies** – a more scalable approach to row-level security if you start using [Views](/data-modeling/views) and want role-based security.
 
 ## Why use Access Policies
 
@@ -454,3 +455,8 @@ AND subscription_tier = 'Premium'
 - **User sees everything**: check for `*` or `allow_all: true`.
 - **Filters do not apply**: confirm token has correct roles.
 - **No roles passed but access granted**: expected; `default` applies.
+
+## Other row-level security methods
+
+- **[Security filters](/data-modeling/row-level-security#security-filters)** – the simplest way to enforce row-level security globally across all your data models, without any changes to your SQL.
+- **[SQL-based row-level security](/data-modeling/sql-based-row-level-security)** – the recommended approach if you want fine-grained control of row-level security at the model level.

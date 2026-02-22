@@ -1,0 +1,107 @@
+# SQL-based row-level security
+
+With SQL-based row-level security, you encode security logic directly into your data models using a **security context** — a JSON object you pass when requesting a [security token](/deployment/tokens-api). Use this approach when you need fine-grained control over how different models filter data.
+
+The `securityContext` is arbitrary JSON passed to the [Tokens API](/deployment/tokens-api) and can contain any fields your models need:
+
+```javascript
+POST /api/v1/security-token
+securityContext: {
+    userId: 45,
+    orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
+    countries: ['us-east', 'eu-west']
+}
+```
+
+It's then available inside your data models via `COMPILE_CONTEXT.securityContext`:
+
+```yaml
+cubes:
+  - name: orders
+    title: "Orders"
+    sql: >
+      SELECT * FROM public.orders
+      WHERE org_id = '{ COMPILE_CONTEXT.securityContext.orgId }'
+      AND user_id = { COMPILE_CONTEXT.securityContext.userId }
+```
+
+Or, if your customer data is split by database schema:
+
+```yaml
+cubes:
+  - name: orders
+    title: "Orders"
+    sql_table: "{ COMPILE_CONTEXT.securityContext.orgId }.orders"
+```
+
+Jinja ([docs](https://jinja.palletsprojects.com/en/3.1.x/templates/)) is used under the hood to compile these models into SQL. The `{ ... }` notation is replaced **before** the query is sent to your database. For example, with `securityContext: { orgId: "abc123" }`:
+
+```yaml
+cubes:
+  - name: customers
+    sql: >
+      SELECT *
+      FROM public.customers
+      WHERE orgId = '{ COMPILE_CONTEXT.securityContext.orgId }'
+```
+
+compiles to:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE orgId = 'abc123'
+```
+
+## Conditional SQL
+
+Jinja also supports conditional logic for more advanced scenarios:
+
+```yaml
+cubes:
+  - name: customers
+    title: "My customers"
+    sql: >
+      SELECT *
+      FROM public.customers
+      {% if COMPILE_CONTEXT.securityContext.superUser %}
+        WHERE 1 = 1
+      {% else %}
+        WHERE organisationId = '{ COMPILE_CONTEXT.securityContext.organisationId }'
+      {% endif %}
+```
+
+For users flagged as `superUser`, the compiled SQL becomes:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE 1 = 1
+```
+
+## Multiple Values
+
+When your security context contains an array (e.g. a list of allowed countries), use the `list` helper:
+
+```yaml
+cubes:
+  - name: customers
+    title: "My customers"
+    sql: >
+      SELECT *
+      FROM public.customers
+      WHERE country IN {{ list(COMPILE_CONTEXT.securityContext.countries) }}
+```
+
+If `countries` is `["United States", "Canada", "Mexico"]`, the resulting SQL looks like:
+
+```sql
+SELECT *
+FROM public.customers
+WHERE country IN ('United States', 'Canada', 'Mexico')
+```
+
+## Other row-level security methods
+
+- **[Security filters](/data-modeling/row-level-security#security-filters)** – the simplest way to enforce row-level security globally across all your data models, without any changes to your SQL.
+- **[Access Policies](/data-modeling/access-policies)** – a more scalable approach if you start using [Views](/data-modeling/views) and want role-based security.
