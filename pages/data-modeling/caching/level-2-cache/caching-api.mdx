@@ -24,6 +24,11 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
         securityContext: {
           userId: '9sZSJ9LHsiYXR0cmli'
         },
+        filters: [{
+          member: 'customers.id',
+          operator: 'equals',
+          values: ['9sZSJ9LHsiYXR0cmli'],
+        }],
         environment: 'default',
         timezones: ['UTC']
       },
@@ -31,6 +36,11 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
         securityContext: {
           userId: 'HsiYXR0cmli9sZSJ9L'
         },
+        filters: [{
+          member: 'customers.id',
+          operator: 'equals',
+          values: ['HsiYXR0cmli9sZSJ9L'],
+        }],
         environment: 'prod'
       }
     ],
@@ -51,7 +61,8 @@ Status 204 (No Content)
     - `embeddables`: (required) a list of Embeddables to refresh. Each object must contain:
       - `id`: the unique identifier of the Embeddable dashboard.
       - `savedVersions`: (optional) an array of saved versions to refresh. If not provided, the latest saved version will be used by default.
-   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security#security-tokens-and-security-context) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
+   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security/sql-based-security) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
+   - `filters`: optional. An array of filter objects (each with `member`, `operator`, and `values`) matching those passed to the [Tokens API](/deployment/tokens-api). Ensures the cache is built with the correct filters applied for that security context.
    - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
    - `timezone` is the timezone you want the pre-aggregation to be built for.  When your components call [loadData](/development/loading-data), they can **only** use pre-aggregations that match their `timezone`.  Timezone must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC' if omitted.
 

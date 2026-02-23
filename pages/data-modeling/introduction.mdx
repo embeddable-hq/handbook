@@ -130,7 +130,7 @@ In practice there is a little more to it.  A **data modeling layer** also has th
 <ImageGrid width='100%' images={["/img/data_modeling_102.png"]}/>
 
 1. **Database type**: in Embeddable this is defined by the type of the [database connection](/data/connect-your-database) you set up and it tells the data modeling layer whether to, for example, generate SQL in the Postgres, MySQL or Snowflake dialect (many other dialects supported).  This is important to the data modeling layer as different databases have slightly different syntax for different query constructs (as a simple example, Postgres surrounds table names with “double quotes”, whereas MySQL uses \`backticks\`).
-2. **Security context**: this is just a simple set of key-value pairs (e.g. `{ "user_id": 1534 }`) that you pass to Embeddable when [generating a security token](/deployment/tokens-api) to load a dashboard in your application. It provides the necessary information for **row-level security** to be applied.  E.g. the `user_id` in this example may be used by the data modeling layer to apply a `WHERE user_id = 1534` filter to the generated SQL, ensuring that the end user **only** ever sees the data rows that they are allowed to see (learn more about how row-level security works in Embeddable [here](/data-modeling/row-level-security)).
+2. **Security context**: this is just a simple set of key-value pairs (e.g. `{ "user_id": 1534 }`) that you pass to Embeddable when [generating a security token](/deployment/tokens-api) to load a dashboard in your application. It provides the necessary information for **row-level security** to be applied.  E.g. the `user_id` in this example may be used by the data modeling layer to apply a `WHERE user_id = 1534` filter to the generated SQL, ensuring that the end user **only** ever sees the data rows that they are allowed to see (learn more about how row-level security works in Embeddable [here](/data-modeling/row-level-security/introduction)).
 3. **Data models**: this is where the magic happens.  Data models are simple files, defined by you, that give the data modeling layer all the context it needs to know in order to generate the correct SQL for your data.  The remainder of this page will take you through a simple example data model.
 
 ## Data models
@@ -325,7 +325,7 @@ And that’s it.  You now understand how to create basic model files and how tho
 - you can then use them to [build your dashboards](/dashboards/building-dashboards).
 - you can also learn more about:
     - joins ([here](/data-modeling/joins))
-    - row-level security ([here](/data-modeling/row-level-security))
+    - row-level security ([here](/data-modeling/row-level-security/introduction))
     - caching ([here](/data-modeling/caching/in-memory))
 
 Let us know on slack if you get stuck.  We’re here to help 😊.
