@@ -1,6 +1,6 @@
 # Tokens API
 
-Whenever a user accesses an Embeddable dashboard in your app, you should fetch a **security token** from our **Tokens API**. This token applies **row-level security** (and more) to their dashboard session.
+Whenever a user accesses an Embeddable dashboard in your app, you should fetch a **security token** from our **Tokens API**. This token applies [row-level security](/data-modeling/row-level-security/introduction) (and more) to their dashboard session.
 
 <Bruno/>
 
@@ -49,7 +49,9 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 You would then use this `token` in your `<em-beddable>` element, as explained in [Embedding an Embeddable](/deployment/embedding#how-it-works).
 
-Learn more about `region` [here](/deployment/deployment-regions).
+Learn more about applying **row-level security** [here](/data-modeling/row-level-security/introduction).
+
+Learn more about specifying `region` [here](/deployment/deployment-regions).
 
 ## Comprehensive example
 
@@ -86,14 +88,14 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     // managed Cube (default)
     //
-    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
-    roles: ['manager'], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
     filters: [{ // optional, simplest way to enforce row-level security globally
       member: 'customers.id',
       operator: 'equals',
       values: ['<customer-id>'],
     }],
-
+    environment: 'default', // optional, tells Embeddable which set of databases to retrieve data from
+    roles: ['manager'], // optional, tells Embeddable which access-policy roles to grant this user e.g. manager, admin etc.
+    
     //
     // external Cube (e.g. Cube Cloud)
     //
@@ -116,7 +118,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   - 'staging' - the saved version published with the 'Staging' tag
   - 'development' - the saved version published with the 'Development' tag
   - 'v3' (or v11, etc.) - the saved version with the given version number.
-- **`securityContext`** is an arbitrary JSON object included in your token request. Embeddable passes it to your **data models**, allowing you to enforce [row/table/schema-level security](/data-modeling/sql-based-row-level-security). For example:
+- **`securityContext`** is an arbitrary JSON object included in your token request. Embeddable passes it to your **data models**, allowing you to enforce row-level (as well as table and schema-level) security (learn more [here](/data-modeling/row-level-security/sql-based-security)). For example:
 
     ```sql
     name: Orders
@@ -130,9 +132,9 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
         {% endif %}
     ```
     
-- **`roles`** optional field, only needed if you’re using [Access Policies](/data-modeling/access-policies). Grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the "default" role. Refer to [Access Policies](/data-modeling/access-policies) for details on how roles drive visibility.
+- **`roles`** optional field, only needed if you’re using [Access Policies](/data-modeling/row-level-security/access-policies). Grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the "default" role. Refer to [Access Policies](/data-modeling/row-level-security/access-policies) for details on how roles drive visibility.
 
-- **`filters`** optional array of filter objects, each with `member`, `operator`, and `values`. When provided, Embeddable automatically applies these filters to every query in the dashboard session. Any query that cannot apply the filter (for example, because there is no join path to the filtered model) will fail with an error. This is the simplest way to ensure row-level security is applied globally across all your data models. See [Security Filters](/data-modeling/row-level-security#security-filters) for details.
+- **`filters`** optional array of filter objects, each with `member`, `operator`, and `values`. When provided, Embeddable automatically applies these filters to every query in the dashboard session. Any query that cannot apply the filter (for example, because there is no join path to the filtered model) will fail with an error. This is the simplest way to ensure row-level security is applied globally across all your data models. See [Security Filters](/data-modeling/row-level-security/security-filters#security-filters) for details.
 
 - **`user`** is a unique identifier for the current user. It enables Embeddable to store (anonymous) session metadata against each user automatically so that customisations / preferences applied by the user to their Embeddable dashboard will automatically be remembered for their next session.
 
@@ -151,4 +153,4 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 ## Testing Security Contexts
 
-If you’re relying on `securityContext` in your data models, you’ll want to **test** them in Embeddable’s no-code builder. You can easily do this by creating [presets](/data-modeling/row-level-security#testing-security-contexts-in-embeddable). 
+If you’re relying on `securityContext` in your data models, you’ll want to **test** them in Embeddable’s no-code builder. You can easily do this by creating [presets](/data-modeling/row-level-security/sql-based-security#testing-your-sql-based-security).

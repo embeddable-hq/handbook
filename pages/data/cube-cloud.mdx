@@ -64,7 +64,7 @@ fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
 
 ### Test your Data Provider
 
-You can then test it in Embeddable by updating your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file like this:
+You can then test it in Embeddable by updating your [**security context**](/data-modeling/row-level-security/sql-based-security#testing-your-sql-based-security) file like this:
 
 ```yaml
 - name: Example customer 1
@@ -96,11 +96,11 @@ Watch this short video demonstrating Cube Cloud and Embeddable in action:
 
  - [0:00] Your cube models, dimensions and measures all appear in Embeddable via **Datasets**.
  - [0:57] If you make changes to your models, just click the **Refresh button** in the Datasets section to bring in your changes.
- - [1:35] You can switch between **security contexts** using the [View As](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) dropdown.
+ - [1:35] You can switch between **security contexts** using the [View As](/data-modeling/row-level-security/sql-based-security#testing-your-sql-based-security) dropdown.
 
 **Notes and best practices**
 
-- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security#testing-security-contexts-in-embeddable) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-cloud#data-provider-api).
+- The `dataProvider` you add in your [**security context**](/data-modeling/row-level-security/sql-based-security#testing-your-sql-based-security) file or [**Tokens API**](/deployment/tokens-api) request must match the data provider you created using the [**Data Providers API**](/data/cube-cloud#data-provider-api).
 - Use clear names for your data providers (e.g., `main-instance`) so they map directly to your Cube instances.
 - Anything you want to pass from Embeddable to your Cube deployment, ensure it is **inside** the `securityContext`.
 
