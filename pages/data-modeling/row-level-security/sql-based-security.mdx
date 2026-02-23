@@ -1,6 +1,6 @@
 # SQL-based row-level security
 
-With SQL-based row-level security, you encode security logic directly into your data models using a **security context** — a JSON object you pass when requesting a [security token](/deployment/tokens-api). Use this approach when you need fine-grained control over how different models filter data.
+With SQL-based row-level security, you encode security logic directly into your data models using a **security context** — a JSON object you pass when requesting a [security token](/deployment/tokens-api). Use this approach when you need control over how different models filter data.
 
 The `securityContext` is arbitrary JSON passed to the [Tokens API](/deployment/tokens-api) and can contain any fields your models need:
 
