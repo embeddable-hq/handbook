@@ -87,7 +87,7 @@ The handbook is primarily a **reference manual**, not a **guide** or a **blogpos
 
 Avoid:
 
-> “If you just want to update your region, it’s a super straightforward process! Just head over to the `embeddable.config.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/embeddable-boilerplate)….”
+> “If you just want to update your region, it’s a super straightforward process! Just head over to the `embeddable.config.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate)….”
 
 Prefer:
 
