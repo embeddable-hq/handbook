@@ -232,7 +232,7 @@ views:
 
 ### Access policies
 
-**Access policies** allow you to apply both `member_level` and `row_level` security to your Views based on roles (i.e. control which columns and rows are visible to which end-users).  This is a nice alternative to **cube-level [row-level security](/data-modeling/row-level-security)**, as:
+**Access policies** allow you to apply both `member_level` and `row_level` security to your Views based on roles (i.e. control which columns and rows are visible to which end-users).  This is a nice alternative to **cube-level [row-level security](/data-modeling/row-level-security/introduction)**, as:
 
 1. It can be defined in one place on the View (rather than having to define it in each cube model)
 2. It can also allow you to control which members (dimensions and measures) are visible.
@@ -258,4 +258,4 @@ views:
 
 The above `access_policy`, for example, gives every end-user with the “default” role, access to **all** members of the `customers_view` view, but it restricts them to only access the rows whose `customers_id` is equal to a given `user_id` in the `securityContext`.
 
-Learn more [here](/data-modeling/access-policies).
+Learn more [here](/data-modeling/row-level-security/access-policies).

@@ -4,13 +4,24 @@ With SQL-based row-level security, you encode security logic directly into your 
 
 The `securityContext` is arbitrary JSON passed to the [Tokens API](/deployment/tokens-api) and can contain any fields your models need:
 
-```javascript
-POST /api/v1/security-token
-securityContext: {
-    userId: 45,
-    orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
-    countries: ['us-east', 'eu-west']
-}
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  },
+  body: JSON.stringify({
+    // ...
+    securityContext: [{
+      userId: 45,
+      orgIg: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
+      countries: ["us-east", "eu-west"],
+    }],
+    // ...
+  })
+})
 ```
 
 It's then available inside your data models via `COMPILE_CONTEXT.securityContext`:
@@ -101,7 +112,28 @@ FROM public.customers
 WHERE country IN ('United States', 'Canada', 'Mexico')
 ```
 
+## Testing your SQL-based security
+
+To try out different security contexts in the no-code builder, define presets in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
+
+```yaml
+- name: Acme Corp
+  securityContext:
+    orgId: acme-corp
+    userId: 45
+
+- name: Globex
+  securityContext:
+    orgId: globex
+    userId: 99
+    superUser: false
+```
+
+Each entry appears under the **"View as"** dropdown in the builder. Switch between presets to verify that the right `WHERE` clauses are being applied — for example, that a user from Acme Corp can't see Globex's rows.
+
+<ImageGrid images={["/img/security-context-preset.png"]}/>
+
 ## Other row-level security methods
 
-- **[Security filters](/data-modeling/row-level-security#security-filters)** – the simplest way to enforce row-level security globally across all your data models, without any changes to your SQL.
-- **[Access Policies](/data-modeling/access-policies)** – a more scalable approach if you start using [Views](/data-modeling/views) and want role-based security.
+- **[Security filters](/data-modeling/row-level-security/security-filters#security-filters)** – the simplest way to enforce row-level security globally across all your data models, without any changes to your SQL.
+- **[Access Policies](/data-modeling/row-level-security/access-policies)** – a more scalable approach if you start using [Views](/data-modeling/views) and want role-based security.
