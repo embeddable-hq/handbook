@@ -115,15 +115,16 @@ const props = (
   );
 
   // Sort data descending by first measure value
-  const measureName = inputs.measures?.[0]?.name;
-  const sortedData = [...(baseProps.results.data ?? [])].sort((a, b) => {
-    return (b[measureName] ?? 0) - (a[measureName] ?? 0);
-  });
+    const measureName = inputs.measures?.[0]?.name;
+    const sortedData = [...(baseProps.results.data ?? [])].sort((a, b) => {
+        if (!measureName) return 0;
+        return (b[measureName] ?? 0) - (a[measureName] ?? 0);
+    });
 
-  return {
+    return {
     ...baseProps,
     results: { ...baseProps.results, data: sortedData },
-  };
+    };
 };
 
 export const barChartSortedDesc = {
@@ -206,60 +207,57 @@ export const barChartLowStockWarning = {
 
 ```tsx
 // index.tsx
-import { BarChartDefaultPro, BarChartDefaultProProps } from '@embeddable.com/remarkable-pro';
+import {
+  barChartDefaultPro,
+  BarChartDefaultProProps,
+} from '@embeddable.com/remarkable-pro';
 import { Typography } from '@embeddable.com/remarkable-ui';
-
 type BarChartLowStockWarningProps = BarChartDefaultProProps & {
   showLowStockWarning?: boolean;
   lowStockThreshold?: number;
 };
-
 const BarChartLowStockWarning = ({
   showLowStockWarning,
   lowStockThreshold,
   ...props
 }: BarChartLowStockWarningProps) => {
   const firstMeasureName = props.measures[0]?.name;
-
   const hasLowStockItem =
     showLowStockWarning &&
     typeof lowStockThreshold === 'number' &&
     !!firstMeasureName &&
     props.results.data?.some((row) => {
-      const value = parseFloat(row[firstMeasureName]);
+      const value = Number.parseFloat(row[firstMeasureName]);
       return typeof value === 'number' && value < lowStockThreshold;
     });
-
   return (
     <div
-        style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-        }}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+      }}
+    >
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <barChartDefaultPro.Component {...props} />
+      </div>
+      {hasLowStockItem && (
+        <Typography
+          as="p"
+          style={{
+            backgroundColor: '#FEF3C7',
+            padding: '8px 12px',
+            borderRadius: 4,
+          }}
         >
-        <div style={{ flex: 1, minHeight: 0 }}>
-            <BarChartDefaultPro.default {...props} />
-        </div>
-
-        {hasLowStockItem && (
-            <Typography
-            as="p"
-            style={{
-                backgroundColor: '#FEF3C7',
-                padding: '8px 12px',
-                borderRadius: 4,
-            }}
-            >
-            ⚠️ Items have low stock
-            </Typography>
-        )}
+          ⚠️ Items have low stock
+        </Typography>
+      )}
     </div>
   );
 };
-
 export default BarChartLowStockWarning;
 ```
 
