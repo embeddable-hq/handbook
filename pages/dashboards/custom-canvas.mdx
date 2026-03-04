@@ -44,11 +44,20 @@ Embeddable also handles the rest:
 
 <Steps>
 
-### Start with a blank canvas
+### Start with a blank canvas or a Starter Canvas
 
 Your users begin with a **clean, empty workspace** that feels flexible and approachable. From here, they can create dashboards that reflect their unique priorities.
 
 <ImageGrid images={["/img/custom-canvas/start-building.png"]} width="100%" />
+
+Alternately, if you've set up a **Starter Canvas**, end-users begin with a pre-built dashboard they can explore and customize right away, rather than starting from a blank canvas.
+
+<ImageGrid images={["/img/custom-canvas/starter-canvas.png"]} width="100%" />
+
+**How the Starter Canvas behaves:**
+- End-users opening a new canvas for the first time always see the Starter Canvas layout.
+- If they haven't yet made any changes, they'll automatically see any updates you make to the Starter Canvas in the builder.
+- Once they make any change of their own, their canvas is saved independently - further updates to the Starter Canvas won't affect them.
 
 ### **Use pre-built templates**
 
@@ -146,6 +155,22 @@ All configured templates appear on your **dashboard builder page**, below your m
  - Manage templates easily using the on-hover controls.
 
 <ImageGrid images={["/img/custom-canvas/manage-and-organise.png"]} width="100%" />
+
+### Set up a Starter Canvas (optional)
+
+A **Starter Canvas** lets you define a default dashboard layout that end-users see the first time they open their custom canvas. Instead of facing a blank canvas, they start with a pre-built set of charts they can immediately explore and customize.
+
+Open the **Starter Canvas tab** in the left sidebar of the dashboard builder.
+
+<ImageGrid images={["/img/custom-canvas/starter-canvas-tab.png"]} width="100%" />
+
+Inside, you'll find a canvas where you can build out the default layout:
+- Drag, drop, and resize charts exactly as you would on the main canvas.
+- Changes are **automatically saved** - the layout is preserved each time you return.
+
+<Callout emoji="💡">
+  The Starter Canvas only applies to end-users who haven't yet made any changes to their own canvas. Once an end-user edits their dashboard, their version is preserved regardless of further updates you make to the Starter Canvas.
+</Callout>
 
 ### Preview and Publish
 
