@@ -67,26 +67,26 @@ Remarkable Pro components use the following structure:
 
 ```
 src/embeddable.com/components/MyCustomBarChart/
-├── definition.ts               # Overrides meta, config, preview (required)
 ├── MyCustomBarChart.emb.ts     # SDK integration (required)
+├── definition.ts               # Overrides meta, config, preview
 └── index.tsx                   # React component (only if you need to customise the UI)
 ```
 
-The `definition` file contains the following definition object, enabling to override any part:
+The only one that is required is the `.emb file`. 
 
+The `definition` file can be used to override elements of the component. It contains the following definition object, enabling you to extend the specific parts you want, re-using the rest of the component and logic. 
 
 | Part | What it controls | Example use case |
 |------|------------------|------------------|
 | `meta.name` | Component identifier | Required - must be unique |
+| `meta.category` | Component category | How components are grouped |
 | `meta.label` | Display name in Builder | Give it a descriptive name |
 | `meta.inputs` | Available inputs in Builder | Add new inputs |
 | `meta.events` | Emitted events | Add new events or modify existing |
 | `config.props` | Data transformation | Compute values, filter or sort data |
 | `config.events` | Event payloads | Transform values before emitting |
-| `previewConfig` | Editor canvas preview | Show new inputs in preview |
-
-
-This means you can extend the specific parts you want, re-using the rest of the component and logic. 
+| `preview` | The default canvas preview | Re-use the existing preview |
+| `previewConfig` | Edit the canvas preview | Show new inputs in preview |
 
 #### Example 1: Custom Data Transformation
 
