@@ -1,3 +1,287 @@
-# Building components
+---
+title: Building & Extending Components
+---
 
-This section is coming soon. 
+# Building & Extending Components
+
+Remarkable Pro gives you the building blocks to create your own components or extend the existing ones.
+
+In both cases, you're using Embeddable's [headless component framework](/development/defining-components) - in effect, just standard React with Embeddable specific configuration files. 
+
+## Architecture: Two Layers
+
+Remarkable Pro is built on top of Remarkable UI. Understanding this separation helps you choose the right approach.
+
+**Building new** means creating a component from scratch, making use of:
+- **Remarkable UI** primitives (charts, cards, buttons, etc.)
+- **Remarkable Pro** utilities (data filling, formatting, color assignment)
+
+**Extending existing** means customizing Remarkable Pro components via:
+- Theme overrides
+- Wrapper components
+
+On this page, we focus principally on extending Remarkable Pro components.
+
+### What each layer provides
+
+| Layer | What it provides 
+|-------|-----------------|
+| **Remarkable UI** | Low-level primitives: e.g. `BarChart`, `PieChart`, `Card`, `Typography`, form fields |
+| **Remarkable Pro** | Embeddable-specific logic: e.g. `useFillGaps`, `ChartCard`, formatters, color utilities |
+
+#### Available from Remarkable UI
+
+[See the full list of exports](https://github.com/embeddable-hq/remarkable-ui/blob/main/src/index.ts)
+
+Examples:
+- `BarChart`, `LineChart`, `PieChart` - Chart primitives
+- `Card`, `Typography`, `Skeleton` - UI primitives
+- `SingleSelectField`, `DateRangePicker` - Form components
+- `getStyle`, `getStyleNumber` - Style utilities
+- `useDebounce`, `useResizeObserver` - Hooks
+
+#### Available from Remarkable Pro
+
+[See the full list of exports](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/index.ts)
+
+Examples:
+- `ChartCard` - Standard chart wrapper with header/menu/loading states
+- `useFillGaps` - Fill gaps in time-series data
+- `getThemeFormatter` - Locale-aware number/date formatting
+- `getDimensionMeasureColor` - Consistent color assignment
+- `inputs` - Pre-defined input configurations for component definitions
+
+## Extending Existing Components
+
+### Via Theme Overrides
+
+You can change many charting / component settings by passing in overrides via the theme - from export options to the content tooltips display. There are dedicated sections for this, [starting here](/component-libraries/remarkable-pro/customizations/date-ranges). 
+
+### Via Direct Overrides
+
+To extend a Remarkable Pro component, import its definition and override the parts you need.
+
+#### File Structure
+
+Remarkable Pro components use the following structure:
+
+```
+src/embeddable.com/components/MyCustomBarChart/
+├── MyCustomBarChart.emb.ts     # SDK integration (required)
+├── definition.ts               # Overrides meta, config, preview
+└── index.tsx                   # React component (only if you need to customise the UI)
+```
+
+The only one that is required is the `.emb file`. 
+
+The `definition` file can be used to override elements of the component. It contains the following definition object, enabling you to extend the specific parts you want, re-using the rest of the component and logic. 
+
+| Part | What it controls | Example use case |
+|------|------------------|------------------|
+| `meta.name` | Component identifier | Required - must be unique |
+| `meta.category` | Component category | How components are grouped |
+| `meta.label` | Display name in Builder | Give it a descriptive name |
+| `meta.inputs` | Available inputs in Builder | Add new inputs |
+| `meta.events` | Emitted events | Add new events or modify existing |
+| `config.props` | Data transformation | Compute values, filter or sort data |
+| `config.events` | Event payloads | Transform values before emitting |
+| `preview` | The default canvas preview | Re-use the existing preview |
+| `previewConfig` | Edit the canvas preview | Show new inputs in preview |
+
+#### Example 1: Custom Data Transformation
+
+When you only need to change behavior (not UI), you can reuse the original React component and just override the necessary parts of `definition.ts`. 
+
+This example extends the default Bar Chart, creating a new version that always sorts data descending by value:
+
+```tsx
+// definition.ts
+import { barChartDefaultPro } from '@embeddable.com/remarkable-pro';
+import { Inputs } from '@embeddable.com/react';
+
+const meta = {
+  ...barChartDefaultPro.meta,
+  name: 'BarChartSortedDesc',
+  label: 'Bar Chart (Sorted Descending)',
+};
+
+const props = (
+  inputs: Inputs<typeof meta>,
+  stateTuple: Parameters<typeof barChartDefaultPro.config.props>[1],
+) => {
+  const baseProps = barChartDefaultPro.config.props(
+    inputs as Inputs<typeof barChartDefaultPro.meta>,
+    stateTuple,
+  );
+
+  // Sort data descending by first measure value
+    const measureName = inputs.measures?.[0]?.name;
+    const sortedData = [...(baseProps.results.data ?? [])].sort((a, b) => {
+        if (!measureName) return 0;
+        return (b[measureName] ?? 0) - (a[measureName] ?? 0);
+    });
+
+    return {
+    ...baseProps,
+    results: { ...baseProps.results, data: sortedData },
+    };
+};
+
+export const barChartSortedDesc = {
+  ...barChartDefaultPro,
+  meta,
+  config: { ...barChartDefaultPro.config, props },
+} as const;
+```
+
+```tsx
+// BarChartSortedDesc.emb.ts
+import { defineComponent } from '@embeddable.com/react';
+import { barChartSortedDesc } from './definition';
+
+export const preview = barChartSortedDesc.preview;
+export const meta = barChartSortedDesc.meta;
+export default defineComponent(barChartSortedDesc.Component, meta, barChartSortedDesc.config);
+```
+
+Things to notice:
+- **Two files only** - no `index.tsx` needed since we reuse the original React component
+- **Spread the original** - `...barChartDefaultPro.meta` inherits all existing inputs, then we override `name` and `label`
+- **Call the original props function** - `barChartDefaultPro.config.props(inputs, stateTuple)` gives us the base props, which we then modify
+- **Export spreads the original** - `...barChartDefaultPro` inherits `Component`, `preview`, and anything else we don't override
+
+#### Example 2: Low Stock Warning
+
+This example also extends the default Bar Chart, creating a new version that displays a warning banner when levels of product stock dip beneath a user-defined threshold. It demonstrates:
+- Adding new inputs (`showLowStockWarning` toggle and `lowStockThreshold` number)
+- Passing new props through `config.props`
+- Wrapping the React component to show conditional UI
+- Configuring the preview to demonstrate the feature
+
+```tsx
+// definition.ts
+import { barChartDefaultPro, inputs } from '@embeddable.com/remarkable-pro';
+import BarChartLowStockWarning from './index';
+import { Inputs } from '@embeddable.com/react';
+
+const meta = {
+  ...barChartDefaultPro.meta,
+  name: 'BarChartLowStockWarning',
+  label: 'Bar Chart (Low Stock Warning)',
+  inputs: [
+    ...barChartDefaultPro.meta.inputs,
+    { ...inputs.boolean, name: 'showLowStockWarning', label: 'Show low stock warning', defaultValue: true },
+    { ...inputs.number, name: 'lowStockThreshold', label: 'Low stock threshold', defaultValue: 10 },
+  ],
+};
+
+const props = (
+  inputs: Inputs<typeof meta>,
+  stateTuple: Parameters<typeof barChartDefaultPro.config.props>[1],
+) => {
+  const baseProps = barChartDefaultPro.config.props(
+    inputs as Inputs<typeof barChartDefaultPro.meta>,
+    stateTuple,
+  );
+  const { showLowStockWarning, lowStockThreshold } = inputs;
+
+  return {
+    ...baseProps,
+    showLowStockWarning: Boolean(showLowStockWarning),
+    lowStockThreshold: Number(lowStockThreshold),
+  };
+};
+
+export const barChartLowStockWarning = {
+  ...barChartDefaultPro,
+  Component: BarChartLowStockWarning,
+  meta,
+  config: { ...barChartDefaultPro.config, props },
+  previewConfig: {
+    ...barChartDefaultPro.previewConfig,
+    showLowStockWarning: true,
+    lowStockThreshold: 10,
+  },
+} as const;
+```
+
+```tsx
+// index.tsx
+import {
+  barChartDefaultPro,
+  BarChartDefaultProProps,
+} from '@embeddable.com/remarkable-pro';
+import { Typography } from '@embeddable.com/remarkable-ui';
+type BarChartLowStockWarningProps = BarChartDefaultProProps & {
+  showLowStockWarning?: boolean;
+  lowStockThreshold?: number;
+};
+const BarChartLowStockWarning = ({
+  showLowStockWarning,
+  lowStockThreshold,
+  ...props
+}: BarChartLowStockWarningProps) => {
+  const firstMeasureName = props.measures[0]?.name;
+  const hasLowStockItem =
+    showLowStockWarning &&
+    typeof lowStockThreshold === 'number' &&
+    !!firstMeasureName &&
+    props.results.data?.some((row) => {
+      const value = Number.parseFloat(row[firstMeasureName]);
+      return typeof value === 'number' && value < lowStockThreshold;
+    });
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+      }}
+    >
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <barChartDefaultPro.Component {...props} />
+      </div>
+      {hasLowStockItem && (
+        <Typography
+          as="p"
+          style={{
+            backgroundColor: '#FEF3C7',
+            padding: '8px 12px',
+            borderRadius: 4,
+          }}
+        >
+          ⚠️ Items have low stock
+        </Typography>
+      )}
+    </div>
+  );
+};
+export default BarChartLowStockWarning;
+```
+
+```tsx
+// BarChartLowStockWarning.emb.ts
+import { defineComponent } from '@embeddable.com/react';
+import { barChartLowStockWarning } from './definition';
+
+export const preview = barChartLowStockWarning.preview;
+export const meta = barChartLowStockWarning.meta;
+export default defineComponent(barChartLowStockWarning.Component, meta, barChartLowStockWarning.config);
+```
+
+Things to notice:
+- **Three files** - `index.tsx` is needed because we're customizing the rendered UI
+- **New inputs added** - spread `...barChartDefaultPro.meta.inputs` then add new ones using the `inputs` helper
+- **Custom Component** - the export overrides `Component: BarChartLowStockWarning` to use our wrapper
+- **Props passed through** - new input values are extracted and passed as props to the React component
+- **previewConfig updated** - ensures the new inputs are demonstrated in the Builder preview
+
+---
+
+## Next Steps
+
+- Learn more about theming [Remarkable Pro components](/component-libraries/remarkable-pro/theming).
+- Learn about [theme overrides](/component-libraries/remarkable-pro/customizations/date-ranges) for simpler customizations
+- See [Defining Components](/development/defining-components) for building components from scratch
