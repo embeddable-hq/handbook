@@ -28,8 +28,8 @@ This ensures users only see options that are relevant.
 - Prefix
 - Suffix
 - Decimal places
-- Currency
-- Abbreviate large numbers (e.g. `1.2k`, `3.4M`)
+- Currency (e.g. enter currency codes like `USD`, `GBP`, `EUR`)
+- Abbreviate large numbers (e.g. `1200` becomes `1.2k`, `3400000` becomes `3.4M`)
 
 **Time**
 - Granularity
@@ -39,8 +39,9 @@ This ensures users only see options that are relevant.
 
 ## Data model defaults (meta)
 
-Some formatting can be defined at the **data model level** using `meta`.  
-These values act as **defaults** in the builder and are applied automatically.
+You can also define the above properties directly at the **data model level** using `meta`. 
+
+These values are then applied automatically everywhere the value is displayed, though they can be overriden using the component inputs and subinputs inside the builder. 
 
 **Example**
 
@@ -53,7 +54,24 @@ measures:
       decimalPlaces: 2
       currency: USD
       abbreviateLargeNumber: true
+      pretext: '-'
+      posttext: '-'
 ```
+
+### Property Keys
+
+| Format | Property | Key |
+| - | - | - |
+| All types | Display name | displayName |
+| All types | Prefix | pretext |
+| All types | Suffix | posttext |
+| Text | Maximum number of characters | maxCharacters |
+| Number | Decimal places | decimalPlaces |
+| Number | Currency | currency |
+| Number | Abbreviate large numbers (e.g. `1.2k`, `3.4M`) | abbreviateLargeNumber |
+| Time | Granularity | granularity |
+
+**Important**: when setting prefix and suffix in the model meta, you need to use **pretext** and **posttext**. This is due to a known issue inside Cube. 
 
 ### How this behaves
 
