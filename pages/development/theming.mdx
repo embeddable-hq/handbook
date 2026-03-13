@@ -4,11 +4,7 @@ Embeddable provides a powerful theming system that allows users to customize the
 
 ## The Basics
 
-Themes are objects that allow Embeddable users to control the global configuration of their components. Embeddable's two main component libraries, [Vanilla Components](/component-libraries/vanilla/introduction) and [Remarkable Pro](/component-libraries/remarkable-pro/introduction), both leverage Embeddable's theming system to provide a consistent look and feel across all components. Remarkable Pro also allows the theme to control date ranges, internationalization, and some component functionality.
-
-<Callout icon="⚠️">
-The rest of this documentation assumes you're using [Remarkable Pro](/component-libraries/remarkable-pro/introduction). If you'd like to learn more about theming in [Vanilla Components](/component-libraries/vanilla/introduction), please see the [Vanilla Components Theming documentation](/component-libraries/vanilla/theming).
-</Callout>
+Themes are objects that allow Embeddable users to control the global configuration of their components. Embeddable's component library, [Remarkable Pro](/component-libraries/remarkable-pro/introduction), leverages Embeddable's theming system to provide a consistent look and feel across all components. Remarkable Pro also allows the theme to control date ranges, internationalization, and some component functionality.
 
 ## themeProvider
 
@@ -90,7 +86,7 @@ Because Client Context is arbitrary JSON, theme data can be sent directly in the
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+import { Theme, defineTheme } from '@embeddable.com/remarkable-pro';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const { theme } = clientContext;

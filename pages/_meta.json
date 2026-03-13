@@ -9,6 +9,7 @@
   "deployment": "Deployment",
   "###": { "type": "separator", "title": "More" },
   "video-tutorials": "Video tutorials",
+  "legacy": "Legacy",
   "whats-new": "What's new",
   "cube-versions": "Cube versions",
   "contact": {
