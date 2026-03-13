@@ -22,5 +22,7 @@
     "type": "page",
     "href": "https://roadmap.embeddable.com/roadmap",
     "newWindow": true
-  }
+  },
+  "---": { "type": "separator" },
+  "legacy": "Legacy"
 }
