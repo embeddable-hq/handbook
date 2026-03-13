@@ -97,14 +97,14 @@ Prefer:
 
 Avoid:
 
-> “Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme”
+> “Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Remarkable Pro to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Remarkable Pro theme”
 
 Prefer:
 
 > Things to notice:
 >
-> 1. we’re bringing in the `Theme` type from Vanilla Components to help with type consistency.
-> 2. the `defineTheme` function helps us merge our changes into the default Vanilla Components theme.
+> 1. we’re bringing in the `Theme` type from Remarkable Pro to help with type consistency.
+> 2. the `defineTheme` function helps us merge our changes into the default Remarkable Pro theme.
 
 ## Start with Why?
 
