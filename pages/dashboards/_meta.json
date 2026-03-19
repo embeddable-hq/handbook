@@ -1,11 +1,11 @@
 {
-  "introduction": "Intro to dashboards",
-  "building-dashboards": "Building dashboards",
-  "interactivity": "Adding interactivity",
-  "starter-components": "Starter components",
-  "saving": "Saving versions",
-  "publishing": "Publishing",
-  "custom-canvas": "Custom Canvas",
-  "drill-down": "Drill-Down",
-  "developer-console": "Debugging dashboards"
+    "introduction": "Intro to dashboards",
+    "building-dashboards": "Building dashboards",
+    "interactivity": "Adding interactivity",
+    "starter-components": "Starter components",
+    "saving": "Saving versions",
+    "publishing": "Publishing",
+    "custom-canvas": "Custom Canvas",
+    "drill-down": "Drill-Down",
+    "developer-console": "Debugging dashboards"
 }
