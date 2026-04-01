@@ -10,6 +10,7 @@
     "row-level-security": "Row-level security",
     "views": "Views",
     "caching": "Caching",
+    "schemas-api": "Schemas API",
     "generate-data-models": "AI Model Builder"
   }
   
