@@ -49,6 +49,9 @@ const ChangelogPaginated: React.FC = () => {
   const muiTheme = createTheme({
     palette: {
       mode: isDark ? "dark" : "light",
+      primary: {
+        main: "#6778DE",
+      },
     },
     typography: {
       fontFamily:
