@@ -187,6 +187,15 @@ When a user clicks a chart element with drill-down configured:
 <ImageGrid width='100%' images={["/img/drill-down-modal-2.png"]}/>
 <ImageGrid width='100%' images={["/img/drill-down-modal-3.png"]}/>
 
+By default, the drill-down modal takes up the full screen on all devices for maximum space to explore. However, you can customize the modal size using CSS variables:
+
+```css
+'--em-drilldown-modal-min-height': '100%',
+'--em-drilldown-modal-width': '100%',
+```
+
+These variables can be [set in your theme](/component-libraries/remarkable-pro/styling/introduction).
+
 ## Multiple interactions on the same chart
 
 You can combine different interaction types on a single chart—multiple drill-down interactions, a mix of drill-down and [set variable](/dashboards/interactivity) interactions, or different actions for different events. This gives you flexibility to build sophisticated interactive experiences.
