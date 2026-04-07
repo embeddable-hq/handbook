@@ -10,6 +10,7 @@
     "row-level-security": "Row-level security",
     "views": "Views",
     "caching": "Caching",
-    "generate-data-models": "AI Model Builder"
+    "filter-params": "Filter Params",
+    "generate-data-models": "AI Model Builder"    
   }
   
