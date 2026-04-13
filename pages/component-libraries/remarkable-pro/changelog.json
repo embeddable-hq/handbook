@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.0",
+    "date": "2026-04-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.0",
+    "notes": [
+      "Added timezone support via `clientContext`, enabling chart components and date range controls to display time-based data in the correct business timezone."
+    ]
+  },
+  {
     "version": "v0.1.32",
     "date": "2026-04-02",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.32",
