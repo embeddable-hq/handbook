@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.1",
+    "date": "2026-04-13",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.1",
+    "notes": [
+      "Fixed markdown content scrolling behavior in the `ScrollableTable` component."
+    ]
+  },
+  {
     "version": "v0.2.0",
     "date": "2026-04-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.0",
