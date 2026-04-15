@@ -1,11 +1,20 @@
 [
   {
+    "version": "v0.2.1",
+    "date": "2026-04-13",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.1",
+    "notes": [
+      "Fixed markdown content scrolling behavior in the `ScrollableTable` component."
+    ]
+  },
+  {
     "version": "v0.2.0",
     "date": "2026-04-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.0",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.0",
     "notes": [
-      "Timezone support via `clientContext` — date ranges now resolve correctly in the viewer's configured timezone across all chart and date-picker components."
+      "Added timezone support via `clientContext`, enabling chart components and date range controls to display time-based data in the correct business timezone."
     ]
   },
   {
@@ -13,72 +22,56 @@
     "date": "2026-04-02",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.32",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.32",
-    "notes": [
-      "Added sort and limit functionality for Bar chart components."
-    ]
+    "notes": ["Added sort and limit functionality for Bar chart components."]
   },
   {
     "version": "v0.1.31",
     "date": "2026-04-02",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.31",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.31",
-    "notes": [
-      "New `FilterBuilder` component."
-    ]
+    "notes": ["New `FilterBuilder` component."]
   },
   {
     "version": "v0.1.30",
     "date": "2026-04-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.30",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.30",
-    "notes": [
-      "Updated SDK versions."
-    ]
+    "notes": ["Updated SDK versions."]
   },
   {
     "version": "v0.1.29",
     "date": "2026-04-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.29",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.29",
-    "notes": [
-      "Released a new version of the Remarkable UI library."
-    ]
+    "notes": ["Released a new version of the Remarkable UI library."]
   },
   {
     "version": "v0.1.28",
     "date": "2026-03-27",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.28",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.28",
-    "notes": [
-      "Fonts can now be injected via the theme configuration."
-    ]
+    "notes": ["Fonts can now be injected via the theme configuration."]
   },
   {
     "version": "v0.1.27",
     "date": "2026-03-26",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.27",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.27",
-    "notes": [
-      "Introduced CSS variables for the drilldown modal."
-    ]
+    "notes": ["Introduced CSS variables for the drilldown modal."]
   },
   {
     "version": "v0.1.26",
     "date": "2026-03-24",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.26",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.26",
-    "notes": [
-      "Fixed tooltip display on pie charts."
-    ]
+    "notes": ["Fixed tooltip display on pie charts."]
   },
   {
     "version": "v0.1.25",
     "date": "2026-03-23",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.25",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.25",
-    "notes": [
-      "Updated the Remarkable UI library to the latest version."
-    ]
+    "notes": ["Updated the Remarkable UI library to the latest version."]
   },
   {
     "version": "v0.1.24",
@@ -131,9 +124,7 @@
     "date": "2026-03-05",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.19",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.19",
-    "notes": [
-      "Added `TextFieldPro` component."
-    ]
+    "notes": ["Added `TextFieldPro` component."]
   },
   {
     "version": "v0.1.18",
@@ -176,45 +167,35 @@
     "date": "2026-02-24",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.14",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.14",
-    "notes": [
-      "Extended components with a dedicated export object."
-    ]
+    "notes": ["Extended components with a dedicated export object."]
   },
   {
     "version": "v0.1.13",
     "date": "2026-02-19",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.13",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.13",
-    "notes": [
-      "Updated the SDK to the latest version."
-    ]
+    "notes": ["Updated the SDK to the latest version."]
   },
   {
     "version": "v0.1.12",
     "date": "2026-02-19",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.12",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.12",
-    "notes": [
-      "Fixed data label alignment on bar charts."
-    ]
+    "notes": ["Fixed data label alignment on bar charts."]
   },
   {
     "version": "v0.1.11",
     "date": "2026-02-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.11",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.11",
-    "notes": [
-      "Internal maintenance release."
-    ]
+    "notes": ["Internal maintenance release."]
   },
   {
     "version": "v0.1.10",
     "date": "2026-02-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.10",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.10",
-    "notes": [
-      "Added `HorizontalDivider` component."
-    ]
+    "notes": ["Added `HorizontalDivider` component."]
   },
   {
     "version": "v0.1.9",
@@ -230,18 +211,14 @@
     "date": "2026-02-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.8",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.8",
-    "notes": [
-      "Added sub-row support to the `PivotTable` component."
-    ]
+    "notes": ["Added sub-row support to the `PivotTable` component."]
   },
   {
     "version": "v0.1.7",
     "date": "2026-02-10",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.7",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.7",
-    "notes": [
-      "Added `EmptyBlockPro` component."
-    ]
+    "notes": ["Added `EmptyBlockPro` component."]
   },
   {
     "version": "v0.1.6",
@@ -257,45 +234,35 @@
     "date": "2026-02-05",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.5",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.5",
-    "notes": [
-      "Updated the Remarkable UI library to the latest version."
-    ]
+    "notes": ["Updated the Remarkable UI library to the latest version."]
   },
   {
     "version": "v0.1.4",
     "date": "2026-02-04",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.4",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.4",
-    "notes": [
-      "Updated the Remarkable UI library to the latest version."
-    ]
+    "notes": ["Updated the Remarkable UI library to the latest version."]
   },
   {
     "version": "v0.1.3",
     "date": "2026-02-04",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.3",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.3",
-    "notes": [
-      "Introduced tooltip support across components."
-    ]
+    "notes": ["Introduced tooltip support across components."]
   },
   {
     "version": "v0.1.2",
     "date": "2026-02-04",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.2",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.2",
-    "notes": [
-      "Fixed deprecation warnings from internal SDK usage."
-    ]
+    "notes": ["Fixed deprecation warnings from internal SDK usage."]
   },
   {
     "version": "v0.1.1",
     "date": "2026-02-03",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.1",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.1",
-    "notes": [
-      "Fixed a high-severity vulnerability in the `xlsx` dependency."
-    ]
+    "notes": ["Fixed a high-severity vulnerability in the `xlsx` dependency."]
   },
   {
     "version": "v0.1.0",
@@ -367,9 +334,7 @@
     "date": "2026-01-16",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.21",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.21",
-    "notes": [
-      "Improved the `GranularitySelectField` component."
-    ]
+    "notes": ["Improved the `GranularitySelectField` component."]
   },
   {
     "version": "v0.0.20",
@@ -395,18 +360,14 @@
     "date": "2026-01-08",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.18",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.18",
-    "notes": [
-      "Added `ScrollableTable` component."
-    ]
+    "notes": ["Added `ScrollableTable` component."]
   },
   {
     "version": "v0.0.17",
     "date": "2026-01-07",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.17",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.17",
-    "notes": [
-      "Improved the HeatMap configuration."
-    ]
+    "notes": ["Improved the HeatMap configuration."]
   },
   {
     "version": "v0.0.16",
@@ -458,9 +419,7 @@
     "date": "2025-12-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.11",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.11",
-    "notes": [
-      "Updated Remarkable UI library version."
-    ]
+    "notes": ["Updated Remarkable UI library version."]
   },
   {
     "version": "v0.0.10",
@@ -477,9 +436,7 @@
     "date": "2025-12-11",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.9",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.9",
-    "notes": [
-      "Updated Remarkable UI library version."
-    ]
+    "notes": ["Updated Remarkable UI library version."]
   },
   {
     "version": "v0.0.8",
@@ -504,44 +461,34 @@
     "date": "2025-12-05",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.6",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.6",
-    "notes": [
-      "Exported table utility functions."
-    ]
+    "notes": ["Exported table utility functions."]
   },
   {
     "version": "v0.0.5",
     "date": "2025-12-03",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.5",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.5",
-    "notes": [
-      "Fixed incorrect sorting of results in the HeatMap component."
-    ]
+    "notes": ["Fixed incorrect sorting of results in the HeatMap component."]
   },
   {
     "version": "v0.0.4",
     "date": "2025-12-02",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.4",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.4",
-    "notes": [
-      "Fixed incorrect sorting behavior in the Pivot Table component."
-    ]
+    "notes": ["Fixed incorrect sorting behavior in the Pivot Table component."]
   },
   {
     "version": "v0.0.3",
     "date": "2025-12-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.3",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.3",
-    "notes": [
-      "Cleaned up `package.json`."
-    ]
+    "notes": ["Cleaned up `package.json`."]
   },
   {
     "version": "v0.0.2",
     "date": "2025-12-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.2",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.2",
-    "notes": [
-      "Initial release of Remarkable PRO."
-    ]
+    "notes": ["Initial release of Remarkable PRO."]
   }
 ]
