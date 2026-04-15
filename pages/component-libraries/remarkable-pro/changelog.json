@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.2",
+    "date": "2026-04-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.2",
+    "notes": [
+      "The `FilterBuilder` component now supports configurable default filter values via a `defaultFilters` prop, allowing filters to be pre-populated on initial load."
+    ]
+  },
+  {
     "version": "v0.2.1",
     "date": "2026-04-13",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.1",
