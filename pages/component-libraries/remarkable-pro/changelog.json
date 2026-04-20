@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.2.4",
+    "date": "2026-04-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.4",
+    "notes": [
+      "Added `LineChartWithKpiTabsPro` component — a tabbed line chart that combines line chart visualisations with selectable KPI metric tabs."
+    ]
+  },
+  {
+    "version": "v0.2.3",
+    "date": "2026-04-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.3",
+    "notes": [
+      "Fixed a bug in `ScrollableTable` where dimension columns would fail to display when the first data row was missing the corresponding key."
+    ]
+  },
+  {
     "version": "v0.2.2",
     "date": "2026-04-15",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.2",
