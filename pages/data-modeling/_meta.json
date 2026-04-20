@@ -11,6 +11,7 @@
     "views": "Views",
     "caching": "Caching",
     "schemas-api": "Schemas API",
-    "generate-data-models": "AI Model Builder"
+    "filter-params": "Filter Params",
+    "generate-data-models": "AI Model Builder"    
   }
   
