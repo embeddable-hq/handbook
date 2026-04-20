@@ -1,0 +1,108 @@
+# FILTER_PARAMS
+
+`FILTER_PARAMS` lets you access the filters applied on your Embeddable components inside your cube's SQL.
+
+By default, Cube applies filters after your SQL runs — as a `WHERE` clause on top. `FILTER_PARAMS` lets you move those same filters inside your SQL, so the database sees them earlier.
+
+## Syntax
+
+```
+FILTER_PARAMS.cube_name.dimension_name.filter(expression)
+```
+
+| Part | Description |
+|------|-------------|
+| `cube_name` | The cube the dimension belongs to |
+| `dimension_name` | The filtered dimension |
+| `expression` | A column name (string) or a function |
+
+Here's what that looks like in practice:
+
+```yaml
+cubes:
+  - name: orders
+    sql: >
+      SELECT * FROM orders
+      WHERE {FILTER_PARAMS.orders.created_at.filter('created_at')}
+
+    dimensions:
+      - name: created_at
+        sql: created_at
+        type: time
+```
+
+If a user filters `created_at`, here's what Cube actually runs:
+
+```sql
+SELECT * FROM (
+  SELECT * FROM orders
+  WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'  -- inside (FILTER_PARAMS)
+) AS orders
+WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'    -- outside (Cube default)
+```
+
+Both conditions are the same. The difference is when they run:
+
+- **Inner filter** → runs early → helps the database skip data
+- **Outer filter** → runs after → standard Cube behavior
+
+If no filter is applied, `FILTER_PARAMS` resolves to `1 = 1`, so your query still works.
+
+## When to use it
+
+Use `FILTER_PARAMS` when the filter needs to be applied inside your SQL, not just on top of it.
+
+The main use case is **partition pruning** — helping your warehouse avoid scanning unnecessary data.
+
+<Callout>
+**Don't overuse this.** `FILTER_PARAMS` is a performance tool, not a general filtering solution.
+
+If you're reaching for it often, it usually means the logic belongs upstream (in your pipeline or transformations), or your data model doesn't match how you're querying it. Overusing it makes models harder to read and maintain.
+</Callout>
+
+## Advanced usage
+
+Pass a function instead of a column name when you need to extract the start and end of the range as separate values — for example, to pass them as individual arguments into a table-valued function (TVF).
+
+The function receives two arguments — `x` (start of the range) and `y` (end of the range).
+
+Start value:
+
+```
+{FILTER_PARAMS.orders.created_at.filter(lambda x, y: f"{x}")}
+```
+
+End value:
+
+```
+{FILTER_PARAMS.orders.created_at.filter(lambda x, y: f"{y}")}
+```
+
+For a full walkthrough of passing these values into a TVF, see [Calling table-valued functions with FILTER_PARAMS](https://community.embeddable.com/t/calling-table-valued-functions-with-filter-params/177).
+
+## Multiple filters — use FILTER_GROUP
+
+When using more than one `FILTER_PARAMS`, wrap them in `FILTER_GROUP`:
+
+```yaml
+sql: >
+  SELECT * FROM orders
+  WHERE {FILTER_GROUP(
+    FILTER_PARAMS.orders.created_at.filter('created_at'),
+    FILTER_PARAMS.orders.status.filter('status')
+  )}
+```
+
+- Ensures conditions are grouped correctly and the SQL is valid
+- Conditions are always combined with `AND` — you cannot force `OR`
+- This is intentional: Cube applies filters with `AND` at the outer level too, so using `OR` inside would produce logically incorrect SQL
+
+<Callout>
+If you only have one `FILTER_PARAMS`, you don't need `FILTER_GROUP`.
+</Callout>
+
+## Limitations
+
+- **No filter = no-op** — resolves to `1 = 1`. If your SQL requires a value, enforce a default filter in your component.
+- **Not for access control** — use [row-level-security](/data-modeling/row-level-security/introduction) instead.
+- **No pre-aggregations** — cubes using `FILTER_PARAMS` in their `sql` definition cannot use pre-aggregations.
