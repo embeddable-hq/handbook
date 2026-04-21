@@ -6,6 +6,7 @@ You can use it for lots of tasks, but common use-cases include:
 
 - **Client-specific theming** (e.g. color schemes)
 - **Localization** (e.g. language, date/number/currency formats)
+- **Time Zones** (e.g. showing data in the user’s local time)
 - **Dark/Light mode** (e.g. switching between night and day themes)
 - Passing in any other **custom** data you want to expose to your React components.
 
@@ -176,3 +177,34 @@ export default function Localized(props) {
 - If it’s `french`, the user sees “bonjour” and “au revoir.”
 
 For larger, more complex localization needs, consider libraries like **react-intl** or **i18next**, but the basic concept remains the same: pass a language key, load the right translations, and render accordingly.
+
+## Example Use Case: Time Zones
+
+Another common use-case is handling **time zones**. You might pass a user’s time zone in `clientContext.timezone` and then use that to display dates/times in their local time. By default, all [Remarkable Pro](/component-libraries/remarkable-pro) components support this behavior. If you pass a `timezone` in the `clientContext`, Remarkable Pro automatically converts any date/time values to that time zone before rendering (otherwise, it defaults to UTC).
+
+For example, if you pass `clientContext.timezone = 'America/New_York'`, all dates/times in your dashboard will show in Eastern Time. If you switch to `clientContext.timezone = 'Europe/Paris'`, they’ll show in Central European Time instead.
+
+<Callout emoji="💡">
+   Time zone strings should be in the format of an [IANA time zone identifier](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) (e.g. `America/New_York`, `Europe/Paris`, `Asia/Tokyo`).
+</Callout>
+
+To support this in your own custom components, you need only add a `timezone` property to your `loadData` call, like this:
+
+```ts
+// YourComponent.emb.ts
+
+export default defineComponent(Component, meta, {
+  props: (inputs, _, clientContext) => {
+    return {
+      ...inputs,
+      results: loadData({
+        from: inputs.ds, // Receives the chosen dataset
+        select: [inputs.myDimension, inputs.myMeasures],
+        timezone: clientContext?.timezone // Receives the timezone from clientContext
+      })
+    };
+  }
+});
+```
+
+This will pass the time zone to Cube.js on every data load (see [Defining Data Models](/data-modeling/defining-models) for further information), which will handle the conversion for you.
