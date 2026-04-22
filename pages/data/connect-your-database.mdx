@@ -3,7 +3,7 @@
 You can connect one or more databases to Embeddable. We call these **Connections**. 
 
 - **Read-only access:** Embeddable only reads from your database - it never writes to it.
-- **Connection options:** Connect directly or via SSH.
+- **Connection options:** Connect directly, via [SSH](/data/connect-your-database#ssh-connections-bastion-host), or via [Amazon PrivateLink](/data/connect-your-database#amazon-privatelink).
 - **IP whitelisting:** Restrict access to your database by allowing only Embeddable’s fixed IPs ([learn more](/deployment/deployment-regions#ips-to-whitelist)).
 
 ## Connections API
@@ -157,6 +157,31 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIqQgU/5Cdbe8sTPZ9S3Zy6iTyBRNP7cjZmD5LtlX0
 </Steps>
 
 Note: SSH tunnels are set up per database server. If you need to connect to two different database servers, you’ll need two separate SSH tunnels. However, the same SSH user can be reused if both databases are accessible through the same bastion host.
+
+## Amazon PrivateLink
+
+Embeddable supports connecting to your database via Amazon PrivateLink. This allows you to connect to your database **without exposing it to the public internet**. Your database must be in the same region as Embeddable's deployment (US or EU).
+
+This is an alternative to SSH connections. It is more secure and easier to set up, but it is **only available** for databases hosted on AWS.
+
+### What it means
+- No public internet exposure — traffic stays entirely within AWS’s private network
+- Available in eu-central-1 and us-east-1 - database must be in the same region as Embeddable's deployment
+- Works with any database that supports PrivateLink (e.g. RDS, Redshift, etc)
+
+### How it works
+- You set up a VPC Endpoint Service (NLB → your DB). For more information, see the [AWS Documentation](https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html)
+- You whitelist our Principal ARN in your Endpoint Service
+- You share the service name with us
+- We connect to your service
+- You accept the connection
+- You can now make connections via the [Connections API](#connections-api) using the provided hostname and port
+
+### Whitelisting Embeddable's Principal ARN
+
+In order to work with Amazon PrivateLink, you need to whitelist our Principal ARN in your VPC Endpoint Service. This allows us to connect to your database securely without exposing it to the public internet.
+
+For EU and US, the ARN is the same: `arn:aws:iam::891377273898:role/EmbeddablePrivateLinkConsumer`.
 
 ## Connect to External Data Platforms
 

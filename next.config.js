@@ -21,6 +21,13 @@ module.exports = withNextra({
         'use-sync-external-store/shim': false,
       }
     }
+    // Suppress optional encoding dep from node-fetch (pulled in by @inkeep packages)
+    config.plugins.push(
+      new (require('webpack').IgnorePlugin)({
+        resourceRegExp: /^encoding$/,
+        contextRegExp: /node-fetch/,
+      })
+    )
     return config
   },
   async redirects() {
