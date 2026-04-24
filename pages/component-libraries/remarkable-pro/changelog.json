@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.5",
+    "date": "2026-04-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.5",
+    "notes": [
+      "Added `ScatterChartPro` component for X/Y coordinate visualisation with optional grouping, configurable point colours, axis labels and ranges, interactive point-click events, and theme-level customisation."
+    ]
+  },
+  {
     "version": "v0.2.4",
     "date": "2026-04-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.4",
