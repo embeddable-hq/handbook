@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.2.6",
+    "date": "2026-04-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.6",
+    "notes": [
+      "Table charts (`TableChartPaginated` and `ScrollableTable`) now expose dedicated `sortColumn` and `sortDirection` input fields for configuring default sort behaviour. The dataset-level sort button has been hidden to prevent conflicts with runtime interactive sorting."
+    ]
+  },
+  {
+    "version": "v0.2.5",
+    "date": "2026-04-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.5",
+    "notes": [
+      "Added `ScatterPlotPro` chart component for X/Y coordinate visualisation with optional grouping, configurable point colours, axis labels and ranges, and point-click event support."
+    ]
+  },
+  {
     "version": "v0.2.4",
     "date": "2026-04-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.4",
