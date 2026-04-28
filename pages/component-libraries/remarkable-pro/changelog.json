@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.2.8",
+    "date": "2026-04-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.8",
+    "notes": [
+      "All interactive chart types (bar, line, pie, scatter, and table) now emit a companion `*DimensionTimeRange` event property alongside the existing `*DimensionValue` property. For time-type dimensions, this provides a `TimeRange` covering the full granularity bucket of the clicked data point (e.g. clicking a monthly bar returns the full month range), making it straightforward to wire click events directly to date-range filters."
+    ]
+  },
+  {
+    "version": "v0.2.7",
+    "date": "2026-04-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.7",
+    "notes": [
+      "Tooltips no longer apply label truncation — the `maxCharacters` setting is now ignored in tooltips so the full label is always shown. CSV and Excel exports now write raw unformatted values instead of abbreviated ones (e.g. `90000000` instead of `90M`), making them suitable for downstream calculations."
+    ]
+  },
+  {
     "version": "v0.2.6",
     "date": "2026-04-27",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.6",
