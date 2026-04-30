@@ -1,0 +1,259 @@
+# Dashboards as Code
+
+**Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `.embeddable.yml` files. These files can be stored in git, iterated on by your team or with LLMs, and previewed live in the browser via [`embeddable:dev`](/getting-started/dev-server).
+
+This is the recommended approach when you want a single source of truth for your dashboards in your code repository, rather than in the no-code builder.
+
+## Why use Dashboards as Code?
+
+- **Git-native workflow** — dashboards live alongside your models and components, with full version history and PR reviews.
+- **LLM-friendly** — use tools like Claude Code, Cursor, or Codex to iterate on dashboards from your terminal.
+- **No-code builder not required** — define, iterate, and deploy entirely through code.
+- **Live preview** — changes are reflected immediately in `embeddable:dev` without a page reload.
+- **Easily Duplicate** — copy-paste YAML blocks to create new dashboards or variations on existing ones.
+
+## How it works
+
+<Steps>
+
+### Define your dashboard in a `.embeddable.yml` file
+
+Add a file like `my-dashboard.embeddable.yml` anywhere in your repo. The root key is `embeddables`, and each entry defines one dashboard:
+
+```yaml
+embeddables:
+  - name: my-embeddable
+    title: My Embeddable
+    variables:
+      - name: date-range
+        type: timeRange
+        defaultValue: { from: '2024-01-01', to: '2024-12-31' }
+    datasets:
+      - name: filtered-data
+        model: daily_listens
+        filters:
+          - member: daily_listens.date
+            operator: inDateRange
+            value: date-range
+            valueType: VARIABLE
+    widgets:
+      - component: BarChart
+        position:
+          x: 0
+          y: 0
+        dimensions:
+          width: 12
+          height: 6
+        inputs:
+          - input: metric
+            inputType: measure
+            value: daily_listens.count
+            valueType: VALUE
+          - input: ds
+            inputType: dataset
+            value: filtered-data
+            valueType: VALUE
+```
+
+### Preview with `embeddable:dev`
+
+Run `embeddable:dev` as normal. Your coded dashboards will appear alongside any dashboards you've built in the workspace. Changes to the `.embeddable.yml` file are reflected immediately via hot-reload.
+
+### Deploy by pushing your bundle
+
+Each time you push your bundle (`embeddable push`), Embeddable automatically creates a new saved version of your coded dashboards. You can then publish those versions to development, staging, or production from the workspace — or reference them directly via the [Versions API](/deployment/versions-api).
+
+</Steps>
+
+## YAML reference
+
+### Top-level structure
+
+```yaml
+embeddables:
+  - name: string         # unique identifier, used in APIs and drilldowns
+    title: string        # human-readable name shown in the workspace
+    variables: [...]     # list of variables
+    datasets: [...]      # list of datasets
+    widgets: [...]       # widgets on the primary canvas
+    customCanvas: {...}  # optional custom canvas config
+```
+
+### Variables
+
+[Variables](/dashboards/interactivity) make dashboards interactive by storing values that datasets and components can react to.
+
+```yaml
+variables:
+  - name: date-range
+    type: timeRange       # text | number | timeRange | dimension | measure | ...
+    array: false
+    defaultValue: { from: '2024-01-01', to: '2024-12-31' }
+```
+
+### Datasets
+
+```yaml
+datasets:
+  - name: filtered-data         # referenced by widgets and customCanvas
+    model: daily_listens        # must exist in your repo or a dependency
+    filters:
+      - member: daily_listens.age_group   # fully qualified dimension or measure
+        operator: equals
+        value: date-range
+        valueType: VARIABLE     # VALUE | VARIABLE
+```
+
+### Widgets
+
+Each widget references a **component** (by name), a **position**, **dimensions**, **inputs**, and optionally **events**.
+
+```yaml
+widgets:
+  - component: MultiSelectFieldPro
+    position:
+      x: 0
+      y: 3
+    dimensions:
+      width: 7
+      height: 3
+    inputs:
+      - input: title
+        inputType: string
+        value: 'Age Group'
+        valueType: VALUE
+      - input: ds
+        inputType: dataset
+        value: filtered-data
+        valueType: VALUE
+        config:
+          filters:
+            - member: daily_listens.age_group
+              operator: equals
+              value: some-filter
+              valueType: VALUE
+          limit: 10
+          order:
+            - member: daily_listens.age_group
+              direction: asc
+      - input: dim
+        inputType: dimension
+        value: daily_listens.age_group
+        valueType: VALUE
+    events:
+      - event: onChange
+        action: SET_VARIABLE
+        config:
+          variable: date-range
+          sourceType: EVENT_PROPERTY    # EVENT_PROPERTY | VARIABLE
+          sourceValue: value
+```
+
+**Input `valueType` options:**
+- `VALUE` — a literal value
+- `VARIABLE` — references a named variable from `variables`
+
+**Event `action` options:**
+- `SET_VARIABLE` — updates a variable when the event fires
+- `DRILLDOWN` — opens another Embeddable in a modal (see [drill-down](/dashboards/drill-down))
+
+**Event `sourceType` options:**
+- `EVENT_PROPERTY` — the data from the fired event (e.g., the clicked value)
+- `VARIABLE` — the current value of a named variable
+
+### Drilldown events
+
+```yaml
+events:
+  - event: onClick
+    action: DRILLDOWN
+    config:
+      embeddable: my-drilldown     # references the name of another coded embeddable
+      variableOverrides:
+        - variable: country
+          sourceType: EVENT_PROPERTY
+          sourceValue: chosenItem
+```
+
+### Custom Canvas
+
+If your dashboard uses a [Custom Canvas](/dashboards/custom-canvas), add a `customCanvas` block:
+
+```yaml
+customCanvas:
+  datasets:
+    - dataset: filtered-data
+    - dataset: other-dataset
+  templates:
+    - name: My Bar Chart
+      component: BarChart
+      description: Standard bar chart
+      icon: stairs
+      inputs:
+        - input: metric
+          inputType: measure
+          valueType: VALUE
+          value: daily_listens.count
+  starterCanvas:
+    widgets:
+      - template: My Bar Chart
+        dimensions:
+          width: 7
+          height: 3
+        inputs:
+          - input: ds
+            inputType: dataset
+            valueType: VALUE
+            value: filtered-data
+```
+
+## Build validation
+
+The build will fail if your `.embeddable.yml` files contain any of the following:
+
+- Unrecognized keys or invalid YAML structure
+- References to components, inputs, events, variables, datasets, or templates that don't exist in your repo or dependencies
+- Duplicate names within a file
+- Invalid `sourceType`, `action`, or `valueType` values
+- Config content that doesn't match the expected shape for a given input type
+- An `inputType` that doesn't match the type declared on the component's input
+
+This strict validation means errors are caught at build time, not at runtime.
+
+## Working in the workspace
+
+Coded dashboards appear in your team workspace just like dashboards built in the builder, with a few differences:
+
+- **View only** — you can open a coded dashboard in preview mode, but the configuration cannot be edited in the builder. The source of truth is always the code.
+- **Saved versions** — every bundle push automatically creates a new saved version. You can switch between saved versions or publish any of them to development, staging, or production.
+- **No manual save** — the **Save Version** button is not available for coded dashboards.
+
+> **SCREENSHOT RECOMMENDED** — show a coded dashboard in the workspace with an indicator that it's read-only / defined in code.
+
+## APIs
+
+Coded dashboards use their `name` field as their identifier across all Embeddable APIs, rather than a UUID.
+
+| API | Behaviour |
+|-----|-----------|
+| [Tokens API](/deployment/tokens-api) | Pass the dashboard `name` as `embeddableId` |
+| [Embeddables API](/deployment/embeddables-api) | The dashboard `name` is returned as the `id`; `title` is returned as `name` |
+| [Versions API](/deployment/versions-api) | Use the dashboard `name` in the URL instead of a UUID; reference saved versions as `v1`, `v2`, etc. |
+| [Caching API](/deployment/caching-api) | Pass the dashboard `name` in the `embeddableId` field |
+
+## Configuration
+
+### `pushEmbeddables`
+
+By default, Embeddable will push all `.embeddable.yml` files it finds in your repo. If your dashboards live in a separate repo from your models and components, you can control this behavior with the `pushEmbeddables` option in your `embeddable.config.ts`:
+
+```typescript
+export default defineConfig({
+  pushEmbeddables: true,  // default — set to false to skip pushing dashboard definitions
+});
+```
+
+## Constraints
+
+- Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
+- Coded dashboards cannot be edited in the no-code builder. If you need to edit a coded dashboard, update the `.embeddable.yml` file directly.
