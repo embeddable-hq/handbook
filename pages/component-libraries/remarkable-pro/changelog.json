@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.9",
+    "date": "2026-04-30",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.9",
+    "notes": [
+      "Added `ComparisonLineChartWithKpiTabsPro` component — a new chart that enables side-by-side comparison of data across two date periods, with interactive KPI tabs displaying metrics and trend indicators."
+    ]
+  },
+  {
     "version": "v0.2.8",
     "date": "2026-04-28",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.8",
