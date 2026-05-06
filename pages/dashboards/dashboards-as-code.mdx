@@ -2,7 +2,10 @@
 
 **Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `.embeddable.yml` files. These files can be stored in git, iterated on by your team or with LLMs, and previewed live in the browser via [`embeddable:dev`](/getting-started/dev-server).
 
-This is the recommended approach when you want a single source of truth for your dashboards in your code repository, rather than in the no-code builder.
+This is the recommended approach when you want a **single source of truth** for your dashboards in your code repository, rather than in the no-code builder.
+
+<ImageGrid width='100%' images={["/img/dashboards-as-code/in-code-editor.png"]}/>
+
 
 ## Why use Dashboards as Code?
 
@@ -16,7 +19,7 @@ This is the recommended approach when you want a single source of truth for your
 
 <Steps>
 
-### Define your dashboard in a `.embeddable.yml` file
+### Define your dashboard in a `<dashboard-name>.embeddable.yml` file
 
 Add a file like `my-dashboard.embeddable.yml` anywhere in your repo. The root key is `embeddables`, and each entry defines one dashboard:
 
@@ -57,7 +60,7 @@ embeddables:
 
 ### Preview with `embeddable:dev`
 
-Run `embeddable:dev` as normal. Your coded dashboards will appear alongside any dashboards you've built in the workspace. Changes to the `.embeddable.yml` file are reflected immediately via hot-reload.
+Run `embeddable:dev` as normal. Your coded dashboards will appear alongside any dashboards you've built in the workspace. Changes to the `<dashboard-name>.embeddable.yml` file are reflected immediately via hot-reload.
 
 ### Deploy by pushing your bundle
 
@@ -209,7 +212,7 @@ customCanvas:
 
 ## Build validation
 
-The build will fail if your `.embeddable.yml` files contain any of the following:
+The build will fail if your `<dashboard-name>.embeddable.yml` files contain any of the following:
 
 - Unrecognized keys or invalid YAML structure
 - References to components, inputs, events, variables, datasets, or templates that don't exist in your repo or dependencies
@@ -228,7 +231,7 @@ Coded dashboards appear in your team workspace just like dashboards built in the
 - **Saved versions** — every bundle push automatically creates a new saved version. You can switch between saved versions or publish any of them to development, staging, or production.
 - **No manual save** — the **Save Version** button is not available for coded dashboards.
 
-> **SCREENSHOT RECOMMENDED** — show a coded dashboard in the workspace with an indicator that it's read-only / defined in code.
+<ImageGrid width='70%' images={["/img/dashboards-as-code/read-only.png"]}/>
 
 ## APIs
 
@@ -245,7 +248,7 @@ Coded dashboards use their `name` field as their identifier across all Embeddabl
 
 ### `pushEmbeddables`
 
-By default, Embeddable will push all `.embeddable.yml` files it finds in your repo. If your dashboards live in a separate repo from your models and components, you can control this behavior with the `pushEmbeddables` option in your `embeddable.config.ts`:
+By default, Embeddable will push all `<dashboard-name>.embeddable.yml` files it finds in your repo. If your dashboards live in a separate repo from your models and components, you can control this behavior with the `pushEmbeddables` option in your `embeddable.config.ts`:
 
 ```typescript
 export default defineConfig({
@@ -256,4 +259,140 @@ export default defineConfig({
 ## Constraints
 
 - Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
-- Coded dashboards cannot be edited in the no-code builder. If you need to edit a coded dashboard, update the `.embeddable.yml` file directly.
+- Coded dashboards cannot be edited in the no-code builder. If you need to edit a coded dashboard, update the `<dashboard-name>.embeddable.yml` file directly.
+
+## Downloading and iterating locally
+
+To iterate on a dashboard locally, first download the latest version of the dashboard from the workspace using the button at the top of the screen.
+
+<ImageGrid width='70%' images={["/img/dashboards-as-code/download-dashboard.png"]}/>
+
+This will give you the YAML content to create or update your `<dashboard-name>.embeddable.yml` file. From there, you can edit the file directly in your code editor and see changes reflected live in `embeddable:dev`.
+
+<Callout emoji="💡">
+You can download any existing dashboard as YAML, even if it wasn't originally created as code. This is a great way to quickly convert a no-code dashboard into a coded one that you can iterate on in your repo. Note that **this will overwrite the non-code version** in the workspace. You can avoid this by renaming either the original or the in-code version after downloading and before pushing your changes to your workspace.
+</Callout>
+
+## Complete Example
+
+The code below produces the following dashboard, which includes a DateRangePicker that controls the date range for a BarChart showing total daily listens over time. The dashboard also includes a Custom Canvas with two preexisting components.
+
+<ImageGrid width='100%' images={["/img/dashboards-as-code/dashboard-example.png"]}/>
+
+
+```yaml
+embeddables:
+  - name: dashboard-1
+    title: Dashboard 1
+    description: Initial Dashboards as Code Example
+
+    # Variables can be used by any component or dataset in the dashboard
+    variables:
+      - name: date-range
+        type: timeRange
+        array: false
+        defaultValue: { relativeTimeString: 'Last 30 days' }
+
+    # Datasets are based on Cube.js models and can have preset filters or parameters
+    datasets:
+      - name: Daily Listens
+        model: daily_listens
+        filters:
+          - member: daily_listens.listened_date
+            operator: inDateRange
+            value: date-range
+            valueType: VARIABLE
+
+    # Widgets are the visual components on the dashboard, each with its own config and inputs
+    widgets:
+      # This DateRangePicker is connected to the 'date-range' variable, allowing users to change the date range and see it reflected across all components using that variable
+      - component: DateRangePickerCustomPro
+        position:
+          x: 0
+          y: 0
+        dimensions:
+          width: 4
+          height: 7
+        inputs:
+          - input: title
+            inputType: string
+            valueType: VALUE
+            value: 'Date range'
+          - input: placeholder
+            inputType: string
+            valueType: VALUE
+            value: 'Select a date-range'
+          - input: selectedValue
+            inputType: timeRange
+            valueType: VARIABLE
+            value: date-range
+          - input: showTwoMonths
+            inputType: boolean
+            valueType: VALUE
+            value: true
+        events:
+          - event: onChange
+            action: SET_VARIABLE
+            config:
+              variable: date-range
+              sourceType: EVENT_PROPERTY
+              sourceValue: value
+
+      # This BarChart is connected to the 'Daily Listens' dataset and will update based on the selected date range from the DateRangePicker. It shows total daily listens over time, aggregated by month.
+      - component: BarChartDefaultPro
+        position:
+          x: 0
+          y: 7
+        dimensions:
+          width: 12
+          height: 15
+        inputs:
+          - input: dataset
+            inputType: dataset
+            valueType: VALUE
+            value: Daily Listens
+          - input: measures
+            inputType: measure
+            valueType: VALUE
+            array: true
+            value:
+              - daily_listens.total_daily_listens
+            config:
+              dataset: dataset
+          - input: dimension
+            inputType: dimension
+            valueType: VALUE
+            value: daily_listens.listened_date
+            config:
+              dataset: dataset
+              inputs:
+                - input: granularity
+                  value: 'month'
+                  valueType: VALUE
+          - input: title
+            inputType: string
+            valueType: VALUE
+            value: 'Total Daily Listens Over Time'
+
+    # Custom Canvas allows your users to edit and change their own dashboards within your app
+    customCanvas:
+      datasets:
+        - dataset: Daily Listens
+      templates:
+        - name: donut-with-dataset
+          component: DonutChartPro
+          description: Donut chart with preset dataset
+          icon: circular
+          inputs:
+            - input: dataset
+              inputType: dataset
+              value: Daily Listens
+              valueType: VALUE
+        - name: donut-blank
+          component: DonutChartPro
+          description: Blank donut chart
+          icon: chart-pie2
+          inputs: []
+      starterCanvas:
+        widgets: []
+```
