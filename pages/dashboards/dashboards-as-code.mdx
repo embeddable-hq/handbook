@@ -1,6 +1,6 @@
 # Dashboards as Code
 
-**Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `.embeddable.yml` files. These files can be stored in git, iterated on by your team or with LLMs, and previewed live in the browser via [`embeddable:dev`](/getting-started/dev-server).
+**Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `.<dashboard-name>.embeddable.yml` files. These files can be stored in git, iterated on by your team or with LLMs, and previewed live in the browser via [`embeddable:dev`](/getting-started/dev-server).
 
 This is the recommended approach when you want a **single source of truth** for your dashboards in your code repository, rather than in the no-code builder.
 
@@ -270,7 +270,7 @@ To iterate on a dashboard locally, first download the latest version of the dash
 This will give you the YAML content to create or update your `<dashboard-name>.embeddable.yml` file. From there, you can edit the file directly in your code editor and see changes reflected live in `embeddable:dev`.
 
 <Callout emoji="💡">
-You can download any existing dashboard as YAML, even if it wasn't originally created as code. This is a great way to quickly convert a no-code dashboard into a coded one that you can iterate on in your repo. Note that **this will overwrite the non-code version** in the workspace. You can avoid this by renaming either the original or the in-code version after downloading and before pushing your changes to your workspace.
+You can download any existing dashboard as YAML, even if it wasn't originally created as code. This is a great way to quickly convert a no-code dashboard into a coded one that you can iterate on in your repo. Note that **this will NOT overwrite the non-code version** in the workspace. If you don't change the name of either, you will end up with two dashboards with the same name, one code-controlled and one no-code.
 </Callout>
 
 ## Complete Example
