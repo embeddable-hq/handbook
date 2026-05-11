@@ -6,6 +6,9 @@ This is the recommended approach when you want a **single source of truth** for 
 
 <ImageGrid width='100%' images={["/img/dashboards-as-code/in-code-editor.png"]}/>
 
+<Callout emoji="💡">
+To use dashboards as code, you must be on the latest Embeddable SDKs. To update, you can run `npm run embeddable:upgrade` and then `npm i` in your project, and it will install the latest versions of all Embeddable packages. If you have any issues or questions during the upgrade process, please reach out to the Embeddable team for support.
+</Callout>
 
 ## Why use Dashboards as Code?
 
@@ -25,8 +28,8 @@ Add a file like `my-dashboard.embeddable.yml` anywhere in your repo. The root ke
 
 ```yaml
 embeddables:
-  - name: my-embeddable
-    title: My Embeddable
+  - name: my-embeddable # Cannot contains spaces
+    title: My Embeddable # Can contain spaces, shown in the workspace
     variables:
       - name: date-range
         type: timeRange
@@ -74,7 +77,7 @@ Each time you push your bundle (`embeddable push`), Embeddable automatically cre
 
 ```yaml
 embeddables:
-  - name: string         # unique identifier, used in APIs and drilldowns
+  - name: string         # unique identifier, used in APIs and drilldowns, no spaces allowed
     title: string        # human-readable name shown in the workspace
     variables: [...]     # list of variables
     datasets: [...]      # list of datasets
