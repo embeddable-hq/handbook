@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.10",
+    "date": "2026-05-07",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.10",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.10",
+    "notes": [
+      "Added `BubbleChartPro` component for visualising three-dimensional data as X/Y scatter points scaled by a configurable size measure. Supports adjustable minimum and maximum bubble radius bounds, optional point labels, theme customisation, and click events that include the bubble's size value."
+    ]
+  },
+  {
     "version": "v0.2.9",
     "date": "2026-04-30",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.9",
