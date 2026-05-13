@@ -55,13 +55,15 @@ The **second parameter** is an object that takes the following properties:
 | ----------- | --------- | ------------ |
 | `label` | string | Yes |
 | `optionLabel`      | (object) => string  | No |
+| `cast`    | \{ [type]: (object) => any \}  | No   |
 | `toNativeDataType`    | \{ [type]: (object) => object \}  | No   |
 
 
 - **`label`**: the human-readable name that appears in the UI.  You can change it anytime without impacting the underlying logic.  E.g. you can see our custom type, labeled 'Color', appearing here among the native types in the Variable Builder:
 <ImageGrid width='50%' images={["/img/custom-type-label.png"]} />
 - **`optionLabel`**: This tells Embeddable how to render each **option** of this custom type in the UI ([learn more](/development/custom-types#the-defineoption-function)).
-- **`toNativeDataType`**: an object specifying how to map this custom type to other native types ([learn more](/development/custom-types#using-custom-types-to-filter-datasets)).
+- **`cast`**: an object specifying how to convert this custom type to other Embeddable types, so variables of this type can be used in component inputs of different types ([learn more](/development/custom-types#casting-between-types)).
+- **`toNativeDataType`**: an object specifying how to map this custom type to Cube-native data types, for use in **dataset filters** only ([learn more](/development/custom-types#using-custom-types-to-filter-datasets)). For component input interoperability, use `cast` instead.
 
 ## The `defineOption` function
 
@@ -452,17 +454,48 @@ It takes the following parameters:
 We should now be able to use our custom editor like so:
 <ImageGrid width='60%' images={["/img/component-color-editor.png"]} />
 
+## Casting between types
+
+By default, a variable can only be connected to component inputs that expect the same type. **Casting** lets you define how your custom type converts to other Embeddable types — so a dashboard builder can, for example, connect a `Color` variable to a component input that expects a `string`.
+
+To enable this, add a `cast` property to your type definition:
+
+```ts
+import { defineType, defineOption } from '@embeddable.com/core';
+
+const ColorType = defineType('color', {
+  label: 'Color',
+  optionLabel: (color) => color.name,
+  cast: {
+    string: (color) => color.name
+  }
+});
+```
+
+This tells Embeddable that a `Color` variable can be used anywhere a `string` is expected. When it is, the value is automatically converted using your function before being passed to the component.
+
+You can define casts to multiple types:
+
+```ts
+cast: {
+  string: (color) => color.name,
+  number: (color) => color.r + color.g + color.b
+}
+```
+
+<Callout emoji="💡">
+  `cast` works for **component inputs**. If you also need your custom type to work in **dataset filters**, you'll need `toNativeDataType` too — see [below](/development/custom-types#using-custom-types-to-filter-datasets).
+</Callout>
+
 ## Using custom types to filter datasets
 
-Custom types are useful for providing custom inputs to **components** and **variables**, but the power of **variables** is that they can also be used to **filter datasets**.
-
-Embeddable, by default, only supports using [native types](/development/define-component-function#native-input-types) to filter datasets, but we can get around this by telling Embeddable how to **convert** your custom type into a native type.
+If you want a custom type variable to also work in **dataset filters** (not just component inputs), you need to tell Embeddable how to convert your custom type into a **Cube-native data type**. This is a separate concern from `cast`, which handles component input compatibility.
 
 This will make your custom types available in the "Dataset builder" filters like so:
 
 <ImageGrid width='50%' images={["/img/custom-type-filters-dataset.png"]} />
 
-To tell Embeddable how to map your custom type into a native type, you can define `toNativeDataType` like so:
+To do this, define `toNativeDataType` on your type:
 
 ```ts
 import { defineType, defineOption } from '@embeddable.com/core';
