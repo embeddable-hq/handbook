@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.2.11",
+    "date": "2026-05-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.11",
+    "notes": [
+      "Fixed a bug where clicking on empty chart space in bar and line charts could cause a runtime error. Click handlers now guard against missing element data and silently no-op when no chart element is at the click position, matching the behaviour already in place for pie, scatter, bubble, and comparison charts."
+    ]
+  },
+  {
     "version": "v0.2.10",
     "date": "2026-05-07",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.10",
