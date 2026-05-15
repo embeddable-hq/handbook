@@ -1,5 +1,32 @@
 [
   {
+    "version": "v0.2.13",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.13",
+    "notes": [
+      "Fixed `LineChartComparisonWithKpiTabsPro` not passing `axisDimensionTimeRange` in its `onLineClicked` event — clicking a data point on the chart now correctly passes the date/time range through to drilldown targets."
+    ]
+  },
+  {
+    "version": "v0.2.12",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.12",
+    "notes": [
+      "Added `BarLineChartPro` component — a combination chart supporting multiple bar measures and multiple line measures plotted against a single shared dimension. Supports a secondary Y-axis with customisable labels and ranges, dashed line styling, fill-under-line options, and click event handlers for both bars and lines."
+    ]
+  },
+  {
+    "version": "v0.2.11",
+    "date": "2026-05-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.11",
+    "notes": [
+      "Chart click handlers now guard against empty interactions — clicking on empty chart space no longer fires spurious events."
+    ]
+  },
+  {
     "version": "v0.2.10",
     "date": "2026-05-07",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.10",
