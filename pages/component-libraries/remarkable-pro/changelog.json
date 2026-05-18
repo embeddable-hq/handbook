@@ -1,5 +1,41 @@
 [
   {
+    "version": "v0.3.0",
+    "date": "2026-05-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.0",
+    "notes": [
+      "All Remarkable Pro components now include a `description` field in their component metadata, providing human-readable summaries of each component's purpose and use case — required for the dashboard-as-code feature."
+    ]
+  },
+  {
+    "version": "v0.2.13",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.13",
+    "notes": [
+      "Fixed `LineChartComparisonWithKpiTabsPro` not passing `axisDimensionTimeRange` in its `onLineClicked` event — clicking a data point on the chart now correctly forwards the date/time range to drilldown targets."
+    ]
+  },
+  {
+    "version": "v0.2.12",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.12",
+    "notes": [
+      "Added `BarLineChartPro` component — a combination chart supporting multiple bar and line measures plotted against a single shared dimension, with an optional secondary Y-axis, configurable line styles (dashed, fill-under-line), and click event handlers for both bar and line interactions."
+    ]
+  },
+  {
+    "version": "v0.2.11",
+    "date": "2026-05-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.11",
+    "notes": [
+      "Chart click handlers now guard against empty element interactions — clicking on empty chart space no longer fires spurious events or risks a runtime error."
+    ]
+  },
+  {
     "version": "v0.2.10",
     "date": "2026-05-07",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.10",
