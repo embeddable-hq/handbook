@@ -142,35 +142,7 @@ Each measure has:
     Embeddable's Starter Components support `pretext` out of the box.
   </Callout>
 
-### `meta.aggType` — "Other" bucket aggregation
-
-When a chart limits results to N items (via `maxItems`), the remaining rows are collapsed into an **"Other"** bucket. By default this bucket is calculated by **summing** the tail values — which is correct for `sum` and `count` measures but wrong for `avg`, `min`, and `max`.
-
-To get the correct result, add `aggType` to `meta` on the measure:
-
-```yaml
-measures:
-  - name: avg_order_value
-    title: "Average Order Value"
-    type: avg
-    sql: order_value
-    meta:
-      aggType: avg
-```
-
-Supported values:
-
-| `aggType` | "Other" bucket calculation |
-|---|---|
-| `avg` | Average of the tail values |
-| `min` | Minimum of the tail values |
-| `max` | Maximum of the tail values |
-
-If `aggType` is not set, the "Other" bucket falls back to **sum** — preserving backwards compatibility for `sum` and `count` measures.
-
-<Callout type="warning" emoji="⚠️">
-  `count_distinct` and `count_distinct_approx` measures cannot produce a correct "Other" bucket value. Distinct counts cannot be recalculated from pre-aggregated data — summing distinct counts across groups would double-count values that appear in multiple groups.
-</Callout>
+Remarkable Pro also reads additional `meta` keys to control chart behaviour — such as how the "Other" bucket is aggregated in bar and pie charts. See [Data Model Meta](/component-libraries/remarkable-pro/data-model-meta) for the full reference.
 
 ### Supported Measure Types
 

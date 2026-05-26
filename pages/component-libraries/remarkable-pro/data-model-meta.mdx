@@ -1,0 +1,52 @@
+# Data Model Meta
+
+Remarkable Pro reads certain `meta` keys from your Cube measures and dimensions to control chart behaviour and formatting. Setting these in your data model means the behaviour applies automatically everywhere that measure or dimension is used — no per-chart configuration needed.
+
+## Supported keys
+
+### Formatting
+
+Control how values are displayed across all charts. These can be overridden per-chart in the no-code builder.
+
+| Key | Applies to | Description |
+|---|---|---|
+| `displayName` | All types | Override the display name |
+| `pretext` | All types | Prefix shown before the value |
+| `posttext` | All types | Suffix shown after the value |
+| `maxCharacters` | Text | Truncate text to this length |
+| `decimalPlaces` | Number | Number of decimal places |
+| `currency` | Number | Currency code (e.g. `USD`, `GBP`, `EUR`) |
+| `abbreviateLargeNumber` | Number | Abbreviate large values (e.g. `1.2k`, `3.4M`) |
+| `granularity` | Time | Default time granularity |
+
+See [Formatting](/component-libraries/remarkable-pro/formatting) for full details and examples.
+
+### "Other" bucket aggregation (`aggType`)
+
+When a chart limits results to N items (via `maxItems`), the remaining rows are collapsed into an **"Other"** bucket. By default this is calculated by **summing** the tail values — correct for `sum` and `count` measures, but wrong for `avg`, `min`, and `max`.
+
+Use `aggType` to control how the "Other" bucket is calculated:
+
+```yaml
+measures:
+  - name: avg_order_value
+    title: "Average Order Value"
+    type: avg
+    sql: order_value
+    meta:
+      aggType: avg
+```
+
+| `aggType` value | "Other" bucket calculation |
+|---|---|
+| `avg` | Average of the tail values |
+| `min` | Minimum of the tail values |
+| `max` | Maximum of the tail values |
+
+If `aggType` is not set, the "Other" bucket falls back to **sum**.
+
+Applies to: Bar chart, Bar+Line chart, Pie chart.
+
+<Callout type="warning" emoji="⚠️">
+  `count_distinct` and `count_distinct_approx` measures cannot produce a correct "Other" bucket value. Distinct counts cannot be recalculated from pre-aggregated data — summing distinct counts across groups would double-count values that appear in multiple groups.
+</Callout>
