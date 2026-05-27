@@ -39,11 +39,7 @@ This ensures users only see options that are relevant.
 
 ## Data model defaults (meta)
 
-You can also define the above properties directly at the **data model level** using `meta`. 
-
-These values are then applied automatically everywhere the value is displayed, though they can be overriden using the component inputs and subinputs inside the builder. 
-
-**Example**
+You can also define formatting properties directly at the **data model level** using `meta`. These values apply automatically everywhere the measure or dimension is displayed, though they can be overridden per-chart in the builder. Manual overrides always take precedence over `meta`.
 
 ```yaml
 measures:
@@ -54,37 +50,8 @@ measures:
       decimalPlaces: 2
       currency: USD
       abbreviateLargeNumber: true
-      pretext: '-'
-      posttext: '-'
+      pretext: ‘-’
+      posttext: ‘-’
 ```
 
-### Property Keys
-
-| Format | Property | Key |
-| - | - | - |
-| All types | Display name | displayName |
-| All types | Prefix | pretext |
-| All types | Suffix | posttext |
-| Text | Maximum number of characters | maxCharacters |
-| Number | Decimal places | decimalPlaces |
-| Number | Currency | currency |
-| Number | Abbreviate large numbers (e.g. `1.2k`, `3.4M`) | abbreviateLargeNumber |
-| Time | Granularity | granularity |
-
-**Important**: when setting prefix and suffix in the model meta, you need to use **pretext** and **posttext**. This is due to a known issue inside Cube. 
-
-### How this behaves
-
-- The builder will:
-  - Default to **2 decimal places**
-  - Treat the value as **USD**
-  - Abbreviate large values (e.g. `1.25M`)
-- Users can still override these settings in the builder.
-- Manual overrides always take precedence over `meta`.
-
-### Things to notice
-
-- `meta` defines **intent and defaults**, not hard rules
-- Builder overrides always win
-- Removing a manual override reverts to the model’s `meta`
-- This keeps formatting consistent by default, while remaining flexible
+For the full list of supported `meta` keys — including formatting properties and chart behaviour options — see [Data Model Meta](/component-libraries/remarkable-pro/data-model-meta).

@@ -6,6 +6,7 @@
     "i18n": "Internationalization",
     "customizations": "Customizations",
     "formatting": "Formatting",
+    "data-model-meta": "Data Model Meta",
     "building-new-components": "Building components",
     "changelog": "Change log"
 }
