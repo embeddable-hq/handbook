@@ -1,5 +1,16 @@
 [
   {
+    "version": "v0.3.1",
+    "date": "2026-05-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.1",
+    "notes": [
+      "Exported `FilterBuilderPro` component — it is now directly importable from the package with full TypeScript type support.",
+      "Chart components now ship with explicitly defined default dimensions for consistent out-of-the-box sizing; comparison period input descriptions have been updated for improved dashboard-as-code compatibility.",
+      "Sorted the component index file."
+    ]
+  },
+  {
     "version": "v0.3.0",
     "date": "2026-05-18",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.0",
