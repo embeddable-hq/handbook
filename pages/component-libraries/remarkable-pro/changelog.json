@@ -1,5 +1,15 @@
 [
   {
+    "version": "v0.3.2",
+    "date": "2026-05-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.2",
+    "notes": [
+      "Added `AreaChartPro` component — a new area chart that renders data as stacked filled areas, supporting interactive click handling for dimension filtering, dynamic granularity selection, and full theme customisation.",
+      "Fixed incorrect aggregation of the \"Other\" bucket in bar and combo charts — charts now support a per-measure `aggType` field in the component meta, enabling average, minimum, or maximum aggregation for tail values instead of always defaulting to sum."
+    ]
+  },
+  {
     "version": "v0.3.1",
     "date": "2026-05-26",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.1",
