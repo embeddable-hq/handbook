@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.3",
+    "date": "2026-05-29",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.3",
+    "notes": [
+      "Fixed focus behaviour in `FilterBuilderPro` — input focus and value auto-selection now activate only when a new filter is being created, preventing unwanted focus when editing existing filter values."
+    ]
+  },
+  {
     "version": "v0.3.2",
     "date": "2026-05-28",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.2",
