@@ -37,6 +37,11 @@ module.exports = withNextra({
         destination: '/component-libraries/remarkable-pro/styling/component-tokens#reference',
         permanent: true,
       },
+      {
+        source: '/dashboards/custom-canvas',
+        destination: '/self-serve/custom-canvas',
+        permanent: true,
+      },
     ]
   }
 })
