@@ -357,7 +357,7 @@ Add a new widget to the custom canvas.
 | `id` | UUID | ✅ | — | Client-assigned UUID for the new widget instance |
 | `templateId` | UUID | ✅ | — | UUID of a template widget (from `templateWidgets` in metadata) |
 | `requestId` | UUID | ✅ | — | Idempotency key |
-| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name |
+| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name. Key names come from the template's definition — check `templateWidgets[].inputConfiguration` in the metadata response. Member values (dimensions, measures) must be full member objects, not plain strings (see example below). |
 | `subInputConfiguration` | Map\<string, Map\<string, Map\<string, any\>\>\> | ☐ | — | Nested per-value input overrides |
 | `filters` | Map\<string, Filter[]\> | ☐ | — | Per-dataset filter overrides |
 | `limit` | Map\<string, int\> | ☐ | — | Per-dataset row limit |
@@ -367,6 +367,8 @@ Add a new widget to the custom canvas.
 | `heightResolution` | integer | ☐ | 1–4 | Height resolution multiplier |
 | `widthResolution` | integer | ☐ | 1–2 | Width resolution multiplier |
 
+The `inputConfiguration` key for a measure input varies by chart type — for example `"measure"` (KPI, Donut) or `"measures"` (Bar Chart, Line Chart). Check the template's definition in `GET /ai/v1/embeddable/metadata` to confirm the correct key for your chart type. Member values must be full member objects as returned by `GET /ai/v1/models`, not plain `"model.field"` strings.
+
 **Example request**
 
 ```json
@@ -374,7 +376,17 @@ Add a new widget to the custom canvas.
   "id": "<uuid>",
   "templateId": "<uuid>",
   "requestId": "<uuid>",
-  "inputConfiguration": { "datasetId": "<uuid>", "metric": "orders.count" },
+  "inputConfiguration": {
+    "datasetId": "<uuid>",
+    "measure": {
+      "name": "orders.count",
+      "title": "Count",
+      "nativeType": "number",
+      "description": null,
+      "meta": null,
+      "__type__": "measure"
+    }
+  },
   "filters": {},
   "limit": {},
   "order": {},
@@ -409,7 +421,17 @@ Replace the configuration of an existing canvas widget. All supplied fields over
 {
   "id": "<uuid>",
   "requestId": "<uuid>",
-  "inputConfiguration": { "datasetId": "<uuid>", "metric": "orders.revenue" },
+  "inputConfiguration": {
+    "datasetId": "<uuid>",
+    "measure": {
+      "name": "orders.revenue",
+      "title": "Revenue",
+      "nativeType": "number",
+      "description": null,
+      "meta": null,
+      "__type__": "measure"
+    }
+  },
   "filters": {},
   "limit": {},
   "order": {}
@@ -722,7 +744,7 @@ def create_canvas_widget(
     id: UUID for the new widget instance.
     template_id: UUID of the template chart to instantiate (from get_embeddable_metadata templateWidgets).
     request_id: Unique UUID for this request (for idempotency).
-    input_configuration: Map of input name -> value (e.g. {"datasetId": "<uuid>", "metric": "orders.count"}).
+    input_configuration: Map of input name -> value. Key names come from the template definition (e.g. "measure" for KPI/Donut, "measures" for Bar/Line). Member values must be full member objects: {"name": "model.field", "title": "...", "nativeType": "...", "__type__": "measure"}.
     sub_input_configuration: Optional nested per-value input overrides. Key is parent input name (e.g. "columns"),
         value is Map<parentValue, Map<inputName, any>>.
     filters: Optional Map<datasetName, list of filters>. Each filter: {"member": "model.field", "operator": "equals", "value": "x", "valueType": "...", "nativeDataType": "..."}.
