@@ -1,5 +1,18 @@
 [
   {
+    "version": "v0.3.4",
+    "date": "2026-06-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.4",
+    "notes": [
+      "Fixed percentage datalabels and tooltips in pie/donut charts, bar charts, and bar+line combo charts now correctly respecting the per-measure `decimalPlaces` subinput — previously the decimal precision was hardcoded to 2 decimal places regardless of configuration.",
+      "The `onLineClicked` event on `LineChartComparisonDefaultPro` now includes a `measureValue` property, providing the numeric value of the clicked data point alongside the existing `dimensionValue` and `dimensionTimeRange`.",
+      "Added `onCellClicked` event to `HeatMapPro`, emitting `rowDimensionValue`, `rowDimensionTimeRange`, `columnDimensionValue`, and `columnDimensionTimeRange` on each cell click — enabling independent row and column filter wiring from a single click interaction.",
+      "Fixed `MeasureMultiSelectFieldPro` and `DimensionOrMeasureMultiSelectFieldPro` displaying model-qualified measure titles (e.g. \"Products # of orders\") when variable defaults were set — titles are now normalised to their short display form (e.g. \"# of orders\") on mount.",
+      "Upgraded the Remarkable UI library."
+    ]
+  },
+  {
     "version": "v0.3.3",
     "date": "2026-05-29",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.3",
