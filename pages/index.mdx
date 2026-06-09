@@ -1,72 +1,90 @@
 ---
-title: Home 
+title: Home
 ---
 
-# Embeddable Documentation
+# Embeddable Docs
 
-Embeddable is a **developer toolkit** to build fast, fully-custom **analytics experiences** directly into your app.
+Embeddable is a **developer toolkit** for building fast, scalable customer-facing analytics experiences into your application.
 
-<CardGrid>
-  <LinkCard title="Quick-start guide" href="/getting-started/quick-start-guide" icon="⚡"/> 
-  <LinkCard title="Defining data models" href="/data-modeling/introduction" icon="📊"/> 
-  <LinkCard title="Building components" href="/development/introduction" icon="🛠️" marginTop="0.5rem"/> 
-  <LinkCard title="Crafting dashboards" href="/dashboards/introduction" icon="📈" marginTop="0.5rem"/> 
-</CardGrid>
+Use it to build **embedded dashboards**, **self-serve analytics**, and **AI-powered insights** on top of the same governed, code-based foundation. 
 
-## Walkthrough video
+Engineers define components, data models, themes, and access policies in code. Your team can then assemble and publish native-feeling analytics experiences using the no-code builder or your existing development workflow.
 
-Here is a short introduction to how Embeddable enables developers and product teams to build **beautiful**, pixel-perfect, **self-serve analytics** experiences, into their web-applications, for their customers.
+<ImageGrid images={["/img/docs-home-example.png"]}/>
 
-<ExternalVideo src="https://www.youtube.com/embed/5DV6lbcD2Hw?si=KfqNVPg424YGIACP"/>
+## Getting started with Embeddable
 
-- [00:00](https://www.youtube.com/watch?v=5DV6lbcD2Hw&t=0s) What is Embeddable?
-- [00:36](https://www.youtube.com/watch?v=5DV6lbcD2Hw&t=36s) How it works?
-- [01:51](https://www.youtube.com/watch?v=5DV6lbcD2Hw&t=111s) Under the hood
-- [04:17](https://www.youtube.com/watch?v=5DV6lbcD2Hw&t=257s) Let's build a dashboard
-- [09:30](https://www.youtube.com/watch?v=5DV6lbcD2Hw&t=570s) Embedding your dashboard
+New here? Follow the **Set up** path top to bottom. Already building? Jump to a common task or reference below.
 
-## Why Embeddable?
+### Set up
 
-Embeddable makes it easy to **build**, **edit**, **deploy**, and **scale customer-facing data experiences** - designed by your product team, built by engineering, and maintained by customer-facing and data teams. Exactly as it should be.
+- [Quickstart](/getting-started/quick-start-guide) - clone the starter repo and connect it to Embeddable
+- [Explore your workspace](/getting-started/your-workspace) - find your way around the platform
+- [Connect your data](/data/connect-your-database) - point Embeddable at your database
+- [Data modeling 101](/data-modeling/introduction) - define your metrics, dimensions, and joins
+- [Build your first dashboard](/getting-started/first-embeddable) - assemble your first dashboard
 
-- **Native Feel** - Drop a simple [web component](/deployment/embedding) (`<em-beddable>`) into your site and let Embeddable handle the rest.
+### Common tasks
 
-- **No-Code + Full-Code** - Non-technical users [drag and drop charts](/dashboards/introduction), filters, and controls, while developers retain control over [components](/development/introduction), [data models](/data-modeling/introduction), and security.
+- [Embed a dashboard](/deployment/embedding) - drop the web component into your app
+- [Row-level security](/data-modeling/row-level-security/introduction) - restrict rows per user
+- [Configure self-serve dashboards](/dashboards/custom-canvas) - let users explore and customise dashboards safely
+- [Theme your dashboards](/component-libraries/remarkable-pro/theming) - match your brand
+- [Set up an environment](/data/environments) - e.g. staging
+- [Dashboards as code](/dashboards/dashboards-as-code) - define dashboards in your repo
+- [Build a custom component](/development/introduction) - write your own React components
 
-<ImageGrid images={["/img/dash3.png"]}/>
+### Reference
 
-- **Security Built-In** - Enforce [row-level security](/data-modeling/row-level-security/security-filters), [table or schema-level security](/data-modeling/row-level-security/sql-based-security), or [switch entire databases](/data/environments) per user if needed.
+- [Tokens API](/deployment/tokens-api) - mint scoped, short-lived embed tokens
+- [Embeddables API](/deployment/embeddables-api) - manage embeddables programmatically
+- [Versions API](/deployment/versions-api) - manage deployments e.g. publish or roll back versions
+- [Schemas API](/data-modeling/schemas-api) - read your data model schema
 
-- **Single Source of Truth** - Define your metrics, dimensions, and transformations [in code](/data-modeling/defining-models). The no-code builder then exposes these for easy selection - no need for repeated SQL queries or one-off scripts.
+## How Embeddable works
 
-<ImageGrid width='90%' images={["/img/data-model-editor.png"]}/>
+Embeddable has four main parts.
 
-- **Performance & Scalability** - Leverage caching and [advanced pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations) to keep your data fast, even at scale.
+### 1. Code-first foundation
 
-## How It Works
+Define **reusable components** (optionally starting with Embeddable's production-grade component suite), **themes**, and **data models** in your own repository. These are version-controlled, reviewable, and extendable by your developers or agents.
 
-You define **Data Models** and **Components** in your codebase, then use our SDK to expose them in a **powerful no-code builder** for your team. 
+### 2. Governed semantic layer
 
-<Steps>
+Your data models are a **semantic layer** that **centralises metrics, joins, dimensions, and access policies** — so every dashboard and AI experience is built on the same trusted definitions as you scale. 
 
-### **Define Data Models** 
-   In code or in Embeddable's **data model editor**, [describe your data](/data-modeling/introduction) and how it's organised (e.g. "orders", "revenue", or "customers").  
-### **Build or Use Starter Components**
-   Pick from Embeddable’s growing [starter library](/dashboards/starter-components), or [define your own React components](/development/defining-components), pushing them to Embeddable using the SDK.   
-### **No-Code Assembly**
-   Team members use Embeddable’s [dashboard builder](/dashboards/introduction) to craft and iterate on interactive dashboards, without code.  
-### **Publish & Embed**
-   With a single `token` from [Embeddable’s Token API](/deployment/tokens-api), you can [embed](/deployment/embedding) each published dashboard anywhere.
+### 3. Dashboards and AI experiences
 
-</Steps>
+Assemble **interactive dashboards and AI experiences** from your models and components using Embeddable’s no-code builder or in code in your repo. Your team can publish directly, or route changes through your existing engineering release process.
 
-<ImageGrid images={["/img/developer-diagram.png"]}/>
+### 4. Native embedding
 
-## Join the Community
+Embed dashboards using Embeddable's **HTML web component and a server-side token**. The token tells Embeddable what to load, who the user is, and which access policies to apply.
 
-- **Explore** how leading teams unify data from multiple services using Embeddable.
-- **Discuss** tips, best practices, and advanced scenarios (like single-tenancy) in our forums.
-- **Contribute** to our starter components or build your own custom components.
+## Architecture
 
-[**Join the slack community**](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA)
+At a high level, Embeddable separates what you define and publish at build time from what each end user is allowed to see at run time.
 
+### Build time
+
+Your components, data models, and (optionally) dashboards live in your repo. Running `npm run embeddable:push` makes them available in your workspace, where you can manage everything in code, or build dashboards with the no-code builder. Either way, you publish a version, and that's what gets embedded.
+
+![Build-time flow: from your repo, pushed to the platform, to a published version](/img/embeddable-build-flow.svg)
+
+### Run time
+
+When an end-user loads a page, the **web component loads its published dashboard**, then fetches data through a pipeline that applies row-level security and caches results before reaching your database. Embeddable **does not** replicate your database - it queries it directly and can cache query results to improve performance.
+
+You can set up **multiple environments** e.g. production, staging, or a per-tenant database connection. Your server-side token request (explained below) specifies which environment to use, so a single deployment can serve different customers from isolated databases, or point at staging data without touching production.
+
+![Run-time flow: the web component down through the cache and security pipeline to your database](/img/embeddable-run-flow.svg)
+
+### Securing the embed
+
+The component never holds your credentials. When a user opens a dashboard, your server calls the [Tokens API](/deployment/tokens-api) server-side, so your API key stays secret, and receives a short-lived, scoped token.
+
+The token tells Embeddable which dashboard and version to load, who the user is, which environment to query, and which filters, roles, and row-level security context to apply.
+
+You embed the component as `<em-beddable token="…" />`. It sends the token with every request, so the runtime returns only the rows that token permits.
+
+![Authorization handshake: your server to the token API to the web component to the runtime](/img/embeddable-token-handshake.svg)
