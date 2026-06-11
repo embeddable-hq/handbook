@@ -8,6 +8,7 @@
   "client-context": "Client Context",
   "custom-types": "Defining custom types",
   "extending-types": "Extending native types",
+  "extending-custom-options": "Extending custom options",
   "theming": "Theming",
   "pushing-code": "Pushing code"
 }

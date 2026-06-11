@@ -1,0 +1,66 @@
+# Extending Custom Options
+
+Custom types defined in a component library (such as Remarkable Pro) can be extended with additional options from your own bundle — without modifying the library itself. You use the same [`defineOption`](/development/custom-types#the-defineoption-function) function used when building custom types.
+
+## Example — Adding an Export Option
+
+Remarkable Pro ships an `ExportOptionType` with three built-in options: `csv`, `xlsx`, and `png`. The steps below show how to add a `json` option from your boilerplate.
+
+<Steps>
+
+### Register the new option
+
+Create a new file in your types directory (e.g. `src/embeddable.com/types/ExportOption.type.emb.ts`). Import the type from the library and call `defineOption` with your new value.
+
+```typescript
+import { defineOption } from '@embeddable.com/core';
+import { ExportOptionType } from '@embeddable.com/remarkable-pro';
+
+defineOption(ExportOptionType, 'json');
+
+export default ExportOptionType;
+```
+
+<Callout emoji="⚠️">
+  Do **not** call `defineType` here — the type is already defined in the library. Only `defineOption` is needed to add new options to it.
+</Callout>
+
+### Wire up the runtime behaviour in your theme
+
+Registering the option makes `json` appear as a selectable value in the dashboard builder. To give it actual behaviour at runtime, add a corresponding `ChartCardMenuOption` to your theme in `embeddable.theme.ts`.
+
+```typescript
+import { defineTheme } from '@embeddable.com/core';
+import { Theme, ChartCardMenuOption } from '@embeddable.com/remarkable-pro';
+
+const jsonExportOption: ChartCardMenuOption = {
+  value: 'json',
+  labelKey: 'charts.menuOptions.downloadJSON',
+  onClick: ({ data, title }) => {
+    // your export logic here
+  },
+};
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  return defineTheme(parentTheme, {
+    i18n: {
+      translations: {
+        en: { translation: { 'charts.menuOptions.downloadJSON': 'Download JSON' } },
+      },
+    },
+    defaults: {
+      chartMenuOptions: [...(parentTheme.defaults?.chartMenuOptions ?? []), jsonExportOption],
+    },
+  }) as Theme;
+};
+
+export default themeProvider;
+```
+
+The `labelKey` maps to an i18n translation string. The `onClick` callback receives the chart's `data` and `title` so you can handle the export however you need.
+
+### Test the new option
+
+Open any chart component in the dashboard builder. Under **Component Settings → Export options**, `json` should now appear as a selectable option alongside the built-in ones.
+
+</Steps>
