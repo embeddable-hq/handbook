@@ -107,6 +107,27 @@ The **second argument** is the javascript **value** that represents that option 
 Also notice the `optionLabel`, on the `defineType` function, in the example above.  This tells Embeddable how to render the **option** in the UI (in this case `optionLabel` is defined as `(color) => color.name` so Embeddable will use the `name` property from `{ name: 'Orange', r: 256, g: 158, b: 84 }`) like so:
 <ImageGrid width='50%' images={["/img/custom-type-values.png"]} />
 
+## Extending native types with additional properties
+
+You can also use `defineOption` to add options to native types, which can be useful if you want to extend a native type with additional properties. The process is the same as for custom types, but instead of passing a custom type as the first argument, you pass a native type (e.g. `string`, `number`, etc.). This can include more complex native types like `time` and `timeRange` too.
+
+As an example, if you wanted to add `Last Three Weeks` as an option to the native `timeRange` type, you could do it like so:
+
+```ts
+// timeRangeOptions.type.emb.ts
+import { defineOption } from '@embeddable.com/core';
+
+defineOption('timeRange', {
+  name: 'Last Three Weeks',
+  from: 'now-3w',
+  to: 'now'
+});
+```
+
+You don't need to import this type into your components the way you would with a true custom type, as it's just an additional option on the existing `timeRange` type.  Once defined, it will be available in any dropdowns of the `timeRange` type across your Embeddable builder (e.g. Variable builder, component inputs, etc.)
+
+
+
 ## Using a custom type in a component
 
 Let's look at a **full example** of how we can use our new **Color type** in a component.
@@ -156,7 +177,6 @@ export default (props: Props) => {
   );
 };
 ```
-
 
 With some CSS to style it (in a file called `Toggle/index.css`) like so:
 
