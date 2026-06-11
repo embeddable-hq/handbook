@@ -241,8 +241,8 @@ When defining `inputs` in your `.emb.ts` file, you can select from a set of **na
     const tr2: TimeRange = { relativeTimeString: 'last 30 days' }
     ```
 - **`dataset`** lets users pick a **dataset** in the builder.
-- **`measure`** represents a [**measure**](/data-modeling/dimensions-and-measures) (count, sum, etc.), as defined in your data models.
-- **`dimension`** represents a [**dimension**](/data-modeling/dimensions-and-measures) (e.g. group by country or category), as defined in your data models.
+- **`measure`** represents a [**measure**](/data-modeling/writing-data-models/dimensions-and-measures) (count, sum, etc.), as defined in your data models.
+- **`dimension`** represents a [**dimension**](/data-modeling/writing-data-models/dimensions-and-measures) (e.g. group by country or category), as defined in your data models.
 - **`granularity`** for grouping time dimensions in [`loadData`](/component-libraries/build-components/loading-data#types).   
     ```ts
     const g: Granularity = 'day'

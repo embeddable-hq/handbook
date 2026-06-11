@@ -9,8 +9,8 @@ You can test your models in Embeddable’s **Data Playground**.  Simply click th
 />
 
  - **View as**: this allows you to test the row-level security by viewing the data as if you are different end-users ([learn more](/data-modeling/row-level-security/security-filters#testing-your-security-filters)).
- - **Data model**: choose which data model you want to test ([defining data models](/data-modeling/defining-models)) 
- - **Columns**: choose which dimensions and measures you want to see (note that all dimensions and measures that are "reachable" from the chosen *data model* will be available here. i.e. any dimensions and measures from any model that can be reached via a join) ([dimensions and measures](/data-modeling/dimensions-and-measures))
+ - **Data model**: choose which data model you want to test ([defining data models](/data-modeling/writing-data-models/defining-models)) 
+ - **Columns**: choose which dimensions and measures you want to see (note that all dimensions and measures that are "reachable" from the chosen *data model* will be available here. i.e. any dimensions and measures from any model that can be reached via a join) ([dimensions and measures](/data-modeling/writing-data-models/dimensions-and-measures))
  - **Models version**: this allows you to load previous versions of models ([pushing your models](/data-modeling/pushing-models))
  - **Generated SQL**: once you click the "Run" button, the SQL that will be used to retrieve your chosen columns will be shown here.  This is very useful for debugging your models to understand if the SQL has been defined correctly for your database data.
  - **Results**: once you click the "Run" button, the SQL will be run against your database, and the results will be shown here (or an error message if your database has a problem running the generated SQL).
@@ -35,7 +35,7 @@ If your models are in a [separate repo](/data-modeling/getting-setup#2-storing-m
 </Callout>
 
 <CardGrid>
-  <LinkCard title="Defining your first data models" href="/data-modeling/defining-models" icon=""/> 
+  <LinkCard title="Defining your first data models" href="/data-modeling/writing-data-models/defining-models" icon=""/> 
 </CardGrid>
 
 ## Testing using Cube's Data Playground

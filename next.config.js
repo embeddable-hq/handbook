@@ -64,6 +64,12 @@ module.exports = withNextra({
         destination: '/getting-started/get-set-up/:page',
         permanent: true,
       },
+      {
+        source:
+          '/data-modeling/:page(defining-models|dimensions-and-measures|joins|examples|views|generate-data-models)',
+        destination: '/data-modeling/writing-data-models/:page',
+        permanent: true,
+      },
     ]
   }
 })

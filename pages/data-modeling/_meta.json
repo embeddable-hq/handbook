@@ -1,17 +1,11 @@
 {
     "introduction": "Data modeling 101",
     "getting-setup": "Getting setup",
-    "testing-models": "Testing your models",    
-    "defining-models": "Defining data models",
-    "dimensions-and-measures": "Dimensions and Measures",
-    "joins": "Joins",
-    "examples": "Example models",
+    "writing-data-models": "Writing data models",
+    "testing-models": "Testing your models",
     "pushing-models": "Pushing your models",
     "row-level-security": "Row-level security",
-    "views": "Views",
     "caching": "Caching",
     "schemas-api": "Schemas API",
-    "filter-params": "Filter Params",
-    "generate-data-models": "AI Model Builder"    
+    "filter-params": "Filter Params"
   }
-  
