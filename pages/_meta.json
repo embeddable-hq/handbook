@@ -4,7 +4,6 @@
   "data": "Connect your data",
   "data-modeling": "Data modeling",
   "component-libraries": "Charts and components",
-  "development": "Build-your-own components",
   "dashboards": "Dashboards",
   "deployment": "Deployment",
   "###": { "type": "separator", "title": "More" },

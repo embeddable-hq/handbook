@@ -37,6 +37,33 @@ module.exports = withNextra({
         destination: '/component-libraries/remarkable-pro/styling/component-tokens#reference',
         permanent: true,
       },
+      {
+        source: '/development',
+        destination: '/getting-started/development/introduction',
+        permanent: true,
+      },
+      {
+        source:
+          '/development/:page(defining-components|define-component-function|loading-data|interactivity|custom-types|extending-types)',
+        destination: '/component-libraries/build-components/:page',
+        permanent: true,
+      },
+      {
+        source: '/development/:page(client-context|theming)',
+        destination: '/component-libraries/:page',
+        permanent: true,
+      },
+      {
+        source: '/development/:page(introduction|local-environment|pushing-code)',
+        destination: '/getting-started/development/:page',
+        permanent: true,
+      },
+      {
+        source:
+          '/getting-started/:page(quick-start-guide|set-up-your-workspace|your-workspace|first-embeddable|theme-components|first-component)',
+        destination: '/getting-started/get-set-up/:page',
+        permanent: true,
+      },
     ]
   }
 })

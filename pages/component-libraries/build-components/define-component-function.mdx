@@ -73,10 +73,10 @@ import Component from './index';
 - **`name`**: A unique identifier that must match the `.emb.ts` filename. Changing it later can break references.
 - **`label`**: A user-facing name shown in the builder.
 - **`classNames`**: CSS class names for styling the container.
-- **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/development/custom-types)).
+- **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/component-libraries/build-components/custom-types)).
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
-- **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](/development/interactivity). 
-- **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/development/interactivity).
+- **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](/component-libraries/build-components/interactivity). 
+- **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/component-libraries/build-components/interactivity).
 
 #### `InputMeta` definition
 
@@ -243,7 +243,7 @@ When defining `inputs` in your `.emb.ts` file, you can select from a set of **na
 - **`dataset`** lets users pick a **dataset** in the builder.
 - **`measure`** represents a [**measure**](/data-modeling/dimensions-and-measures) (count, sum, etc.), as defined in your data models.
 - **`dimension`** represents a [**dimension**](/data-modeling/dimensions-and-measures) (e.g. group by country or category), as defined in your data models.
-- **`granularity`** for grouping time dimensions in [`loadData`](/development/loading-data#types).   
+- **`granularity`** for grouping time dimensions in [`loadData`](/component-libraries/build-components/loading-data#types).   
     ```ts
     const g: Granularity = 'day'
     // or 'week', 'month', 'year', etc.
@@ -254,7 +254,7 @@ If you need more specialized behavior than these native types provide (e.g., cus
 
 #### `EventMeta` definition
 
-Events are used to create [interactive components](/development/interactivity). For example, a dropdown containing a list of countries that, when clicked, filters the data. Or a set of buttons showing 'day', 'week', and 'month' that, when clicked, update the x-axis granularity on a time-series chart. 
+Events are used to create [interactive components](/component-libraries/build-components/interactivity). For example, a dropdown containing a list of countries that, when clicked, filters the data. Or a set of buttons showing 'day', 'week', and 'month' that, when clicked, update the x-axis granularity on a time-series chart. 
 
 ```ts
 export const meta: EmbeddedComponentMeta = {
@@ -302,7 +302,7 @@ export const meta: EmbeddedComponentMeta = {
 
 #### `VariableMeta` definition
 
-Variables are a core-concept in Embeddable. They are used mainly to store the values passed to Embeddable from events fired by [interactive components](/development/interactivity). 
+Variables are a core-concept in Embeddable. They are used mainly to store the values passed to Embeddable from events fired by [interactive components](/component-libraries/build-components/interactivity). 
 
 Variables can be created manually in the no-code builder or they can be defined in code and then created automatically. Defining them in code is preferable because it contributes to a faster, more intuitive experience within the builder - especially for non-technical users.
 
@@ -361,8 +361,8 @@ export const meta: EmbeddedComponentMeta = {
 
 - **`props(inputs, [state, setState], clientContext)`**  
   - **`inputs`**: Values entered by the user in the no-code builder.  
-  - **`state`** and **`setState`** are state local to the `.emb` file, enabling you to pass state from your react component back to the `.emb.` file. The most common use-case is to [load data dynamically](/development/loading-data#loading-data-dynamically) from within the component.
-  - **`clientContext`**: Any [additional data](/development/client-context) passed in from the web component at embed time (e.g. theming, environment info).  
+  - **`state`** and **`setState`** are state local to the `.emb` file, enabling you to pass state from your react component back to the `.emb.` file. The most common use-case is to [load data dynamically](/component-libraries/build-components/loading-data#loading-data-dynamically) from within the component.
+  - **`clientContext`**: Any [additional data](/component-libraries/client-context) passed in from the web component at embed time (e.g. theming, environment info).  
     
     ```ts
     export default defineComponent(MyComponent, meta, {
@@ -374,7 +374,7 @@ export const meta: EmbeddedComponentMeta = {
       }
     });
     ```
-- **`events`** describes how events your component triggers are transformed into a data object that Embeddable can use for [interactivity](/development/interactivity), as described in `events.properties` in `meta`.
+- **`events`** describes how events your component triggers are transformed into a data object that Embeddable can use for [interactivity](/component-libraries/build-components/interactivity), as described in `events.properties` in `meta`.
 
 ---
 
