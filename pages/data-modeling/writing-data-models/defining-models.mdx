@@ -95,7 +95,7 @@ You can see more data model examples inside [your repo](https://github.com/embed
   ```
 
 <Callout emoji="💡">
-   A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/dimensions-and-measures). The data modeling layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
+   A common misconception is that you have to write **GROUP BY** statements in your `sql`. Instead, use `sql` to define a base table and then separately define [dimensions and measures](/data-modeling/writing-data-models/dimensions-and-measures). The data modeling layer automatically generates the necessary SQL, including GROUP BY clauses, behind the scenes.
 </Callout>
 
 - `dimensions`: There are all the "virtual columns" that you want to expose in your model (learn more [here](./dimensions-and-measures)).
@@ -106,7 +106,7 @@ You can see more data model examples inside [your repo](https://github.com/embed
 
 You can also define other parameters, including [joins](./joins) between models and [pre-aggregations](./caching/pre-aggregations) to optimize performance.
 
-- `joins`: Defines how to [link models](/data-modeling/joins) and handle join relationships.
+- `joins`: Defines how to [link models](/data-modeling/writing-data-models/joins) and handle join relationships.
 
 - `description`: A short note or summary of what the model represents or how it should be used. Useful for keeping track of intentions or business context.
 

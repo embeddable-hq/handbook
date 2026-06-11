@@ -8,7 +8,7 @@
    - We may make **breaking changes** to custom types in the future.
 </Callout>
 
-Out of the box, we provide you with all the standard types, like `string`, `number`, `boolean`, `time` and `timeRange` (we call these [native types](/development/define-component-function#native-input-types)). But sometimes you'll want to create your own **custom types** or extend the existing native types.
+Out of the box, we provide you with all the standard types, like `string`, `number`, `boolean`, `time` and `timeRange` (we call these [native types](/component-libraries/build-components/define-component-function#native-input-types)). But sometimes you'll want to create your own **custom types**.
 
 E.g. here we've defined a Color type which is used as an input on a Toggle component:
 
@@ -24,7 +24,7 @@ E.g:
 
 ## The `defineType` function
 
-The `defineType` function is how you define a **custom type** in Embeddable (on top of the built-in [native types](/development/define-component-function#native-input-types)).
+The `defineType` function is how you define a **custom type** in Embeddable (on top of the built-in [native types](/component-libraries/build-components/define-component-function#native-input-types)).
 
 E.g. to define a `Color` type, create a file named `Color.type.emb.ts` (file must end in `.type.emb.ts` for Embeddable to pick it up) like so:
 
@@ -61,9 +61,9 @@ The **second parameter** is an object that takes the following properties:
 
 - **`label`**: the human-readable name that appears in the UI.  You can change it anytime without impacting the underlying logic.  E.g. you can see our custom type, labeled 'Color', appearing here among the native types in the Variable Builder:
 <ImageGrid width='50%' images={["/img/custom-type-label.png"]} />
-- **`optionLabel`**: This tells Embeddable how to render each **option** of this custom type in the UI ([learn more](/development/custom-types#the-defineoption-function)).
-- **`cast`**: an object specifying how to convert this custom type to other Embeddable types, so variables of this type can be used in component inputs of different types ([learn more](/development/custom-types#casting-between-types)).
-- **`toNativeDataType`**: an object specifying how to map this custom type to Cube-native data types, for use in **dataset filters** only ([learn more](/development/custom-types#using-custom-types-to-filter-datasets)). For component input interoperability, use `cast` instead.
+- **`optionLabel`**: This tells Embeddable how to render each **option** of this custom type in the UI ([learn more](/component-libraries/build-components/custom-types#the-defineoption-function)).
+- **`cast`**: an object specifying how to convert this custom type to other Embeddable types, so variables of this type can be used in component inputs of different types ([learn more](/component-libraries/build-components/custom-types#casting-between-types)).
+- **`toNativeDataType`**: an object specifying how to map this custom type to Cube-native data types, for use in **dataset filters** only ([learn more](/component-libraries/build-components/custom-types#using-custom-types-to-filter-datasets)). For component input interoperability, use `cast` instead.
 
 ## The `defineOption` function
 
@@ -99,7 +99,7 @@ The `defineOption` function takes the following parameters:
 
 The **first argument** is the **type** itself (e.g. `ColorType`).  This tells Embeddable which **type** you're adding the **option** to.
 
-The **second argument** is the javascript **value** that represents that option (e.g. `{ name: 'Orange', r: 256, g: 158, b: 84 }`).  This is the javascript value that will get passed to a component if that option is chosen (concrete example of this [below](/development/custom-types#using-a-type-in-a-component)).
+The **second argument** is the javascript **value** that represents that option (e.g. `{ name: 'Orange', r: 256, g: 158, b: 84 }`).  This is the javascript value that will get passed to a component if that option is chosen (concrete example of this [below](/component-libraries/build-components/custom-types#using-a-type-in-a-component)).
 <Callout emoji="💡">
   In the example above we're using `name` and `r`, `g` and `b` to represent our type, but we could define the shape of the object however we like.  As long as the components that use this custom type know how to handle it.
 </Callout>
@@ -322,7 +322,7 @@ So now we can customize the color of our Toggle component directly in Embeddable
 
 ## The `defineEditor` function
 
-The fastest way to use custom types is to use `defineOption` (as demonstrated [above](/development/custom-types#the-defineoption-function)) as it automatically makes this type available as a **dropdown** of the available options:
+The fastest way to use custom types is to use `defineOption` (as demonstrated [above](/component-libraries/build-components/custom-types#the-defineoption-function)) as it automatically makes this type available as a **dropdown** of the available options:
 
 <ImageGrid width='50%' images={["/img/custom-type-values.png"]} />
 
@@ -504,7 +504,7 @@ cast: {
 ```
 
 <Callout emoji="💡">
-  `cast` works for **component inputs**. If you also need your custom type to work in **dataset filters**, you'll need `toNativeDataType` too — see [below](/development/custom-types#using-custom-types-to-filter-datasets).
+  `cast` works for **component inputs**. If you also need your custom type to work in **dataset filters**, you'll need `toNativeDataType` too — see [below](/component-libraries/build-components/custom-types#using-custom-types-to-filter-datasets).
 </Callout>
 
 ## Using custom types to filter datasets

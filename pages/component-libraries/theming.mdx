@@ -8,7 +8,7 @@ Themes are objects that allow Embeddable users to control the global configurati
 
 ## themeProvider
 
-`embeddable.theme.ts` defines and exports a `themeProvider` function. The role of `themeProvider` is to decide which values to apply to the theme based on the incoming [Client Context](/development/client-context), and return the merged theme using `defineTheme(parentTheme, newTheme)`, which combines customizations with the existing theme.
+`embeddable.theme.ts` defines and exports a `themeProvider` function. The role of `themeProvider` is to decide which values to apply to the theme based on the incoming [Client Context](/component-libraries/client-context), and return the merged theme using `defineTheme(parentTheme, newTheme)`, which combines customizations with the existing theme.
 
 There are different ways to implement `themeProvider` depending on whether a single theme or multiple themes are required.
 
