@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.5",
+    "date": "2026-06-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.5",
+    "notes": [
+      "Added cascading filter support to `FilterBuilderPro` via a new 'Apply dynamic filters' boolean input (Component Settings). When enabled, each filter clause's value dropdown is automatically narrowed by all other active clauses — for example, selecting a Country first will filter the available City options accordingly. Each clause's own selections are excluded from its own filtering, so multiple values can still be added to a single clause without interference."
+    ]
+  },
+  {
     "version": "v0.3.4",
     "date": "2026-06-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.4",
