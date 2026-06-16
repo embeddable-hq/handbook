@@ -2,11 +2,9 @@
   "introduction": "Intro to dashboards",
   "building-dashboards": "Building dashboards",
   "interactivity": "Adding interactivity",
-  "starter-components": "Starter components",
+  "drill-down": "Drill-Down",
   "saving": "Saving versions",
   "publishing": "Publishing",
-  "custom-canvas": "Custom Canvas",
-  "drill-down": "Drill-Down",
   "dashboards-as-code": "Dashboards as Code",
   "developer-console": "Debugging dashboards"
 }

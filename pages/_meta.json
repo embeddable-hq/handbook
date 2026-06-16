@@ -5,6 +5,7 @@
   "data-modeling": "Data modeling",
   "component-libraries": "Charts and components",
   "dashboards": "Dashboards",
+  "self-serve": "Self-serve",
   "deployment": "Deployment",
   "###": { "type": "separator", "title": "More" },
   "video-tutorials": "Video tutorials",

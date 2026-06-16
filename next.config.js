@@ -33,6 +33,16 @@ module.exports = withNextra({
   async redirects() {
     return [
       {
+        source: '/dashboards/custom-canvas',
+        destination: '/self-serve/custom-canvas',
+        permanent: true,
+      },
+      {
+        source: '/dashboards/starter-components',
+        destination: '/component-libraries/remarkable-pro/introduction',
+        permanent: true,
+      },
+      {
         source: '/component-libraries/remarkable-pro/styling/token-reference',
         destination: '/component-libraries/remarkable-pro/styling/component-tokens#reference',
         permanent: true,
