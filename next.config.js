@@ -43,6 +43,16 @@ module.exports = withNextra({
         permanent: true,
       },
       {
+        source: '/dashboards/building-dashboards',
+        destination: '/dashboards/introduction',
+        permanent: true,
+      },
+      {
+        source: '/self-serve/ai-endpoint',
+        destination: '/self-serve/ai-endpoints',
+        permanent: true,
+      },
+      {
         source: '/component-libraries/remarkable-pro/styling/token-reference',
         destination: '/component-libraries/remarkable-pro/styling/component-tokens#reference',
         permanent: true,
