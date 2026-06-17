@@ -34,7 +34,7 @@ module.exports = withNextra({
     return [
       {
         source: '/dashboards/custom-canvas',
-        destination: '/self-serve/custom-canvas',
+        destination: '/self-serve/custom-canvas/introduction',
         permanent: true,
       },
       {
@@ -50,6 +50,11 @@ module.exports = withNextra({
       {
         source: '/self-serve/ai-endpoint',
         destination: '/self-serve/ai-endpoints',
+        permanent: true,
+      },
+      {
+        source: '/self-serve/custom-canvas',
+        destination: '/self-serve/custom-canvas/introduction',
         permanent: true,
       },
       {
