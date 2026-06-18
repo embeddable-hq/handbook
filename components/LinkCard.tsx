@@ -26,7 +26,7 @@ const LinkCard: React.FC<LinkCardProps> = ({ title, href, icon, children, margin
             {title}
             <span>&#x2192;</span>
           </h3>
-          {children && <p className="text-sm opacity-80">{children}</p>}
+          {children && <p className="text-sm opacity-80 nx-px-4 nx-pb-4">{children}</p>}
         </div>
       </div>
     </Link>
