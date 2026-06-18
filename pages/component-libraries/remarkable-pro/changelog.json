@@ -1,5 +1,24 @@
 [
   {
+    "version": "v0.3.6",
+    "date": "2026-06-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.6",
+    "notes": [
+      "Fixed tooltip positioning across chart components by updating the Remarkable UI library to 3.0.19.",
+      "Fixed pie and donut chart legend labels ignoring the active theme's colour setting — labels now correctly apply the `--em-chart-category-color` CSS variable instead of always rendering in black."
+    ]
+  },
+  {
+    "version": "v0.3.5",
+    "date": "2026-06-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.5",
+    "notes": [
+      "Extended `FilterBuilderPro` with cascading filter support via a new \"Apply dynamic filters\" boolean component setting. When enabled, each clause's value dropdown is automatically narrowed by all other active clauses — for example, selecting a Country first filters the available City options. Each clause's own selections are excluded from its own filtering, so multiple values can still be added to a single clause."
+    ]
+  },
+  {
     "version": "v0.3.4",
     "date": "2026-06-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.4",
