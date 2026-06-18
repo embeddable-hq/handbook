@@ -1,49 +1,66 @@
 # Introduction to Dashboards
 
-Embeddable provides a **no-code builder** that lets non-technical users create, edit, and organize analytics dashboards without writing SQL or code. 
-
-It brings together your **data models** (defined in code) and your **components** (written in React), giving end users an intuitive, drag-and-drop environment to configure visuals, filters, interactivity, and more.
-
-## Why a No-Code Builder?
-
-- **Empower Non-Tech Users**: Allow product managers, analysts, or support teams to build dashboards themselves.  
-- **Faster Iterations**: Dashboards can be designed and tested on the fly. No need to wait for dev cycles to adjust charts or filters.  
-- **Reuse & Scale**: Your code-defined models and components are made available in one place. Embeddable handles the plumbing - so a single chart component can be reused by multiple teams or use cases.
+An Embeddable dashboard brings together your [data models](/data-modeling/introduction) (defined in code) and [components](/component-libraries/build-components/defining-components) (written in React) into an interactive analytics experience you [embed](/deployment/embedding) in your app. Every dashboard is assembled from the same building blocks — however you build it.
 
 <ImageGrid images={["/img/dash1.png", "/img/dash2.png"]}/>
 
-## High-Level Workflow
+## The building blocks
 
-1. **Define Components & Models in Code**  
-   - Your technical teams build [React components](/component-libraries/build-components/defining-components) (e.g. charts, controls) and [data models](/data-modeling/introduction), then [push them](/getting-started/development/pushing-code) to Embeddable.  
+A dashboard is assembled from four building blocks, arranged on a grid. They're the same whether you build in the no-code builder or in code — in YAML they're literally the keys `datasets`, `widgets`, `variables`, and `customCanvas`.
 
-2. **Build Dashboards with Drag & Drop**  
-   - **Add** a component (like a line chart or dropdown) onto the canvas.  
-   - **Customize** it using the [inputs](/component-libraries/build-components/defining-components#configure-in-embts) available - your team have full control over these.
+### Datasets
 
-4. **Preview & Interact**  
-   - **Preview** the dashboard right there, with live data. 
-   - Build in [interactivity](/dashboards/interactivity) to create dynamic, engaging experiences.   
+A **dataset** is a named [data model](/data-modeling/introduction) with optional **filters** applied — the data a component shows. For example, a **Customers** dataset based on your `customers` model, and a **High-Spend Customers** dataset that filters it.
 
-5. **Test Security Contexts**  
-   - Switch between different [security-contexts](/data-modeling/row-level-security/security-filters#testing-your-security-filters) (e.g. “User A” or “User B”) and [environments](/data/environments), seeing the exact data and set up your users see.
+<ImageGrid images={["/img/dataset-builder-min.png"]}/>
 
-6. **Publish & Embed**  
-   - Once satisfied, click [Publish](/dashboards/publishing). 
-   - [Embed](/deployment/embedding) the resulting dashboard on your website or app using a web-component (not an iFrame).
+<Callout emoji="💡">
+  Because data models include [row-level security rules](/data-modeling/row-level-security/introduction) and transformations, everyone sees the right data automatically — it **isn't something you need to think about** when building a dashboard.
+</Callout>
 
-With the **no-code builder**, everyone in your organization - devs and non-devs alike - can collaborate on analytics dashboards. Devs define the underlying data logic and React components; end users assemble, configure, and publish dashboards. 
+### Components
 
-## A Native Look and Feel
+**Components** are the visual and interactive elements — charts, tables, dropdowns, text blocks. Your dev team [builds and pushes](/getting-started/development/pushing-code) them, and each exposes **inputs** you fill in (e.g. which dimension goes on the x-axis, or the title). In code, components are called **widgets**.
 
-Embeddable dashboards appear on your site through a **web component** (`<em-beddable>`). This approach offers:
+<ImageGrid images={["/img/add-components-min.png"]}/>
 
-- **Seamless Integration**: The web component behaves like any native HTML element, so your dashboard feels right at home in your layout.
-- **Mobile Responsiveness**: Automatic breakpoints and scaling help your dashboards adapt to smaller screens without extra effort.
-- **Flexible Branding**: Any theming you’ve applied (e.g., custom colors) comes through naturally, since the canvas is invisible and won’t override your site’s look.
+### Variables
 
-By design, visitors can’t tell they’re viewing something “external” - it looks and behaves like a **built-in** part of your website.
+**[Variables](/dashboards/interactivity)** are reactive values that make a dashboard interactive. A filter, search box, or picker updates a variable, and every component or dataset bound to it reacts in real time.
 
-**Examples**
+### Custom Canvas
 
-<ImageGrid images={["/img/eyk-example.png", "/img/pledge-example.png", "/img/ra-example.png", "/img/concept-x-example.png" ]} />
+Optionally, a dashboard can include a **[Custom Canvas](/self-serve/custom-canvas/introduction)** — an area your end-users can build on themselves, from templates you define.
+
+### Layout
+
+Components sit on a **12-column grid** that reflows responsively — 12 columns on desktop, 1 on mobile. In the builder you drag and resize them; in code you set each widget's `position` and `dimensions`.
+
+<ImageGrid images={["/img/canvas-drag-min.png"]}/>
+
+## Two ways to build
+
+You assemble those building blocks in one of two ways — both produce the same dashboard, in the same workspace:
+
+- **No-code builder** — arrange the blocks visually, by drag-and-drop. Ideal for non-technical users like product managers, analysts, or support teams.
+- **[Dashboards as Code](/dashboards/dashboards-as-code)** — define the same blocks in YAML inside your repo, for version control and a git-native workflow. You can even [build them with AI](/dashboards/build-with-ai).
+
+These aren't separate worlds. The no-code builder is also where you **preview and verify** code dashboards while developing, and you can move between the two freely — [convert a no-code dashboard to code](/dashboards/dashboards-as-code#editing-locally), or edit a coded one visually in the local builder and [sync it back to the file](/dashboards/dashboards-as-code#editing-locally).
+
+<LinkCard
+   title="Follow a walkthrough to create your first dashboard"
+   href="/getting-started/get-set-up/first-embeddable"
+   arrow
+/>
+
+## Add interactivity
+
+Make dashboards dynamic and explorable for your viewers:
+- **[Interactivity with variables](/dashboards/interactivity)** — wire up filters, search inputs, and pickers that update components in real time.
+- **[Drill-down](/dashboards/drill-down)** — let users click a data point to open a filtered detail view.
+
+## Save, publish & embed
+
+- **[Save versions](/dashboards/saving)** of your dashboard as you work.
+- **[Publish](/dashboards/publishing)** to an environment when you're ready.
+- **[Embed](/deployment/embedding)** using a web component (`<em-beddable>`, not an iFrame) so the dashboard feels native — responsive, themed, and seamless inside your app.

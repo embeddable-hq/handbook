@@ -2,23 +2,27 @@
 
 Embeddable’s **variables** make dashboards interactive - so when you change something in one part of the dashboard, it can automatically update another.
 
-## How it works:
+<Callout emoji="💡">
+  Building [as code](/dashboards/dashboards-as-code)? Variables work exactly the same way — define them in the [`variables`](/dashboards/dashboards-as-code#variables) block of your `.embeddable.yml` and bind them to inputs and datasets just as you would in the builder.
+</Callout>
+
+## How it works
 
 <Steps>
 
-### **A user performs an action**  
+### A user performs an action  
    - e.g. type in a text box, click a button, or select a value from a dropdown.
 
-### **A Variable gets updated**  
+### A variable gets updated  
    - The dashboard saves what you typed or clicked inside a variable. 
    - Some components [create variables automatically](/component-libraries/build-components/interactivity#usage-flow-1) when you add them to the Canvas, but you can also create variables manually. 
 
-### **Any connected components and datasets update too**  
+### Any connected components and datasets update too  
    - If a variable is connected to a dataset filter, or an input within a component, it will update, causing the data to reload or the component to change in some way. 
 
 </Steps>
 
-It’s like magic, but actually just smart automation behind the scenes! 🚀
+That’s the core model: an action updates a variable, and everything connected to it reacts.
 
 <Callout emoji="🎥">
   Want to see variables in action, check out our [Quick Hits video tutorial on Variables](/video-tutorials/quick-hits/variables) for a step-by-step walkthrough.
@@ -80,7 +84,7 @@ Here's how to filter data when a user clicks the segment of a pie chart.
 
 <Steps>
 
-### **Create a Variable**  
+### Create a variable  
    - Since adding the pie chart doesn’t automatically generate a variable for this type of interaction, you’ll add one yourself. 
    - Click the **+ icon** on the right, give your variable a **name** (e.g. **country**), and select a **type** (simply `text` in this case). 
 
@@ -90,7 +94,7 @@ Here's how to filter data when a user clicks the segment of a pie chart.
     height="846"
 />
 
-### **Set Up the Pie Chart Interaction**  
+### Set up the pie chart interaction  
    - Click edit on the pie chart.  
    - Under **Interactions**, connect the click event to your new variable and then click Done.
    - Now, whenever someone clicks a slice, the chart fires an event, and Embeddable updates the **country** variable. 
@@ -101,7 +105,7 @@ Here's how to filter data when a user clicks the segment of a pie chart.
     height="846"
 />
 
-### **Apply the Variable to a Dataset Filter**  
+### Apply the variable to a dataset filter  
    - In your dataset settings, add a new filter:  
      - Choose the dimension (e.g., Country) you want to match.  
      - Set it to “equals” (or “contains,” depending on your need).  
@@ -114,7 +118,7 @@ Here's how to filter data when a user clicks the segment of a pie chart.
     height="846"
 />
 
-### **Test the Flow**  
+### Test the flow  
    - Switch to **Preview** mode.  
    - Click any pie slice: **country** updates, causing the dataset to reload with that slice’s data.  
    - Any chart or table using this dataset also updates automatically.
@@ -133,7 +137,7 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 <Steps>
 
-### **Add a Granularity Picker Component**
+### Add a granularity picker component
 
     - Drop the **Daterange Picker** onto your canvas. You could also add the **Granularity Picker**.
     - A "granularity" variable is created automatically. Each time the user selects a granularity, it will update the **granularity** variable. 
@@ -156,7 +160,7 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
     height="938"
 />
 
-### **Sit back, and enjoy the ride**
+### Sit back and enjoy the ride
 
 - Switch to **Preview** mode and click different granularity options.
 - Watch your chart instantly switch between day, week, or month. 
@@ -167,7 +171,7 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 You can also use **dimensions** and **measures** as variables. This is useful for components that need to filter data based on user selections, like a dropdown that lets users pick a dimension or measure to display.
 
-In order to facilitate this behavior, we provide six predefined picker components in [our starter library](/dashboards/starter-components.mdx) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
+In order to facilitate this behavior, we provide six predefined picker components in [our starter library](/component-libraries/remarkable-pro/introduction) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
 
 Dimensions and measures as variables are powerful because they let users dynamically change the data being displayed in charts or tables without needing to write any code. This adds a significant level of interactivity to your dashboards without requiring additional code on your part.
 

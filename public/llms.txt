@@ -38,12 +38,18 @@ Row-level security controls which rows each user, customer, or tenant can see. I
 
 ## Building dashboards
 
-Assemble dashboards from your models and components — either in the no-code drag-and-drop builder or as code in your repo. Variables make them interactive, and Custom Canvas lets your end users build their own.
+Every dashboard is assembled from the same building blocks — datasets, components, variables, and an optional Custom Canvas — either in the no-code drag-and-drop builder or as code in your repo. The two interoperate: code dashboards can be previewed and round-tripped in the builder.
 
-- [Building dashboards](https://docs.embeddable.com/dashboards/building-dashboards): The two ways to build — the no-code builder and Dashboards as Code.
-- [Dashboards as Code](https://docs.embeddable.com/dashboards/dashboards-as-code): Define dashboards as `.embeddable.yml` files in your repo — git-native, reviewable in PRs, and editable with AI tools like Claude Code, Cursor, and Codex.
+- [Introduction to dashboards](https://docs.embeddable.com/dashboards/introduction): The building blocks and the two ways to build — the no-code builder or Dashboards as Code.
+- [Dashboards as Code](https://docs.embeddable.com/dashboards/dashboards-as-code): Define dashboards as `.embeddable.yml` files in your repo — git-native, reviewable in PRs, and editable locally in the builder (changes sync back to the file).
+- [Build dashboards with AI](https://docs.embeddable.com/dashboards/build-with-ai): Embeddable's `dashboard-as-code` Claude skill scaffolds and edits dashboards from a prompt; the guidance is plain markdown any agent can use.
 - [Interactivity with variables](https://docs.embeddable.com/dashboards/interactivity): Let user actions (filters, clicks) update charts across the dashboard.
-- [Custom Canvas](https://docs.embeddable.com/dashboards/custom-canvas): Let end users build and customise their own dashboards — governed self-serve analytics.
+
+## Self-serve analytics
+
+Let your end users explore data and answer their own questions inside your product, within guardrails you define.
+
+- [Custom Canvas](https://docs.embeddable.com/self-serve/custom-canvas/introduction): Let end users build and customise their own dashboards from templates you define — governed self-serve analytics. (AI-powered self-serve — a chatbot and a chat endpoint for your own UI — is on the way.)
 
 ## Charts and components
 

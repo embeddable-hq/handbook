@@ -33,6 +33,7 @@ pnpm build  # Build for production
 | Data modeling | Data people (SQL-comfortable) |
 | Building components | React engineers |
 | Dashboards | Non-technical dashboard builders |
+| Self-serve | Builders enabling end-user data exploration (Custom Canvas, AI) |
 | Deployment | Integration engineers |
 
 ## Writing Guidelines

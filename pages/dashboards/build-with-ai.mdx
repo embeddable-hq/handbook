@@ -1,0 +1,56 @@
+# Build dashboards with AI
+
+Because [Dashboards as Code](/dashboards/dashboards-as-code) are just `.embeddable.yml` files, you can build and edit them by **prompting an AI agent** instead of writing YAML by hand. Embeddable ships a **Claude skill** that teaches the agent how Embeddable dashboards work, so it turns a plain-English description into a valid, working dashboard.
+
+<Callout emoji="💡">
+See it in action in the [Dashboards as Code & Claude Skills Quick Hit](/video-tutorials/quick-hits/dashboards-as-code) (video + transcript).
+</Callout>
+
+## The `dashboard-as-code` skill
+
+The skill ships in the [Remarkable Pro boilerplate](https://github.com/embeddable-hq/remarkable-pro-boilerplate) at `.claude/skills/dashboard-as-code/`. If you set up your workspace from the boilerplate, [Claude Code](https://www.claude.com/product/claude-code) discovers it automatically — there's nothing to install.
+
+It triggers whenever you ask for dashboard work — phrases like *"create a dashboard"*, *"add a widget"*, *"wire up a date filter"*, or *"make a custom canvas template"* — or whenever you edit a `.embeddable.yml` file.
+
+When it runs, the agent:
+
+1. **Discovers the components** available in your repo and component libraries (e.g. [Remarkable Pro](/component-libraries/remarkable-pro)), reading each one's metadata so it picks the right chart and inputs.
+2. **Reads your [data models](/data-modeling/introduction)** to confirm the cubes, dimensions, and measures you reference actually exist.
+3. **Writes or edits the YAML** under `src/embeddable.com/embeddables/`, using valid components, inputs, positions, [variables](/dashboards/interactivity), and [Custom Canvas](/self-serve/custom-canvas/introduction) templates.
+4. **Checks build validation** (when `embeddable:dev` is running) and fixes issues such as overlapping widgets.
+
+Everything it produces is the same [Dashboards as Code](/dashboards/dashboards-as-code) YAML you'd write yourself — so it's fully reviewable in a normal code diff.
+
+## Workflow
+
+<Steps>
+
+### Start your dev server
+
+Run [`embeddable:dev`](/getting-started/development/local-environment) so you get a live preview and build-time validation as the agent works.
+
+### Describe what you want
+
+Prompt Claude Code in plain English. For example:
+
+> Reduce the bar chart to half-width and convert it to a line chart using the appropriate Remarkable Pro component. Then add a pie chart in the newly emptied space to the right, breaking down total listens by the age group dimension.
+
+The agent reads your existing dashboard, the skill's reference files, and the relevant component code, then updates the `.embeddable.yml` accordingly.
+
+### Review and preview
+
+Review the YAML diff like any other code change, and watch it render live in `embeddable:dev`. Iterate by prompting again, or by [editing it yourself](/dashboards/dashboards-as-code#editing-locally) — in the code or in the local builder.
+
+### Push when you're ready
+
+[Push](/getting-started/development/pushing-code) to create a new saved version in your workspace, then publish it.
+
+</Steps>
+
+<Callout emoji="⚠️">
+The skill **won't** run `embeddable:push` or start `embeddable:dev` for you — those stay your call. It also treats a dashboard's `name` (and Custom Canvas template `key`s) as stable identifiers, since renaming them can break live embeds and drilldowns.
+</Callout>
+
+## Other agents
+
+The skill is written for Claude Code, but it's just markdown — `SKILL.md` and its reference files live in your repo under `.claude/skills/dashboard-as-code/`. Any agent (Cursor, Codex, and others) can use the same guidance: point it at those files, or copy them into that tool's own rules/config format. What's specific to Claude Code is the *automatic* discovery and triggering — other tools just need pointing at the folder. And since the dashboards themselves are plain `.embeddable.yml`, any agent can read and edit them regardless.
