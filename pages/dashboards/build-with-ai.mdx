@@ -53,4 +53,4 @@ The skill **won't** run `embeddable:push` or start `embeddable:dev` for you — 
 
 ## Other agents
 
-The skill is built for Claude Code, but Dashboards as Code is just text — so Cursor, Codex, or any agent can read and edit the same `.embeddable.yml` files. They simply won't have the Embeddable-specific guidance the skill provides.
+The skill is written for Claude Code, but it's just markdown — `SKILL.md` and its reference files live in your repo under `.claude/skills/dashboard-as-code/`. Any agent (Cursor, Codex, and others) can use the same guidance: point it at those files, or copy them into that tool's own rules/config format. What's specific to Claude Code is the *automatic* discovery and triggering — other tools just need pointing at the folder. And since the dashboards themselves are plain `.embeddable.yml`, any agent can read and edit them regardless.
