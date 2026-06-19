@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.7",
+    "date": "2026-06-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.7",
+    "notes": [
+      "Chart components now expose an `exportOptions` setting in the component builder, allowing builders to control which export formats (CSV, XLSX, PNG) are available in each chart's export menu — or disable exports entirely on a per-component basis."
+    ]
+  },
+  {
     "version": "v0.3.6",
     "date": "2026-06-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.6",
