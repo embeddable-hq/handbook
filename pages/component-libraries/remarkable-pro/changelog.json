@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.11",
+    "date": "2026-06-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.11",
+    "notes": [
+      "Time-dimension chart components now expose an `ignoreEmptyDate` boolean sub-input on the time dimension. When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
+    ]
+  },
+  {
     "version": "v0.3.9",
     "date": "2026-06-22",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.9",
