@@ -14,14 +14,40 @@ This is useful when you want to enable conversational insights (i.e. ask questio
 
 ## Setup
 
-Getting started with the AI endpoints is straightforward but requires the following initial steps:
+Getting started with the AI endpoints is straightforward but requires the following initial steps. For a more complete description, see our [Custom Canvas](/self-serve/custom-canvas/introduction) documentation.
 
-- Enable Custom Canvas in the builder
-- Add datasets the user and AI can use for Custom Canvas 
-- Create Templates with widgets the end user or AI can use for Custom Canvas
-- To give the ai agent more options, add templates for many types of charts and leave them open (no set dataset or filters)
-- Publish custom canvas
-- Create a security token
+<Steps>
+### Enable Custom Canvas in the builder
+
+Simply toggle the "Custom Canvas" option in your dashboard's settings. This allows your end users to create and manage their own charts.
+
+<ImageGrid width='100%' images={["/img/custom-canvas/custom-canvas-button.png"]}/>
+
+
+### Add datasets the user and AI can use for Custom Canvas 
+
+Add datasets to your dashboard and enable them for Custom Canvas. The AI agent will only be able to query datasets that are enabled for Custom Canvas.
+
+<ImageGrid width='100%' images={["/img/custom-canvas/custom-canvas-datasets.png"]}/>
+
+
+### Create Templates with widgets the end user or AI can use for Custom Canvas
+
+To give the ai agent more options, add templates for many types of charts and leave them open (no set dataset or filters)
+
+<ImageGrid width='100%' images={["/img/custom-canvas/custom-canvas-add-template.png"]}/>
+
+### Publish custom canvas
+
+You'll need to publish your dashboard with the Custom Canvas enabled and at least one dataset defined and enabled within Custom Canvas in order to proceed. Otherwise, the API endpoints won’t be able to query your data!
+
+<ImageGrid width='100%' images={["/img/custom-canvas/preview.png"]}/>
+
+### Create a security token
+
+You can learn more about creating a security token on our [Tokens Api Page](/deployment/tokens-api).
+
+</Steps>
 
 <Callout emoji="⚠️">
 **Important note:** you must have Custom Canvas enabled on your dashboard and at least one dataset defined and enabled within Custom Canvas in order to proceed. Otherwise, the API endpoints won’t be able to query your data!
@@ -80,7 +106,7 @@ A typical agent flow looks like this:
 
 ```
 End User
-  │  "Show me sales performance this quarter"
+  │  "Add a KPI chart showing sales performance this quarter in terms of dollars"
   ▼
 Customer's AI Agent
   │  GET  /ai/v1/embeddable/metadata          → available chart types & datasets
@@ -93,10 +119,28 @@ Embeddable API  (authenticated via Security Token)
   │  Applies row-level security
   │  Writes chart to end user's Custom Canvas
   ▼
-End User sees the chart
+End User sees the chart on their canvas
 ```
 
 The AI reasoning stays with your agent. Embeddable provides the tools it needs: data access, chart rendering, and canvas management.
+
+You can also use the agent without rendering a chart, simply asking a question that would return an answer based on the data. For example, "Show me sales performance this quarter" might return a table of results or a summary of the data, without creating a chart on the canvas. Here is an example of that flow:
+
+```
+End User
+  │  "Show me sales performance this quarter"
+  ▼
+Customer's AI Agent
+  │  GET  /ai/v1/embeddable/metadata          → available chart types & datasets
+  │  GET  /ai/v1/models                       → data model schema
+  │  POST /ai/v1/query                        → run and verify a data query
+  ▼
+Embeddable API  (authenticated via Security Token)
+  │  Applies row-level security
+  │  Returns data to the agent
+  ▼
+End User sees the data in the agent's response (table, summary, etc.)
+```
 
 ---
 
