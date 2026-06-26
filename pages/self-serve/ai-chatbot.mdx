@@ -1,7 +1,129 @@
 # AI Chatbot
 
-<Callout emoji="🚧">
-  This feature is coming soon — full documentation is on the way.
+<Callout emoji="⚠️">
+  This feature is in **Prototype**. APIs, visual appearance, and behavior may change. [Reach out to the Embeddable team](mailto:support@embeddable.com) if you have questions or run into issues.
 </Callout>
 
-Let your end-users ask questions of their data in natural language, with a ready-made chat experience you can drop into your product.
+Let your end-users ask questions of their data in natural language — and get back both **text explanations and live charts**, without ever leaving your product.
+
+The AI Chatbot is a ready-made chat experience you drop onto the same page as your existing Embeddable dashboard. End users type a question; the chatbot queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas) on their behalf.
+
+<ImageGrid width='100%' images={["/img/chatbot-example1.png"]}/>
+
+## How it works
+
+The AI Chatbot is made up of three pieces that work together:
+
+- **`<em-ai-chat-bot>`** — a web component you drop onto your page alongside `<em-beddable>`. It connects to the AI orchestrator via WebSocket and authenticates using the same embeddable tokens you already generate for your users.
+- **AI Orchestrator** — hosted by Embeddable. Receives messages from the chatbot, calls your LLM using the API key you've saved in the platform, queries your data models, and streams responses back.
+- **Platform LLM config** — a single API call (`PUT /api/v1/llm-config`) where you save your LLM provider API key. This is how you bring your own key (BYOK).
+
+```
+End User types a question
+  │
+  ▼
+<em-ai-chat-bot>  (WebSocket)
+  │
+  ▼
+AI Orchestrator  (Embeddable-hosted)
+  │  ├── fetches LLM API key from platform (encrypted at rest)
+  │  ├── queries your data models via /ai/v1/* endpoints
+  │  └── enforces row-level security from the embeddable token
+  │
+  ▼
+Response streamed back → text + rendered chart
+```
+
+## Prerequisites
+
+Before adding the AI Chatbot you need:
+
+1. **[Custom Canvas](/self-serve/custom-canvas) enabled** on your dashboard — the chatbot uses Custom Canvas datasets and templates to render charts.
+2. At least one **dataset enabled** in Custom Canvas and at least one **chart template** configured. The more templates you define (and the more open their inputs), the more chart types the AI can offer.
+3. A **security token** generated server-side for each end user — [see the Tokens API](/deployment/tokens-api). The chatbot uses this token exclusively for authentication; no separate chatbot credential exists.
+
+## Setup
+
+<Steps>
+
+### Save your LLM API key
+
+Register your LLM API key with the Embeddable platform. The orchestrator fetches this key fresh on every message; it is encrypted at rest and never cached.
+
+```bash
+curl -X PUT https://api.eu.embeddable.com/api/v1/llm-config \
+  -H "Authorization: Bearer <your-embeddable-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "openai",
+    "apiKey": "<your-llm-api-key>"
+  }'
+```
+
+<Callout emoji="💡">
+  Use your **Embeddable API key** (not your end-user security token) as authorization to call this endpoint. This is a one-time platform configuration, not a per-user call.
+</Callout>
+
+### Add the web component to your page
+
+Drop `<em-ai-chat-bot>` onto the same page as your existing `<em-beddable>` component:
+
+```html
+<em-beddable
+  id="my-dashboard"
+  token="<security-token>"
+  embeddable-id="<embeddable-id>"
+/>
+
+<em-ai-chat-bot
+  embeddable-tokens="<security-token>"
+/>
+```
+
+The `embeddable-tokens` attribute takes the same security token you already pass to `<em-beddable>`. If you render multiple embeddables on one page, pass all their tokens as a space-separated list.
+
+<Callout emoji="⚠️">
+  The chatbot authenticates **exclusively** via `embeddable-tokens`. There is no separate chatbot token. Row-level security from the embeddable token is enforced on every data query.
+</Callout>
+
+### Publish and test
+
+Publish your dashboard in the builder, then open your product. The chatbot panel should appear alongside the dashboard.
+
+{/* SCREENSHOT: The chatbot panel open in a real product page, with the dashboard visible alongside it */}
+
+Try asking a natural-language question — for example, *"Show me revenue by region for last quarter"*. The AI will query your data and render a chart using one of your configured templates.
+
+{/* SCREENSHOT: A chat message and response — user question on the left/top, AI response with a rendered chart below */}
+
+</Steps>
+
+## The end-user experience
+
+End users interact with the chatbot in plain language. The AI can:
+
+- **Answer data questions** — retrieve and summarise data from any dataset available in Custom Canvas, presented as text or charts.
+- **Add charts to the canvas** — place new charts based on what the user asks for.
+- **Edit existing charts** — update a chart's dataset, measure, or filters on request.
+- **Resize and reorder charts** — rearrange the canvas layout conversationally.
+- **Delete charts** — remove charts the user no longer needs.
+
+{/* SCREENSHOT: Sequence of three chat turns — (1) user asks for a new chart, AI adds it; (2) user asks to resize it; (3) user asks to remove it — showing the canvas updating in real time */}
+
+All responses are scoped to the end user's security context. The orchestrator rejects connections where tokens belong to different workspaces, so there is no risk of cross-user or cross-workspace data leakage.
+
+## Security
+
+| Concern | How it's handled |
+|---------|-----------------|
+| Authentication | Exclusively via the embeddable token passed in `embeddable-tokens` — no separate chatbot credential |
+| Row-level security | Enforced on every data query using the claims in the embeddable token |
+| LLM API key | Fetched fresh on every message; encrypted at rest in the platform database; never sent to the client |
+| Cross-workspace isolation | The orchestrator rejects WebSocket connections where tokens belong to different workspaces |
+
+## Related
+
+- [Custom Canvas](/self-serve/custom-canvas) — required prerequisite; also where chatbot-created charts appear
+- [AI Endpoints](/self-serve/ai-endpoints) — power your own chat UI instead of using the ready-made component
+- [Tokens API](/deployment/tokens-api) — how to generate the security tokens the chatbot relies on
+- [Row-level security](/data-modeling/row-level-security/introduction) — how per-user data access is enforced
