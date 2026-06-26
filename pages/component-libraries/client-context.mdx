@@ -48,7 +48,7 @@ Learn how to generate a `securityToken` [here](/deployment/tokens-api).
 
 ### **Receive it in `defineComponent`**  
     
-    In your `.emb.ts` file, the third argument of the `props` function within [`config`](/development/defining-components#3-config) is `clientContext`:
+    In your `.emb.ts` file, the third argument of the `props` function within [`config`](/component-libraries/build-components/defining-components#3-config) is `clientContext`:
    
    ```ts
    props: (inputs, [state, setState], clientContext) => ({
@@ -207,4 +207,4 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-This will pass the time zone to Cube.js on every data load (see [Defining Data Models](/data-modeling/defining-models) for further information), which will handle the conversion for you.
+This will pass the time zone to Cube.js on every data load (see [Defining Data Models](/data-modeling/writing-data-models/defining-models) for further information), which will handle the conversion for you.

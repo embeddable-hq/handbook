@@ -1,4 +1,6 @@
 {
+  "introduction": "Introduction",
   "custom-canvas": "Custom Canvas",
-  "apis-for-agents": "APIs for AI Agents"
+  "ai-chatbot": "AI Chatbot",
+  "ai-endpoints": "AI Endpoints"
 }

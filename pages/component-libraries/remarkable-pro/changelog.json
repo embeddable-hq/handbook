@@ -1,5 +1,51 @@
 [
   {
+    "version": "v0.3.9",
+    "date": "2026-06-22",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.9",
+    "notes": [
+      "`FilterBuilderPro` now supports an AND/OR operator toggle — a button appears between each pair of adjacent filter clauses allowing the top-level logic to switch between AND (all clauses must match) and OR (any clause may match). The selected operator defaults to AND, is persisted in `FilterBuilderState`, and is included in the filter output."
+    ]
+  },
+  {
+    "version": "v0.3.8",
+    "date": "2026-06-19",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.8",
+    "notes": [
+      "Added support for custom canvas overlay customisation — chart components can now render custom content directly on top of the chart canvas, enabled by an upgrade to Remarkable UI 3.0.20."
+    ]
+  },
+  {
+    "version": "v0.3.7",
+    "date": "2026-06-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.7",
+    "notes": [
+      "Chart components now expose an `exportOptions` setting in the component builder, allowing builders to control which export formats (CSV, XLSX, PNG) are available in each chart's export menu — or disable exports entirely on a per-component basis."
+    ]
+  },
+  {
+    "version": "v0.3.6",
+    "date": "2026-06-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.6",
+    "notes": [
+      "Fixed tooltip positioning across chart components by updating the Remarkable UI library to 3.0.19.",
+      "Fixed pie and donut chart legend labels ignoring the active theme's colour setting — labels now correctly apply the `--em-chart-category-color` CSS variable instead of always rendering in black."
+    ]
+  },
+  {
+    "version": "v0.3.5",
+    "date": "2026-06-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.5",
+    "notes": [
+      "Extended `FilterBuilderPro` with cascading filter support via a new \"Apply dynamic filters\" boolean component setting. When enabled, each clause's value dropdown is automatically narrowed by all other active clauses — for example, selecting a Country first filters the available City options. Each clause's own selections are excluded from its own filtering, so multiple values can still be added to a single clause."
+    ]
+  },
+  {
     "version": "v0.3.4",
     "date": "2026-06-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.4",

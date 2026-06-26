@@ -4,7 +4,7 @@ The `loadData` function, called inside your `.emb.ts` files, is a powerful part 
 
 ## A Basic Example
 
-Below is an `.emb` file for a **bar chart** component that calls `loadData` inside the [`defineComponent`](/development/defining-components) function:
+Below is an `.emb` file for a **bar chart** component that calls `loadData` inside the [`defineComponent`](/component-libraries/build-components/defining-components) function:
 
 ```ts
 // src/components/BarChart/BarChart.emb.ts
@@ -102,7 +102,7 @@ This approach lets **no-code users** decide **which data to load**, while your c
 
 ## Parameters
 
-Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/development/defining-components#inputmeta-definition) in your `.emb.ts` file.
+Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/component-libraries/build-components/defining-components#inputmeta-definition) in your `.emb.ts` file.
 
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
@@ -130,10 +130,10 @@ OFFSET <offset>
 
 ### Params
 
-- `from` is a `Dataset` which is defined in the no-code builder.  It defines which [data model](/data-modeling/defining-models) to use, as well as any filters that should be applied to the query.
+- `from` is a `Dataset` which is defined in the no-code builder.  It defines which [data model](/data-modeling/writing-data-models/defining-models) to use, as well as any filters that should be applied to the query.
 
 
-- `select` is an array of [dimensions](/data-modeling/dimensions-and-measures#dimensions), [measures](/data-modeling/dimensions-and-measures#dimensions) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
+- `select` is an array of [dimensions](/data-modeling/writing-data-models/dimensions-and-measures#dimensions), [measures](/data-modeling/writing-data-models/dimensions-and-measures#dimensions) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
 
   ```ts
   select: [
@@ -158,7 +158,7 @@ OFFSET <offset>
   ```
 - `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. This is also available as a native input in the no-code builder.  
 
-- `offset` is a number specifying how many rows to skip, e.g. for [pagination](/development/loading-data#1-pagination-example). Defaults to 0.
+- `offset` is a number specifying how many rows to skip, e.g. for [pagination](/component-libraries/build-components/loading-data#1-pagination-example). Defaults to 0.
 
 - `filters` is an array of additional filters, applied on top of any filters in the dataset. Dimensions go into `WHERE`, measures go into `HAVING`.  
 
@@ -398,7 +398,7 @@ Here, `mainResults` and `secondaryResults` each return their own `isLoading`, `e
 
 ## Loading Data Dynamically
 
-Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/development/defining-components#definecomponent-config-reference). 
+Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/component-libraries/build-components/defining-components#definecomponent-config-reference). 
 
 ### 1. Pagination Example
 

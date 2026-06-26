@@ -5,7 +5,7 @@ You can create **custom React components** in Embeddable using any JS libraries 
 Key capabilities include:
 
 - **Define Inputs**: Make re-usable components by defining inputs your team can customize in the builder.
-- **Load Data**: Dynamically fetch data from your database via Embeddable's [`loadData`](/development/loading-data) function.
+- **Load Data**: Dynamically fetch data from your database via Embeddable's [`loadData`](/component-libraries/build-components/loading-data) function.
 - **Pass Events**: Capture user actions (e.g. button clicks) and send them back to Embeddable for interactive features like filtering. 
 
 ## How It Works
@@ -40,7 +40,7 @@ Key capabilities include:
   There's nothing Embeddable-specific about this code - it's just standard React. 
 
 ### **Configure in `.emb.ts`**  
-  In a **companion `.emb.ts` file**, define **inputs** and other configuration, including how to [load data](/development/loading-data). This file tells Embeddable **how** to expose the component in the no-code builder so it can be configured by your team without code:
+  In a **companion `.emb.ts` file**, define **inputs** and other configuration, including how to [load data](/component-libraries/build-components/loading-data). This file tells Embeddable **how** to expose the component in the no-code builder so it can be configured by your team without code:
 
   ```tsx
   // src/components/TextComponent/TextComponent.emb.ts
@@ -84,7 +84,7 @@ Two things to notice:
 
 <a name="push-to-embeddable"></a>
 ### **Push to Embeddable**  
-  Run `npm run embeddable:dev` to test out your component, and when you’re happy with it, [**push**](/development/pushing-code) your component code to Embeddable. Your teammates can now **drag, drop, and configure** it in their dashboards - no extra coding required.
+  Run `npm run embeddable:dev` to test out your component, and when you’re happy with it, [**push**](/getting-started/development/pushing-code) your component code to Embeddable. Your teammates can now **drag, drop, and configure** it in their dashboards - no extra coding required.
 
   <ImageGrid images={["/img/hello-world-edit.png", "/img/hello-world-component.png"]} />
 
@@ -180,7 +180,7 @@ export default defineComponent(Component, meta, {
 });
 ```
 
-The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](./define-component-function) and [loadData](/development/loading-data).
+The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](./define-component-function) and [loadData](/component-libraries/build-components/loading-data).
 
 ## Adding Component Previews
 

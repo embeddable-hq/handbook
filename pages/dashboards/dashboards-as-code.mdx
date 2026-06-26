@@ -1,6 +1,8 @@
 # Dashboards as Code
 
-**Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `.<dashboard-name>.embeddable.yml` files. These files can be stored in git, iterated on by your team or with LLMs, and previewed live in the browser via [`embeddable:dev`](/getting-started/dev-server).
+**Dashboards as Code** lets you define Embeddable dashboards directly in your codebase using `<dashboard-name>.embeddable.yml` files. These files can be stored in git, iterated on by your team or with [AI](/dashboards/build-with-ai), and previewed live in the browser via [`embeddable:dev`](/getting-started/development/local-environment).
+
+It uses the **same building blocks as the [no-code builder](/dashboards/introduction)** — datasets, components, variables, and Custom Canvas — just assembled in YAML instead of by drag-and-drop. Anything you can build in the builder, you can build in code.
 
 This is the recommended approach when you want a **single source of truth** for your dashboards in your code repository, rather than in the no-code builder.
 
@@ -15,7 +17,7 @@ You can [find a complete introductory tutorial here](/video-tutorials/quick-hits
 ## Why use Dashboards as Code?
 
 - **Git-native workflow** — dashboards live alongside your models and components, with full version history and PR reviews.
-- **LLM-friendly** — use tools like Claude Code, Cursor, or Codex to iterate on dashboards from your terminal.
+- **AI-friendly** — Embeddable ships a [Claude skill](/dashboards/build-with-ai) for scaffolding and editing dashboards by prompt; any agent (Claude Code, Cursor, Codex) can work with the YAML.
 - **No-code builder not required** — define, iterate, and deploy entirely through code.
 - **Live preview** — changes are reflected immediately in `embeddable:dev` without a page reload.
 - **Easily Duplicate** — copy-paste YAML blocks to create new dashboards or variations on existing ones.
@@ -185,7 +187,7 @@ events:
 
 ### Custom Canvas
 
-If your dashboard uses a [Custom Canvas](/dashboards/custom-canvas), add a `customCanvas` block:
+If your dashboard uses a [Custom Canvas](/self-serve/custom-canvas/introduction), add a `customCanvas` block:
 
 ```yaml
 customCanvas:
@@ -230,9 +232,9 @@ This strict validation means errors are caught at build time, not at runtime.
 
 ## Working in the workspace
 
-Coded dashboards appear in your team workspace just like dashboards built in the builder, with a few differences:
+Once you [push](/getting-started/development/pushing-code), coded dashboards appear in your team workspace just like dashboards built in the builder, with a few differences:
 
-- **View only** — you can open a coded dashboard in preview mode, but the configuration cannot be edited in the builder. The source of truth is always the code.
+- **View only in the workspace** — you can open a pushed coded dashboard in preview mode, but its configuration can't be edited in the workspace builder; the code stays the source of truth. (You *can* edit it visually **before** pushing — see [Editing locally](#editing-locally).)
 - **Saved versions** — every bundle push automatically creates a new saved version. You can switch between saved versions or publish any of them to development, staging, or production.
 - **No manual save** — the **Save Version** button is not available for coded dashboards.
 
@@ -247,7 +249,7 @@ Coded dashboards use their `name` field as their identifier across all Embeddabl
 | [Tokens API](/deployment/tokens-api) | Pass the dashboard `name` as `embeddableId` |
 | [Embeddables API](/deployment/embeddables-api) | The dashboard `name` is returned as the `id`; `title` is returned as `name` |
 | [Versions API](/deployment/versions-api) | Use the dashboard `name` in the URL instead of a UUID; reference saved versions as `v1`, `v2`, etc. |
-| [Caching API](/deployment/caching-api) | Pass the dashboard `name` in the `embeddableId` field |
+| [Caching API](/data-modeling/caching/level-2-cache/caching-api) | Pass the dashboard `name` in the `embeddableId` field |
 
 ## Configuration
 
@@ -264,18 +266,29 @@ export default defineConfig({
 ## Constraints
 
 - Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
-- Coded dashboards cannot be edited in the no-code builder. If you need to edit a coded dashboard, update the `<dashboard-name>.embeddable.yml` file directly.
+- Once pushed, coded dashboards can't be edited in the **workspace** builder — the code stays the source of truth. To change one, edit its `<dashboard-name>.embeddable.yml` (directly, or visually in the local builder — see [Editing locally](#editing-locally)) and push again.
 
-## Downloading and iterating locally
+## Editing locally
 
-To iterate on a dashboard locally, first download the latest version of the dashboard from the workspace using the button at the top of the screen.
+While `embeddable:dev` is running, there are **two ways to edit a coded dashboard** — and both write to the same `<dashboard-name>.embeddable.yml` file:
+
+1. **Edit the YAML directly** in your code editor. Changes are reflected live in `embeddable:dev` via hot-reload.
+2. **Edit it visually in the local builder.** Prefer drag-and-drop to hand-writing YAML? Open the dashboard in the builder while the dev server is running, arrange it visually, and your changes **sync back to the `<dashboard-name>.embeddable.yml` file**.
+
+When you're happy, [push](/getting-started/development/pushing-code) to create a new saved version in your workspace. Local edits stay local until you push.
+
+<Callout emoji="💡">
+Visual editing only syncs back to your file while running **locally**. Once a dashboard is pushed, it's [view-only in the workspace](#working-in-the-workspace) — the code remains the source of truth.
+</Callout>
+
+### Converting a no-code dashboard to code
+
+You can turn an existing no-code dashboard into a coded one. Download it from the workspace as YAML using the button at the top of the screen, then paste the result into a `<dashboard-name>.embeddable.yml` file and iterate from there.
 
 <ImageGrid width='70%' images={["/img/dashboards-as-code/download-dashboard.png"]}/>
 
-This will give you the YAML content to create or update your `<dashboard-name>.embeddable.yml` file. From there, you can edit the file directly in your code editor and see changes reflected live in `embeddable:dev`.
-
 <Callout emoji="💡">
-You can download any existing dashboard as YAML, even if it wasn't originally created as code. This is a great way to quickly convert a no-code dashboard into a coded one that you can iterate on in your repo. Note that **this will NOT overwrite the non-code version** in the workspace. If you don't change the name of either, you will end up with two dashboards with the same name, one code-controlled and one no-code.
+Downloading **will NOT overwrite the non-code version** in the workspace. If you don't change the name of either, you'll end up with two dashboards sharing one name — one code-controlled and one no-code.
 </Callout>
 
 ## Complete Example

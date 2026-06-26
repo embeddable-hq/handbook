@@ -10,6 +10,10 @@
 
 If you'd like to learn more about Drill-Down before reading further, we've created a [five-minute tutorial](/video-tutorials/quick-hits/drill-down) (video and text) that will walk you through the basics of how it works and how to set it up.
 
+<Callout emoji="💡">
+  Building [as code](/dashboards/dashboards-as-code)? Drill-downs are [`DRILLDOWN` events](/dashboards/dashboards-as-code#drilldown-events) in your `.embeddable.yml` — the same behaviour, defined in YAML.
+</Callout>
+
 
 ## Why use drill-down?
 
@@ -52,7 +56,7 @@ Add one or more chart components showing the detailed data you want users to see
 ### Add a variable for filtering
 
 - Click **Variables** in the right sidebar
-- Click **Add variable** and [configure it](https://docs.embeddable.com/dashboards/interactivity)
+- Click **Add variable** and [configure it](/dashboards/interactivity)
 - Give it a default value for testing
 
 <ImageGrid width='100%' images={["/img/drill-down-add-variable.png", "/img/drill-down-configure-variable.png"]}/>
@@ -60,7 +64,7 @@ Add one or more chart components showing the detailed data you want users to see
 
 ### Connect the variable to your chart or dataset
 
-Variables can be used on a chart-by-chart basis or to add filters to an entire dataset, which can impact multiple charts. For more information and complete examples, take a look at our [variables documentation](https://docs.embeddable.com/dashboards/interactivity) Connect your variable to the relevant chart or dataset so that when the variable value changes, the data updates accordingly.
+Variables can be used on a chart-by-chart basis or to add filters to an entire dataset, which can impact multiple charts. For more information and complete examples, take a look at our [variables documentation](/dashboards/interactivity). Connect your variable to the relevant chart or dataset so that when the variable value changes, the data updates accordingly.
 
 ### Test the variable
 
@@ -262,7 +266,7 @@ This ensures users never encounter broken drill-down links in production.
 
 ## Technical notes
 
-- Drill-downs respect all security settings from your [security token](/deployment/security-token), including row-level security
+- Drill-downs respect all security settings from your [security token](/deployment/tokens-api), including row-level security
 - The `savedVersion` from your security token determines which version of the dependent Embeddable is rendered
 - If a dependent Embeddable's published version doesn't match the `savedVersion`, users see an error: *"Embeddable published with savedVersion 'X' could not be found"*
 - If an overridden variable has been deleted or renamed in the dependent Embeddable, the drill-down continues without error—the override is simply skipped

@@ -1,0 +1,69 @@
+# Embeddable
+
+> Embeddable is a developer toolkit for building customer-facing analytics — embedded dashboards, self-serve analytics, and AI-powered insights — into your own application. Engineers define components, data models, and themes in code; their team assembles and publishes dashboards with a no-code builder or directly in code.
+
+Each section below explains a core concept and links the key pages for it.
+
+## Getting started
+
+Clone the starter repo, connect it to your data, and build a first dashboard. Then learn how the code-first workflow fits together — you develop locally and push your repo to a workspace with the CLI.
+
+- [Quickstart](https://docs.embeddable.com/getting-started/get-set-up/quick-start-guide): Clone the starter repo, connect it to Embeddable, and build a first dashboard from sample data.
+- [Introduction to development](https://docs.embeddable.com/getting-started/development/introduction): How the code-first workflow fits together — develop locally with `embeddable:dev` and push components, models, and dashboards with the CLI.
+
+## Connecting your data
+
+Embeddable queries your own database directly (Postgres, BigQuery, Snowflake, MySQL, and more) rather than copying your data. Environments let a single deployment point at different databases — e.g. staging vs production, or a separate database per customer for multi-tenant isolation.
+
+- [Connect your database](https://docs.embeddable.com/data/connect-your-database): Connect one or more databases; SSH and PrivateLink supported.
+- [Set up environments](https://docs.embeddable.com/data/environments): Map models to different database connections per environment or tenant.
+
+## Data modeling — your semantic layer
+
+Data models are Embeddable's semantic layer: you define metrics, dimensions, and joins once (using the open-source [Cube](https://cube.dev) modeling language), and every chart, dashboard, and AI experience reuses those same trusted, governed definitions. Embeddable turns each chart's request into the correct SQL for your database.
+
+- [Data modeling 101](https://docs.embeddable.com/data-modeling/introduction): What a semantic layer is and how a chart's request becomes SQL — start here.
+- [Defining data models](https://docs.embeddable.com/data-modeling/writing-data-models/defining-models): The syntax for defining models over your database tables.
+- [Dimensions and measures](https://docs.embeddable.com/data-modeling/writing-data-models/dimensions-and-measures): How data is segmented (dimensions) and summarised (measures / metrics).
+- [Joins](https://docs.embeddable.com/data-modeling/writing-data-models/joins): Relationships between tables, so dashboards can combine them without hand-written SQL.
+- [Views](https://docs.embeddable.com/data-modeling/writing-data-models/views): A clean facade over your models that curates join paths and simplifies the model for dashboard builders.
+- [Generate data models](https://docs.embeddable.com/data-modeling/writing-data-models/generate-data-models): Generate Cube models from SQL queries with the AI Model Builder.
+
+## Security and multi-tenancy
+
+Row-level security controls which rows each user, customer, or tenant can see. It is enforced server-side and driven by the security context you pass when minting an embed token, so each customer only ever sees their own data.
+
+- [Row-level security](https://docs.embeddable.com/data-modeling/row-level-security/introduction): The three approaches — security filters, SQL-based security, and access policies.
+- [Access policies](https://docs.embeddable.com/data-modeling/row-level-security/access-policies): Role-based, centralised access rules that scale across many models.
+
+## Building dashboards
+
+Every dashboard is assembled from the same building blocks — datasets, components, variables, and an optional Custom Canvas — either in the no-code drag-and-drop builder or as code in your repo. The two interoperate: code dashboards can be previewed and round-tripped in the builder.
+
+- [Introduction to dashboards](https://docs.embeddable.com/dashboards/introduction): The building blocks and the two ways to build — the no-code builder or Dashboards as Code.
+- [Dashboards as Code](https://docs.embeddable.com/dashboards/dashboards-as-code): Define dashboards as `.embeddable.yml` files in your repo — git-native, reviewable in PRs, and editable locally in the builder (changes sync back to the file).
+- [Build dashboards with AI](https://docs.embeddable.com/dashboards/build-with-ai): Embeddable's `dashboard-as-code` Claude skill scaffolds and edits dashboards from a prompt; the guidance is plain markdown any agent can use.
+- [Interactivity with variables](https://docs.embeddable.com/dashboards/interactivity): Let user actions (filters, clicks) update charts across the dashboard.
+
+## Self-serve analytics
+
+Let your end users explore data and answer their own questions inside your product, within guardrails you define.
+
+- [Custom Canvas](https://docs.embeddable.com/self-serve/custom-canvas/introduction): Let end users build and customise their own dashboards from templates you define — governed self-serve analytics. (AI-powered self-serve — a chatbot and a chat endpoint for your own UI — is on the way.)
+
+## Charts and components
+
+Embeddable ships a production-ready React component suite (Remarkable Pro), and you can build your own React components for product-native charts and controls. Theming makes everything match your brand.
+
+- [Remarkable Pro](https://docs.embeddable.com/component-libraries/remarkable-pro/introduction): The production-ready component suite — core chart types, sensible defaults, and internationalisation.
+- [Defining components](https://docs.embeddable.com/component-libraries/build-components/defining-components): Build your own React components with typed inputs, data loading, and events.
+- [Theming](https://docs.embeddable.com/component-libraries/theming): Match your product's brand with `embeddable.theme.ts` — colours, fonts, and design tokens.
+
+## Embedding and deployment
+
+Dashboards embed as an HTML web component (no iframe), authorised by a short-lived token your server mints. Saved versions let you publish to staging or production and roll back, and APIs let you manage everything programmatically.
+
+- [Embedding dashboards](https://docs.embeddable.com/deployment/embedding): Drop the web component into your app (React, Vue, Angular, or plain HTML) and pass a token.
+- [Tokens API](https://docs.embeddable.com/deployment/tokens-api): Mint short-lived, scoped tokens server-side that carry the user, environment, roles, and row-level-security context.
+- [Deploying dashboard versions](https://docs.embeddable.com/deployment/versions): Publish to development, staging, or production — and roll back — using saved versions.
+- [Embeddables API](https://docs.embeddable.com/deployment/embeddables-api) and [Versions API](https://docs.embeddable.com/deployment/versions-api): Manage dashboards and deployments programmatically.
