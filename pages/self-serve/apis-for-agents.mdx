@@ -12,6 +12,21 @@ This is useful when you want to enable conversational insights (i.e. ask questio
 **End users** in this context are your customers — the people using the product you've built on top of Embeddable.
 </Callout>
 
+## Setup
+
+Getting started with the AI endpoints is straightforward but requires the following initial steps:
+
+- Enable Custom Canvas in the builder
+- Add datasets the user and AI can use for Custom Canvas 
+- Create Templates with widgets the end user or AI can use for Custom Canvas
+- To give the ai agent more options, add templates for many types of charts and leave them open (no set dataset or filters)
+- Publish custom canvas
+- Create a security token
+
+<Callout emoji="⚠️">
+**Important note:** you must have Custom Canvas enabled on your dashboard and at least one dataset defined and enabled within Custom Canvas in order to proceed. Otherwise, the API endpoints won’t be able to query your data!
+</Callout>
+
 ## Base URL
 
 ```
@@ -82,10 +97,6 @@ End User sees the chart
 ```
 
 The AI reasoning stays with your agent. Embeddable provides the tools it needs: data access, chart rendering, and canvas management.
-
-<Callout emoji="⚠️">
-**Important note:** you must have Custom Canvas enabled on your dashboard and at least one dataset defined and enabled within Custom Canvas in order to use these endpoints. Otherwise, the API endpoints won’t be able to query your data!
-</Callout>
 
 ---
 
