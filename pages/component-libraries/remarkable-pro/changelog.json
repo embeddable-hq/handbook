@@ -1,5 +1,32 @@
 [
   {
+    "version": "v0.3.13",
+    "date": "2026-07-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.13",
+    "notes": [
+      "Updated the Remarkable UI dependency to version 3.0.21, which extends the date-picker to support date selection up to five years in the future."
+    ]
+  },
+  {
+    "version": "v0.3.12",
+    "date": "2026-07-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.12",
+    "notes": [
+      "Fixed the KPI chart not respecting the viewer's timezone — `clientContext` is now forwarded to the `loadData` call, ensuring KPI data is displayed in the correct timezone when one is configured via `clientContext`."
+    ]
+  },
+  {
+    "version": "v0.3.11",
+    "date": "2026-06-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.11",
+    "notes": [
+      "Added an `ignoreEmptyData` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
+    ]
+  },
+  {
     "version": "v0.3.9",
     "date": "2026-06-22",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.9",
