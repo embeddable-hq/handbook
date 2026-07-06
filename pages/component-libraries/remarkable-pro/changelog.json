@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.14",
+    "date": "2026-07-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.14",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.14",
+    "notes": [
+      "Fixed the `EditorCard` component incorrectly applying a border style — the border is now discarded so the editor card renders without an unwanted border."
+    ]
+  },
+  {
     "version": "v0.3.13",
     "date": "2026-07-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.13",
