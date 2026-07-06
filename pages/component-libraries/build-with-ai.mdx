@@ -1,0 +1,64 @@
+# Build components with AI
+
+A [custom component](/component-libraries/build-components/defining-components) is just a React `index.tsx` and a companion `.emb.ts` descriptor — so you can build and edit one by **prompting an AI agent** instead of writing it by hand. Embeddable ships a **Claude skill** that teaches the agent how Embeddable components work, so it turns a plain-English description into a valid, themed, buildable component.
+
+<Callout emoji="💡">
+Building dashboards instead? See [Build dashboards with AI](/dashboards/build-with-ai) — the same idea, applied to your `.embeddable.yml` files.
+</Callout>
+
+## The `build-component` skill
+
+The skill ships in the [Remarkable Pro boilerplate](https://github.com/embeddable-hq/remarkable-pro-boilerplate) at `.claude/skills/build-component/`. If you set up your workspace from the boilerplate, [Claude Code](https://www.claude.com/product/claude-code) discovers it automatically — there's nothing to install. If you cloned or forked the boilerplate before the skill was added, you can get the update with a simple `git pull` in the `main` branch. If you have any trouble, reach out to Embeddable Customer Success!
+
+It triggers whenever you ask for component work — phrases like *"create a component"*, *"build a custom chart"*, *"wrap the bar chart"*, *"add a dropdown that filters the dashboard"*, or *"make a KPI tile"* — or whenever you edit a `*.emb.ts` or `index.tsx` file under `src/embeddable.com/components/`.
+
+When it runs, the agent:
+
+1. **Discovers what's available** — reads the installed [Remarkable Pro](/component-libraries/remarkable-pro/introduction) and Remarkable UI packages to find the real component and symbol names, so it never guesses an import.
+2. **Runs a reuse-first decision tree** — see below.
+3. **Writes the component and its `.emb.ts` descriptor** under `src/embeddable.com/components/`, composing [inputs](/component-libraries/build-components/defining-components), [`loadData`](/component-libraries/build-components/loading-data), and [events](/component-libraries/build-components/interactivity).
+4. **Validates with a local build** (`embeddable:build`) and fixes any issues.
+
+Everything it produces is the same component code you'd write yourself — fully reviewable in a normal code diff.
+
+## Reuse-first
+
+The skill is built to **build _on_ Remarkable Pro, not reinvent it**. For any request, it works top-down: configure an existing Pro component if that's enough → [extend one](/component-libraries/remarkable-pro/building-new-components#extending-existing-components) (Pattern B) → build a new component from Remarkable UI primitives (Pattern A). That means you inherit themed formatting, i18n, chart colors, and card chrome for free, rather than getting a "plain React" component that ignores that layer.
+
+## Workflow
+
+<Steps>
+
+### Describe what you want
+
+Prompt Claude Code in plain English. For example:
+
+> Build a KPI tile that shows total revenue, with the previous-period value and a percentage change underneath. Use the Remarkable Pro building blocks so it matches our theme.
+
+The agent reads the skill's reference files and the relevant Remarkable Pro code, then generates the component and its descriptor.
+
+### Get a fast visual check in the sandbox
+
+The skill runs a local **sandbox** renderer to preview the component with mock data. It needs **no data model, account, or API key** to build and render, so you get **super-fast visual confirmation** of the look, theming, and layout while iterating.
+
+### Test it for real with `embeddable:dev`
+
+The sandbox is a quick check, not the real thing. When it looks right, we recommend running [`embeddable:dev`](/getting-started/development/local-environment) so you can actually experience the component in the **no-code builder** — wired to **your own data**, and testing each of the **inputs** your team will configure.
+
+### Review and iterate
+
+Review the code diff like any other change. Iterate by prompting again, or [edit it yourself](/component-libraries/build-components/defining-components).
+
+### Push when you're ready
+
+[Push](/getting-started/development/pushing-code) to create a new component version in your workspace, ready to drag, drop, and configure in the builder.
+
+</Steps>
+
+<Callout emoji="⚠️">
+The skill **won't** run `embeddable:push` or start `embeddable:dev` for you — those stay your call. It also treats a component's `meta.name` as a stable identifier, since renaming it after a push orphans the component in your workspace.
+</Callout>
+
+## Other agents
+
+The skill is written for Claude Code, but it's just markdown — `SKILL.md` and its reference files live in your repo under `.claude/skills/build-component/`. Any agent (Cursor, Codex, and others) can use the same guidance: point it at those files, or copy them into that tool's own rules/config format. What's specific to Claude Code is the *automatic* discovery and triggering.
