@@ -132,8 +132,8 @@ This file interacts with an `index.tsx` file in the same folder, which contains 
 Here is a very simple implementation of the `index.tsx` file you might pair with the above `.emb.ts` file:
 
 ```tsx
-import { useState } from "react";
-import { DataResponse, Dataset, Dimension } from "@embeddable.com/core";
+import { useState } from 'react';
+import { DataResponse, Dataset, Dimension } from '@embeddable.com/core';
 
 type Change = (text: string) => void;
 let timeout: NodeJS.Timeout | null = null;
@@ -148,7 +148,7 @@ type Props = {
 
 export default (props: Props) => {
   const { defaultValue, ds, onChange, results, values } = props;
-  const [value, setValue] = useState(props.defaultValue || "");
+  const [value, setValue] = useState(props.defaultValue || '');
 
   const handleChange = (newValue) => {
     setValue(newValue);
@@ -163,8 +163,8 @@ export default (props: Props) => {
   return (
     <>
       <select
-        style={{ width: "100%", height: 40, fontSize: 16 }}
-        value={value || defaultValue || ""}
+        style={{ width: '100%', height: 40, fontSize: 16 }}
+        value={value || defaultValue || ''}
         onChange={(e) => handleChange(e.target.value)}
         disabled={!ds}
       >
@@ -202,44 +202,44 @@ import {
   defineComponent,
   EmbeddedComponentMeta,
   Inputs,
-} from "@embeddable.com/react";
-import { Value } from "@embeddable.com/core";
-import GranularityPickerComponent from "./index";
+} from '@embeddable.com/react';
+import { Value } from '@embeddable.com/core';
+import GranularityPickerComponent from './index';
 
 export const meta = {
-  name: "GranularityPicker",
-  label: "Granularity Picker",
+  name: 'GranularityPicker',
+  label: 'Granularity Picker',
   inputs: [
     {
-      name: "defaultGranularity",
-      type: "string",
-      label: "Default Granularity",
+      name: 'defaultGranularity',
+      type: 'string',
+      label: 'Default Granularity',
       description: 'Initial granularity (e.g. "day", "week", or "month")',
     },
   ],
   events: [
     {
-      name: "onPickGranularity",
-      label: "Pick Granularity",
+      name: 'onPickGranularity',
+      label: 'Pick Granularity',
       properties: [
         {
-          name: "value",
-          type: "granularity",
+          name: 'value',
+          type: 'granularity',
         },
       ],
     },
   ],
   variables: [
     {
-      name: "chosenGranularity",
-      type: "granularity",
-      defaultValue: "month", // or Value.noFilter() if you want no default
-      inputs: ["defaultGranularity"], // Ties the 'defaultGranularity' input to this variable
+      name: 'chosenGranularity',
+      type: 'granularity',
+      defaultValue: 'month', // or Value.noFilter() if you want no default
+      inputs: ['defaultGranularity'], // Ties the 'defaultGranularity' input to this variable
       events: [
         // Ties this variable to the onPickGranularity
         {
-          name: "onPickGranularity",
-          property: "value",
+          name: 'onPickGranularity',
+          property: 'value',
         },
       ],
     },
@@ -275,44 +275,44 @@ Below is a **minimal** pie chart configuration. When the user clicks on a pie se
 ```ts
 // src/components/PieChart/PieChart.emb.ts
 
-import { Value, loadData } from "@embeddable.com/core";
+import { Value, loadData } from '@embeddable.com/core';
 import {
   EmbeddedComponentMeta,
   Inputs,
   defineComponent,
-} from "@embeddable.com/react";
-import PieChartComponent from "./index";
+} from '@embeddable.com/react';
+import PieChartComponent from './index';
 
 export const meta = {
-  name: "PieChart",
-  label: "Pie Chart",
-  category: "Charts",
+  name: 'PieChart',
+  label: 'Pie Chart',
+  category: 'Charts',
   inputs: [
     {
-      name: "ds",
-      type: "dataset",
-      label: "Dataset to display",
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset to display',
     },
     {
-      name: "slice",
-      type: "dimension",
-      label: "Slice",
-      config: { dataset: "ds" },
+      name: 'slice',
+      type: 'dimension',
+      label: 'Slice',
+      config: { dataset: 'ds' },
     },
     {
-      name: "metric",
-      type: "measure",
-      label: "Metric",
-      config: { dataset: "ds" },
+      name: 'metric',
+      type: 'measure',
+      label: 'Metric',
+      config: { dataset: 'ds' },
     },
   ],
   events: [
     {
-      name: "onClick", // Prop name in the React component
-      label: "Click", // The event label in the builder
+      name: 'onClick', // Prop name in the React component
+      label: 'Click', // The event label in the builder
       properties: [
-        { name: "slice", type: "string" },
-        { name: "metric", type: "number" },
+        { name: 'slice', type: 'string' },
+        { name: 'metric', type: 'number' },
       ],
     },
   ],
@@ -359,7 +359,7 @@ This flow shows how **no-code configuration** meets **full-code logic**, letting
 If your component needs to “reset” a chosen value - like clearing a text field or returning a dropdown to “no selection” - you can use **`Value.noFilter()`**. This tells Embeddable that any associated variable should be emptied i.e. it no longer has a specific value.
 
 ```ts
-import { Value } from "@embeddable.com/core";
+import { Value } from '@embeddable.com/core';
 
 export default defineComponent(MyComponent, meta, {
   events: {
