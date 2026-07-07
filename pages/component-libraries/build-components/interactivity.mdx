@@ -124,9 +124,7 @@ export default defineComponent(Component, meta, {
 This file interacts with an `index.tsx` file in the same folder, which contains the actual React component logic. The component receives five props: `defaultValue`, `ds`, `values`, `results` (the loaded dimension values), and an `onChange` function to call whenever the user selects a new option.
 
 <Callout icon="💡">
-  Because of the way `defineComponent` works, the third parameter, the object
-  that defines props and events, must be delivered inline (i.e. not as a
-  separate variable). This prevents build errors.
+  Because of the way `defineComponent` works, the third parameter, the object that defines props and events, must be delivered inline (i.e. not as a separate variable). This prevents build errors.
 </Callout>
 
 Here is a very simple implementation of the `index.tsx` file you might pair with the above `.emb.ts` file:
