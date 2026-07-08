@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.3.16",
+    "date": "2026-07-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.16",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.16",
+    "notes": [
+      "Added a fallback for when the i18n system is not initialized — for example, when `clientContext` is not configured on `<EmbeddedComponent>`. Text values that are not translation keys are now returned as-is, and for values that are translation keys, the user's configured input field value is used as the fallback, preventing broken or empty text when i18n initialization fails due to misconfiguration."
+    ]
+  },
+  {
+    "version": "v0.3.15",
+    "date": "2026-07-07",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.15",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.15",
+    "notes": [
+      "Pivot table row and column totals have been upgraded from simple on/off toggles to multi-select aggregation pickers — each measure can now independently show any combination of Sum, Min, Max, and Average calculations per axis. The sub-input labels have been renamed from \"Show row/column aggregation\" to \"Show row/column calculation\", and the aggregate labels rendered in the table are now translatable via the theme i18n keys `charts.pivotTable.sum`, `charts.pivotTable.min`, `charts.pivotTable.max`, and `charts.pivotTable.average`."
+    ]
+  },
+  {
     "version": "v0.3.14",
     "date": "2026-07-03",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.14",
