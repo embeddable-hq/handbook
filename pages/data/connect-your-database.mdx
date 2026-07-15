@@ -33,6 +33,7 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
     body: JSON.stringify({
         name: connectionName,
         type: 'postgres', // Database type
+        concurrency: 20, // optional, number - see "Connection Concurrency" below
         credentials: {
             host: '...',
             database: '...',
@@ -47,10 +48,25 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
 - `apiKey`: This is located on the homepage of your workspace.
 - `connectionName`: Unique name for the database connection within your workspace.
 - `type`: Which driver to use (postgres, bigquery, etc). Find your database [here](./credentials).
+- `concurrency`: Optional number of concurrent connections Cube can open to your database for this connection. See [Connection Concurrency](#connection-concurrency) below.
 - `credentials`: A javascript object containing the credentials expected by the driver:
     * The necessary credentials for each database are available [here](./credentials). 
     * Credentials are securely encrypted.
     * We strongly suggest creating a **read-only** database user for each connection.
+
+## Connection Concurrency
+
+Each connection has a `concurrency` setting: the number of connections Cube is allowed to open to your database at once for that connection.
+
+- **Why it matters:** the higher the concurrency, the more queries Cube can run against your database in parallel, instead of queuing them up one after another. This directly impacts how fast your dashboards load, especially when many end-users (or many components on the same dashboard) request data at the same time.
+- **Recommendation:** we recommend setting `concurrency` to somewhere between **20 and 100**, depending on how many connections your database can support. Databases with generous connection limits and available resources (e.g. Snowflake, BigQuery, Redshift) can typically support higher values; row-based databases like Postgres with low default connection limits should be checked against your own database's `max_connections` before going too high.
+- **Default:** if you omit `concurrency`, Cube falls back to its own default, which is low and generally not enough to serve concurrent dashboard traffic well. We recommend setting it explicitly for any production connection.
+
+You can set `concurrency` when creating a connection (`POST /api/v1/connections`, shown above), or add/update it on an existing connection (`PUT /api/v1/connections/<connectionName>`) — see [CRUD Operations](#crud-operations) below.
+
+<Callout emoji="⚠️">
+Leave enough headroom in your database's own max connection limit for other applications connecting to the same database. Setting `concurrency` higher than your database can support may cause connection errors instead of faster queries.
+</Callout>
 
 ## CRUD Operations
 

@@ -21,6 +21,10 @@ This has the advantage that users will always see the latest (up-to-date) data d
 
 Pre-aggregations allow you to pre-aggregate the results so that the incoming queries have less work to do to return a result (which in turn means fast results).
 
+<Callout emoji="💡">
+If you'd rather not pre-aggregate your data, increasing your connection's [concurrency](/data/connect-your-database#connection-concurrency) lets more queries run against your database in parallel, which can also help with slow dashboards under concurrent load.
+</Callout>
+
 As an example, users may want to see their data by month or week.  Going through all the data, every time, and grouping it by week and month is expensive and slow.  Instead, you can define a pre-aggregation that pre-aggregates the data by month and by week.  That way, the incoming queries can use this pre-aggregated data in order to skip the expensive steps and answer the query faster.
 
 ## How do you define a pre-aggregation?
