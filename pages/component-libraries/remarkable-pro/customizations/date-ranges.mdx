@@ -40,23 +40,7 @@ type DateRangeOption = {
 };
 ```
 
-You typically start from the defaults in the `parentTheme`, then adjust them as needed:
-
-```ts
-
-// embeddable.theme.ts
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const dateRangeOptions = parentTheme.defaults.dateRangesOptions;
-
-  return defineTheme(parentTheme, {
-    defaults: {
-      dateRangesOptions: dateRangeOptions,
-    },
-  });
-  
-};
-```
+You typically start from the defaults in `parentTheme.defaults.dateRangesOptions`, transform the array, and pass the result back via `defineTheme` - as shown in the examples below.
 
 **Things to notice**
 

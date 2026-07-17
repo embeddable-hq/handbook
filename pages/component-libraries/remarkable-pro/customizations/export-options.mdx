@@ -1,3 +1,169 @@
 # Export options
 
-This section is coming soon. 
+Theme namespace: `theme.defaults.chartMenuOptions`
+
+Every Remarkable Pro chart includes a **card menu** (the ⋮ icon in the top-right corner) that lets users export the chart. By default it offers:
+
+- `Download CSV`
+- `Download XLSX`
+- `Download PNG`
+
+These default options are defined inside Remarkable’s theme, but you can easily override them to:
+
+- hide or re-order options
+- change how an export behaves
+- add entirely new options (e.g. a JSON download, or sending data to your own API)
+
+## Modifying the default options
+
+You configure export options via the theme at:
+
+`theme.defaults.chartMenuOptions`
+
+Each option has the following shape:
+
+```ts
+type ChartCardMenuOption = {
+  value: string;      // e.g. 'csv' - identifies the option
+  labelKey: string;   // translation key, e.g. 'charts.menuOptions.downloadCSV'
+  iconSrc?: string;   // optional SVG icon shown next to the label
+  onClick: (props: ChartCardMenuOptionOnClickProps) => void; // performs the export
+};
+```
+
+When a user clicks an option, its `onClick` receives everything needed to perform the export:
+
+```ts
+type ChartCardMenuOptionOnClickProps = {
+  title?: string;               // the chart's title
+  data?: DataResponse['data'];  // the rows currently loaded in the chart
+  dimensionsAndMeasures?: (Dimension | Measure)[]; // the fields shown in the chart
+  containerRef?: React.RefObject<HTMLDivElement | null>; // the chart's DOM element (useful for image exports)
+  theme: Theme;                 // the active theme
+};
+```
+
+You typically start from the defaults in `parentTheme.defaults.chartMenuOptions`, transform the array, and pass the result back via `defineTheme` - as shown in the examples below.
+
+**Things to notice**
+
+- The default list is a plain array of `ChartCardMenuOption`, so you can manipulate it using normal array operations (`filter`, `map`, `concat`, etc.).
+- `onClick` can be async - the chart shows a loading indicator until the export finishes.
+
+### Example: remove options
+
+Here’s how you might remove the XLSX option everywhere:
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myOptions = parentTheme.defaults.chartMenuOptions
+    .filter((option) => option.value !== 'xlsx');
+
+  return defineTheme(parentTheme, {
+    defaults: {
+      chartMenuOptions: myOptions,
+    },
+  });
+};
+```
+
+To remove the menu entirely, set `chartMenuOptions` to an empty array - charts hide the menu automatically when there are no options to show.
+
+### Example: change options
+
+Here’s how you might replace the built-in CSV export with your own implementation - for example, to export **all** rows from your own API rather than just the rows loaded in the chart:
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myOptions = parentTheme.defaults.chartMenuOptions.map((option) => {
+    if (option.value === 'csv') {
+      return {
+        ...option,
+        onClick: ({ title, data, dimensionsAndMeasures }) => {
+          // your custom export logic
+        },
+      };
+    }
+    return option;
+  });
+
+  return defineTheme(parentTheme, {
+    defaults: {
+      chartMenuOptions: myOptions,
+    },
+  });
+};
+```
+
+### Example: add custom options
+
+Let’s say we want a new option that downloads the chart’s data as JSON. All we need to do is append a new `ChartCardMenuOption` to the existing list:
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myOptions = [
+    ...parentTheme.defaults.chartMenuOptions,
+    {
+      value: 'json',
+      labelKey: 'charts.menuOptions.downloadJSON',
+      onClick: ({ title, data }) => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title ?? 'untitled'}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+    },
+  ];
+
+  return defineTheme(parentTheme, {
+    defaults: {
+      chartMenuOptions: myOptions,
+    },
+    i18n: {
+      translations: {
+        en: {
+          translation: {
+            charts: {
+              'menuOptions.downloadJSON': 'Download JSON',
+            },
+          },
+        },
+      },
+    },
+  });
+};
+```
+
+**Things to notice**
+
+- `labelKey` is a **translation key**: it’s looked up in your theme’s translations (`theme.i18n.translations`) using the active language. If no translation is found, the raw key is displayed - so always add an entry for each language you support. Read more about translations [here](/component-libraries/remarkable-pro/i18n).
+- `iconSrc` is optional. The built-in options use bundled SVG icons; you can import your own SVG and pass it here.
+
+## Choosing options per chart in the Builder
+
+Each Remarkable Pro chart has a **Menu options** input (under **Component Settings**) in Embeddable’s Builder. This lets dashboard builders choose which export options appear on that specific chart:
+
+- The input lists option **values** (`csv`, `xlsx`, `png` by default).
+- The chart only shows theme options whose `value` is selected.
+- Deselect all values to hide the menu on that chart.
+
+### Making new options selectable in the Builder
+
+The list of values shown in the **Menu options** input comes from Remarkable Pro’s `exportOption` type. If you add a custom option to the theme (like `json` above), also register its value so it can be selected in the Builder:
+
+```ts
+// src/components/types/ExportOption.type.emb.ts
+
+defineOption(ExportOptionType, 'json');
+```
+
+Learn more about type options in [Defining Custom Types](/component-libraries/build-components/custom-types#the-defineoption-function).
