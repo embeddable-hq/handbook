@@ -39,23 +39,7 @@ type ComparisonPeriodOption = {
 };
 ```
 
-You can access the defaults from the `parentTheme` like so:
-
-```ts
-
-// embeddable.theme.ts
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-
-  const myTheme = {
-    defaults: {
-      comparisonPeriodsOptions: parentTheme.defaults.comparisonPeriodsOptions,
-    },
-  };
-
-  return defineTheme(parentTheme, myTheme) as Theme;
-};
-```
+You typically start from the defaults in `parentTheme.defaults.comparisonPeriodsOptions`, transform the array, and pass the result back via `defineTheme` - as shown in the examples below.
 
 **Things to notice**
 
