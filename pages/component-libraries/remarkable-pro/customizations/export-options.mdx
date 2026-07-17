@@ -43,21 +43,7 @@ type ChartCardMenuOptionOnClickProps = {
 };
 ```
 
-You typically start from the defaults in the `parentTheme`, then adjust them as needed:
-
-```ts
-// embeddable.theme.ts
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-  const menuOptions = parentTheme.defaults.chartMenuOptions;
-
-  return defineTheme(parentTheme, {
-    defaults: {
-      chartMenuOptions: menuOptions,
-    },
-  });
-};
-```
+You typically start from the defaults in `parentTheme.defaults.chartMenuOptions`, transform the array, and pass the result back via `defineTheme` - as shown in the examples below.
 
 **Things to notice**
 
