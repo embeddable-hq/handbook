@@ -211,7 +211,58 @@ i18n: {
 
 ## Formatting
 
-This section is coming soon. 
+Theme namespace: `theme.formatter`
+
+Remarkable Pro formats numbers, currencies, dates and times using the browser’s standard [Intl API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), which is locale-aware. The active locale is controlled by `theme.formatter.locale`:
+
+- **By default**, Remarkable uses the browser’s locale (`navigator.language`), so formatting automatically matches each user’s own settings.
+- You can also **set the locale explicitly** - typically via [Client Context](/component-libraries/client-context) - to keep formatting consistent with the rest of your product.
+
+**Example**
+
+```tsx
+//embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme) => {
+
+    return defineTheme(parentTheme, {
+        formatter: {
+            locale: clientContext?.locale || "en-US",
+        },
+    });
+};
+```
+
+**Things to notice**
+
+- The locale controls decimal and thousand separators, currency display, and date formats. For example, `1234.56` in `USD` renders as `$1,234.56` with `en-US`, and as `1.234,56 $` with `de-DE`.
+- The locale is independent of `i18n.language` (which controls translations), but you’ll usually want to keep the two consistent.
+- If the locale you provide isn’t valid, Remarkable falls back to `en-US`.
+
+### Default date & time formatting
+
+You can also adjust how dates and times are rendered via `theme.formatter.defaultDateTimeFormatOptions` - an [Intl.DateTimeFormatOptions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#options) object.
+
+The time dimension’s **granularity** decides which parts of the date are shown (e.g. only year and month for monthly data); these options decide how each part looks.
+
+**Example**
+
+```tsx
+//theme.formatter
+
+formatter: {
+    locale: 'en-GB',
+    defaultDateTimeFormatOptions: {
+        ...parentTheme.formatter.defaultDateTimeFormatOptions,
+        month: 'long', // e.g. "17 July 2026" instead of "17 Jul 2026"
+    },
+},
+```
+
+**Things to notice**
+
+- **Number formatting** works differently: it’s driven by the locale together with per-field settings from the Builder or data model `meta` (decimal places, currency, abbreviations, etc.) - see [Formatting](/component-libraries/remarkable-pro/formatting).
+- The theme also exposes `theme.formatter.defaultNumberFormatterOptions` ([Intl.NumberFormatOptions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options)), but built-in components don’t use it when rendering data - it only applies when calling the theme formatter directly without field-specific options (e.g. from your own custom components).
 
 ## Time Zone
 
