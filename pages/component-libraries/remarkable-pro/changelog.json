@@ -1,5 +1,32 @@
 [
   {
+    "version": "v0.3.19",
+    "date": "2026-07-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.19",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.19",
+    "notes": [
+      "Disabled the box shadow on the `EditorCard` component."
+    ]
+  },
+  {
+    "version": "v0.3.18",
+    "date": "2026-07-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.18",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.18",
+    "notes": [
+      "Updated the Remarkable UI dependency to the latest version, bringing the latest interface enhancements."
+    ]
+  },
+  {
+    "version": "v0.3.17",
+    "date": "2026-07-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.17",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.17",
+    "notes": [
+      "Added a `canBeCleared` option to `SingleSelectFieldPro` and `MultiSelectFieldPro`. When set to false, the field automatically pre-selects the first available option if no value is currently selected — ensuring these fields always have a value when clearing is disabled."
+    ]
+  },
+  {
     "version": "v0.3.16",
     "date": "2026-07-08",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.16",
