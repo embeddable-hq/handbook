@@ -266,6 +266,36 @@ formatter: {
 
 ## Time Zone
 
-By default, Remarkable Pro displays dates and times in UTC, but it also supports **time zone localization**, so your users can see dates and times in their local time zone. You can pass the user's [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) (e.g. "America/New_York") via [Client Context](/component-libraries/client-context) to have all dates and times automatically converted to that time zone.
+By default, Remarkable Pro shows dates and times in UTC, but it also supports **time zone localization**, so your users can see dates and times in their local time zone. All you need to do is pass the user's [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) via [Client Context](/component-libraries/client-context).
 
-Full Information and an example can be found in our documentation on [Client Context](/component-libraries/client-context#example-use-case-time-zones).
+**Example**
+
+```js
+// Your front-end code
+
+<em-beddable
+  token="${json.token}"
+  client-context="${JSON.stringify({ timezone: 'America/New_York' })}"
+></em-beddable>
+```
+
+To try out time zones in the Builder, add presets to your `client-contexts.cc.yml`:
+
+```yaml
+# src/embeddable/presets/client-contexts.cc.yml
+
+- name: New York user
+  clientContext:
+    timezone: America/New_York
+
+- name: Tokyo user
+  clientContext:
+    timezone: Asia/Tokyo
+```
+
+**Things to notice**
+
+- The value must be a valid IANA identifier (e.g. `America/New_York`, `Europe/Paris`, `Asia/Tokyo`). Invalid values are ignored, and Remarkable falls back to UTC.
+- No theme configuration is needed - Remarkable Pro picks up `clientContext.timezone` automatically.
+- The time zone is applied when data is loaded: time-based data is grouped into that zone's days, weeks and months (e.g. an event at 11pm on 16 July in New York is counted under 16 July, not 17 July UTC), and relative date ranges like `Today` or `This week` resolve to that zone's calendar boundaries.
+- To wire time zones into your own custom components, pass the time zone to `loadData` - see the example in [Client Context](/component-libraries/client-context#example-use-case-time-zones).
