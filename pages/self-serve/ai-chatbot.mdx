@@ -146,7 +146,7 @@ Choose between **inline** (fills its container) and **modal** (a floating panel 
 </em-ai-chat>
 ```
 
-`embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. If you render multiple embeddables on the page, include all of their tokens; the first is used as the credential for the chat connection.
+`embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. The tokens define what the AI can see: include a token for each embeddable you want it to answer questions about (and extend, where Custom Canvas is enabled). The first token is used as the credential for the chat connection.
 
 ### Publish and test
 
