@@ -6,20 +6,17 @@ Embeddable is **code-first**: the building blocks of your customer-facing analyt
 - [Components](/component-libraries/remarkable-pro/introduction) - use Embeddable's ready-made charting components, or [build your own](/component-libraries/build-components/defining-components) in React.
 - [Dashboards as code](/dashboards/dashboards-as-code) - compose data models and components into dashboards, entirely in code.
 
-We'll come back to creating each of these. They all share the same workflow: you [develop locally](/getting-started/development/local-environment) against a live preview, then [push your code](/getting-started/development/pushing-code) to your Embeddable workspace using the SDK's CLI. Behind the scenes, when you push:
+You can write all three by hand, or prompt an AI agent: Embeddable ships **Claude skills** for [data models](/data-modeling/build-with-ai), [components](/component-libraries/build-with-ai), and [dashboards](/dashboards/build-with-ai) that turn plain English into valid, reviewable code.
 
-- The CLI uses a standard JS bundler ([Vite.js](https://vitejs.dev/)) to bundle your components and generate a minified JS bundle.  
-- This bundle, along with your data models and metadata from your [config files](/component-libraries/build-components/defining-components), is securely pushed to Embeddable.  
+## The workflow
 
-Since Embeddable uses standard bundling tools, you have **no limitations** on how you build—whether it’s the CSS framework, charting library, or design system you prefer. If it can be bundled, it can be sent to Embeddable.  
+All three share the same workflow: [develop locally](/getting-started/development/local-environment) against a live preview, then [push](/getting-started/development/pushing-code) to your Embeddable workspace using the SDK's CLI. When you push, the CLI bundles your components with a standard JS bundler ([Vite.js](https://vitejs.dev/)) and securely uploads the bundle, your data models, and the metadata from your [config files](/component-libraries/build-components/defining-components).
 
-**If you can dream it, you can build it.** 🚀
+Because it's standard bundling, there are **no limitations** on how you build — use whatever CSS framework, charting library, or design system you prefer. If it can be bundled, it can be sent to Embeddable. **If you can dream it, you can build it.** 🚀
 
 <Callout emoji="💡">
 Embeddable supports building components in React, but you can embed anywhere there is HTML.
 </Callout>
-
-Prefer to describe it in plain English? You can build both [components](/component-libraries/build-with-ai) and [dashboards](/dashboards/build-with-ai) by prompting an AI agent — Embeddable ships Claude skills that turn a description into valid, reviewable code.
 
 ## Requirements
 
