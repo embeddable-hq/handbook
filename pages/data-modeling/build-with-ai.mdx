@@ -1,0 +1,65 @@
+# Build data models with AI
+
+[Data models](/data-modeling/introduction) are just `*.cube.yml` files — so you can generate and edit them by **prompting an AI agent** instead of writing YAML by hand. Embeddable ships a **Claude skill** that teaches the agent how Embeddable data models work, so it turns your database schema — plus a short interview about your business — into valid, working models.
+
+<Callout emoji="💡">
+Building on top of your models? See [Build dashboards with AI](/dashboards/build-with-ai) and [Build components with AI](/component-libraries/build-with-ai). Prefer to stay in the browser? The [AI Model Builder](/data-modeling/writing-data-models/generate-data-models) generates a model from a SQL query, right on the docs page.
+</Callout>
+
+## The `create-models` skill
+
+The skill ships in the [Remarkable Pro boilerplate](https://github.com/embeddable-hq/remarkable-pro-boilerplate) at `.claude/skills/create-models/`. If you set up your workspace from the boilerplate, [Claude Code](https://www.claude.com/product/claude-code) discovers it automatically — there's nothing to install. If you cloned or forked the boilerplate before the skill was added, you can get the update with a simple `git pull` in the `main` branch. If you have any trouble, reach out to Embeddable Customer Success!
+
+It triggers whenever you ask for data-model work — phrases like *"model my database"*, *"generate a cube model"*, *"create a cube for orders"*, or *"add a data model"* — or whenever you edit a `*.cube.yml` file under `src/embeddable.com/models/`.
+
+When it runs, the agent:
+
+1. **Reads your live database schema** — via the boilerplate's schema-fetch script (you'll need to be logged in via `npm run embeddable:login`), so table and column names come from your actual database, never guesswork. If it can't reach the schema, it falls back to asking you.
+2. **Interviews you for business context** — the things a schema can't tell it: what each entity means, which measures matter, what encoded values like `status = 1/2/3` stand for, which columns to hide from dashboard authors, and what business-friendly names to use.
+3. **Offers exploratory queries** — when live data can answer a question (say, the distinct values of a `status` column), it offers to run a quick query instead of asking you. It always asks permission first, one query at a time.
+4. **Writes the YAML** under `src/embeddable.com/models/` — one cube per table, plus a starter [view](/data-modeling/writing-data-models/views) that joins the domain into a single surface for dashboard authors — with a primary key on every cube and [joins](/data-modeling/writing-data-models/joins) declared on the fact side.
+5. **Remembers what it learned** — modeling decisions and business context are saved to gitignored notes in `.claude/notes/cube-models/`, so your next session picks up where this one left off.
+
+Everything it produces is the same [`*.cube.yml`](/data-modeling/writing-data-models/defining-models) you'd write yourself — fully reviewable in a normal code diff.
+
+## One domain at a time
+
+The skill deliberately scopes each run to a **domain** — a cluster of related tables like *orders + order_items + customers*. After generating a domain's cubes and starter view, it stops and hands over so you can verify the models against real data before moving on. Every generated model gets checked by a human before the next batch builds on it.
+
+## Workflow
+
+<Steps>
+
+### Describe what you want to model
+
+Prompt Claude Code in plain English. For example:
+
+> Model my orders data — orders, order_items, and customers — so my team can build revenue dashboards.
+
+The agent fetches your schema, proposes which tables belong in the domain, and confirms the scope with you.
+
+### Answer a short interview
+
+The schema answers the structural questions; the interview covers what only you know. Where live data can answer instead — encoded values, suspected join keys, ambiguous columns — the agent offers to run a query, and you approve each one.
+
+### Verify in `embeddable:dev`
+
+After each domain, run [`embeddable:dev`](/getting-started/development/local-environment), open **Data Models** in the no-code builder, confirm the dimensions and measures appear correctly, and run a test query to sanity-check row counts and values.
+
+### Review and iterate
+
+Review the YAML diff like any other code change. Iterate by prompting again — for existing cubes the skill makes targeted edits rather than regenerating — or [edit the files yourself](/data-modeling/writing-data-models/defining-models). Then model the next domain.
+
+### Push when you're ready
+
+[Push your models](/data-modeling/pushing-models) to make them available to dashboards and the no-code builder in your workspace.
+
+</Steps>
+
+<Callout emoji="⚠️">
+The skill **won't** run `embeddable:push` or start `embeddable:dev` for you — those stay your call. And it never queries your data unprompted: every exploratory query is described in plain English and only run with your explicit approval.
+</Callout>
+
+## Other agents
+
+The skill is written for Claude Code, but it's just markdown — `SKILL.md` and its reference files live in your repo under `.claude/skills/create-models/`. Any agent (Cursor, Codex, and others) can use the same guidance: point it at those files, or copy them into that tool's own rules/config format. What's specific to Claude Code is the *automatic* discovery and triggering. And since the models themselves are plain `*.cube.yml`, any agent can read and edit them regardless.
