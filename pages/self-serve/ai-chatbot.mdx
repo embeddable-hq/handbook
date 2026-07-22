@@ -148,6 +148,12 @@ Choose between **inline** (fills its container) and **modal** (a floating panel 
 
 `embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. The tokens define what the AI can see: include a token for each embeddable you want it to answer questions about (and extend, where Custom Canvas is enabled). The first token is used as the credential for the chat connection.
 
+<Callout emoji="💡">
+  **Match tokens with an on-page dashboard.** If the same page also renders one or more `<em-beddable>` dashboards, pass those **same token(s)** to `embeddable-tokens`. The chat only inspects `<em-beddable>` elements whose token matches one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
+
+  The chat still works with a different or standalone token — it can add a chart to the canvas — but without a match it can't see the on-page dashboard's data or layout, so it can't position or resize what it adds effectively. This requirement is **temporary**; a future release will remove the need for the tokens to match.
+</Callout>
+
 ### Publish and test
 
 Publish your dashboard in the builder, then open your product. Try asking a natural-language question — for example, *"Show me revenue by region for last quarter"*. The AI will query your data and render a chart using one of your configured templates.
@@ -237,10 +243,10 @@ Provide any subset of the keys below; omitted keys fall back to the defaults.
 
 The chat's visual styling is controlled by `--em-ai-chat-*` CSS custom properties. If an `<em-beddable>` is present on the page, the chat automatically inherits its design tokens from the [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui) design system, so it matches your dashboard out of the box.
 
-To customize further (or when there's no `<em-beddable>` on the page), set the variables on `:root` or on the element itself:
+To customize further (or when there's no `<em-beddable>` on the page), set the variables directly on `em-ai-chat` to match your own design:
 
 ```css
-:root {
+em-ai-chat {
   /* Shell */
   --em-ai-chat-shell-background: #ffffff;
   --em-ai-chat-shell-border-color: #e4e4ea;
