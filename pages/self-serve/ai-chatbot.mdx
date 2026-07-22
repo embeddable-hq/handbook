@@ -21,7 +21,7 @@ The AI Chatbot is made up of three pieces that work together:
 
 - **`<em-ai-chat>`** — a web component you drop into your page. It connects to the AI orchestrator over a WebSocket and authenticates using the same [security tokens](/deployment/tokens-api) you already generate for your users.
 - **AI Orchestrator** — hosted by Embeddable. Receives messages from the chatbot, calls your LLM using the API key you've saved in the platform, queries your data models, and streams responses back.
-- **LLM config** — a one-time API call (`POST /api/v1/llm-config`) where you save your LLM provider and API key. This is how you bring your own key (BYOK).
+- **LLM config** — a one-time API call (`POST /api/v1/llm-config`) where you save your LLM provider, API key and extra configuration. This is how you bring your own key (BYOK).
 
 ```
 End user types a question
