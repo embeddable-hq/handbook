@@ -6,135 +6,328 @@
 
 Let your end-users ask questions of their data in natural language — and get back both **text explanations and live charts**, without ever leaving your product.
 
-The AI Chatbot is a ready-made chat experience you drop onto the same page as your existing Embeddable dashboard. End users type a question; the chatbot queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas) on their behalf.
+The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain HTML, React, Vue, Angular, or any other framework. End users type a question; the AI queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas) on their behalf.
 
 <ImageGrid width='100%' images={["/img/chatbot-example1.png"]}/>
+
+You can use it in two ways:
+
+- **Alongside a dashboard** — render `<em-ai-chat>` next to your `<em-beddable>` dashboard. The AI can answer questions *and* manage the user's Custom Canvas conversationally.
+- **Standalone chat** — render only the chat, with no visible dashboard. The AI still answers questions and shows charts in the conversation. See [Standalone chat](#standalone-chat-no-visible-dashboard).
 
 ## How it works
 
 The AI Chatbot is made up of three pieces that work together:
 
-- **`<em-ai-chat-bot>`** — a web component you drop onto your page alongside `<em-beddable>`. It connects to the AI orchestrator via WebSocket and authenticates using the same embeddable tokens you already generate for your users.
+- **`<em-ai-chat>`** — a web component you drop into your page. It connects to the AI orchestrator over a WebSocket and authenticates using the same [security tokens](/deployment/tokens-api) you already generate for your users.
 - **AI Orchestrator** — hosted by Embeddable. Receives messages from the chatbot, calls your LLM using the API key you've saved in the platform, queries your data models, and streams responses back.
-- **Platform LLM config** — a single API call (`PUT /api/v1/llm-config`) where you save your LLM provider API key. This is how you bring your own key (BYOK).
+- **LLM config** — a one-time API call (`POST /api/v1/llm-config`) where you save your LLM provider, API key and extra configuration. This is how you bring your own key (BYOK).
 
 ```
-End User types a question
+End user types a question
   │
   ▼
-<em-ai-chat-bot>  (WebSocket)
+<em-ai-chat>  (WebSocket)
   │
   ▼
 AI Orchestrator  (Embeddable-hosted)
-  │  ├── fetches LLM API key from platform (encrypted at rest)
-  │  ├── queries your data models via /ai/v1/* endpoints
-  │  └── enforces row-level security from the embeddable token
+  │  ├── calls your LLM with the key saved in the platform (encrypted at rest)
+  │  ├── queries the datasets you've enabled for Custom Canvas
+  │  └── enforces row-level security from the security token
   │
   ▼
-Response streamed back → text + rendered chart
+Response streamed back → text + rendered charts
 ```
 
 ## Prerequisites
 
-Before adding the AI Chatbot you need:
+The chatbot gets its **data access** and its **chart vocabulary** from [Custom Canvas](/self-serve/custom-canvas). Before adding it, you need a dashboard with:
 
-1. **[Custom Canvas](/self-serve/custom-canvas) enabled** on your dashboard — the chatbot uses Custom Canvas datasets and templates to render charts.
-2. At least one **dataset enabled** in Custom Canvas and at least one **chart template** configured. The more templates you define (and the more open their inputs), the more chart types the AI can offer.
-3. A **security token** generated server-side for each end user — [see the Tokens API](/deployment/tokens-api). The chatbot uses this token exclusively for authentication; no separate chatbot credential exists.
+1. **[Custom Canvas](/self-serve/custom-canvas) enabled** — toggle it on beneath your main canvas in the builder.
+2. **At least one dataset enabled** for Custom Canvas — these are the only datasets the AI can query. Without them, it can't answer data questions.
+3. **At least one chart template** in the Template Library — these are the only chart types the AI can render. Without them, it can answer in text but can't show charts. The more templates you define (and the more open you leave their inputs), the more the AI can do.
+4. **The dashboard published** — the chatbot reads the published configuration, not your draft.
+
+<Callout emoji="💡">
+  You do **not** have to render this dashboard in your product. Publishing it is what exposes its datasets and templates to the AI — whether or not your users ever see it. See [Standalone chat](#standalone-chat-no-visible-dashboard).
+</Callout>
 
 ## Setup
 
 <Steps>
 
-### Save your LLM API key
+### Save your LLM configuration
 
-Register your LLM API key with the Embeddable platform. The orchestrator fetches this key fresh on every message; it is encrypted at rest and never cached.
+Register your LLM provider and API key with the Embeddable platform. This is a **one-time, per-workspace setup** — the config is stored encrypted and reused for every chat session.
 
 ```bash
-curl -X POST https://api.eu.embeddable.com/api/v1/llm-config \
-  -H "Authorization: Bearer <your-workspace-api-key>" \
+curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
+  -H "Authorization: Bearer <your-embeddable-api-key>" \
   -H "Content-Type: application/json" \
   -d '{
-    "provider": "anthropic"
-    "model": "claude-sonnett-4-0",
-    "apiKey": "<your-llm-api-key>"
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5",
+    "apiKey": "<your-llm-provider-api-key>",
+    "systemPrompt": "You are a helpful analytics assistant."
   }'
 ```
 
-| `provider` value | Supported `model` values |
-|-----------------|--------------------------|
-| `anthropic` | `claude-sonnet-4-0` `claude-sonnet-4-5` `claude-sonnet-4-6` `claude-opus-4-0` `claude-opus-4-1` `claude-opus-4-5` `claude-opus-4-6` `claude-opus-4-7` `claude-haiku-4-5` |
-| `openai` | `gpt-4o` `gpt-4o-mini` `gpt-4.1` `gpt-4.1-nano` `gpt-4.1-mini` `o1` `o3` `o3-mini` `o4-mini` `gpt-5` `gpt-5-mini` `gpt-5-nano` `gpt-5-codex` `gpt-5-pro` `gpt-5.1` `gpt-5.1-codex` `gpt-5.1-codex-max` `gpt-5.2` `gpt-5.2-pro` `gpt-5.2-codex` `gpt-5.3-codex` `gpt-5.4` `gpt-5.4-mini` `gpt-5.4-nano` `gpt-5.4-pro` `gpt-5.5` `gpt-5.5-pro` `gpt-audio` `gpt-4o-mini-audio-preview` `gpt-4o-audio-preview` `text-embedding-3-small` `text-embedding-3-large` `text-embedding-ada-002` `omni-moderation-latest` |
-| `google` | `gemini-2.0-flash-lite-001`,`gemini-2.5-pro`,`gemini-2.5-flash`,`gemini-2.5-flash-lite`,`gemini-3-pro-preview`,`gemini-3-flash-preview`,`gemini-embedding-001` |
-| `openrouter` | `microsoft/phi-4-reasoning:free`,`anthropic/claude-3-opus`,`anthropic/claude-3-sonnet`,`anthropic/claude-3-haiku`,`anthropic/claude-3.5-sonnet`,`anthropic/claude-3.7-sonnet`,`anthropic/claude-sonnet-4`,`anthropic/claude-opus-4.1`,`anthropic/claude-haiku-4.5`,`anthropic/claude-sonnet-4.5`,`anthropic/claude-opus-4.5`,`anthropic/claude-sonnet-4.6`,`anthropic/claude-opus-4.6`,`anthropic/claude-3-sonnet-vision`,`anthropic/claude-3-opus-vision`,`anthropic/claude-3-haiku-vision`,`openai/gpt-3.5-turbo`,`openai/gpt-4`,`openai/gpt-4o`,`openai/gpt-4o-mini`,`openai/gpt-4-turbo`,`openai/gpt-5`,`openai/gpt-5-mini`,`openai/gpt-5-nano`,`openai/gpt-5-chat`,`openai/gpt-oss-120b`,`openai/gpt-5.2`,`openai/gpt-5.2-pro`,`meta-llama/llama-3-70b`,`meta-llama/llama-3-70b-instruct`,`mistralai/mistral-7b-instruct`,`mistralai/mixtral-8x7b-instruct`,`deepseek/deepseek-chat-v3-0324`,`google/gemini-2.5-flash-lite`,`google/gemini-2.5-flash`,`google/gemini-2.5-pro`,`qwen/qwen-2.5-72b-instruct`,`qwen/qwen3-vl-8b-instruct` |
-| `mistralai` | `anthropic`,`openai`,`google`,`openrouter`,`mistralai`,`bedrock`,`ollama` |
-| `bedrock` | `us.anthropic.claude-opus-4-20250514-v1:0`,`us.anthropic.claude-opus-4-1-20250805-v1:0`,`us.anthropic.claude-opus-4-5-20251101-v1:0`,`us.anthropic.claude-opus-4-6-v1`,`us.anthropic.claude-opus-4-7`,`us.anthropic.claude-sonnet-4-20250514-v1:0`,`us.anthropic.claude-sonnet-4-5-20250929-v1:0`,`us.anthropic.claude-sonnet-4-6`,`us.anthropic.claude-haiku-4-5-20251001-v1:0`,`us.amazon.nova-micro-v1:0`,`us.amazon.nova-lite-v1:0`,`us.amazon.nova-pro-v1:0`,`us.amazon.nova-premier-v1:0`,`us.meta.llama3-8b-instruct-v1:0`,`us.meta.llama3-70b-instruct-v1:0`,`us.meta.llama3-1-8b-instruct-v1:0`,`us.meta.llama3-1-70b-instruct-v1:0`,`us.meta.llama3-1-405b-instruct-v1:0`,`us.meta.llama3-2-1b-instruct-v1:0`,`us.meta.llama3-2-3b-instruct-v1:0`,`us.meta.llama3-2-11b-instruct-v1:0`,`us.meta.llama3-2-90b-instruct-v1:0`,`us.meta.llama3-3-70b-instruct-v1:0`,`amazon.titan-embed-text-v1`,`amazon.titan-embed-text-v2:0`,`cohere.embed-english-v3`,`cohere.embed-multilingual-v3`,`us.cohere.embed-v4:0`,`moonshot.kimi-k2-thinking`,`moonshotai.kimi-k2.5`,`minimax.minimax-m2.5`,`openai.gpt-oss-120b-1:0`,`openai.gpt-oss-20b-1:0`,`google.gemma-3-4b-it`,`google.gemma-3-12b-it`,`google.gemma-3-27b-it` |
-| `ollama` | `llama3-groq-tool-use:8b`,`llama3-groq-tool-use:70b`,`llama3.2:latest`,`llama3.2:3b`,`llama4:latest`,`llama4:scout`,`llama-guard3:latest`,`qwen2.5:0.5b`,`qwen3:0.6b`,`qwq:32b`,`qwen2.5-coder:32b`,`qwen3.5:9b`,`granite3.2-vision`,`deepseek-r1:1.5b`,`gpt-oss:20b`,`nomic-embed-text`,`all-minilm`,`zylonai/multilingual-e5-large`,`bge-large`,`mxbai-embed-large` |
+`region` is `us` or `eu` — [learn more](/deployment/deployment-regions).
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `provider` | string | Yes | One of: `anthropic`, `openai`, `google`, `openrouter`, `mistralai`, `bedrock`, `ollama` |
+| `model` | string | Yes | A model ID supported by your chosen provider, e.g. `claude-sonnet-4-5`. If you pass an unsupported model, the API returns a `400` listing the accepted models for that provider. |
+| `apiKey` | string | Yes | Your LLM provider API key. Stored encrypted; never returned in full. |
+| `temperature` | number | No | Sampling temperature. Higher values produce more varied output. Provider default when omitted. |
+| `maxTokens` | integer | No | Maximum tokens generated per response. Provider default when omitted. |
+| `systemPrompt` | string | No | Prepended to every conversation to steer the assistant's tone and behavior. |
+
+To check the current config, call `GET /api/v1/llm-config` (the API key is masked in the response). It returns `404` if none is set.
 
 <Callout emoji="💡">
-  Use your **Embeddable API key** (not your end-user security token) as authorization to call this endpoint. This is a one-time platform configuration, not a per-user call.
+  Authenticate with your **Embeddable API key** (not an end-user security token). This is a platform configuration call, not a per-user call.
 </Callout>
 
-### Add the web component to your page
+### Mint a security token
 
-Drop `<em-ai-chat-bot>` onto the same page as your existing `<em-beddable>` component:
+Each end user needs a **security token**, minted **server-side** with your Embeddable API key — exactly as you already do for dashboards ([see the Tokens API](/deployment/tokens-api)). Use the `embeddableId` of the dashboard where you configured Custom Canvas:
 
-```html
-<em-beddable
-  id="my-dashboard"
-  token="<security-token>"
-  embeddable-id="<embeddable-id>"
-/>
-
-<em-ai-chat-bot
-  embeddable-tokens="<security-token>"
-/>
+```bash
+curl -X POST https://api.<region>.embeddable.com/api/v1/security-token \
+  -H "Authorization: Bearer <your-embeddable-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "embeddableId": "<your-embeddable-id>",
+    "user": "user-123",
+    "securityContext": { "userId": "user-123" },
+    "expiryInSeconds": 3600
+  }'
 ```
 
-The `embeddable-tokens` attribute takes the same security token you already pass to `<em-beddable>`. If you render multiple embeddables on one page, pass all their tokens as a space-separated list.
+There is no separate chatbot credential — the chatbot authenticates **exclusively** with this token, and [row-level security](/data-modeling/row-level-security/introduction) from the token is enforced on every data query.
 
-<Callout emoji="⚠️">
-  The chatbot authenticates **exclusively** via `embeddable-tokens`. There is no separate chatbot token. Row-level security from the embeddable token is enforced on every data query.
+### Load the component
+
+Add this script to your page — no build step required:
+
+```html
+<script type="module" src="https://unpkg.com/@embeddable.com/ai-chat@0.2.1/dist/ai-chat/ai-chat.esm.js"></script>
+```
+
+Check [npm](https://www.npmjs.com/package/@embeddable.com/ai-chat) for the latest version. If you're using a bundler or framework, you can `npm install @embeddable.com/ai-chat` instead — see [Framework integration](#framework-integration).
+
+### Add the chat to your page
+
+Choose between **inline** (fills its container) and **modal** (a floating panel that opens from a trigger element).
+
+**Inline:**
+
+```html
+<div style="width: 420px; height: 600px;">
+  <em-ai-chat
+    mode="inline"
+    orchestrator-url="wss://api.<region>.embeddable.com/ws"
+    embeddable-tokens='["<security-token>"]'
+  ></em-ai-chat>
+</div>
+```
+
+**Modal:**
+
+```html
+<em-ai-chat
+  mode="modal"
+  placement="bottom-right"
+  orchestrator-url="wss://api.<region>.embeddable.com/ws"
+  embeddable-tokens='["<security-token>"]'
+>
+  <button slot="trigger">Open chat</button>
+</em-ai-chat>
+```
+
+`embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. The tokens define what the AI can see: include a token for each embeddable you want it to answer questions about (and extend, where Custom Canvas is enabled). The first token is used as the credential for the chat connection.
+
+<Callout emoji="💡">
+  **Match tokens with an on-page dashboard.** If the same page also renders one or more `<em-beddable>` dashboards, pass those **same token(s)** to `embeddable-tokens`. The chat only inspects `<em-beddable>` elements whose token matches one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
+
+  The chat still works with a different or standalone token — it can add a chart to the canvas — but without a match it can't see the on-page dashboard's data or layout, so it can't position or resize what it adds effectively. This requirement is **temporary**; a future release will remove the need for the tokens to match.
 </Callout>
 
 ### Publish and test
 
-Publish your dashboard in the builder, then open your product. The chatbot panel should appear alongside the dashboard.
+Publish your dashboard in the builder, then open your product. Try asking a natural-language question — for example, *"Show me revenue by region for last quarter"*. The AI will query your data and render a chart using one of your configured templates.
 
-{/* SCREENSHOT: The chatbot panel open in a real product page, with the dashboard visible alongside it */}
-
-Try asking a natural-language question — for example, *"Show me revenue by region for last quarter"*. The AI will query your data and render a chart using one of your configured templates.
-
-{/* SCREENSHOT: A chat message and response — user question on the left/top, AI response with a rendered chart below */}
+{/* SCREENSHOT: A chat message and response — user question on top, AI response with a rendered chart below */}
 
 </Steps>
+
+## Standalone chat (no visible dashboard)
+
+You can offer AI chat **without rendering a dashboard at all** — just the `<em-ai-chat>` component on its own. The Custom Canvas dashboard still does the work behind the scenes: it defines which datasets the AI can query and which chart templates it can render, so it must still be **configured and published** as described in [Prerequisites](#prerequisites).
+
+In this setup, we recommend making the canvas **read-only** so the AI doesn't modify a canvas your users never see. Add `customCanvasReadOnly: true` when minting the security token:
+
+```json
+{
+  "embeddableId": "<your-embeddable-id>",
+  "user": "user-123",
+  "securityContext": { "userId": "user-123" },
+  "customCanvasReadOnly": true
+}
+```
+
+With a read-only token, the AI can still answer questions and show charts in the conversation — it just can't add to or modify the Custom Canvas. Because the flag lives on the token, you can grant different users different levels of access with the same embedded widget.
 
 ## The end-user experience
 
 End users interact with the chatbot in plain language. The AI can:
 
-- **Answer data questions** — retrieve and summarise data from any dataset available in Custom Canvas, presented as text or charts.
+- **Answer data questions** — retrieve and summarise data from any dataset enabled for Custom Canvas, presented as text or charts.
 - **Add charts to the canvas** — place new charts based on what the user asks for.
 - **Edit existing charts** — update a chart's dataset, measure, or filters on request.
-- **Resize and reorder charts** — rearrange the canvas layout conversationally.
-- **Delete charts** — remove charts the user no longer needs.
+- **Resize, reorder, and delete charts** — rearrange the canvas layout conversationally.
+- **Collect feedback** — end users can rate each response with a thumbs up/down and leave a comment.
+
+Canvas editing requires a token without `customCanvasReadOnly` — with a read-only token, the AI answers questions and shows charts but leaves the canvas untouched.
 
 {/* SCREENSHOT: Sequence of three chat turns — (1) user asks for a new chart, AI adds it; (2) user asks to resize it; (3) user asks to remove it — showing the canvas updating in real time */}
 
-All responses are scoped to the end user's security context. The orchestrator rejects connections where tokens belong to different workspaces, so there is no risk of cross-user or cross-workspace data leakage.
+## Component reference
+
+### Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `orchestrator-url` | string | — | WebSocket URL of the AI orchestrator: `wss://api.<region>.embeddable.com/ws` |
+| `embeddable-tokens` | string | — | JSON-encoded array of security tokens. The first token is used as the credential for the connection. |
+| `client-context` | string | — | JSON-encoded client context — the same object you pass to your embeddables. Its `timezone` resolves dates consistently with the dashboard. |
+| `mode` | `"inline"` or `"modal"` | `"inline"` | `inline` fills its container; `modal` opens a floating, draggable panel from the trigger element |
+| `placement` | `"bottom-right"`, `"bottom-left"`, `"top-right"`, `"top-left"` | `"top-right"` | Where the modal panel appears relative to the trigger element |
+| `chart-preview-supported` | `"true"` or `"false"` | `"true"` | Whether this client can render chart previews in the conversation |
+
+### Customizing the UI text
+
+All user-facing text — the welcome message, input placeholder, and feedback dialog copy — can be overridden via the `labels` property. It's a JavaScript **object property**, not an HTML attribute:
+
+```js
+const chat = document.querySelector('em-ai-chat');
+chat.labels = {
+  welcomeMessage: 'Hi! Ask me anything about your data.',
+  inputPlaceholder: 'Type a question…',
+};
+```
+
+Provide any subset of the keys below; omitted keys fall back to the defaults.
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `welcomeMessage` | *(built-in greeting)* | Message shown in the empty state before the first user message |
+| `inputPlaceholder` | `"Ask anything..."` | Placeholder text inside the message input |
+| `feedbackTitlePositive` | `"Tell us what you liked"` | Title of the feedback comment dialog after a thumbs-up rating |
+| `feedbackTitleNegative` | `"How can we improve?"` | Title of the feedback comment dialog after a thumbs-down rating |
+| `feedbackPlaceholderPositive` | `"Share more"` | Placeholder text inside the feedback comment input after a thumbs-up |
+| `feedbackPlaceholderNegative` | `"Share more"` | Placeholder text inside the feedback comment input after a thumbs-down |
+| `feedbackDismiss` | `"Dismiss"` | Label for the dismiss button in the feedback dialog |
+| `feedbackSubmit` | `"Submit feedback"` | Label for the submit button in the feedback dialog |
+| `feedbackThanksForFeedback` | `"Thanks for your feedback"` | Confirmation message shown after a written comment is submitted |
+| `feedbackThanksForRating` | `"Thanks for your rating"` | Confirmation message shown after only a thumbs up/down rating is given |
+| `addToDashboardConfirmationText` | `"Shall I add this to your dashboard?"` | Prompt shown alongside a generated chart, asking whether to add it to the dashboard |
+| `addToDashboard` | `"Add to dashboard"` | Label for the button that adds a generated chart to the dashboard |
+| `addingToDashboard` | `"Adding to dashboard…"` | Label shown on the button while the add-to-dashboard action is in progress |
+| `newConversation` | `"New conversation"` | Label for the button/action that starts a new conversation |
+| `ratePositive` | `"Rate this positive"` | Accessible label for the thumbs-up rating button |
+| `rateNegative` | `"Rate this negative"` | Accessible label for the thumbs-down rating button |
+| `toolCallsThinking` | `"Thinking"` | Status text shown while tool calls are in progress |
+| `toolCallsRanStepsSingular` | `"Ran {count} step"` | Summary text for a single completed tool call step (`{count}` is substituted) |
+| `toolCallsRanStepsPlural` | `"Ran {count} steps"` | Summary text for multiple completed tool call steps (`{count}` is substituted) |
+| `addToDashboardMessageWithTitle` | `'Add the chart "{title}" to the dashboard'` | User-message text sent when clicking "Add to dashboard" on a titled chart (`{title}` is substituted) |
+| `addToDashboardMessage` | `"Add the chart to the dashboard"` | User-message text sent when clicking "Add to dashboard" on a chart without a title |
+| `conversationTooLongError` | `"This conversation has become too long to continue. Please start a new conversation to keep chatting."` | Shown when the conversation transcript grows too large to continue |
+| `unknownError` | `"An unknown error occurred"` | Shown when a server error arrives without a specific error message |
+
+### Slots
+
+| Name | Description |
+|------|-------------|
+| `trigger` | *(modal mode only)* The element that toggles the chat panel open and closed |
+
+## Theming
+
+The chat's visual styling is controlled by `--em-ai-chat-*` CSS custom properties. If an `<em-beddable>` is present on the page, the chat automatically inherits its design tokens from the [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui) design system, so it matches your dashboard out of the box.
+
+To customize further (or when there's no `<em-beddable>` on the page), set the variables directly on `em-ai-chat` to match your own design:
+
+```css
+em-ai-chat {
+  /* Shell */
+  --em-ai-chat-shell-background: #ffffff;
+  --em-ai-chat-shell-border-color: #e4e4ea;
+
+  /* Input composer */
+  --em-ai-chat-composer-input-border-color: #e4e4ea;
+  --em-ai-chat-composer-input-border-color--focus: #2d52cc;
+
+  /* Primary icon button (send / cancel) */
+  --em-ai-chat-icon-button-primary-background: #2d52cc;
+  --em-ai-chat-icon-button-primary-color: #ffffff;
+
+  /* Panel size (modal mode) */
+  --em-ai-chat-panel-width: 23.75rem;
+  --em-ai-chat-panel-height: 32.5rem;
+}
+```
+
+The full list of variables ships with the package — see `em-ai-chat.tokens.css` in the [published package](https://www.npmjs.com/package/@embeddable.com/ai-chat).
+
+## Framework integration
+
+In React, Vue, Angular, or any other bundled app, install the package and register the custom elements once at startup:
+
+```js
+import { defineCustomElements } from '@embeddable.com/ai-chat/loader';
+defineCustomElements();
+```
+
+Then use `<em-ai-chat>` like any other HTML element:
+
+```tsx
+return (
+  <em-ai-chat
+    mode="modal"
+    orchestrator-url="wss://api.<region>.embeddable.com/ws"
+    embeddable-tokens={JSON.stringify([token])}
+  >
+    <button slot="trigger">Chat</button>
+  </em-ai-chat>
+);
+```
+
+<Callout emoji="💡">
+  **Vite users** — exclude the package from dependency pre-bundling, which otherwise breaks the component's lazy-loaded chunks:
+
+  ```ts
+  export default defineConfig({
+    optimizeDeps: {
+      exclude: ['@embeddable.com/ai-chat'],
+    },
+  });
+  ```
+</Callout>
 
 ## Security
 
 | Concern | How it's handled |
 |---------|-----------------|
-| Authentication | Exclusively via the embeddable token passed in `embeddable-tokens` — no separate chatbot credential |
-| Row-level security | Enforced on every data query using the claims in the embeddable token |
-| LLM API key | Fetched fresh on every message; encrypted at rest in the platform database; never sent to the client |
-| Cross-workspace isolation | The orchestrator rejects WebSocket connections where tokens belong to different workspaces |
+| Authentication | Exclusively via the security tokens passed in `embeddable-tokens` — no separate chatbot credential |
+| Row-level security | Enforced on every data query using the claims in the security token |
+| LLM API key | Stored encrypted in the platform; masked in API responses; never sent to the client |
+| Canvas write access | Controlled per token via `customCanvasReadOnly` — the orchestrator denies canvas writes for read-only tokens |
+| Cross-workspace isolation | The orchestrator rejects connections where tokens belong to different workspaces |
 
 ## Related
 
-- [Custom Canvas](/self-serve/custom-canvas) — required prerequisite; also where chatbot-created charts appear
+- [Custom Canvas](/self-serve/custom-canvas) — where you configure the datasets and chart templates the AI can use
 - [AI Endpoints](/self-serve/ai-endpoints) — power your own chat UI instead of using the ready-made component
 - [Tokens API](/deployment/tokens-api) — how to generate the security tokens the chatbot relies on
 - [Row-level security](/data-modeling/row-level-security/introduction) — how per-user data access is enforced
