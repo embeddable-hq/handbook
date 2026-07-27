@@ -13,7 +13,7 @@ The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain 
 You can use it in two ways:
 
 - **Alongside a dashboard** — render `<em-ai-chat>` next to your `<em-beddable>` dashboard. The AI can answer questions *and* manage the user's Custom Canvas conversationally.
-- **Standalone chat** — render only the chat, with no visible dashboard. The AI still answers questions and shows charts in the conversation. See [Standalone chat](#standalone-chat-no-visible-dashboard).
+- **Standalone chat** — render only the chat, with no visible dashboard. The AI still answers questions and previews charts in the conversation. See [Standalone chat](#standalone-chat-no-visible-dashboard).
 
 ## How it works
 
@@ -177,7 +177,7 @@ In this setup, we recommend making the canvas **read-only** so the AI doesn't mo
 }
 ```
 
-With a read-only token, the AI can still answer questions and show charts in the conversation — it just can't add to or modify the Custom Canvas. Because the flag lives on the token, you can grant different users different levels of access with the same embedded widget.
+With a read-only token, the AI can still answer questions and preview charts in the conversation — it just can't add to or otherwise modify the Custom Canvas. Because the flag lives on the token, you can grant different users different levels of access with the same embedded widget.
 
 ## The end-user experience
 
@@ -189,7 +189,7 @@ End users interact with the chatbot in plain language. The AI can:
 - **Resize, reorder, and delete charts** — rearrange the canvas layout conversationally.
 - **Collect feedback** — end users can rate each response with a thumbs up/down and leave a comment.
 
-Canvas editing requires a token without `customCanvasReadOnly` — with a read-only token, the AI answers questions and shows charts but leaves the canvas untouched.
+Canvas editing requires a token without `customCanvasReadOnly` — with a read-only token, the AI answers questions and previews charts but leaves the canvas untouched.
 
 {/* SCREENSHOT: Sequence of three chat turns — (1) user asks for a new chart, AI adds it; (2) user asks to resize it; (3) user asks to remove it — showing the canvas updating in real time */}
 
