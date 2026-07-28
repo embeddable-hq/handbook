@@ -46,6 +46,7 @@ fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
     body: JSON.stringify({
         name: 'main-instance', // unique name for your cube endpoint
         type: 'cube', // Data provider type
+        version: 'v1.0.0', // required - must follow semantic versioning
         credentials: {
           secretKey: '<your API Secret>',
           instanceUrl: '<your REST API Endpoint>'
@@ -57,10 +58,15 @@ fetch(`https://api.<region>.embeddable.com/api/v1/data-providers`, {
 - **apiKey**: This is located on the homepage of your workspace.
 - **name**: A unique identifier you'll use to reference your Cube deployment (e.g. `main-instance`)
 - **type**: Always set to `cube` for external cube deployments.
+- **version**: Required on both create (`POST`) and update (`PUT /api/v1/data-providers/{name}`) requests. Must follow semantic versioning in the format `vMAJOR.MINOR.PATCH` (e.g. `v1.2.34`).
 - **credentials**:
     - **secretKey** – your API secret.
     - **instanceUrl** – your REST API Endpoint.
 - **region**: Learn more about `region` [here](/deployment/deployment-regions).
+
+<Callout emoji="⚠️">
+  `version` is required on `POST /api/v1/data-providers` and `PUT /api/v1/data-providers/{name}`. Requests missing `version`, or providing one that doesn't match the `vMAJOR.MINOR.PATCH` format, will receive a `400 Bad Request` response. If you have existing integrations calling these endpoints without `version`, you'll need to update them.
+</Callout>
 
 ### Test your Data Provider
 
