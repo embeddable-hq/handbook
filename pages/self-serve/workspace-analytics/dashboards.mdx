@@ -1,0 +1,50 @@
+# The three dashboards
+
+Workspace Analytics is split into three dashboards: [Errors](#errors), [Usage](#usage), and [Performance](#performance). Each one answers a different question about your live dashboards, and each supports drill-downs so you can go from a broad, workspace-wide view down to a single query or user.
+
+<Callout emoji="💡">
+  **"Client" here means whatever your security context uses to identify a business account** — for example a company, account ID, or plan — as opposed to an **end-user**, the individual person opening a dashboard.
+</Callout>
+
+## Errors
+
+The **Errors** dashboard shows you what's going wrong across your dashboards.
+
+It surfaces:
+
+- **Failed requests**, including 500s and other non-successful response codes.
+- **Cube error messages**, including the underlying error code and message returned by Cube.
+- **Where the error happened**, such as the request origin and which dashboard triggered it.
+
+<Callout emoji="💡">
+  Use this dashboard as your first stop when a client reports "the dashboard isn't loading." Drill down from a spike in errors to the specific request and error message causing it.
+</Callout>
+
+## Usage
+
+The **Usage** dashboard shows you how your end-users are actually using your dashboards.
+
+It surfaces:
+
+- **Active users**, so you can see how many distinct end-users are opening dashboards, and when.
+- **Returning users**, so you can tell new visitors apart from users who come back day after day.
+- **Top clients**, so you can see which of your clients (or client segments) generate the most activity.
+
+<Callout emoji="💡">
+  Use this dashboard to understand adoption: is a dashboard actually being used, and by which clients? Drill down from a workspace-wide trend to a single client's activity.
+</Callout>
+
+## Performance
+
+The **Performance** dashboard shows you how quickly your dashboards are loading.
+
+It surfaces:
+
+- **Query load times**, including the median and maximum duration for each query.
+- **Slowest queries**, ranked so you can see which queries are the biggest contributors to slow load times.
+- **Invocation counts**, so you can tell a rarely-run slow query apart from a frequently-run one.
+
+<Callout emoji="💡">
+  Use this dashboard to find performance bottlenecks before your clients do. Drill down from the slowest queries to the exact measures and dimensions being requested.
+</Callout>
+
