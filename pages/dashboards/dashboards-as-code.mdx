@@ -237,6 +237,7 @@ Once you [push](/getting-started/development/pushing-code), coded dashboards app
 - **View only in the workspace** — you can open a pushed coded dashboard in preview mode, but its configuration can't be edited in the workspace builder; the code stays the source of truth. (You *can* edit it visually **before** pushing — see [Editing locally](#editing-locally).)
 - **Saved versions** — every bundle push automatically creates a new saved version. You can switch between saved versions or publish any of them to development, staging, or production.
 - **No manual save** — the **Save Version** button is not available for coded dashboards.
+- **Delete only in code** — a coded dashboard can't be deleted from the no-code builder. To remove one, delete its entry from the `<dashboard-name>.embeddable.yml` file (or delete the file) in your repo and push again. The repo is the source of truth.
 
 <ImageGrid width='70%' images={["/img/dashboards-as-code/read-only.png"]}/>
 
@@ -267,6 +268,7 @@ export default defineConfig({
 
 - Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
 - Once pushed, coded dashboards can't be edited in the **workspace** builder — the code stays the source of truth. To change one, edit its `<dashboard-name>.embeddable.yml` (directly, or visually in the local builder — see [Editing locally](#editing-locally)) and push again.
+- Coded dashboards can't be **deleted** from the workspace builder either — remove the dashboard from its `<dashboard-name>.embeddable.yml` file (or delete the file) in your repo and push again.
 
 ## Editing locally
 
