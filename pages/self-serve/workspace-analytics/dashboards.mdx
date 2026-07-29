@@ -3,7 +3,7 @@
 Workspace Analytics is split into three dashboards: [Errors](#errors), [Usage](#usage), and [Performance](#performance). Each one answers a different question about your live dashboards, and each supports drill-downs so you can go from a broad, workspace-wide view down to a single query or user.
 
 <Callout emoji="💡">
-  **"Client" here means whatever your security context uses to identify a business account** — for example a company, account ID, or plan — as opposed to an **end-user**, the individual person opening a dashboard.
+  **"Client" here means whatever your [security context](/data-modeling/row-level-security/introduction) uses to identify a business account** — for example a company, account ID, or plan — as opposed to an **end-user**, the individual person opening a dashboard.
 </Callout>
 
 ## Errors
@@ -13,12 +13,14 @@ The **Errors** dashboard shows you what's going wrong across your dashboards.
 It surfaces:
 
 - **Failed requests**, including 500s and other non-successful response codes.
-- **Cube error messages**, including the underlying error code and message returned by Cube.
+- **Cube error messages**, including the underlying error code and message returned by [Cube](https://cube.dev/docs/product/data-modeling/overview).
 - **Where the error happened**, such as the request origin and which dashboard triggered it.
 
 <Callout emoji="💡">
   Use this dashboard as your first stop when a client reports "the dashboard isn't loading." Drill down from a spike in errors to the specific request and error message causing it.
 </Callout>
+
+{/* SCREENSHOT: The Errors dashboard, showing failed request volume over time and a drill-down into one error message */}
 
 ## Usage
 
@@ -34,6 +36,8 @@ It surfaces:
   Use this dashboard to understand adoption: is a dashboard actually being used, and by which clients? Drill down from a workspace-wide trend to a single client's activity.
 </Callout>
 
+{/* SCREENSHOT: The Usage dashboard, showing active/returning users over time and top clients */}
+
 ## Performance
 
 The **Performance** dashboard shows you how quickly your dashboards are loading.
@@ -47,4 +51,6 @@ It surfaces:
 <Callout emoji="💡">
   Use this dashboard to find performance bottlenecks before your clients do. Drill down from the slowest queries to the exact measures and dimensions being requested.
 </Callout>
+
+{/* SCREENSHOT: The Performance dashboard, showing query load times and a ranked list of the slowest queries */}
 
