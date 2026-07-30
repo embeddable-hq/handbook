@@ -1,16 +1,18 @@
 # Versions API
 
-The **Versions API** allows you to programmatically list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
+The **Versions API** allows you to programmatically list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace, and fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of any saved version. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
 
 <Bruno/>
 
-## Endpoint
+## List saved versions
+
+### Endpoint
 
 ```
 GET https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions
 ```
 
-## Example Request
+### Example Request
 
 ```ts
 // Important: Always call this server-side, never from client-side code
@@ -49,7 +51,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 }
 ```
 
-## Field Reference
+### Field Reference
 
 - **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
 - **`saved-versions[]`**: Each saved version, newest first.
@@ -59,11 +61,72 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
   - **`saved-at`**: When the snapshot was taken.
   - **`components-version / models-version / cube-version`**: The underlying versions that this saved version references.
 
-## Notes
+### Notes
 
 - Version values are **per embeddable** and are not shared across different dashboards.
 - The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
 - You can use this API endpoint to build custom deployment workflows, such as automatically promoting versions from development to production based on your CI/CD processes.
+
+## Get version metadata
+
+Fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of a specific saved version, as JSON.
+
+### Endpoint
+
+```
+GET https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/{version}/metadata
+```
+
+### Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/{version}/metadata', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`).
+
+### Example Response
+
+Returns the dashboard's definition in the same JSON shape as its YAML [dashboards-as-code](/dashboards/dashboards-as-code) source — variables, datasets, and widgets — as it existed at that saved version.
+
+```json
+{
+  "name": "my-embeddable",
+  "title": "My Embeddable",
+  "variables": [
+    { "name": "date-range", "type": "timeRange", "defaultValue": { "from": "2024-01-01", "to": "2024-12-31" } }
+  ],
+  "datasets": [
+    {
+      "name": "filtered-data",
+      "model": "daily_listens",
+      "filters": [
+        { "member": "daily_listens.date", "operator": "inDateRange", "value": "date-range", "valueType": "VARIABLE" }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "component": "BarChart",
+      "position": { "x": 0, "y": 0 },
+      "dimensions": { "width": 12, "height": 6 },
+      "inputs": [
+        { "input": "metric", "inputType": "measure", "value": "daily_listens.count" }
+      ]
+    }
+  ]
+}
+```
 
 ## Related Topics
 
