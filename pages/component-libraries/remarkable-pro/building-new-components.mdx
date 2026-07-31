@@ -87,7 +87,7 @@ The `definition` file can be used to override elements of the component. It cont
 | `meta.label` | Display name in Builder | Give it a descriptive name |
 | `meta.inputs` | Available inputs in Builder | Add new inputs |
 | `meta.events` | Emitted events | Add new events or modify existing |
-| `config.props` | Data transformation | Compute values, filter or sort data |
+| `config.props` | Maps inputs to props & defines the data query | Customize the query: sort, filter, limit |
 | `config.events` | Event payloads | Transform values before emitting |
 | `preview` | The default canvas preview | Re-use the existing preview |
 | `previewConfig` | Edit the canvas preview | Show new inputs in preview |
@@ -96,10 +96,11 @@ The `definition` file can be used to override elements of the component. It cont
 
 When you only need to change behavior (not UI), you can reuse the original React component and just override the necessary parts of `definition.ts`. 
 
-This example extends the default Bar Chart, creating a new version that always sorts data descending by value:
+This example extends the default Bar Chart, creating a new version that always sorts by the first measure, descending. The sort is applied to the data query itself, so it also works correctly with the component's `Max Results` limit:
 
 ```tsx
 // definition.ts
+import { loadData } from '@embeddable.com/core';
 import { barChartDefaultPro } from '@embeddable.com/remarkable-pro';
 import { Inputs } from '@embeddable.com/react';
 
@@ -112,23 +113,21 @@ const meta = {
 const props = (
   inputs: Inputs<typeof meta>,
   stateTuple: Parameters<typeof barChartDefaultPro.config.props>[1],
+  clientContext: Parameters<typeof barChartDefaultPro.config.props>[2],
 ) => {
-  const baseProps = barChartDefaultPro.config.props(
-    inputs as Inputs<typeof barChartDefaultPro.meta>,
-    stateTuple,
-  );
+  const baseInputs = inputs as Inputs<typeof barChartDefaultPro.meta>;
+  const baseProps = barChartDefaultPro.config.props(baseInputs, stateTuple, clientContext);
 
-  // Sort data descending by first measure value
-    const measureName = inputs.measures?.[0]?.name;
-    const sortedData = [...(baseProps.results.data ?? [])].sort((a, b) => {
-        if (!measureName) return 0;
-        return (b[measureName] ?? 0) - (a[measureName] ?? 0);
-    });
+  // Sort by the first measure, descending
+  const measure = inputs.measures?.[0];
 
-    return {
+  return {
     ...baseProps,
-    results: { ...baseProps.results, data: sortedData },
-    };
+    results: loadData({
+      ...barChartDefaultPro.results.loadDataArgs(baseInputs, baseProps.dimension, clientContext),
+      orderBy: measure ? [{ property: measure, direction: 'desc' }] : undefined,
+    }),
+  };
 };
 
 export const barChartSortedDesc = {
@@ -151,8 +150,13 @@ export default defineComponent(barChartSortedDesc.Component, meta, barChartSorte
 Things to notice:
 - **Two files only** - no `index.tsx` needed since we reuse the original React component
 - **Spread the original** - `...barChartDefaultPro.meta` inherits all existing inputs, then we override `name` and `label`
-- **Call the original props function** - `barChartDefaultPro.config.props(inputs, stateTuple)` gives us the base props, which we then modify
+- **Call the original props function** - `barChartDefaultPro.config.props(inputs, stateTuple, clientContext)` gives us the base props; always pass `clientContext` through - it carries e.g. the viewer's timezone
+- **Customize the query, not the loaded rows** - `barChartDefaultPro.results.loadDataArgs(...)` returns the component's standard data request; we add `orderBy` to it and wrap it in `loadData()` again
 - **Export spreads the original** - `...barChartDefaultPro` inherits `Component`, `preview`, and anything else we don't override
+
+<Callout emoji="💡">
+`config.props` runs **before** any data has loaded: `loadData()` returns a query definition, which Embeddable executes for you, delivering the loaded rows to your React component as `results` (`{ isLoading, data, error }`). This means `results.data` is not available inside `config.props`. To transform loaded rows client-side (e.g. computed columns), wrap the React component instead (as in Example 2) and transform `props.results.data` at render time.
+</Callout>
 
 #### Example 2: Low Stock Warning
 
@@ -182,10 +186,12 @@ const meta = {
 const props = (
   inputs: Inputs<typeof meta>,
   stateTuple: Parameters<typeof barChartDefaultPro.config.props>[1],
+  clientContext: Parameters<typeof barChartDefaultPro.config.props>[2],
 ) => {
   const baseProps = barChartDefaultPro.config.props(
     inputs as Inputs<typeof barChartDefaultPro.meta>,
     stateTuple,
+    clientContext,
   );
   const { showLowStockWarning, lowStockThreshold } = inputs;
 
