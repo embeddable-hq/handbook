@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.3.24",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.24",
+    "notes": [
+      "Extended `FilterBuilderWithGroupingPro` to dispatch `embeddable-user-interaction` browser events on user-driven edits at both top-level and group-level, matching the behaviour already present in `FilterBuilderPro`. A `trackingId` input and `componentName` field have been added for consistency with other trackable components, allowing specific filter builder instances to be identified in event listeners."
+    ]
+  },
+  {
+    "version": "v0.3.23",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.23",
+    "notes": [
+      "Added a `syncDefaultFilters` opt-in setting to `FilterBuilderPro` and `FilterBuilderWithGroupingPro`. When enabled, the component tracks host-driven changes to its bound `defaultFilters` after mount — allowing the host to update or reset the filter state at runtime (for example, switching between or reverting to saved filter sets) without remounting the embed. The component's own `onChange` echoes and `null`/`undefined` values are ignored to preserve in-progress edits, and a well-formed empty clause resets the filter. When disabled (the default), behaviour is unchanged: `defaultFilters` only seeds the initial state on mount."
+    ]
+  },
+  {
     "version": "v0.3.22",
     "date": "2026-07-28",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.22",
