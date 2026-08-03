@@ -1,5 +1,32 @@
 [
   {
+    "version": "v0.3.25",
+    "date": "2026-08-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.25",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.25",
+    "notes": [
+      "Fixed `syncDefaultFilters` not re-applying a previously adopted `defaultFilters` value after the filter list was cleared in `FilterBuilderPro` and `FilterBuilderWithGroupingPro`. Deleting the last filter emits `null`, which was leaving stale adoption state behind — so pushing the same clause back in from the host was silently ignored. The host can now revert to or re-push a filter set after it has been cleared, and it will be re-applied as expected."
+    ]
+  },
+  {
+    "version": "v0.3.24",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.24",
+    "notes": [
+      "`FilterBuilderWithGroupingPro` now dispatches `embeddable-user-interaction` events on user-driven edits at both top-level and group-level, matching `FilterBuilderPro`. Added `trackingId` input and `componentName` for consistency with other trackable components."
+    ]
+  },
+  {
+    "version": "v0.3.23",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.23",
+    "notes": [
+      "Added an opt-in `syncDefaultFilters` setting to `FilterBuilderPro` and `FilterBuilderWithGroupingPro`. When enabled, the component tracks host-driven changes to its bound `defaultFilters` after mount — allowing the host to update or reset filter state at runtime (e.g. switching between or reverting to saved filter sets) without remounting the embed. When disabled (the default), behaviour is unchanged: `defaultFilters` only seeds the initial value."
+    ]
+  },
+  {
     "version": "v0.3.22",
     "date": "2026-07-28",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.22",
