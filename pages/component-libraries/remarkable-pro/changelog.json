@@ -1,5 +1,41 @@
 [
   {
+    "version": "v0.3.26",
+    "date": "2026-08-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.26",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.26",
+    "notes": [
+      "Exposed CSS variables for canvas overlays, enabling custom styling for overlay positioning, sizing, spacing, colours, actions, responsive layouts, and configurator forms."
+    ]
+  },
+  {
+    "version": "v0.3.25",
+    "date": "2026-08-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.25",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.25",
+    "notes": [
+      "Fixed `syncDefaultFilters` in `FilterBuilderPro` and `FilterBuilderWithGroupingPro` not re-applying a previously adopted `defaultFilters` value after the filter list was cleared. Deleting the last filter emits `null`, which was leaving stale adoption state behind — so pushing the same clause back in from the host was silently ignored. The host can now revert to or re-push a filter set after it has been cleared, and it will be re-applied as expected."
+    ]
+  },
+  {
+    "version": "v0.3.24",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.24",
+    "notes": [
+      "`FilterBuilderWithGroupingPro` now dispatches `embeddable-user-interaction` events on user-driven edits (top-level and group-level), matching `FilterBuilderPro`. An optional `trackingId` input and `componentName` have been added for consistency with other trackable components."
+    ]
+  },
+  {
+    "version": "v0.3.23",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.23",
+    "notes": [
+      "`FilterBuilderPro` and `FilterBuilderWithGroupingPro` now support a new opt-in **Track default filters** (`syncDefaultFilters`) setting. When enabled, the component tracks host-driven changes to its bound `defaultFilters` after mount — allowing the host to update or reset the filter at runtime (e.g. switching between or reverting to saved filter sets) without remounting the embed. The component's own `onChange` echo and `null`/`undefined` values are ignored so in-progress edits are preserved, and a well-formed empty clause resets the filters. When disabled (the default), behaviour is unchanged: `defaultFilters` only seeds the initial value."
+    ]
+  },
+  {
     "version": "v0.3.22",
     "date": "2026-07-28",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.22",
