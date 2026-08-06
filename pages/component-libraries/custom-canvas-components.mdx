@@ -2,7 +2,7 @@
 
 [Custom Canvas](/self-serve/custom-canvas/introduction) is a feature that lets your users build their own dashboards inside your product. This page covers **styling** its interface; see also [Deploying Custom Canvas](/deployment/custom-canvas).
 
-The UI components powering Custom Canvas (panels, forms, buttons, cards) are built on [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui). These components are *currently* fixed - you can't swap them out or modify their behavior - but you can **style them** to match your brand using CSS variables.
+The UI components powering Custom Canvas (panels, forms, buttons, cards) are built on [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui). These components are _currently_ fixed - you can't swap them out or modify their behavior - but you can **style them** to match your brand using CSS variables.
 
 ## How to Style Custom Canvas
 
@@ -13,8 +13,8 @@ Add variables to `theme.styles` in your theme:
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   return defineTheme(parentTheme, {
     styles: {
-      '--em-sem-background': '#f8f9fa',
-      '--em-sem-text': '#1a1a2e',
+      "--em-sem-background": "#f8f9fa",
+      "--em-sem-text": "#1a1a2e",
     },
   });
 };
@@ -32,61 +32,100 @@ Override only what you need. Start with these high-impact variables.
 
 Set the main background and text colors that define your look:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `--em-background-color-default` | Main background color | `#ffffff` |
-| `--em-background-color-subtle` | Secondary/muted backgrounds | `#f8f9fa` |
-| `--em-foreground-color-default` | Primary text color | `#1a1a2e` |
-| `--em-primary-btn-background-color-default` | Primary button background | Brand blue |
+| Variable                                    | Description                 | Default    |
+| ------------------------------------------- | --------------------------- | ---------- |
+| `--em-background-color-default`             | Main background color       | `#ffffff`  |
+| `--em-background-color-subtle`              | Secondary/muted backgrounds | `#f8f9fa`  |
+| `--em-foreground-color-default`             | Primary text color          | `#1a1a2e`  |
+| `--em-primary-btn-background-color-default` | Primary button background   | Brand blue |
 
 ### Cards
 
 Chart cards are the containers for each visualization:
 
-| Variable | Description |
-|----------|-------------|
+| Variable                          | Description               |
+| --------------------------------- | ------------------------- |
 | `--em-card-border-radius-default` | Corner rounding for cards |
-| `--em-card-padding-default` | Inner spacing |
-| `--em-card-title-color-default` | Card title text color |
-| `--em-card-title-font-weight` | Card title boldness |
-| `--em-box-shadow-default-color` | Card shadow color |
-| `--em-box-shadow-default-blur` | Card shadow blur radius |
+| `--em-card-padding-default`       | Inner spacing             |
+| `--em-card-title-color-default`   | Card title text color     |
+| `--em-card-title-font-weight`     | Card title boldness       |
+| `--em-box-shadow-default-color`   | Card shadow color         |
+| `--em-box-shadow-default-blur`    | Card shadow blur radius   |
 
 ### Buttons
 
 Style the action buttons throughout the interface:
 
-| Variable | Description |
-|----------|-------------|
-| `--em-primary-btn-background-color-default` | Primary button fill |
-| `--em-primary-btn-background-color-disabled` | Disabled state fill |
-| `--em-secondary-btn-background-color-default` | Secondary button fill |
-| `--em-secondary-btn-background-color-hover` | Secondary button hover |
-| `--em-icon-btn-background-color-default` | Icon button fill |
-| `--em-icon-btn-background-color-hover` | Icon button hover |
+| Variable                                      | Description            |
+| --------------------------------------------- | ---------------------- |
+| `--em-primary-btn-background-color-default`   | Primary button fill    |
+| `--em-primary-btn-background-color-disabled`  | Disabled state fill    |
+| `--em-secondary-btn-background-color-default` | Secondary button fill  |
+| `--em-secondary-btn-background-color-hover`   | Secondary button hover |
+| `--em-icon-btn-background-color-default`      | Icon button fill       |
+| `--em-icon-btn-background-color-hover`        | Icon button hover      |
 
 ### Forms & Inputs
 
 Customize dropdowns, text inputs, and form sections:
 
-| Variable | Description |
-|----------|-------------|
-| `--em-form-background-color-default` | Form panel background |
-| `--em-form-border-radius-default` | Form panel corners |
-| `--em-form-header-font-font-color` | Form section header color |
-| `--em-text-input-label-color-default` | Input label color |
-| `--em-select-menu-label-color-default` | Dropdown label color |
+| Variable                               | Description               |
+| -------------------------------------- | ------------------------- |
+| `--em-form-background-color-default`   | Form panel background     |
+| `--em-form-border-radius-default`      | Form panel corners        |
+| `--em-form-header-font-font-color`     | Form section header color |
+| `--em-text-input-label-color-default`  | Input label color         |
+| `--em-select-menu-label-color-default` | Dropdown label color      |
 
 ### Typography
 
 Fine-tune font sizes and weights:
 
-| Variable | Description |
-|----------|-------------|
-| `--em-font-size-sm` | Small text size |
-| `--em-font-size-md` | Medium text size |
+| Variable                  | Description        |
+| ------------------------- | ------------------ |
+| `--em-font-size-sm`       | Small text size    |
+| `--em-font-size-md`       | Medium text size   |
 | `--em-font-weight-medium` | Medium font weight |
-| `--em-line-height-sm` | Small line height |
+| `--em-line-height-sm`     | Small line height  |
+
+### Custom Canvas Overlay
+
+The overlay is the modal that hosts the [template selector and the chart configurator](/self-serve/custom-canvas/end-user-experience). Its variables sit in their own `--em-canvas-overlay-*` namespace, so overriding them doesn't affect the rest of your dashboard.
+
+#### Coverage and box
+
+| Variable                            | Description                                         | Default          |
+| ----------------------------------- | --------------------------------------------------- | ---------------- |
+| `--em-canvas-overlay-position`      | `fixed` (viewport) or `absolute` (parent container) | `fixed`          |
+| `--em-canvas-overlay-inset`         | Inset for the modal and the dim                     | `0`              |
+| `--em-canvas-overlay-max-width`     | Maximum content width                               | `78rem`          |
+| `--em-canvas-overlay-padding`       | Inner spacing of the content area                   | `0 2rem 2.25rem` |
+| `--em-canvas-overlay-border-radius` | Corner rounding of the content area                 | `1.75rem`        |
+
+- `--em-canvas-overlay-position` accepts `fixed` (default - the modal and the dim cover the viewport) or `absolute` (they cover only the embeddable's region). When using `absolute`, the embeddable's parent must be a positioned ancestor, e.g. `position: relative`.
+- `--em-canvas-overlay-inset` accepts any CSS `inset` shorthand (`5rem`, `1rem 2rem`, `1rem 2rem 3rem 4rem`) and insets the modal **and** the dim layer together.
+
+#### Colours
+
+| Variable                                       | Description                | Default                                      |
+| ---------------------------------------------- | -------------------------- | -------------------------------------------- |
+| `--em-canvas-overlay-backdrop-background`      | Dim layer behind the modal | `var(--em-overlay-background)`               |
+| `--em-canvas-overlay-content-background`       | Content panel fill         | `transparent`                                |
+| `--em-canvas-overlay-title-color`              | Overlay title colour       | `var(--em-sem-text--inverted)`               |
+| `--em-canvas-overlay-action-button-background` | Back / close button fill   | `var(--em-buttonicon-background--secondary)` |
+| `--em-canvas-overlay-action-button-color`      | Back / close icon colour   | `var(--em-buttonicon-color--secondary)`      |
+
+- the background is split in two: `--em-canvas-overlay-backdrop-background` is the dim behind the modal, `--em-canvas-overlay-content-background` is the panel holding the topbar, template grid and configurator. The content panel defaults to `transparent`, which is why cards appear to float over the dim.
+- the action-button variables only apply to the overlay's back and close buttons - other icon buttons keep their own styling.
+
+#### Configurator actions bar
+
+| Variable                                      | Description                                                                            | Default  |
+| --------------------------------------------- | -------------------------------------------------------------------------------------- | -------- |
+| `--em-canvas-overlay-actions-justify-content` | Horizontal position of the cancel / confirm pill: `flex-start`, `center` or `flex-end` | `center` |
+| `--em-canvas-overlay-actions-position`        | `sticky` floats the pill while scrolling, `static` lets it scroll with the content     | `sticky` |
+
+For the complete set, see [Canvas Overlay](#canvas-overlay) in the full variable reference below.
 
 ---
 
@@ -252,6 +291,83 @@ Below is the complete list of supported CSS variables, organized by category.
 --em-status-error
 --em-status-negative-foreground
 --em-switch-thumb-background-color
+```
+
+### Canvas Overlay
+
+Variables for the [Custom Canvas overlay](#custom-canvas-overlay). Defaults and accepted values for the most-used ones are listed in the sub-section above.
+
+**Coverage and placement:**
+
+```
+--em-canvas-overlay-position
+--em-canvas-overlay-inset
+```
+
+**Content box:**
+
+```
+--em-canvas-overlay-width
+--em-canvas-overlay-max-width
+--em-canvas-overlay-height
+--em-canvas-overlay-max-height
+--em-canvas-overlay-padding
+--em-canvas-overlay-border-radius
+```
+
+**Backgrounds:**
+
+```
+--em-canvas-overlay-backdrop-background
+--em-canvas-overlay-content-background
+```
+
+**Topbar title and action buttons (back, close):**
+
+```
+--em-canvas-overlay-title-color
+--em-canvas-overlay-action-button-background
+--em-canvas-overlay-action-button-color
+--em-canvas-overlay-action-button-border-color
+--em-canvas-overlay-action-button-border-width
+--em-canvas-overlay-action-button-border-radius
+```
+
+**Configurator actions bar:**
+
+```
+--em-canvas-overlay-actions-justify-content
+--em-canvas-overlay-actions-position
+--em-canvas-overlay-actions-grid-column
+--em-canvas-overlay-actions-grid-row
+--em-canvas-overlay-actions-justify-self
+--em-canvas-overlay-actions-align-self
+```
+
+**Template grid:**
+
+```
+--em-canvas-overlay-grid-template-columns
+--em-canvas-overlay-grid-template-columns--tablet
+--em-canvas-overlay-grid-template-columns--mobile
+--em-canvas-overlay-grid-auto-rows
+--em-canvas-overlay-grid-auto-flow
+--em-canvas-overlay-grid-gap
+--em-canvas-overlay-grid-align-items
+```
+
+**Configurator layout and form panel:**
+
+```
+--em-canvas-overlay-configurator-grid-template-columns
+--em-canvas-overlay-configurator-grid-template-columns--tablet
+--em-canvas-overlay-configurator-grid-template-columns--mobile
+--em-canvas-overlay-configurator-gap
+--em-canvas-overlay-configurator-form-background
+--em-canvas-overlay-configurator-form-padding
+--em-canvas-overlay-configurator-form-padding-bottom
+--em-canvas-overlay-configurator-form-border-radius
+--em-canvas-overlay-configurator-form-gap
 ```
 
 ---
