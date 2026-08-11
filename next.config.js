@@ -43,6 +43,11 @@ module.exports = withNextra({
         permanent: true,
       },
       {
+        source: "/component-libraries/remarkable-pro",
+        destination: "/component-libraries/remarkable-pro/introduction",
+        permanent: true,
+      },
+      {
         source: "/dashboards/building-dashboards",
         destination: "/dashboards/introduction",
         permanent: true,
