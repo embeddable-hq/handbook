@@ -2,6 +2,10 @@
 
 Whenever a user accesses an Embeddable dashboard in your app, you should fetch a **security token** from our **Tokens API**. This token applies [row-level security](/data-modeling/row-level-security/introduction) (and more) to their dashboard session.
 
+<Callout emoji="💡">
+  Using **Cube Cloud** or another external Cube deployment? Pass the `dataProvider` field (see the [comprehensive example](#comprehensive-example) below) — set up in [Bring your own Cube](/data/bring-your-own-cube).
+</Callout>
+
 <Bruno/>
 
 ## Example: Fetch a Token
