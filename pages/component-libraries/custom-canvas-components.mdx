@@ -105,15 +105,15 @@ The overlay is the modal that hosts the [template selector and the chart configu
 - `--em-canvas-overlay-position` accepts `fixed` (default - the modal and the dim cover the viewport) or `absolute` (they cover only the embeddable's region). When using `absolute`, the embeddable's parent must be a positioned ancestor, e.g. `position: relative`.
 - `--em-canvas-overlay-inset` accepts any CSS `inset` shorthand (`5rem`, `1rem 2rem`, `1rem 2rem 3rem 4rem`) and insets the modal **and** the dim layer together.
 
-#### Colours
+#### Colors
 
 | Variable                                       | Description                | Default                                      |
 | ---------------------------------------------- | -------------------------- | -------------------------------------------- |
 | `--em-canvas-overlay-backdrop-background`      | Dim layer behind the modal | `var(--em-overlay-background)`               |
 | `--em-canvas-overlay-content-background`       | Content panel fill         | `transparent`                                |
-| `--em-canvas-overlay-title-color`              | Overlay title colour       | `var(--em-sem-text--inverted)`               |
+| `--em-canvas-overlay-title-color`              | Overlay title color        | `var(--em-sem-text--inverted)`               |
 | `--em-canvas-overlay-action-button-background` | Back / close button fill   | `var(--em-buttonicon-background--secondary)` |
-| `--em-canvas-overlay-action-button-color`      | Back / close icon colour   | `var(--em-buttonicon-color--secondary)`      |
+| `--em-canvas-overlay-action-button-color`      | Back / close icon color    | `var(--em-buttonicon-color--secondary)`      |
 
 - the background is split in two: `--em-canvas-overlay-backdrop-background` is the dim behind the modal, `--em-canvas-overlay-content-background` is the panel holding the topbar, template grid and configurator. The content panel defaults to `transparent`, which is why cards appear to float over the dim.
 - the action-button variables only apply to the overlay's back and close buttons - other icon buttons keep their own styling.
