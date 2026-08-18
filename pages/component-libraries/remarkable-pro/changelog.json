@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.3.27",
+    "date": "2026-08-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.27",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.27",
+    "notes": [
+      "Fixed `DateRangePickerPresetsPro` custom calendar going out of sync with `selectedValue`. The trigger label correctly reflected the latest bound value, but the internal `dateRange` state (used by the calendar and the Apply button) was not kept in sync — causing the Custom view to open with nothing selected and Apply enabled when a preset was active, and an externally updated `selectedValue` to update the label without updating the calendar grid. `dateRange` is now initialised from the resolved time range on mount and re-synced whenever `selectedValue` changes."
+    ]
+  },
+  {
     "version": "v0.3.26",
     "date": "2026-08-04",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.26",
