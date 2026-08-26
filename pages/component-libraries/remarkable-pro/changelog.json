@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.4.0",
+    "date": "2026-08-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.0",
+    "notes": [
+      "`MultiSelectFieldPro` now includes an opt-in **select all / deselect all** control, enabled via the new **Display \"select / deselect all\"** setting (off by default). When enabled, the control is only shown when the full list of options has loaded (i.e. the number of available values is within the maximum options limit), ensuring bulk selection only operates over a complete set."
+    ]
+  },
+  {
     "version": "v0.3.27",
     "date": "2026-08-18",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.27",
