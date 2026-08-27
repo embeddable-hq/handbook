@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.4.1",
+    "date": "2026-08-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.1",
+    "notes": [
+      "Fixed `DateRangePickerPresetsPro` not syncing when `selectedValue` changes to a custom `{from, to}` range. Unapplied date range edits are now also discarded when the picker closes without pressing Apply."
+    ]
+  },
+  {
+    "version": "v0.4.0",
+    "date": "2026-08-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.0",
+    "notes": [
+      "`MultiSelectFieldPro` now supports an opt-in select all / deselect all option, controlled by a new 'Display \"select / deselect all\"' input (off by default). The option only appears when the loaded values are fewer than the maximum options limit, ensuring the full list is known to be complete."
+    ]
+  },
+  {
     "version": "v0.3.27",
     "date": "2026-08-18",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.27",
