@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.4.2",
+    "date": "2026-09-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.2",
+    "notes": [
+      "Fixed `DateRangePickerCustomPro` and `DateRangePickerPresetsPro` resolving manually picked dates to the wrong calendar day when `clientContext.timezone` differed from the viewer's browser timezone. `getTimeRangeFromDateRange` now uses `clientContext.timezone` when projecting selected dates, matching the existing preset behaviour. Two edge cases are also resolved: a near-midnight end-of-day UTC timestamp could tip into the next calendar day after timezone projection (now normalised back to its own day-start), and an incomplete range (single click, `to` undefined) was defaulting `to` to the current time instead of the picked day."
+    ]
+  },
+  {
     "version": "v0.4.1",
     "date": "2026-08-27",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.1",
