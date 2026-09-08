@@ -1,5 +1,15 @@
 [
   {
+    "version": "v0.6.0",
+    "date": "2026-09-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.6.0",
+    "notes": [
+      "Added `FunnelChartPro` — a new funnel chart component for visualising stage-based conversion funnels. Supports configurable sorting, colours, gradients, legends, tooltips, percentage and count labels, titles, descriptions, and export menu options.",
+      "Fixed an issue in the `useFillGaps` hook where charts using a non-UTC dashboard timezone (e.g. `America/Los_Angeles`) with a live or rolling date range would show correct data for part of the range followed by empty buckets. The number of empty buckets matched the timezone's UTC offset. The hook now correctly identifies live/rolling date bounds as real instants and converts them to the dashboard's local timezone before computing the fill range, while preserving the existing behaviour for day-precision preset and custom-picker bounds."
+    ]
+  },
+  {
     "version": "v0.5.0",
     "date": "2026-09-04",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.5.0",
