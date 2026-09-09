@@ -174,6 +174,8 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIqQgU/5Cdbe8sTPZ9S3Zy6iTyBRNP7cjZmD5LtlX0
 - Host and port of the database (must be accessible from Bastion host)
 - Database credentials needed by Cube
 
+Send us these details using [PrivateBin](https://privatebin.eu.embeddable.com/) — do not send them by email or chat. Paste the details, set an expiry, and share the link with us.
+
 </Steps>
 
 Note: SSH tunnels are set up per database server. If you need to connect to two different database servers, you’ll need two separate SSH tunnels. However, the same SSH user can be reused if both databases are accessible through the same bastion host.
@@ -192,7 +194,7 @@ This is an alternative to SSH connections. It is more secure and easier to set u
 ### How it works
 - You set up a VPC Endpoint Service (NLB → your DB). For more information, see the [AWS Documentation](https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html)
 - You whitelist our Principal ARN in your Endpoint Service
-- You share the service name with us
+- You share the service name with us using [PrivateBin](https://privatebin.eu.embeddable.com/)
 - We connect to your service
 - You accept the connection
 - You can now make connections via the [Connections API](#connections-api) using the provided hostname and port
