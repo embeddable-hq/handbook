@@ -1,10 +1,13 @@
 # Connect Your Database
 
 <Callout emoji="💡">
-  Using **Cube Cloud** or your own **Cube Core** deployment instead of Embeddable's built-in Cube? See [Bring your own Cube](/data/bring-your-own-cube) — this page (and the rest of the **Connect your data** section) does not apply to you.
+  Using **Cube Cloud** or your own **Cube Core** deployment instead of
+  Embeddable's built-in Cube? See [Bring your own
+  Cube](/data/bring-your-own-cube) — this page (and the rest of the **Connect
+  your data** section) does not apply to you.
 </Callout>
 
-You can connect one or more databases to Embeddable. We call these **Connections**. 
+You can connect one or more databases to Embeddable. We call these **Connections**.
 
 - **Read-only access:** Embeddable only reads from your database - it never writes to it.
 - **Connection options:** Connect directly, via [SSH](/data/connect-your-database#ssh-connections-bastion-host), or via [Amazon PrivateLink](/data/connect-your-database#amazon-privatelink).
@@ -14,11 +17,11 @@ You can connect one or more databases to Embeddable. We call these **Connections
 
 Use our **Connections API** to connect Embeddable to your database(s).
 
- - You can call the API directly using tools like [Postman](https://www.postman.com/) or Bruno (link below)
+- You can call the API directly using tools like [Postman](https://www.postman.com/) or Bruno (link below)
 
-<Bruno/>
+<Bruno />
 
- - Or you can use the handy sample javascript scripts in [your repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/scripts).
+- Or you can use the handy sample javascript scripts in [your repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/scripts).
 
 The below is a `CREATE` action, but all `CRUD` operations are available.
 
@@ -49,14 +52,15 @@ const resp = await fetch(`${BASE_URL}/api/v1/connections`, {
     }),
 });
 ```
+
 - `apiKey`: This is located on the homepage of your workspace.
 - `connectionName`: Unique name for the database connection within your workspace.
 - `type`: Which driver to use (postgres, bigquery, etc). Find your database [here](./credentials).
 - `concurrency`: Optional number of concurrent connections Cube can open to your database for this connection. See [Connection Concurrency](#connection-concurrency) below.
 - `credentials`: A javascript object containing the credentials expected by the driver:
-    * The necessary credentials for each database are available [here](./credentials). 
-    * Credentials are securely encrypted.
-    * We strongly suggest creating a **read-only** database user for each connection.
+  - The necessary credentials for each database are available [here](./credentials).
+  - Credentials are securely encrypted.
+  - We strongly suggest creating a **read-only** database user for each connection.
 
 ## Connection Concurrency
 
@@ -69,12 +73,16 @@ Each connection has a `concurrency` setting: the number of connections Cube is a
 You can set `concurrency` when creating a connection (`POST /api/v1/connections`, shown above), or add/update it on an existing connection (`PUT /api/v1/connections/<connectionName>`) — see [CRUD Operations](#crud-operations) below.
 
 <Callout emoji="⚠️">
-Leave enough headroom in your database's own max connection limit for other applications connecting to the same database. Setting `concurrency` higher than your database can support may cause connection errors instead of faster queries.
+  Leave enough headroom in your database's own max connection limit for other
+  applications connecting to the same database. Setting `concurrency` higher
+  than your database can support may cause connection errors instead of faster
+  queries.
 </Callout>
 
 ## CRUD Operations
 
 Refer to the specific scripts in [your repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/scripts) to easily manage connections:
+
 - **Create a connection:** `connection-create.cjs`
 - **List connections:** `connection-list.cjs`
 - **Read a specific connection:** `connection-read.cjs`
@@ -89,24 +97,24 @@ node src/embeddable.com/scripts/<script>.cjs
 
 Or use tools like [Postman](https://www.postman.com/) or Bruno (link below).
 
-<Bruno/>
+<Bruno />
 
 ## Testing Your Connection
 
-To confirm your connection works, use the `/test` endpoint, which is also available as a [script](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/scripts) in your repo. 
+To confirm your connection works, use the `/test` endpoint, which is also available as a [script](https://github.com/embeddable-hq/remarkable-pro-boilerplate/tree/main/src/embeddable.com/scripts) in your repo.
 
 ```javascript
-const apiKey = '<your API Key>';
-const connectionName = '<some unique name>';
-const BASE_URL = 'https://api.us.embeddable.com'; // US API
+const apiKey = "<your API Key>";
+const connectionName = "<some unique name>";
+const BASE_URL = "https://api.us.embeddable.com"; // US API
 // const BASE_URL = 'https://api.eu.embeddable.com'; // EU API
 
 fetch(`${BASE_URL}/api/v1/connections/${connectionName}/test`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-    },
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  },
 });
 ```
 
@@ -124,17 +132,19 @@ cubes:
 
 ## Multiple databases
 
-Embeddable supports connecting to **multiple databases** out-of-the-box.  
+Embeddable supports connecting to **multiple databases** out-of-the-box.
 
-To do so, simply: 
+To do so, simply:
+
 - create a separate **connection** for each database (see "Connections API" above)
 - then point each of your **models** at the appropriate **connection** (see "Using your connection" above).
 
 Sometimes, however, you'll want to point a model at different databases, e.g:
- - to run against prod vs qa vs test databases.
- - to connect to different databases depending on the customer.
 
-In those cases you'll need use what we call **Environments**.  Learn more [here](./environments).
+- to run against prod vs qa vs test databases.
+- to connect to different databases depending on the customer.
+
+In those cases you'll need use what we call **Environments**. Learn more [here](./environments).
 
 ## IP Whitelisting
 
@@ -142,9 +152,7 @@ You can restrict database access by allowing only Embeddable’s IPs ([learn mor
 
 ## SSH Connections (Bastion Host)
 
-<Callout emoji="💬">
-  Please contact us for help with this.
-</Callout>
+<Callout emoji="💬">Please contact us for help with this.</Callout>
 
 Embeddable also supports connecting to your database via SSH connection. The process works as follows:
 
@@ -158,23 +166,26 @@ Details [here](/deployment/deployment-regions#ips-to-whitelist).
 
 This will be used for establishing the SSH tunnel.
 
-- **US :** 
+- **US :**
+
 ```bash
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMMDhwuLvNxkgh7armnFQ94MjFyA5EnAAYol9uXcj0Xi jump-server-us@embeddable.com
 ```
 
-- **EU :** 
+- **EU :**
+
 ```bash
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIqQgU/5Cdbe8sTPZ9S3Zy6iTyBRNP7cjZmD5LtlX0 jump-server-eu@embeddable.com
 ```
 
-### You'll need the following information 
+### You'll need the following information
+
 - Bastion user
 - Bastion host
 - Host and port of the database (must be accessible from Bastion host)
 - Database credentials needed by Cube
 
-Send us these details using [PrivateBin](https://privatebin.eu.embeddable.com/) — do not send them by email or chat. Paste the details, set an expiry, and share the link with us.
+You can send us these details using [Embeddable's secure transfer service](https://privatebin.eu.embeddable.com/) — to avoid sending them by email or chat. Just paste the details, set an expiry, and share the link with us.
 
 </Steps>
 
@@ -187,14 +198,16 @@ Embeddable supports connecting to your database via Amazon PrivateLink. This all
 This is an alternative to SSH connections. It is more secure and easier to set up, but it is **only available** for databases hosted on AWS.
 
 ### What it means
+
 - No public internet exposure — traffic stays entirely within AWS’s private network
 - Available in eu-central-1 and us-east-1 - database must be in the same region as Embeddable's deployment
 - Works with any database that supports PrivateLink (e.g. RDS, Redshift, etc)
 
 ### How it works
+
 - You set up a VPC Endpoint Service (NLB → your DB). For more information, see the [AWS Documentation](https://docs.aws.amazon.com/vpc/latest/privatelink/create-endpoint-service.html)
 - You whitelist our Principal ARN in your Endpoint Service
-- You share the service name with us using [PrivateBin](https://privatebin.eu.embeddable.com/)
+- You share the service name with us using [our transfer service](https://privatebin.eu.embeddable.com/)
 - We connect to your service
 - You accept the connection
 - You can now make connections via the [Connections API](#connections-api) using the provided hostname and port
