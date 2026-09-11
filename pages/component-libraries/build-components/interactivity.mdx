@@ -352,6 +352,114 @@ export default defineComponent(PieChartComponent, meta, {
 
 This flow shows how **no-code configuration** meets **full-code logic**, letting non-technical users pick the data and handle events while you focus on rendering and behavior in the **React** component.
 
+## `filters`: a native variable type
+
+Alongside `text`, `number`, `time`, and the rest, Embeddable supports a native **`filters`** variable type. Where a normal variable holds a single value, a `filters` variable holds an entire filter *expression* — one or more conditions combined with `AND`/`OR`, including nested groups. This is what powers filter-builder style components, letting an end user construct arbitrary filter logic (e.g. “Country equals *United States* AND (Status equals *Active* OR Status equals *Pending*)”) and apply the whole thing to a dataset in one go.
+
+### The `Filters` shape
+
+A `filters` variable's value is either a single condition, or a group of conditions joined by an operator:
+
+```ts
+type FilterOperator =
+  | 'equals' | 'notEquals'
+  | 'contains' | 'notContains'
+  | 'startsWith' | 'endsWith'
+  | 'gt' | 'gte' | 'lt' | 'lte'
+  | 'set' | 'notSet'
+  | 'measureFilter'
+  | 'inDateRange' | 'notInDateRange'
+  | 'beforeDate' | 'afterDate'
+  | 'onTheDate' | 'beforeOrOnDate' | 'afterOrOnDate';
+
+type TimeRange = {
+  from: string | Date;
+  relativeTimeString: string;
+  to: string | Date;
+};
+
+type FilterValue =
+  | string
+  | boolean
+  | number
+  | Date
+  | TimeRange
+  | Array<string | boolean | number | Date>;
+
+type QueryFilter = {
+  property: Dimension | Measure;
+  operator: FilterOperator;
+  value?: FilterValue; // omit for 'set' / 'notSet', which don't take a value
+};
+
+type Filters =
+  | QueryFilter
+  | { operator: 'and' | 'or' | 'AND' | 'OR'; clauses: Filters[] };
+```
+
+See [Available Filter Operators](/component-libraries/build-components/loading-data#available-filter-operators) for what each of these means.
+
+Because `clauses` can itself contain nested groups, you can build arbitrarily deep AND/OR logic. For example:
+
+```json
+{
+  "operator": "and",
+  "clauses": [
+    { "property": "country", "operator": "equals", "value": "United States" },
+    {
+      "operator": "or",
+      "clauses": [
+        { "property": "country", "operator": "equals", "value": ["Germany", "France"] },
+        { "property": "customers.age", "operator": "notEquals", "value": 0 }
+      ]
+    }
+  ]
+}
+```
+
+Before reaching your data warehouse, Embeddable translates this into [Cube's boolean logical operator format](https://cube.dev/docs/product/apis-integrations/rest-api/query-format#boolean-logical-operators).
+
+### Declaring a `filters` event and variable
+
+To build a component that sets a `filters` variable — a filter-builder UI, for example — declare a `filters`-typed event property and variable in your `.emb.ts` file:
+
+```ts
+events: [
+  {
+    name: 'onApply',
+    label: 'Apply',
+    properties: [{ name: 'value', type: 'filters' }],
+  },
+],
+variables: [
+  {
+    name: 'my filter',
+    type: 'filters',
+    events: [{ name: 'onApply', property: 'value' }],
+    // `defaultValue` and `inputs` aren't supported for the `filters` type
+  },
+],
+```
+
+Unlike other variable types, `filters` variables don't support `defaultValue` or `inputs` — there's no default filter state to configure, and (as noted below) a `filters` variable can't be fed into a component as an input.
+
+A teammate can also create a `filters` variable directly in the no-code builder's **Variables** panel and connect it to your component's event, the same way they would [connect any other variable to a component event](/dashboards/interactivity#example-click-a-pie-chart-segment-to-filter-data). Unlike other variable types, a `filters` variable has no default value to configure — it always starts out empty (`{}`) until something sets it.
+
+<ImageGrid width='50%' images={["/img/filters-as-variables-add.png"]}/>
+
+### Applying a `filters` variable to a dataset
+
+Once a `filters` variable holds a value, it can be applied to a dataset in either of the usual places:
+
+- **The dataset settings modal** — open the dataset's settings and add the `filters` variable as a filter, the same way you'd link any other variable to a field-level filter.
+- **A component's dataset filters** — when configuring a component's dataset input, add the `filters` variable to that component's own filter list.
+
+Either way, the variable's filter logic is combined with any other filters already on the dataset using `AND` — it's layered on top of your existing filters rather than replacing them or being OR'd against them.
+
+<Callout emoji="🚨">
+  A `filters` variable can currently only be used to filter datasets — it can't be wired up as an input on a component.
+</Callout>
+
 ## Clearing Values
 
 If your component needs to “reset” a chosen value - like clearing a text field or returning a dropdown to “no selection” - you can use **`Value.noFilter()`**. This tells Embeddable that any associated variable should be emptied i.e. it no longer has a specific value.

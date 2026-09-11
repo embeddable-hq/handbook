@@ -295,3 +295,9 @@ If certain values are **customer-specific** (like “United States” for one cl
 Each variable is defined with a **type** - like `text`, `time`, or `number`. When you link a variable to an input or dataset filter, both sides must share a **matching type**. For instance, you can’t connect a **number** input to a **text** variable.
 
 **Note**: In the future, we plan to offer more flexibility around how different types can interact.
+
+## Filters as variables
+
+Some components — like a filter-builder UI — don't just capture a single value, they capture a whole filter expression, with its own `AND`/`OR` logic and nested groups. For this, Embeddable has a native **`filters`** variable type: connect one to a component's filter-building event, then apply it to a dataset (via the dataset settings modal or a component's dataset filters) just like any other variable, and it's added on top of your existing filters using `AND`.
+
+See [`filters`: a native variable type](/component-libraries/build-components/interactivity#filters-a-native-variable-type) for the full details, including how to wire this up in a custom component.
