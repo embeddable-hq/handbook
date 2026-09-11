@@ -220,11 +220,14 @@ Depending on whether a filter applies to a dimension or measure, Embeddable tran
   
 - **`beforeDate`**: Property is strictly before a specified date/time.  
 - **`afterDate`**: Property is strictly after a specified date/time.
+- **`onTheDate`**: Property falls on a specified date.  
+- **`beforeOrOnDate`**: Property is before or on a specified date/time.  
+- **`afterOrOnDate`**: Property is after or on a specified date/time.
 
 ```ts
   {
     property: inputs.timeDimension, 
-    operator: 'beforeData',
+    operator: 'beforeDate',
     value: ["2025-01-01"] // an array of one element in YYYY-MM-DD format
   }
   ```
