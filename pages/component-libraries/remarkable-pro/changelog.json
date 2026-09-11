@@ -1,5 +1,51 @@
 [
   {
+    "version": "v0.6.0",
+    "date": "2026-09-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.6.0",
+    "notes": [
+      "Added `FunnelChartPro` — a new funnel chart component for visualising stage-based conversion funnels. Supports configurable sorting, colours, gradients, legends, tooltips, percentage and count labels, titles, descriptions, and export menu options.",
+      "Fixed an issue in the `useFillGaps` hook where charts using a non-UTC dashboard timezone (e.g. `America/Los_Angeles`) with a live or rolling date range would show correct data for part of the range followed by empty buckets. The number of empty buckets matched the timezone's UTC offset. The hook now correctly identifies live/rolling date bounds as real instants and converts them to the dashboard's local timezone before computing the fill range, while preserving the existing behaviour for day-precision preset and custom-picker bounds."
+    ]
+  },
+  {
+    "version": "v0.5.0",
+    "date": "2026-09-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.5.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.5.0",
+    "notes": [
+      "Fixed date ranges being anchored in UTC rather than the dashboard's configured timezone. Both custom date picks and built-in presets (Today, Yesterday, Last 7 days, etc.) now compute boundaries using the dashboard's own timezone throughout, so the data returned always matches the calendar day the user selected in their local timezone."
+    ]
+  },
+  {
+    "version": "v0.4.2",
+    "date": "2026-09-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.2",
+    "notes": [
+      "Fixed `DateRangePickerCustomPro` and `DateRangePickerPresetsPro` resolving manually picked dates to the wrong calendar day when `clientContext.timezone` differed from the viewer's browser timezone. `getTimeRangeFromDateRange` now uses `clientContext.timezone` when projecting selected dates, matching the existing preset behaviour. Two edge cases are also resolved: a near-midnight end-of-day UTC timestamp could tip into the next calendar day after timezone projection (now normalised back to its own day-start), and an incomplete range (single click, `to` undefined) was defaulting `to` to the current time instead of the picked day."
+    ]
+  },
+  {
+    "version": "v0.4.1",
+    "date": "2026-08-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.1",
+    "notes": [
+      "Fixed `DateRangePickerPresetsPro` not syncing when `selectedValue` changes to a custom `{from, to}` range. Unapplied date range edits are now also discarded when the picker closes without pressing Apply."
+    ]
+  },
+  {
+    "version": "v0.4.0",
+    "date": "2026-08-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.0",
+    "notes": [
+      "`MultiSelectFieldPro` now supports an opt-in select all / deselect all option, controlled by a new 'Display \"select / deselect all\"' input (off by default). The option only appears when the loaded values are fewer than the maximum options limit, ensuring the full list is known to be complete."
+    ]
+  },
+  {
     "version": "v0.3.27",
     "date": "2026-08-18",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.27",
