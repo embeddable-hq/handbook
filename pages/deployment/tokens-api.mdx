@@ -88,6 +88,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user custom dashboard state
     customCanvasReadOnly: false, // turns off custom dashboard editing for your end-user (if "custom canvas" is enabled)
+    export: false, // set to true ONLY for tokens used with the Dashboard Export API (see "Exporting dashboards" below)
 
     //
     // managed Cube (default)
@@ -154,6 +155,21 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 - **`customCanvasState`** is only needed if you are using [Custom Canvas](/self-serve/custom-canvas/introduction). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field [here](./custom-canvas).  
 
 - **`customCanvasReadOnly`** is also only needed if you are using [Custom Canvas](/self-serve/custom-canvas/introduction).  If `true` the end-user will only be able to view (and interact with) the dashboard, but not edit it (add/remove/move/resize charts). It defaults to `false`.  Learn more [here](./custom-canvas).
+
+- **`export`** is only needed if you are using the [Dashboard Export API](/deployment/dashboard-export). It defaults to `false`. Set it to `true` **only** for a token you pass to that API. An export token has a different lifecycle to a normal token, so the two are not interchangeable — see [Exporting dashboards](#exporting-dashboards) below.
+
+## Exporting dashboards
+
+To export a dashboard with the [Dashboard Export API](/deployment/dashboard-export), request a token with **`export: true`** and pass it to that API. Everything else about the token works as usual — RLS, `filters`, `roles`, `securityContext`, `variables` and `savedVersion` all apply to the export exactly as they would to an embedded dashboard.
+
+Export tokens and normal embedding tokens are **not interchangeable**:
+
+- A token **without** `export: true` is **rejected** by the Dashboard Export API.
+- A token **with** `export: true` is **rejected** if you try to use it to embed a dashboard normally (in your `<em-beddable>` element).
+
+<Callout emoji="💡">
+  Create a fresh token with `export: true` for each export, and use your normal tokens for embedding. Learn more in the [Dashboard Export API](/deployment/dashboard-export) guide.
+</Callout>
 
 ## Testing Security Contexts
 

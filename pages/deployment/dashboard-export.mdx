@@ -1,0 +1,276 @@
+# Dashboard Export API
+
+The **Dashboard Export API** renders a published Embeddable dashboard server-side and returns it as a **print-quality PDF** — the same charts, tables, filters and data the user would see in the browser, captured to a file.
+
+Use it to:
+
+- generate **scheduled reports** (e.g. a monthly PDF per customer)
+- attach dashboards to **emails, invoices or external documents**
+- **archive** a point-in-time snapshot of a dashboard
+
+Because you export with a [security token](/deployment/tokens-api), the PDF is scoped by exactly the same [row-level security](/data-modeling/row-level-security/introduction), filters and context as the embedded dashboard — a user only ever exports data they are allowed to see.
+
+<Bruno/>
+
+<Callout emoji="⚡">
+  The Export API is **asynchronous** and optimized for **bulk export**. You start a job, then poll for its result. See [Timing & throughput](#timing--throughput) before you build against it — the first exports in a batch can take a couple of minutes to begin.
+</Callout>
+
+## How it works
+
+<Steps>
+
+### Create an export-enabled token
+
+Call the [Tokens API](/deployment/tokens-api) with **`export: true`**. This token carries the RLS, filters and context for the export, and can **only** be used with this API.
+
+### Start an export job
+
+`POST` the token (plus any viewport, variables or context) to start a job. The API immediately returns a `jobId` — it does **not** wait for the PDF to render.
+
+### Poll for the result
+
+`GET` the job by its `jobId` until its `status` becomes `SUCCEEDED` (or `FAILED`).
+
+### Download the PDF
+
+A succeeded job returns a short-lived `downloadUrl`. Download the file directly from it.
+
+</Steps>
+
+## Before you start
+
+- **Export-enabled token** — create it with [`export: true`](/deployment/tokens-api#exporting-dashboards). A normal embedding token is rejected, and an export token cannot be used for normal embedding.
+- **Minimum SDK versions** — the dashboard's components must have been built with recent enough Embeddable SDK packages (see [SDK version requirements](#sdk-version-requirements)). Otherwise the export is rejected.
+- **A published dashboard** — export targets a [saved version](/deployment/versions) of an Embeddable, resolved from the token.
+
+## 1. Start an export job
+
+### Endpoint
+
+```
+POST https://api.<region>.embeddable.com/api/v1/dashboard-exports
+```
+
+Learn more about specifying `region` [here](/deployment/deployment-regions).
+
+### Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<region>.embeddable.com/api/v1/dashboard-exports', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    //
+    // required
+    //
+    token: '<export-token>', // a security token created with `export: true`
+    format: 'PDF',
+
+    //
+    // optional
+    //
+    viewport: {
+      width: 1280,  // render width in px (defaults to 1280)
+      height: 800,  // optional; acts as a minimum height (see below)
+    },
+    variables: {          // override the dashboard's variables
+      'date-range': { from: '2025-01-01', to: '2025-12-31' }
+    },
+    clientContext: {      // same clientContext you'd pass when embedding
+      theme: 'light',
+      timezone: 'Europe/Berlin'
+    },
+    styles: {             // CSS applied to the dashboard element
+      background: '#ffffff'
+    },
+    animationSettleMs: 500 // extra wait for animations before capture
+  })
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+### Example Response
+
+```json
+{
+  "jobId": "4a752795-ee35-4e6d-9cf9-9972174a28cf"
+}
+```
+
+The API responds with **`202 Accepted`** and a `Retry-After` header — the job has been queued, not yet rendered. Store the `jobId` and move on to [polling](#2-check-status--download).
+
+### Parameters
+
+- **`token`** _(required)_ — a [security token](/deployment/tokens-api) created with **`export: true`**. It determines which dashboard and saved version is exported, and applies all [row-level security](/data-modeling/row-level-security/introduction), filters and roles.
+- **`format`** _(required)_ — the output format. Currently only **`"PDF"`** is supported.
+- **`viewport`** _(optional)_ — the size the dashboard is rendered at:
+  - **`width`** — render width in pixels. Defaults to `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
+  - **`height`** _(optional)_ — a **minimum** height in pixels. A short dashboard is padded up to it; a taller dashboard extends past it. If omitted, the PDF is exactly as tall as the dashboard's content.
+- **`variables`** _(optional)_ — values that override the dashboard's [variables](/dashboards/interactivity) (for example a date range or a selected filter), so you can export a specific view.
+- **`clientContext`** _(optional)_ — the same [client context](/component-libraries/client-context) object you pass when embedding (e.g. theme, language, timezone).
+- **`styles`** _(optional)_ — a map of CSS declarations applied to the dashboard element, e.g. `{ "background": "#ffffff" }`. A `background` here also paints the page behind the dashboard. Up to 50 declarations.
+- **`animationSettleMs`** _(optional)_ — extra time, in milliseconds, to let animations and transitions settle before the snapshot is taken. Increase it if charts animate in and you see a mid-animation frame in the PDF.
+
+<Callout emoji="💡">
+  The PDF is a faithful, **single-page** capture at the requested width: on-screen styling (not a print stylesheet), backgrounds included, rendered at high resolution. Multi-page / page-break handling is not part of this version.
+</Callout>
+
+## 2. Check status & download
+
+Poll this endpoint with the `jobId` from step 1 until the job reaches a terminal status.
+
+### Endpoint
+
+```
+GET https://api.<region>.embeddable.com/api/v1/dashboard-exports/{jobId}
+```
+
+### Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch(`https://api.<region>.embeddable.com/api/v1/dashboard-exports/${jobId}`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+### Example Response — still rendering
+
+While the job is in progress it returns `status: "PENDING"` and a `Retry-After` header telling you how long to wait before polling again.
+
+```json
+{
+  "jobId": "4a752795-ee35-4e6d-9cf9-9972174a28cf",
+  "status": "PENDING"
+}
+```
+
+### Example Response — ready to download
+
+```json
+{
+  "jobId": "4a752795-ee35-4e6d-9cf9-9972174a28cf",
+  "status": "SUCCEEDED",
+  "downloadUrl": "https://embeddable-dashboard-export...s3...amazonaws.com/4a752795-...?X-Amz-Signature=...",
+  "downloadUrlExpiresAt": "2026-09-10T10:15:00Z",
+  "expiresAt": "2026-09-11T09:00:00Z"
+}
+```
+
+### Field Reference
+
+- **`status`** — the job's lifecycle status:
+  - **`PENDING`** — queued or rendering. Keep polling (see `Retry-After`).
+  - **`SUCCEEDED`** — the PDF is ready; `downloadUrl` is present.
+  - **`FAILED`** — the export could not be produced; see `failureReason`.
+  - **`EXPIRED`** — the export succeeded earlier but the file has since been deleted (see [File retention](#file-retention)). Start a new export to get it again.
+- **`downloadUrl`** — a temporary, pre-signed link to the PDF. Present only when `SUCCEEDED`.
+- **`downloadUrlExpiresAt`** — when the `downloadUrl` stops working. It's short-lived (about 15 minutes); if it expires, just call this endpoint again for a fresh link.
+- **`expiresAt`** — when the file itself is permanently deleted. After this the job reports `EXPIRED`.
+- **`failureReason`** — present only when `FAILED`:
+  - **`RENDER_ERROR`** — the dashboard could not be rendered (e.g. a component error, or it was too heavy/slow to finish in time). Re-running the same export usually won't help — check the dashboard and keep its queries fast.
+  - **`TIMEOUT`** — no result came back in time, typically transient backlog. A retry may succeed.
+
+## Downloading the file
+
+When a job is `SUCCEEDED`, download the PDF from `downloadUrl`. The bytes stream straight from storage — they never pass through the Embeddable API.
+
+<Callout emoji="⚠️">
+  **Don't put `downloadUrl` directly into an email or a saved document.** The link expires after ~15 minutes. Instead, **download the file** and attach the downloaded PDF. If a link expires before you fetch it, request a new one from the same `GET` endpoint (until the file's `expiresAt`).
+</Callout>
+
+## File retention
+
+Each file is kept for **24 hours** after it's produced (`expiresAt`), then permanently deleted. After that the job returns `EXPIRED` and you must start a new export.
+
+## Timing & throughput
+
+This API is built for **bulk export** — generating many PDFs in a batch (for example, one report per customer at the start of the month).
+
+- **Startup delay.** After you create an export, allow a **couple of minutes** before it begins processing. When you export in bulk, this delay applies once at the start of the batch; a single one-off export waits the same short delay before it begins.
+- **Per-export time limit.** Each export is given about **2 minutes** to render. The bulk of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
+- **Throughput depends on the dashboard.** An export can only be captured once the dashboard's data has loaded, so a dashboard that takes N seconds to load takes roughly N + a couple of seconds to export. Fast dashboards export in large numbers in parallel; slow ones are gated by their own load time.
+- **Concurrent exports per workspace.** There's no per-request rate limit, but each workspace can only have a limited number of exports **in flight** at once. Beyond that, `POST` responds with `429 Too Many Requests` and a `Retry-After` header — wait for running exports to finish, then retry.
+
+## SDK version requirements
+
+Dashboard export requires the dashboard's components to have been built with these SDK package versions (or newer):
+
+| Package | Minimum version |
+|---------|-----------------|
+| `@embeddable.com/react` | `2.13.6` |
+| `@embeddable.com/sdk-core` | `4.4.0` |
+| `@embeddable.com/sdk-react` | `4.3.6` |
+
+If the components were built and pushed with older versions, the export is rejected with a `400`. To fix it, update these packages in your [components project](/getting-started/development/introduction), **push your components again**, and **re-publish** the dashboard.
+
+## Errors
+
+| Status | Meaning |
+|--------|---------|
+| `202 Accepted` | The export job was created. The body contains the `jobId`. |
+| `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, or when the dashboard's components are below the [minimum SDK versions](#sdk-version-requirements). |
+| `403 Forbidden` | An `export: true` token was used somewhere other than this API. Export tokens can only be used with the Dashboard Export API. |
+| `404 Not Found` | No job with that `jobId` exists in your workspace. |
+| `429 Too Many Requests` | The workspace has too many exports in flight. Retry after the delay in the `Retry-After` header. |
+
+## Full example — start, poll, download
+
+```ts
+// Important: Always call this server-side, never from client-side code
+const BASE = 'https://api.<region>.embeddable.com/api/v1/dashboard-exports';
+const headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': `Bearer ${apiKey}`,
+};
+
+// 1. Start the job
+const { jobId } = await fetch(BASE, {
+  method: 'POST',
+  headers,
+  body: JSON.stringify({ token: exportToken, format: 'PDF', viewport: { width: 1280 } }),
+}).then((r) => r.json());
+
+// 2. Poll until it's done. Respect the Retry-After header rather than a tight loop.
+async function waitForExport(jobId) {
+  while (true) {
+    const res = await fetch(`${BASE}/${jobId}`, { headers });
+    const job = await res.json();
+
+    if (job.status === 'SUCCEEDED') return job;
+    if (job.status === 'FAILED' || job.status === 'EXPIRED') {
+      throw new Error(`Export ${job.status}: ${job.failureReason ?? ''}`);
+    }
+
+    const retryAfter = Number(res.headers.get('Retry-After')) || 2;
+    await new Promise((r) => setTimeout(r, retryAfter * 1000));
+  }
+}
+
+const job = await waitForExport(jobId);
+
+// 3. Download the PDF and (for example) save or attach it — don't reuse the URL later, it expires.
+const pdf = Buffer.from(await fetch(job.downloadUrl).then((r) => r.arrayBuffer()));
+```
+
+## Related Topics
+
+<CardGrid>
+  <LinkCard title="Tokens API" href="/deployment/tokens-api" icon="🔑">Create the `export: true` security token this API requires.</LinkCard>
+  <LinkCard title="Row-level security" href="/data-modeling/row-level-security/introduction" icon="🔒">How the token scopes the data in your export.</LinkCard>
+  <LinkCard title="Saved versions" href="/deployment/versions" icon="🏷️">Which version of the dashboard gets exported.</LinkCard>
+</CardGrid>
