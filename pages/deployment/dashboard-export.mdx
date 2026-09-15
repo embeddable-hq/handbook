@@ -34,15 +34,29 @@ Call the [Tokens API](/deployment/tokens-api) with **`export: true`**. This toke
 
 ### Download the PDF
 
-A succeeded job returns a short-lived `downloadUrl`. Download the file directly from it.
+A succeeded job returns a short-lived `downloadUrl` (it expires after about **15 minutes**). Download the file directly from it.
 
 </Steps>
 
-## Before you start
+## Requirements
 
-- **Export-enabled token** — create it with [`export: true`](/deployment/tokens-api#exporting-dashboards). A normal embedding token is rejected, and an export token cannot be used for normal embedding.
-- **Minimum SDK versions** — the dashboard's components must have been built with recent enough Embeddable SDK packages (see [SDK version requirements](#sdk-version-requirements)). Otherwise the export is rejected.
-- **A published dashboard** — export targets a [saved version](/deployment/versions) of an Embeddable, resolved from the token.
+Before you export, make sure:
+
+- **You have an export-enabled token** — create it with [`export: true`](/deployment/tokens-api#exporting-dashboards). A normal embedding token is rejected, and an export token cannot be used for normal embedding.
+- **The dashboard is published** — export targets a [saved version](/deployment/versions) of an Embeddable, resolved from the token.
+- **Your components meet the minimum [SDK versions](#sdk-versions)** — see below.
+
+### SDK versions
+
+Dashboard export requires the dashboard's components to have been built with these SDK package versions (or newer):
+
+| Package | Minimum version |
+|---------|-----------------|
+| `@embeddable.com/react` | `2.13.6` |
+| `@embeddable.com/sdk-core` | `4.4.0` |
+| `@embeddable.com/sdk-react` | `4.3.6` |
+
+If the components were built and pushed with older versions, the export is rejected with a `400`. To fix it, update these packages in your [components project](/getting-started/development/introduction), **push your components again**, and **re-publish** the dashboard.
 
 ## 1. Start an export job
 
@@ -113,7 +127,7 @@ The API responds with **`202 Accepted`** and a `Retry-After` header — the job 
 - **`viewport`** _(optional)_ — the size the dashboard is rendered at:
   - **`width`** — render width in pixels. Defaults to `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
   - **`height`** _(optional)_ — a **minimum** height in pixels. A short dashboard is padded up to it; a taller dashboard extends past it. If omitted, the PDF is exactly as tall as the dashboard's content.
-- **`variables`** _(optional)_ — values that override the dashboard's [variables](/dashboards/interactivity) (for example a date range or a selected filter), so you can export a specific view.
+- **`variables`** _(optional)_ — values that override the dashboard's [variables](/deployment/interactivity#pass-in-and-update-variables) (for example a date range or a selected filter), so you can export a specific view.
 - **`clientContext`** _(optional)_ — the same [client context](/component-libraries/client-context) object you pass when embedding (e.g. theme, language, timezone).
 - **`styles`** _(optional)_ — a map of CSS declarations applied to the dashboard element, e.g. `{ "background": "#ffffff" }`. A `background` here also paints the page behind the dashboard. Up to 50 declarations.
 - **`animationSettleMs`** _(optional)_ — extra time, in milliseconds, to let animations and transitions settle before the snapshot is taken. Increase it if charts animate in and you see a mid-animation frame in the PDF.
@@ -196,20 +210,11 @@ When a job is `SUCCEEDED`, download the PDF from `downloadUrl`. The bytes stream
 
 Each file is kept for **24 hours** after it's produced (`expiresAt`), then permanently deleted. After that the job returns `EXPIRED` and you must start a new export.
 
-## Timing & throughput
-
-This API is built for **bulk export** — generating many PDFs in a batch (for example, one report per customer at the start of the month).
-
-- **Startup delay.** After you create an export, allow a **couple of minutes** before it begins processing. When you export in bulk, this delay applies once at the start of the batch; a single one-off export waits the same short delay before it begins.
-- **Per-export time limit.** Each export is given about **2 minutes** to render. The bulk of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
-- **Throughput depends on the dashboard.** An export can only be captured once the dashboard's data has loaded, so a dashboard that takes N seconds to load takes roughly N + a couple of seconds to export. Fast dashboards export in large numbers in parallel; slow ones are gated by their own load time.
-- **Concurrent exports per workspace.** There's no per-request rate limit, but each workspace can only have a limited number of exports **in flight** at once. Beyond that, `POST` responds with `429 Too Many Requests` and a `Retry-After` header — wait for running exports to finish, then retry.
-
 ## Database connections & concurrency
 
 An export is only marked `SUCCEEDED` once **every widget on the dashboard has received its data**. If even one widget fails to load its data in time, the whole export fails (`FAILED` with `RENDER_ERROR`) — a partially-loaded dashboard is never returned.
 
-Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the [per-export time limit](#timing--throughput). If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
+Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the per-export time limit. If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
 
 ### What to set `concurrency` to
 
@@ -225,24 +230,21 @@ You **don't** need one connection per query. Because you have a ~2-minute window
 
 So here a `concurrency` of `4`–`8` is plenty — not `300`. Raise it further only if your queries are slower or you run more exports at once, and only as far as your database can comfortably handle.
 
-## SDK version requirements
+## Timing & throughput
 
-Dashboard export requires the dashboard's components to have been built with these SDK package versions (or newer):
+This API is built for **bulk export** — generating many PDFs in a batch (for example, one report per customer at the start of the month).
 
-| Package | Minimum version |
-|---------|-----------------|
-| `@embeddable.com/react` | `2.13.6` |
-| `@embeddable.com/sdk-core` | `4.4.0` |
-| `@embeddable.com/sdk-react` | `4.3.6` |
-
-If the components were built and pushed with older versions, the export is rejected with a `400`. To fix it, update these packages in your [components project](/getting-started/development/introduction), **push your components again**, and **re-publish** the dashboard.
+- **Startup delay.** After you create an export, allow a **couple of minutes** before it begins processing. When you export in bulk, this delay applies once at the start of the batch; a single one-off export waits the same short delay before it begins.
+- **Per-export time limit.** Each export is given about **2 minutes** to render. The bulk of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
+- **Throughput depends on the dashboard.** An export can only be captured once the dashboard's data has loaded, so a dashboard that takes N seconds to load takes roughly N + a couple of seconds to export. Fast dashboards export in large numbers in parallel; slow ones are gated by their own load time.
+- **Concurrent exports per workspace.** There's no per-request rate limit, but each workspace can only have a limited number of exports **in flight** at once. Beyond that, `POST` responds with `429 Too Many Requests` and a `Retry-After` header — wait for running exports to finish, then retry.
 
 ## Errors
 
 | Status | Meaning |
 |--------|---------|
 | `202 Accepted` | The export job was created. The body contains the `jobId`. |
-| `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, or when the dashboard's components are below the [minimum SDK versions](#sdk-version-requirements). |
+| `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, or when the dashboard's components are below the [minimum SDK versions](#sdk-versions). |
 | `403 Forbidden` | An `export: true` token was used somewhere other than this API. Export tokens can only be used with the Dashboard Export API. |
 | `404 Not Found` | No job with that `jobId` exists in your workspace. |
 | `429 Too Many Requests` | The workspace has too many exports in flight. Retry after the delay in the `Retry-After` header. |
