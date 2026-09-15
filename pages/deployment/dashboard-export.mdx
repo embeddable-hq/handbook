@@ -218,15 +218,13 @@ Each file is kept for **24 hours** after it's produced (`expiresAt`), then perma
 
 An export is only marked `SUCCEEDED` once **every widget on the dashboard has received its data**. If even one widget fails to load its data in time, the whole export fails (`FAILED` with `RENDER_ERROR`) — a partially-loaded dashboard is never returned.
 
-Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the per-export time limit. If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
+Several exports can render at the same time, and each one loads **all** its widgets' data at once — so exports reach your database as bursts of queries. Your connection's [`concurrency`](/data/connect-your-database#connection-concurrency) — how many of those queries run at once — is what keeps them moving: if it's too low, queries queue up, some widgets miss the 2-minute per-export limit, and their exports fail.
 
 ### Setting `concurrency`
 
-Several of your exports can be rendering at the same time, and each one loads **all** its widgets' data at once — so a burst of exports can hit your database with a lot of queries in a short window. If your connection's `concurrency` is too low, those queries queue up, some widgets don't get their data before the 2-minute per-export limit, and their exports fail.
+**Set `concurrency` as high as your database can comfortably serve** (within its connection limit — see the [warning here](/data/connect-your-database#connection-concurrency)), and keep queries fast so each export asks less of it. The more headroom your connection has, the more exports finish in time.
 
-You can't predict exactly how many of your exports will be running at any one moment, so size for resilience rather than for an exact number: **set `concurrency` as high as your database can comfortably serve** (within its connection limit — see the [warning here](/data/connect-your-database#connection-concurrency)). The more headroom it has, the more exports finish in time.
-
-To see how much it matters: say each dashboard has 10 widgets and, at some moment, 30 of your exports are rendering at once — up to 300 queries hitting your database together, at ~800 ms each (`300 × 0.8s = 240s` of query time):
+To see how much it matters: when 30 exports render at once, each with 10 widgets, that's 300 queries hitting your database together — at ~800 ms each, `300 × 0.8s = 240s` of query time to clear:
 
 | `concurrency` | Time to clear 300 queries | Result |
 |---|---|---|
@@ -234,7 +232,7 @@ To see how much it matters: say each dashboard has 10 widgets and, at some momen
 | `4` | ~1 min | comfortable headroom |
 | `8` | ~30 sec | large headroom |
 
-Even a small increase has an outsized effect — so set `concurrency` well above your dashboard's widget count, and keep queries fast so each export needs less from your database.
+Even a small increase has an outsized effect — so set `concurrency` well above your dashboard's widget count.
 
 ## Timing & throughput
 
