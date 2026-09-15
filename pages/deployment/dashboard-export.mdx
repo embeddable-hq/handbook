@@ -17,7 +17,7 @@ Because you export with a [security token](/deployment/tokens-api), the PDF is s
 <Bruno/>
 
 <Callout emoji="⚡">
-  The Export API is **asynchronous** and optimized for **bulk export**. You start a job, then poll for its result. See [Timing & throughput](#timing--throughput) before you build against it — the first exports in a batch can take a couple of minutes to begin.
+  The Export API is **asynchronous**: you start a job, then poll for its result. See [Timing & throughput](#timing--throughput) before you build against it — the first exports after a quiet period can take a couple of minutes to begin.
 </Callout>
 
 ## How it works
@@ -63,6 +63,8 @@ Dashboard export requires the dashboard's components to have been built with the
 If the components were built and pushed with older versions, the export is rejected with a `400`. To fix it, update these packages in your [components project](/getting-started/development/introduction), **push your components again**, and **re-publish** the dashboard.
 
 ## 1. Start an export job
+
+Each request starts **one** export — one dashboard, one PDF. To generate many, call this endpoint once for each dashboard; Embeddable renders them in parallel.
 
 ### Endpoint
 
@@ -236,10 +238,10 @@ Even a small increase has an outsized effect — so set `concurrency` well above
 
 ## Timing & throughput
 
-This API is built for **bulk export** — generating many PDFs in a batch (for example, one report per customer at the start of the month).
+A few things to know when you're generating many PDFs — for example, one report per customer at the start of the month:
 
-- **Startup delay.** After you create an export, allow a **couple of minutes** before it begins processing. When you export in bulk, this delay applies once at the start of the batch; a single one-off export waits the same short delay before it begins.
-- **Per-export time limit.** Each export is given about **2 minutes** to render. The bulk of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
+- **Startup delay.** After you create an export, allow a **couple of minutes** before it begins processing. This affects the first exports after a quiet period; once exports are already running, new ones start without the wait.
+- **Per-export time limit.** Each export is given about **2 minutes** to render. Most of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
 - **Throughput depends on the dashboard.** An export can only be captured once the dashboard's data has loaded, so a dashboard that takes N seconds to load takes roughly N + a couple of seconds to export. Fast dashboards export in large numbers in parallel; slow ones are gated by their own load time.
 - **Concurrent exports per workspace.** There's no per-request rate limit, but each workspace can only have a limited number of exports **in flight** at once. Beyond that, `POST` responds with `429 Too Many Requests` and a `Retry-After` header — wait for running exports to finish, then retry.
 
