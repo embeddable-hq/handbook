@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.7.0",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.7.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.7.0",
+    "notes": [
+      "Chart card components now support an optional **Maximize** menu action. When enabled per chart via the builder's menu options input (off by default), a Maximize button appears in the chart menu that expands the chart into a full-viewport lightbox — the chart can be restored by clicking the Minimize button, pressing Escape, or clicking the backdrop. The lightbox backdrop and dimensions are configurable via the `--em-lightbox-*` CSS theme variables."
+    ]
+  },
+  {
+    "version": "v0.6.1",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.6.1",
+    "notes": [
+      "`KpiChartNumberComparisonPro` and `LineChartComparisonWithKpiTabsPro` now have separate controls for 'Reverse positive/negative colors' and 'Reverse trend direction'. Previously, toggling the color reversal also reversed the trend arrow direction — the two settings are now independent. For existing dashboards that have not explicitly configured the new 'Reverse trend direction' field, it defaults to mirror the legacy color-reversal value, preserving existing appearance."
+    ]
+  },
+  {
     "version": "v0.6.0",
     "date": "2026-09-08",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.0",
