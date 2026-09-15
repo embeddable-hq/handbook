@@ -181,7 +181,7 @@ While the job is in progress it returns `status: "PENDING"` and a `Retry-After` 
 - **`downloadUrlExpiresAt`** — when the `downloadUrl` stops working. It's short-lived (about 15 minutes); if it expires, just call this endpoint again for a fresh link.
 - **`expiresAt`** — when the file itself is permanently deleted. After this the job reports `EXPIRED`.
 - **`failureReason`** — present only when `FAILED`:
-  - **`RENDER_ERROR`** — the dashboard could not be rendered (e.g. a component error, or it was too heavy/slow to finish in time). Re-running the same export usually won't help — check the dashboard and keep its queries fast.
+  - **`RENDER_ERROR`** — the dashboard could not be fully rendered — for example a widget didn't receive its data in time (see [Database connections & concurrency](#database-connections--concurrency)), or a component errored. Re-running the same export usually won't help on its own — check the dashboard, keep its queries fast, and make sure your connection `concurrency` is high enough.
   - **`TIMEOUT`** — no result came back in time, typically transient backlog. A retry may succeed.
 
 ## Downloading the file
@@ -204,6 +204,14 @@ This API is built for **bulk export** — generating many PDFs in a batch (for e
 - **Per-export time limit.** Each export is given about **2 minutes** to render. The bulk of that is waiting for the dashboard's data to load, so a dashboard with many widgets or slow queries can hit the limit and come back `FAILED`. Keeping queries fast is the best way to keep exports fast and reliable.
 - **Throughput depends on the dashboard.** An export can only be captured once the dashboard's data has loaded, so a dashboard that takes N seconds to load takes roughly N + a couple of seconds to export. Fast dashboards export in large numbers in parallel; slow ones are gated by their own load time.
 - **Concurrent exports per workspace.** There's no per-request rate limit, but each workspace can only have a limited number of exports **in flight** at once. Beyond that, `POST` responds with `429 Too Many Requests` and a `Retry-After` header — wait for running exports to finish, then retry.
+
+## Database connections & concurrency
+
+An export is only marked `SUCCEEDED` once **every widget on the dashboard has received its data**. If even one widget fails to load its data in time, the whole export fails (`FAILED` with `RENDER_ERROR`) — a partially-loaded dashboard is never returned.
+
+Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the [per-export time limit](#timing--throughput). Set it high enough for the number of exports you run at the same time. If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
+
+**Worked example.** Suppose each dashboard has 10 widgets that load in parallel, and you start 30 exports at once — that's 300 queries competing for the same connection. With a `concurrency` of `2` (the low default for Postgres), only 2 of those queries run at a time. Even at a fast average query time of 750–800 ms, clearing all 300 takes roughly two minutes on its own — so many dashboards never receive all their data before the 2-minute per-export limit, and those exports fail. Raising `concurrency` to match your peak export volume is what prevents this.
 
 ## SDK version requirements
 
