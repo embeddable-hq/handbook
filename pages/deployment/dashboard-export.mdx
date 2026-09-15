@@ -209,9 +209,21 @@ This API is built for **bulk export** — generating many PDFs in a batch (for e
 
 An export is only marked `SUCCEEDED` once **every widget on the dashboard has received its data**. If even one widget fails to load its data in time, the whole export fails (`FAILED` with `RENDER_ERROR`) — a partially-loaded dashboard is never returned.
 
-Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the [per-export time limit](#timing--throughput). Set it high enough for the number of exports you run at the same time. If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
+Because exports run **in parallel** and every widget runs its own query, the [`concurrency` of your database connection](/data/connect-your-database#connection-concurrency) — how many queries Embeddable may run against your database at once — is usually what decides how many exports finish within the [per-export time limit](#timing--throughput). If it's too low, queries queue up behind each other, widgets don't get their data in time, and exports fail.
 
-**Worked example.** Suppose each dashboard has 10 widgets that load in parallel, and you start 30 exports at once — that's 300 queries competing for the same connection. With a `concurrency` of `2` (the low default for Postgres), only 2 of those queries run at a time. Even at a fast average query time of 750–800 ms, clearing all 300 takes roughly two minutes on its own — so many dashboards never receive all their data before the 2-minute per-export limit, and those exports fail. Raising `concurrency` to match your peak export volume is what prevents this.
+### What to set `concurrency` to
+
+You **don't** need one connection per query. Because you have a ~2-minute window per export, you only need enough `concurrency` to get through your **total query load** — roughly `(exports running at once) × (widgets per dashboard) × (average query time)` — comfortably inside that window. A modest value usually leaves plenty of headroom. The real ceiling is your database: never set `concurrency` higher than it can comfortably serve (see the [connection-limit warning](/data/connect-your-database#connection-concurrency)).
+
+**Worked example.** Say each dashboard has 10 widgets that load in parallel and you start 30 exports at once — 300 queries, at an average of 800 ms each. That's `300 × 0.8s = 240s` of query time to get through, so the concurrency you pick decides whether that fits in the window:
+
+| `concurrency` | Time to run all 300 queries | Result |
+|---|---|---|
+| `2` (Postgres default) | ~2 min | Many dashboards miss the 2-minute limit and **fail** |
+| `4` | ~1 min | All exports finish, with ~1 min of headroom |
+| `8` | ~30 sec | All exports finish, with large headroom |
+
+So here a `concurrency` of `4`–`8` is plenty — not `300`. Raise it further only if your queries are slower or you run more exports at once, and only as far as your database can comfortably handle.
 
 ## SDK version requirements
 
