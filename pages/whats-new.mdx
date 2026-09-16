@@ -2,6 +2,21 @@
 # 🚀 What’s New in Embeddable
 
 
+## September 2026
+
+### 1. Export dashboards as PDF (Beta)
+
+You can now render a published dashboard server-side and download it as a **print-quality PDF** using the new [Dashboard Export API](/deployment/dashboard-export). This feature is in **Beta** — APIs and behaviour may still change.
+
+It's ideal for scheduled reports, email attachments, and archiving — and because you export with a [security token](/deployment/tokens-api), every PDF respects the same [row-level security](/data-modeling/row-level-security/introduction), filters and context as the embedded dashboard.
+
+- Async API: start a job, poll for status, download from a temporary link
+- Control the render with viewport width, variable overrides, client context and styles
+- Enabled with a new `export: true` flag on the [Tokens API](/deployment/tokens-api#exporting-dashboards)
+
+Learn more in the [Dashboard Export API](/deployment/dashboard-export) guide.
+
+
 ## September 2025
 
 We’ve been hard at work improving Embeddable! Here’s a roundup of the latest features and enhancements designed to help you build, manage, and secure dashboards more efficiently.
