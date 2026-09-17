@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.8.0",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.8.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.8.0",
+    "notes": [
+      "`FunnelChartPro` has received several improvements: a new `showStageLabels` option lets you display stage names (and optionally values or percentages) directly on funnel slices; legend labels now correctly apply the active theme’s colour settings instead of always rendering in black; and a console error that occurred when toggling legend items has been fixed."
+    ]
+  },
+  {
     "version": "v0.7.0",
     "date": "2026-09-15",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.7.0",
