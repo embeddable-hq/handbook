@@ -1,11 +1,20 @@
 [
   {
+    "version": "v0.9.0",
+    "date": "2026-09-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.9.0",
+    "notes": [
+      "Added a **Limit top group by** input to `BarChartGroupedPro`, `BarChartGroupedHorizontalPro`, `BarChartStackedPro`, `BarChartStackedHorizontalPro`, and `LineChartGroupedPro`. The control ranks the group-by dimension — the one driving side-by-side bars, stack segments, or separate lines — by its total measure contribution, keeps the top N groups, and folds the rest into a single **Other** series. This operates independently of any existing x/y-axis item limits. An optional **Sort by group total** direction input controls the ranking order. Restricted to sum and count measures."
+    ]
+  },
+  {
     "version": "v0.8.0",
     "date": "2026-09-15",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.8.0",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.8.0",
     "notes": [
-      "`FunnelChartPro` has received several improvements: a new `showStageLabels` option lets you display stage names (and optionally values or percentages) directly on funnel slices; legend labels now correctly apply the active theme’s colour settings instead of always rendering in black; and a console error that occurred when toggling legend items has been fixed."
+      "`FunnelChartPro` has received several improvements: a new `showStageLabels` option lets you display stage names (and optionally values or percentages) directly on funnel slices; legend labels now correctly apply the active theme's colour settings instead of always rendering in black; and a console error that occurred when toggling legend items has been fixed."
     ]
   },
   {
