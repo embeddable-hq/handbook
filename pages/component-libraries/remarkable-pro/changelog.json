@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.9.2",
+    "date": "2026-09-22",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.9.2",
+    "notes": [
+      "Reviewed and updated components that previously had no timezone usage — affected components now correctly apply the configured `clientContext.timezone` where applicable, preventing them from falling back to the browser's default timezone."
+    ]
+  },
+  {
     "version": "v0.9.1",
     "date": "2026-09-17",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.1",
