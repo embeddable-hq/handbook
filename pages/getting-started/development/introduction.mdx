@@ -1,0 +1,28 @@
+# Introduction to development
+
+Embeddable is **code-first**: the building blocks of your customer-facing analytics live **in your own repository** (or separate repos), making them easy to **customize**, **version**, and **integrate** with your existing codebase. In your repo you can define:
+
+- [Data models](/data-modeling/introduction) - describe how to query your data, in YAML or JavaScript.
+- [Components](/component-libraries/remarkable-pro/introduction) - use Embeddable's ready-made charting components, or [build your own](/component-libraries/build-components/defining-components) in React.
+- [Dashboards as code](/dashboards/dashboards-as-code) - compose data models and components into dashboards, entirely in code.
+
+You can write all three by hand, or prompt an AI agent: Embeddable ships **Claude skills** for [data models](/data-modeling/build-with-ai), [components](/component-libraries/build-with-ai), [dashboards](/dashboards/build-with-ai), and [themes](/component-libraries/remarkable-pro/theme-with-ai) that turn plain English into valid, reviewable code.
+
+## The workflow
+
+All three share the same workflow: [develop locally](/getting-started/development/local-environment) against a live preview, then [push](/getting-started/development/pushing-code) to your Embeddable workspace using the SDK's CLI. When you push, the CLI bundles your components with a standard JS bundler ([Vite.js](https://vitejs.dev/)) and securely uploads the bundle, your data models, and the metadata from your [config files](/component-libraries/build-components/defining-components).
+
+Because it's standard bundling, there are **no limitations** on how you build — use whatever CSS framework, charting library, or design system you prefer. If it can be bundled, it can be sent to Embeddable. **If you can dream it, you can build it.** 🚀
+
+<Callout emoji="💡">
+Embeddable supports building components in React, but you can embed anywhere there is HTML.
+</Callout>
+
+## Requirements
+
+Embeddable requires **Node.js version 20 or later**. To update Node.js:
+- If you're using a version manager like **nvm**, run:
+  ```bash
+  nvm install 20
+  nvm use 20
+  ```

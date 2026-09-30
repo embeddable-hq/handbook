@@ -4,9 +4,15 @@
 
 <VideoComponent
     src="/video/drill-down-example.mp4"
-    width="1920"
-    height="1080"
+    width="1280"
+    height="720"
 />
+
+If you'd like to learn more about Drill-Down before reading further, we've created a [five-minute tutorial](/video-tutorials/quick-hits/drill-down) (video and text) that will walk you through the basics of how it works and how to set it up.
+
+<Callout emoji="💡">
+  Building [as code](/dashboards/dashboards-as-code)? Drill-downs are [`DRILLDOWN` events](/dashboards/dashboards-as-code#drilldown-events) in your `.embeddable.yml` — the same behaviour, defined in YAML.
+</Callout>
 
 
 ## Why use drill-down?
@@ -50,16 +56,25 @@ Add one or more chart components showing the detailed data you want users to see
 ### Add a variable for filtering
 
 - Click **Variables** in the right sidebar
-- Click **Add variable** and [configure it](https://docs.embeddable.com/dashboards/interactivity)
+- Click **Add variable** and [configure it](/dashboards/interactivity)
 - Give it a default value for testing
+
+<ImageGrid width='100%' images={["/img/drill-down-add-variable.png", "/img/drill-down-configure-variable.png"]}/>
+
 
 ### Connect the variable to your chart or dataset
 
-Variables can be used on a chart-by-chart basis or to add filters to an entire dataset, which can impact multiple charts. For more information and complete examples, take a look at our [variables documentation](https://docs.embeddable.com/dashboards/interactivity) Connect your variable to the relevant chart or dataset so that when the variable value changes, the data updates accordingly.
+Variables can be used on a chart-by-chart basis or to add filters to an entire dataset, which can impact multiple charts. For more information and complete examples, take a look at our [variables documentation](/dashboards/interactivity). Connect your variable to the relevant chart or dataset so that when the variable value changes, the data updates accordingly.
 
 ### Test the variable
 
 Change the variable value using the variable controls in the builder. Verify your chart updates correctly with different values.
+
+<VideoComponent
+    src="/video/drill-down-test-variable.mp4"
+    width="1280"
+    height="720"
+/>
 
 ### Save and publish your Embeddable
 
@@ -75,7 +90,7 @@ Once filtering works as expected, save and publish. This Embeddable is now ready
 
 In your dashboard, click **Edit** on the chart where you want to add drill-down.
 
-<ImageGrid width='100%' images={["/img/drill-down-choose.jpg"]}/>
+<ImageGrid width='100%' images={["/img/drill-down-choose.png"]}/>
 
 ### Navigate to the Interactions tab
 
@@ -187,6 +202,15 @@ When a user clicks a chart element with drill-down configured:
 <ImageGrid width='100%' images={["/img/drill-down-modal-2.png"]}/>
 <ImageGrid width='100%' images={["/img/drill-down-modal-3.png"]}/>
 
+By default, the drill-down modal takes up the full screen on all devices for maximum space to explore. However, you can customize the modal size using CSS variables:
+
+```css
+'--em-drilldown-modal-min-height': '100%',
+'--em-drilldown-modal-width': '100%',
+```
+
+These variables can be [set in your theme](/component-libraries/remarkable-pro/styling/introduction).
+
 ## Multiple interactions on the same chart
 
 You can combine different interaction types on a single chart—multiple drill-down interactions, a mix of drill-down and [set variable](/dashboards/interactivity) interactions, or different actions for different events. This gives you flexibility to build sophisticated interactive experiences.
@@ -242,7 +266,7 @@ This ensures users never encounter broken drill-down links in production.
 
 ## Technical notes
 
-- Drill-downs respect all security settings from your [security token](/deployment/security-token), including row-level security
+- Drill-downs respect all security settings from your [security token](/deployment/tokens-api), including row-level security
 - The `savedVersion` from your security token determines which version of the dependent Embeddable is rendered
 - If a dependent Embeddable's published version doesn't match the `savedVersion`, users see an error: *"Embeddable published with savedVersion 'X' could not be found"*
 - If an overridden variable has been deleted or renamed in the dependent Embeddable, the drill-down continues without error—the override is simply skipped

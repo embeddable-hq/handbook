@@ -1,0 +1,36 @@
+# Embeddable Quick Hits - Drill-Down Button
+
+<Callout emoji="💡">
+     this document is transcribed from the video and therefore at times makes reference to things you can see on screen.
+</Callout>
+
+<ExternalVideo src="https://www.youtube.com/embed/NVig_XlQUvQ?si=UBCXVgFGY1323nZj"/>
+
+## Video Transcript
+Hi, welcome to Embeddable Quick Hits. In this video, we're going to talk about enabling Drill-Down in your dashboards. Drill Down is a powerful feature that allows your users to click through an existing dashboard and bring up additional information behind what they clicked on. The classic example, and the one we'll be taking you through today, is clicking on a bar in a bar chart to reveal a table of information relating to that particular bar.
+
+Embeddable's Drill-Down solution uses parent dashboards and child dashboards, opening the child dashboard in a modal. This can be nested, meaning a child dashboard can open its own child dashboard. Embeddable handles this gracefully, using the existing modal and creating a breadcrumb trail.
+
+Let's start with a blank dashboard. This is going to be our child dashboard. It might seem a bit strange to be creating this first, but we have to have something to point interactions on the parent dashboard at when we build it. For this example, we'll be using the sample data that comes with new Embeddable workspaces, but the same principals apply to any data you happen to be using. We'll need a name for this dashboard, so for simplicity let's go with “Child Dashboard.”
+
+Let's make a Dataset. We're going to click the plus icon in the bottom right, name our Dataset “Daily Listeners,” and select “Daily Listeners Data” as the Data Model. Then we'll click “Confirm.” With that done, we can add a table chart. We'll click “Add Component” up at the top right of the main dashboard view. Then we'll search for the word “table” and choose Table Chart - Paginated.
+
+For Dataset, we'll choose the “Daily Listeners” one we just created. For the Columns input, we'll choose everything available under “Daily Listeners Data” but ignore the items available via joins, just to keep things a little simpler, visually. We'll give the table the title “Daily Listeners by Age Group” and leave everything else as default. We'll click “Add to dashboard” to finish chart setup. Then we'll expand it vertically so it has some room to breathe.
+
+You may immediately notice that this table is clearly not “by age group” considering we can see all kinds of different age groups being displayed. That's because we need to filter the dataset. We could do that by hard-coding an age group, but for the purpose of our interaction with the parent chart, we'll want to use a variable.
+
+Let's create one by clicking the plus icon in the right sidebar. The name will be “Age Group” and the type will be “text.” We could give a default value here and have the table start out filtered, but I'm going to pass on that and leave the table un-filtered for now. Click “Confirm” and we're done there.
+
+The last thing we need to do is filter the Dataset by the variable's value. We'll click the “Daily Listeners” dataset and then the “Add filter” button. We'll choose “Age Group,” and leave the equals sign, and then we'll click the “link variable” icon and link to our Age Group variable. Then click “Confirm” to save, and we're all set on this dashboard. Click the Embeddable logo to return to your workspace.
+
+From here, we're going to create the parent dashboard, so we'll click “Create new Embeddable” and once again, we have a blank dashboard to work with. This one needs a name, too, and we're going to stay simple and just use “Parent Dashboard.” We'll again need a dataset, and it's the same process. Click the plus icon, name it “Daily Listeners” and choose “Daily Listeners Data,” then click “Confirm.”
+
+Next We'll add a bar chart by clicking the “Add Component” button. We don't need to filter here as we're going with the very first chart. We'll choose “Daily Listeners” for our dataset. For our measure, we'll go with “Total Listens” and for our X-Axis we'll choose “Age Group”. For a title, we'll put “Total Listens by Age Group”. We can again leave everything else defaulted, and click “Add to dashboard.” We'll get a nice-looking graph displaying exactly what we expect it to display.
+
+Now we're going to wire up the Drill-Down. You could actually have done this before clicking “Add to dashboard” but I like to be sure the chart's working as expected first. Hover over the chart and click the “edit” icon that appears in the top-center menu. Click the “Interactions” tab, and then click the “Add interaction” button. From here we'll choose “When a bar is clicked” and take the “Drill-down” Action. We'll choose our Drill-Down Child dashboard as the Embeddable to open. Then we'll click “Add a variable to update”. We'll choose the “Age Group” variable we created in the child dashboard, and then set that to equal the Clicked axis dimension value (the Dimension in question being “Age Group” and the value therefor being one of the age groups). We're all set here, so we'll click “Save.”
+
+That's really it! Now it's time to test. We can do that by clicking “Preview” in the top menu. We'll see the same chart, but now when we click one of the bars, a modal will open. In it, we'll see the chart from our child dashboard … but now it's filtered by the age group we clicked on.
+
+As you can see, setting up a Drill-Down interaction is very straightforward, but it opens up a ton of possibilities for your Embeddables! If you'd like more information about Drill-Down, you can [check out our documentation](https://docs.embeddable.com/dashboards/drill-down). We've also got a [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) you can join, where we're happy to answer your questions.
+
+See you next time!

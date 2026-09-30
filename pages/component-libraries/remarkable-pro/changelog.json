@@ -1,0 +1,963 @@
+[
+  {
+    "version": "v0.10.0",
+    "date": "2026-09-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.10.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.10.0",
+    "notes": [
+      "Added an **Auto apply** input (off by default) to `MultiSelectFieldPro`, `MeasureMultiSelectFieldPro`, and `DimensionOrMeasureMultiSelectFieldPro`. When enabled, the Apply button is hidden and each checkbox tick immediately applies the selection via the existing `onChange` event and `multi-select values` variable — no separate Apply step required."
+    ]
+  },
+  {
+    "version": "v0.9.2",
+    "date": "2026-09-22",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.9.2",
+    "notes": [
+      "Reviewed and updated components that previously had no timezone usage — affected components now correctly apply the configured `clientContext.timezone` where applicable, preventing them from falling back to the browser's default timezone."
+    ]
+  },
+  {
+    "version": "v0.9.1",
+    "date": "2026-09-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.9.1",
+    "notes": [
+      "The dropdown search placeholder ('Search…') and multi-select Apply button label are now translatable via new `common.search` and `common.apply` theme i18n keys, with English and German translations provided. These strings are now correctly localised in `MultiSelectFieldPro`, `MeasureMultiSelectFieldPro`, `DimensionOrMeasureMultiSelectFieldPro`, `SingleSelectFieldPro`, and all `FilterBuilder` variants — previously they always rendered the English defaults."
+    ]
+  },
+  {
+    "version": "v0.9.0",
+    "date": "2026-09-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.9.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.9.0",
+    "notes": [
+      "Added a **Limit top group by** input to `BarChartGroupedPro`, `BarChartGroupedHorizontalPro`, `BarChartStackedPro`, `BarChartStackedHorizontalPro`, and `LineChartGroupedPro`. The control ranks the group-by dimension — the one driving side-by-side bars, stack segments, or separate lines — by its total measure contribution, keeps the top N groups, and folds the rest into a single **Other** series. This operates independently of any existing x/y-axis item limits. An optional **Sort by group total** direction input controls the ranking order. Restricted to sum and count measures."
+    ]
+  },
+  {
+    "version": "v0.8.0",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.8.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.8.0",
+    "notes": [
+      "`FunnelChartPro` has received several improvements: a new `showStageLabels` option lets you display stage names (and optionally values or percentages) directly on funnel slices; legend labels now correctly apply the active theme's colour settings instead of always rendering in black; and a console error that occurred when toggling legend items has been fixed."
+    ]
+  },
+  {
+    "version": "v0.7.0",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.7.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.7.0",
+    "notes": [
+      "Chart card components now support an optional **Maximize** menu action. When enabled per chart via the builder's menu options input (off by default), a Maximize button appears in the chart menu that expands the chart into a full-viewport lightbox — the chart can be restored by clicking the Minimize button, pressing Escape, or clicking the backdrop. The lightbox backdrop and dimensions are configurable via the `--em-lightbox-*` CSS theme variables."
+    ]
+  },
+  {
+    "version": "v0.6.1",
+    "date": "2026-09-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.6.1",
+    "notes": [
+      "`KpiChartNumberComparisonPro` and `LineChartComparisonWithKpiTabsPro` now have separate controls for 'Reverse positive/negative colors' and 'Reverse trend direction'. Previously, toggling the color reversal also reversed the trend arrow direction — the two settings are now independent. For existing dashboards that have not explicitly configured the new 'Reverse trend direction' field, it defaults to mirror the legacy color-reversal value, preserving existing appearance."
+    ]
+  },
+  {
+    "version": "v0.6.0",
+    "date": "2026-09-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.6.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.6.0",
+    "notes": [
+      "Added `FunnelChartPro` — a new funnel chart component for visualising stage-based conversion funnels. Supports configurable sorting, colours, gradients, legends, tooltips, percentage and count labels, titles, descriptions, and export menu options.",
+      "Fixed an issue in the `useFillGaps` hook where charts using a non-UTC dashboard timezone (e.g. `America/Los_Angeles`) with a live or rolling date range would show correct data for part of the range followed by empty buckets. The number of empty buckets matched the timezone's UTC offset. The hook now correctly identifies live/rolling date bounds as real instants and converts them to the dashboard's local timezone before computing the fill range, while preserving the existing behaviour for day-precision preset and custom-picker bounds."
+    ]
+  },
+  {
+    "version": "v0.5.0",
+    "date": "2026-09-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.5.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.5.0",
+    "notes": [
+      "Fixed date ranges being anchored in UTC rather than the dashboard's configured timezone. Both custom date picks and built-in presets (Today, Yesterday, Last 7 days, etc.) now compute boundaries using the dashboard's own timezone throughout, so the data returned always matches the calendar day the user selected in their local timezone."
+    ]
+  },
+  {
+    "version": "v0.4.2",
+    "date": "2026-09-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.2",
+    "notes": [
+      "Fixed `DateRangePickerCustomPro` and `DateRangePickerPresetsPro` resolving manually picked dates to the wrong calendar day when `clientContext.timezone` differed from the viewer's browser timezone. `getTimeRangeFromDateRange` now uses `clientContext.timezone` when projecting selected dates, matching the existing preset behaviour. Two edge cases are also resolved: a near-midnight end-of-day UTC timestamp could tip into the next calendar day after timezone projection (now normalised back to its own day-start), and an incomplete range (single click, `to` undefined) was defaulting `to` to the current time instead of the picked day."
+    ]
+  },
+  {
+    "version": "v0.4.1",
+    "date": "2026-08-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.1",
+    "notes": [
+      "Fixed `DateRangePickerPresetsPro` not syncing when `selectedValue` changes to a custom `{from, to}` range. Unapplied date range edits are now also discarded when the picker closes without pressing Apply."
+    ]
+  },
+  {
+    "version": "v0.4.0",
+    "date": "2026-08-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.4.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.4.0",
+    "notes": [
+      "`MultiSelectFieldPro` now supports an opt-in select all / deselect all option, controlled by a new 'Display \"select / deselect all\"' input (off by default). The option only appears when the loaded values are fewer than the maximum options limit, ensuring the full list is known to be complete."
+    ]
+  },
+  {
+    "version": "v0.3.27",
+    "date": "2026-08-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.27",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.27",
+    "notes": [
+      "Fixed `DateRangePickerPresetsPro` custom calendar going out of sync with `selectedValue`. The trigger label correctly reflected the latest bound value, but the internal `dateRange` state (used by the calendar and the Apply button) was not kept in sync — causing the Custom view to open with nothing selected and Apply enabled when a preset was active, and an externally updated `selectedValue` to update the label without updating the calendar grid. `dateRange` is now initialised from the resolved time range on mount and re-synced whenever `selectedValue` changes."
+    ]
+  },
+  {
+    "version": "v0.3.26",
+    "date": "2026-08-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.26",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.26",
+    "notes": [
+      "Exposed CSS variables for canvas overlays, enabling custom styling for overlay positioning, sizing, spacing, colours, actions, responsive layouts, and configurator forms."
+    ]
+  },
+  {
+    "version": "v0.3.25",
+    "date": "2026-08-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.25",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.25",
+    "notes": [
+      "Fixed `syncDefaultFilters` in `FilterBuilderPro` and `FilterBuilderWithGroupingPro` not re-applying a previously adopted `defaultFilters` value after the filter list was cleared. Deleting the last filter emits `null`, which was leaving stale adoption state behind — so pushing the same clause back in from the host was silently ignored. The host can now revert to or re-push a filter set after it has been cleared, and it will be re-applied as expected."
+    ]
+  },
+  {
+    "version": "v0.3.24",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.24",
+    "notes": [
+      "`FilterBuilderWithGroupingPro` now dispatches `embeddable-user-interaction` events on user-driven edits (top-level and group-level), matching `FilterBuilderPro`. An optional `trackingId` input and `componentName` have been added for consistency with other trackable components."
+    ]
+  },
+  {
+    "version": "v0.3.23",
+    "date": "2026-07-31",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.23",
+    "notes": [
+      "`FilterBuilderPro` and `FilterBuilderWithGroupingPro` now support a new opt-in **Track default filters** (`syncDefaultFilters`) setting. When enabled, the component tracks host-driven changes to its bound `defaultFilters` after mount — allowing the host to update or reset the filter at runtime (e.g. switching between or reverting to saved filter sets) without remounting the embed. The component's own `onChange` echo and `null`/`undefined` values are ignored so in-progress edits are preserved, and a well-formed empty clause resets the filters. When disabled (the default), behaviour is unchanged: `defaultFilters` only seeds the initial value."
+    ]
+  },
+  {
+    "version": "v0.3.22",
+    "date": "2026-07-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.22",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.22",
+    "notes": [
+      "Added a standardised `embeddable-user-interaction` browser event that all Pro chart components dispatch on click interactions. The event fires on the `window` object and carries a consistent payload including `componentName`, an optional `trackingId`, and the clicked `dimension`, `dimensionValue`, `dimensionTimeRange`, group-by dimension, and measure values — providing a single chart-agnostic way to observe and react to user interactions across all Pro charts. An optional `trackingId` input has been added to affected chart components so specific chart instances can be identified in event listeners.",
+      "Improved click-event payload consistency: when a click resolves to a time range, `dimensionValue` is now set to `undefined` to avoid duplicating the raw value alongside `dimensionTimeRange`."
+    ]
+  },
+  {
+    "version": "v0.3.21",
+    "date": "2026-07-22",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.21",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.21",
+    "notes": [
+      "Fixed the KPI chart comparison period label being incorrectly lowercased — the `toLowerCase()` transformation has been removed so comparison period labels now preserve their original capitalisation."
+    ]
+  },
+  {
+    "version": "v0.3.20",
+    "date": "2026-07-20",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.20",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.20",
+    "notes": [
+      "Introduced `FilterBuilderWithGrouping` — a new filter builder component that supports nested AND/OR filter groups, enabling users to compose complex multi-level filter conditions. The existing `FilterBuilderPro` is unchanged and unaffected."
+    ]
+  },
+  {
+    "version": "v0.3.19",
+    "date": "2026-07-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.19",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.19",
+    "notes": [
+      "Removed the box shadow from the `EditorCard` component so it renders without an unwanted shadow in embedded contexts."
+    ]
+  },
+  {
+    "version": "v0.3.18",
+    "date": "2026-07-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.18",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.18",
+    "notes": [
+      "Updated the Remarkable UI dependency to the latest version."
+    ]
+  },
+  {
+    "version": "v0.3.17",
+    "date": "2026-07-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.17",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.17",
+    "notes": [
+      "Added a `canBeCleared` boolean option to `SingleSelectFieldPro` and `MultiSelectFieldPro`. When set to `false`, the clear button is hidden and the field automatically selects the first available option, preventing the user from leaving the field empty."
+    ]
+  },
+  {
+    "version": "v0.3.16",
+    "date": "2026-07-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.16",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.16",
+    "notes": [
+      "Added a fallback for when the i18n system is not initialized — for example, when `clientContext` is not configured on `<EmbeddedComponent>`. Text values that are not translation keys are now returned as-is, and for values that are translation keys, the user's configured input field value is used as the fallback, preventing broken or empty text when i18n initialization fails due to misconfiguration."
+    ]
+  },
+  {
+    "version": "v0.3.15",
+    "date": "2026-07-07",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.15",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.15",
+    "notes": [
+      "Pivot table row and column totals have been upgraded from simple on/off toggles to multi-select aggregation pickers — each measure can now independently show any combination of Sum, Min, Max, and Average calculations per axis. The sub-input labels have been renamed from \"Show row/column aggregation\" to \"Show row/column calculation\", and the aggregate labels rendered in the table are now translatable via the theme i18n keys `charts.pivotTable.sum`, `charts.pivotTable.min`, `charts.pivotTable.max`, and `charts.pivotTable.average`."
+    ]
+  },
+  {
+    "version": "v0.3.14",
+    "date": "2026-07-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.14",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.14",
+    "notes": [
+      "Fixed the `EditorCard` component incorrectly applying a border style — the border is now discarded so the editor card renders without an unwanted border."
+    ]
+  },
+  {
+    "version": "v0.3.13",
+    "date": "2026-07-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.13",
+    "notes": [
+      "Updated the Remarkable UI dependency to version 3.0.21, which extends the date-picker to support date selection up to five years in the future."
+    ]
+  },
+  {
+    "version": "v0.3.12",
+    "date": "2026-07-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.12",
+    "notes": [
+      "Fixed the KPI chart not respecting the viewer's timezone — `clientContext` is now forwarded to the `loadData` call, ensuring KPI data is displayed in the correct timezone when one is configured via `clientContext`."
+    ]
+  },
+  {
+    "version": "v0.3.11",
+    "date": "2026-06-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.11",
+    "notes": [
+      "Added an `ignoreEmptyData` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
+    ]
+  },
+  {
+    "version": "v0.3.9",
+    "date": "2026-06-22",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.9",
+    "notes": [
+      "`FilterBuilderPro` now supports an AND/OR operator toggle — a button appears between each pair of adjacent filter clauses allowing the top-level logic to switch between AND (all clauses must match) and OR (any clause may match). The selected operator defaults to AND, is persisted in `FilterBuilderState`, and is included in the filter output."
+    ]
+  },
+  {
+    "version": "v0.3.8",
+    "date": "2026-06-19",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.8",
+    "notes": [
+      "Added support for custom canvas overlay customisation — chart components can now render custom content directly on top of the chart canvas, enabled by an upgrade to Remarkable UI 3.0.20."
+    ]
+  },
+  {
+    "version": "v0.3.7",
+    "date": "2026-06-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.7",
+    "notes": [
+      "Chart components now expose an `exportOptions` setting in the component builder, allowing builders to control which export formats (CSV, XLSX, PNG) are available in each chart's export menu — or disable exports entirely on a per-component basis."
+    ]
+  },
+  {
+    "version": "v0.3.6",
+    "date": "2026-06-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.6",
+    "notes": [
+      "Fixed tooltip positioning across chart components by updating the Remarkable UI library to 3.0.19.",
+      "Fixed pie and donut chart legend labels ignoring the active theme's colour setting — labels now correctly apply the `--em-chart-category-color` CSS variable instead of always rendering in black."
+    ]
+  },
+  {
+    "version": "v0.3.5",
+    "date": "2026-06-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.5",
+    "notes": [
+      "Extended `FilterBuilderPro` with cascading filter support via a new \"Apply dynamic filters\" boolean component setting. When enabled, each clause's value dropdown is automatically narrowed by all other active clauses — for example, selecting a Country first filters the available City options. Each clause's own selections are excluded from its own filtering, so multiple values can still be added to a single clause."
+    ]
+  },
+  {
+    "version": "v0.3.4",
+    "date": "2026-06-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.4",
+    "notes": [
+      "Fixed percentage datalabels and tooltips in pie/donut charts, bar charts, and bar+line combo charts now correctly respecting the per-measure `decimalPlaces` subinput — previously the decimal precision was hardcoded to 2 decimal places regardless of configuration.",
+      "The `onLineClicked` event on `LineChartComparisonDefaultPro` now includes a `measureValue` property, providing the numeric value of the clicked data point alongside the existing `dimensionValue` and `dimensionTimeRange`.",
+      "Added `onCellClicked` event to `HeatMapPro`, emitting `rowDimensionValue`, `rowDimensionTimeRange`, `columnDimensionValue`, and `columnDimensionTimeRange` on each cell click — enabling independent row and column filter wiring from a single click interaction.",
+      "Fixed `MeasureMultiSelectFieldPro` and `DimensionOrMeasureMultiSelectFieldPro` displaying model-qualified measure titles (e.g. \"Products # of orders\") when variable defaults were set — titles are now normalised to their short display form (e.g. \"# of orders\") on mount.",
+      "Upgraded the Remarkable UI library."
+    ]
+  },
+  {
+    "version": "v0.3.3",
+    "date": "2026-05-29",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.3",
+    "notes": [
+      "Fixed focus behaviour in `FilterBuilderPro` — input focus and value auto-selection now activate only when a new filter is being created, preventing unwanted focus when editing existing filter values."
+    ]
+  },
+  {
+    "version": "v0.3.2",
+    "date": "2026-05-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.2",
+    "notes": [
+      "Added `AreaChartPro` component — a new area chart that renders data as stacked filled areas, supporting interactive click handling for dimension filtering, dynamic granularity selection, and full theme customisation.",
+      "Fixed incorrect aggregation of the \"Other\" bucket in bar and combo charts — charts now support a per-measure `aggType` field in the component meta, enabling average, minimum, or maximum aggregation for tail values instead of always defaulting to sum."
+    ]
+  },
+  {
+    "version": "v0.3.1",
+    "date": "2026-05-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.1",
+    "notes": [
+      "Exported `FilterBuilderPro` component — it is now directly importable from the package with full TypeScript type support.",
+      "Chart components now ship with explicitly defined default dimensions for consistent out-of-the-box sizing; comparison period input descriptions have been updated for improved dashboard-as-code compatibility.",
+      "Sorted the component index file."
+    ]
+  },
+  {
+    "version": "v0.3.0",
+    "date": "2026-05-18",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.0",
+    "notes": [
+      "All Remarkable Pro components now include a `description` field in their component metadata, providing human-readable summaries of each component's purpose and use case — required for the dashboard-as-code feature."
+    ]
+  },
+  {
+    "version": "v0.2.13",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.13",
+    "notes": [
+      "Fixed `LineChartComparisonWithKpiTabsPro` not passing `axisDimensionTimeRange` in its `onLineClicked` event — clicking a data point on the chart now correctly forwards the date/time range to drilldown targets."
+    ]
+  },
+  {
+    "version": "v0.2.12",
+    "date": "2026-05-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.12",
+    "notes": [
+      "Added `BarLineChartPro` component — a combination chart supporting multiple bar and line measures plotted against a single shared dimension, with an optional secondary Y-axis, configurable line styles (dashed, fill-under-line), and click event handlers for both bar and line interactions."
+    ]
+  },
+  {
+    "version": "v0.2.11",
+    "date": "2026-05-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.11",
+    "notes": [
+      "Chart click handlers now guard against empty element interactions — clicking on empty chart space no longer fires spurious events or risks a runtime error."
+    ]
+  },
+  {
+    "version": "v0.2.10",
+    "date": "2026-05-07",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.10",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.10",
+    "notes": [
+      "Added `BubbleChartPro` component for visualising three-dimensional data as X/Y scatter points scaled by a configurable size measure. Supports adjustable minimum and maximum bubble radius bounds, optional point labels, theme customisation, and click events that include the bubble's size value."
+    ]
+  },
+  {
+    "version": "v0.2.9",
+    "date": "2026-04-30",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.9",
+    "notes": [
+      "Added `ComparisonLineChartWithKpiTabsPro` component — a new chart that enables side-by-side comparison of data across two date periods, with interactive KPI tabs displaying metrics and trend indicators."
+    ]
+  },
+  {
+    "version": "v0.2.8",
+    "date": "2026-04-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.8",
+    "notes": [
+      "All interactive chart types (bar, line, pie, scatter, and table) now emit a companion `*DimensionTimeRange` event property alongside the existing `*DimensionValue` property. For time-type dimensions, this provides a `TimeRange` covering the full granularity bucket of the clicked data point (e.g. clicking a monthly bar returns the full month range), making it straightforward to wire click events directly to date-range filters."
+    ]
+  },
+  {
+    "version": "v0.2.7",
+    "date": "2026-04-28",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.7",
+    "notes": [
+      "Tooltips no longer apply label truncation — the `maxCharacters` setting is now ignored in tooltips so the full label is always shown. CSV and Excel exports now write raw unformatted values instead of abbreviated ones (e.g. `90000000` instead of `90M`), making them suitable for downstream calculations."
+    ]
+  },
+  {
+    "version": "v0.2.6",
+    "date": "2026-04-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.6",
+    "notes": [
+      "Table charts (`TableChartPaginated` and `ScrollableTable`) now expose dedicated `sortColumn` and `sortDirection` input fields for configuring default sort behaviour. The dataset-level sort button has been hidden to prevent conflicts with runtime interactive sorting."
+    ]
+  },
+  {
+    "version": "v0.2.5",
+    "date": "2026-04-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.5",
+    "notes": [
+      "Added `ScatterPlotPro` chart component for X/Y coordinate visualisation with optional grouping, configurable point colours, axis labels and ranges, and point-click event support."
+    ]
+  },
+  {
+    "version": "v0.2.4",
+    "date": "2026-04-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.4",
+    "notes": [
+      "Added `LineChartWithKpiTabsPro` component — a tabbed line chart that combines line chart visualisations with selectable KPI metric tabs."
+    ]
+  },
+  {
+    "version": "v0.2.3",
+    "date": "2026-04-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.3",
+    "notes": [
+      "Fixed a bug in `ScrollableTable` where dimension columns would fail to display when the first data row was missing the corresponding key."
+    ]
+  },
+  {
+    "version": "v0.2.2",
+    "date": "2026-04-15",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.2",
+    "notes": [
+      "The `FilterBuilder` component now supports configurable default filter values via a `defaultFilters` prop, allowing filters to be pre-populated on initial load."
+    ]
+  },
+  {
+    "version": "v0.2.1",
+    "date": "2026-04-13",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.1",
+    "notes": [
+      "Fixed markdown content scrolling behavior in the `ScrollableTable` component."
+    ]
+  },
+  {
+    "version": "v0.2.0",
+    "date": "2026-04-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.2.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.2.0",
+    "notes": [
+      "Added timezone support via `clientContext`, enabling chart components and date range controls to display time-based data in the correct business timezone."
+    ]
+  },
+  {
+    "version": "v0.1.32",
+    "date": "2026-04-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.32",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.32",
+    "notes": ["Added sort and limit functionality for Bar chart components."]
+  },
+  {
+    "version": "v0.1.31",
+    "date": "2026-04-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.31",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.31",
+    "notes": ["New `FilterBuilder` component."]
+  },
+  {
+    "version": "v0.1.30",
+    "date": "2026-04-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.30",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.30",
+    "notes": ["Updated SDK versions."]
+  },
+  {
+    "version": "v0.1.29",
+    "date": "2026-04-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.29",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.29",
+    "notes": ["Released a new version of the Remarkable UI library."]
+  },
+  {
+    "version": "v0.1.28",
+    "date": "2026-03-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.28",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.28",
+    "notes": ["Fonts can now be injected via the theme configuration."]
+  },
+  {
+    "version": "v0.1.27",
+    "date": "2026-03-26",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.27",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.27",
+    "notes": ["Introduced CSS variables for the drilldown modal."]
+  },
+  {
+    "version": "v0.1.26",
+    "date": "2026-03-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.26",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.26",
+    "notes": ["Fixed tooltip display on pie charts."]
+  },
+  {
+    "version": "v0.1.25",
+    "date": "2026-03-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.25",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.25",
+    "notes": ["Updated the Remarkable UI library to the latest version."]
+  },
+  {
+    "version": "v0.1.24",
+    "date": "2026-03-12",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.24",
+    "notes": [
+      "Extended the date ranges component with `fromDate` and `toDate` props.",
+      "Upgraded SDK versions."
+    ]
+  },
+  {
+    "version": "v0.1.23",
+    "date": "2026-03-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.23",
+    "notes": [
+      "Renamed `BarChartStackedHorizontalPro` and its associated type for naming consistency."
+    ]
+  },
+  {
+    "version": "v0.1.22",
+    "date": "2026-03-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.22",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.22",
+    "notes": [
+      "Cleaned up select field categories and updated logic for `MeasureMultiSelect` and `MeasureDimensionMultiSelect`."
+    ]
+  },
+  {
+    "version": "v0.1.21",
+    "date": "2026-03-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.21",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.21",
+    "notes": [
+      "Added support for all per-type sub-inputs in the data model meta."
+    ]
+  },
+  {
+    "version": "v0.1.20",
+    "date": "2026-03-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.20",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.20",
+    "notes": [
+      "Added `MeasureMultiSelectFieldPro` and `DimensionMeasureMultiSelectFieldPro` components."
+    ]
+  },
+  {
+    "version": "v0.1.19",
+    "date": "2026-03-05",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.19",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.19",
+    "notes": ["Added `TextFieldPro` component."]
+  },
+  {
+    "version": "v0.1.18",
+    "date": "2026-03-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.18",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.18",
+    "notes": [
+      "Updated the Markdown component category and exported layout components."
+    ]
+  },
+  {
+    "version": "v0.1.17",
+    "date": "2026-03-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.17",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.17",
+    "notes": [
+      "Added `MarkdownPro` component, `MarkdownEditor`, and a `markdown` input type."
+    ]
+  },
+  {
+    "version": "v0.1.16",
+    "date": "2026-03-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.16",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.16",
+    "notes": [
+      "Pie charts and simple bar charts can now display values as percentages."
+    ]
+  },
+  {
+    "version": "v0.1.15",
+    "date": "2026-02-27",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.15",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.15",
+    "notes": [
+      "Fixed a bug in `dataOtherFormatter` where namespace parsing failed for raw string values."
+    ]
+  },
+  {
+    "version": "v0.1.14",
+    "date": "2026-02-24",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.14",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.14",
+    "notes": ["Extended components with a dedicated export object."]
+  },
+  {
+    "version": "v0.1.13",
+    "date": "2026-02-19",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.13",
+    "notes": ["Updated the SDK to the latest version."]
+  },
+  {
+    "version": "v0.1.12",
+    "date": "2026-02-19",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.12",
+    "notes": ["Fixed data label alignment on bar charts."]
+  },
+  {
+    "version": "v0.1.11",
+    "date": "2026-02-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.11",
+    "notes": ["Internal maintenance release."]
+  },
+  {
+    "version": "v0.1.10",
+    "date": "2026-02-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.10",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.10",
+    "notes": ["Added `HorizontalDivider` component."]
+  },
+  {
+    "version": "v0.1.9",
+    "date": "2026-02-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.9",
+    "notes": [
+      "Updated component exports to ensure all components are accessible."
+    ]
+  },
+  {
+    "version": "v0.1.8",
+    "date": "2026-02-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.8",
+    "notes": ["Added sub-row support to the `PivotTable` component."]
+  },
+  {
+    "version": "v0.1.7",
+    "date": "2026-02-10",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.7",
+    "notes": ["Added `EmptyBlockPro` component."]
+  },
+  {
+    "version": "v0.1.6",
+    "date": "2026-02-10",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.6",
+    "notes": [
+      "Improved the KPI chart with a `displayNullAs` option for controlling how null values are displayed."
+    ]
+  },
+  {
+    "version": "v0.1.5",
+    "date": "2026-02-05",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.5",
+    "notes": ["Updated the Remarkable UI library to the latest version."]
+  },
+  {
+    "version": "v0.1.4",
+    "date": "2026-02-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.4",
+    "notes": ["Updated the Remarkable UI library to the latest version."]
+  },
+  {
+    "version": "v0.1.3",
+    "date": "2026-02-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.3",
+    "notes": ["Introduced tooltip support across components."]
+  },
+  {
+    "version": "v0.1.2",
+    "date": "2026-02-04",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.2",
+    "notes": ["Fixed deprecation warnings from internal SDK usage."]
+  },
+  {
+    "version": "v0.1.1",
+    "date": "2026-02-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.1",
+    "notes": ["Fixed a high-severity vulnerability in the `xlsx` dependency."]
+  },
+  {
+    "version": "v0.1.0",
+    "date": "2026-02-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.1.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.1.0",
+    "notes": [
+      "Updated to the latest SDK to fix critical security vulnerabilities."
+    ]
+  },
+  {
+    "version": "v0.0.27",
+    "date": "2026-02-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.27",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.27",
+    "notes": [
+      "Added `MeasureSingleSelectField` and `DimensionSingleSelectField` components."
+    ]
+  },
+  {
+    "version": "v0.0.26",
+    "date": "2026-02-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.26",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.26",
+    "notes": [
+      "Introduced a built-in granularity selector for bar and line charts."
+    ]
+  },
+  {
+    "version": "v0.0.25",
+    "date": "2026-01-21",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.25",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.25",
+    "notes": [
+      "Added color input support for measures on single-dimension bar charts.",
+      "Introduced `backgroundColorMap` and `borderColorMap` theme properties."
+    ]
+  },
+  {
+    "version": "v0.0.24",
+    "date": "2026-01-20",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.24",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.24",
+    "notes": [
+      "Dropdowns now handle viewport collisions, ensuring they always appear within the visible area."
+    ]
+  },
+  {
+    "version": "v0.0.23",
+    "date": "2026-01-20",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.23",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.23",
+    "notes": [
+      "Components now check the data model meta for number formatting configuration.",
+      "Fixed the `Meta` type definition."
+    ]
+  },
+  {
+    "version": "v0.0.22",
+    "date": "2026-01-16",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.22",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.22",
+    "notes": [
+      "Added support for Component Previews, allowing live previews of components in the Embeddable dashboard builder."
+    ]
+  },
+  {
+    "version": "v0.0.21",
+    "date": "2026-01-16",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.21",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.21",
+    "notes": ["Improved the `GranularitySelectField` component."]
+  },
+  {
+    "version": "v0.0.20",
+    "date": "2026-01-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.20",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.20",
+    "notes": [
+      "Improved the `getBarStackedChartProData` function for more accurate stacked bar chart data handling."
+    ]
+  },
+  {
+    "version": "v0.0.19",
+    "date": "2026-01-14",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.19",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.19",
+    "notes": [
+      "Added `GranularitySelectField` component.",
+      "Synced dependencies."
+    ]
+  },
+  {
+    "version": "v0.0.18",
+    "date": "2026-01-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.18",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.18",
+    "notes": ["Added `ScrollableTable` component."]
+  },
+  {
+    "version": "v0.0.17",
+    "date": "2026-01-07",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.17",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.17",
+    "notes": ["Improved the HeatMap configuration."]
+  },
+  {
+    "version": "v0.0.16",
+    "date": "2025-12-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.16",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.16",
+    "notes": [
+      "Updated the Remarkable UI library and exported component sub-inputs."
+    ]
+  },
+  {
+    "version": "v0.0.15",
+    "date": "2025-12-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.15",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.15",
+    "notes": [
+      "Improved `inputs` and `subInputs` for greater reusability across components."
+    ]
+  },
+  {
+    "version": "v0.0.14",
+    "date": "2025-12-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.14",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.14",
+    "notes": [
+      "Added new default comparison periods, including \"same period last X\"."
+    ]
+  },
+  {
+    "version": "v0.0.13",
+    "date": "2025-12-23",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.13",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.13",
+    "notes": [
+      "Improved the `fillgaps` hook for more reliable gap-filling in time series data."
+    ]
+  },
+  {
+    "version": "v0.0.12",
+    "date": "2025-12-19",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.12",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.12",
+    "notes": [
+      "Added `DateRangePickerCustom` and `DateRangePickerPresets` components."
+    ]
+  },
+  {
+    "version": "v0.0.11",
+    "date": "2025-12-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.11",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.11",
+    "notes": ["Updated Remarkable UI library version."]
+  },
+  {
+    "version": "v0.0.10",
+    "date": "2025-12-12",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.10",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.10",
+    "notes": [
+      "Improved KPI chart resize behavior.",
+      "Improved KPI chart configuration."
+    ]
+  },
+  {
+    "version": "v0.0.9",
+    "date": "2025-12-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.9",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.9",
+    "notes": ["Updated Remarkable UI library version."]
+  },
+  {
+    "version": "v0.0.8",
+    "date": "2025-12-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.8",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.8",
+    "notes": [
+      "Separated the `loadData` call for PaginatedTable totals, improving performance and correctness when displaying total rows."
+    ]
+  },
+  {
+    "version": "v0.0.7",
+    "date": "2025-12-10",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.7",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.7",
+    "notes": [
+      "Improved the `useFillGaps` hook to return an empty result when source data is empty."
+    ]
+  },
+  {
+    "version": "v0.0.6",
+    "date": "2025-12-05",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.6",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.6",
+    "notes": ["Exported table utility functions."]
+  },
+  {
+    "version": "v0.0.5",
+    "date": "2025-12-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.5",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.5",
+    "notes": ["Fixed incorrect sorting of results in the HeatMap component."]
+  },
+  {
+    "version": "v0.0.4",
+    "date": "2025-12-02",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.4",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.4",
+    "notes": ["Fixed incorrect sorting behavior in the Pivot Table component."]
+  },
+  {
+    "version": "v0.0.3",
+    "date": "2025-12-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.3",
+    "notes": ["Cleaned up `package.json`."]
+  },
+  {
+    "version": "v0.0.2",
+    "date": "2025-12-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.0.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.0.2",
+    "notes": ["Initial release of Remarkable PRO."]
+  }
+]

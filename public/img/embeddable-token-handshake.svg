@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 406" role="img" aria-label="Authorization handshake">
+<style>
+  svg{--blue-fill:#E6F1FB;--blue-stroke:#185FA5;--blue-title:#0C447C;--blue-sub:#185FA5;--green-fill:#EAF3DE;--green-stroke:#3B6D11;--green-title:#27500A;--green-sub:#3B6D11;--arrow:#888780;--ink:#2A2926;--ink-soft:#5F5E5A}
+  @media (prefers-color-scheme:dark){svg{--blue-fill:#0C447C;--blue-stroke:#85B7EB;--blue-title:#B5D4F4;--blue-sub:#85B7EB;--green-fill:#27500A;--green-stroke:#97C459;--green-title:#C0DD97;--green-sub:#97C459;--arrow:#B4B2A9;--ink:#F1EFE8;--ink-soft:#B4B2A9}}
+  text{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .th{font-weight:600;font-size:15px}.ts{font-weight:400;font-size:12px}
+  .lbl{font-weight:400;font-size:12px;fill:var(--ink-soft)}
+  .arr{stroke:var(--arrow);stroke-width:1.5;fill:none}
+  .n-blue rect{fill:var(--blue-fill);stroke:var(--blue-stroke);stroke-width:1}.n-blue .th{fill:var(--blue-title)}.n-blue .ts{fill:var(--blue-sub)}
+  .n-green rect{fill:var(--green-fill);stroke:var(--green-stroke);stroke-width:1}.n-green .th{fill:var(--green-title)}.n-green .ts{fill:var(--green-sub)}
+</style>
+<defs><marker id="arrowS" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<g class="n-green">
+  <rect x="130" y="30" width="420" height="56" rx="8"/>
+  <text class="th" x="340" y="50" text-anchor="middle" dominant-baseline="central">Your server</text>
+  <text class="ts" x="340" y="70" text-anchor="middle" dominant-baseline="central">Your backend, per request</text>
+</g>
+<line x1="340" y1="86" x2="340" y2="122" class="arr" marker-end="url(#arrowS)"/>
+<text class="lbl" x="352" y="104" dominant-baseline="central">Request: dashboard, user, filters + env</text>
+<g class="n-blue">
+  <rect x="130" y="130" width="420" height="56" rx="8"/>
+  <text class="th" x="340" y="150" text-anchor="middle" dominant-baseline="central">Embeddable token API</text>
+  <text class="ts" x="340" y="170" text-anchor="middle" dominant-baseline="central">Mints a scoped token</text>
+</g>
+<line x1="340" y1="186" x2="340" y2="222" class="arr" marker-end="url(#arrowS)"/>
+<text class="lbl" x="352" y="204" dominant-baseline="central">Returns a security token</text>
+<g class="n-blue">
+  <rect x="130" y="230" width="420" height="56" rx="8"/>
+  <text class="th" x="340" y="250" text-anchor="middle" dominant-baseline="central">Web component</text>
+  <text class="ts" x="340" y="270" text-anchor="middle" dominant-baseline="central">&lt;em-beddable token=&quot;…&quot; /&gt;</text>
+</g>
+<line x1="340" y1="286" x2="340" y2="322" class="arr" marker-end="url(#arrowS)"/>
+<text class="lbl" x="352" y="304" dominant-baseline="central">Sends token per request</text>
+<g class="n-blue">
+  <rect x="130" y="330" width="420" height="56" rx="8"/>
+  <text class="th" x="340" y="350" text-anchor="middle" dominant-baseline="central">Embeddable data runtime</text>
+  <text class="ts" x="340" y="370" text-anchor="middle" dominant-baseline="central">Returns only allowed data</text>
+</g>
+</svg>

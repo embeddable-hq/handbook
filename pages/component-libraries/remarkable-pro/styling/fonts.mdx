@@ -1,0 +1,191 @@
+# Custom Fonts
+
+Remarkable Pro ships with **Inter** as the default font. You can load additional [Google Fonts](https://fonts.google.com/) or self-hosted fonts and assign them to specific parts of the UI via [CSS variables](/component-libraries/remarkable-pro/styling/introduction).
+
+## How it works
+
+Font configuration has two parts:
+
+- **`theme.fonts`** declares which fonts to **load** (make them available to the browser).
+- **`theme.styles`** **assigns** loaded fonts to specific CSS variables that control where they appear in the UI.
+
+Loading a font does not automatically apply it anywhere. The browser also lazy-loads font files: it only downloads the actual `.woff2` data when a rendered element uses that font-family.
+
+## Quick start
+
+To replace the default font with Roboto:
+
+```ts
+// embeddable.theme.ts
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/remarkable-pro';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  return defineTheme(parentTheme, {
+    fonts: {
+      google: [
+        { name: 'Inter' },
+        { name: 'Roboto' },
+      ],
+    },
+    styles: {
+      '--em-core-font-family--base': "'Roboto'",
+    },
+  }) as Theme;
+};
+
+export default themeProvider;
+```
+
+**Things to notice:**
+- **Inter is included explicitly.** `defineTheme` replaces the entire `google` array, so omitting Inter would stop it from loading.
+- **Roboto is assigned** to `--em-core-font-family--base`, which controls the default font across the UI.
+- `display=swap` is always used for Google Fonts, ensuring text remains visible while fonts load.
+
+## Google Fonts
+
+Use `theme.fonts.google` to load fonts from [Google Fonts](https://fonts.google.com/).
+
+```ts
+fonts: {
+  google: [
+    { name: 'Roboto', weights: '400;700' },
+    { name: 'Playfair Display', weights: '400..700' },
+    { name: 'Lato' },
+  ],
+}
+```
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `name` | Yes | The Google Font family name, exactly as it appears on [fonts.google.com](https://fonts.google.com/). |
+| `weights` | No | Weight range to load. Defaults to `'100..900'` (full variable range). Use `'400;700'` for specific weights or `'400..700'` for a range. |
+
+<Callout emoji="💡">
+`defineTheme` replaces the entire `google` array when merging. To keep Inter alongside your custom fonts, include `{ name: 'Inter' }` in the array.
+</Callout>
+
+## Self-hosted fonts
+
+Use `theme.fonts.custom` to load fonts from your own URLs using `@font-face` rules.
+
+```ts
+fonts: {
+  custom: [
+    {
+      family: 'BrandFont',
+      src: 'https://cdn.example.com/fonts/brandfont-regular.woff2',
+    },
+    {
+      family: 'BrandFont',
+      src: 'https://cdn.example.com/fonts/brandfont-bold.woff2',
+      descriptors: { weight: '700' },
+    },
+  ],
+}
+```
+
+| Property | Required | Description |
+|----------|----------|-------------|
+| `family` | Yes | The font-family name to use in CSS. |
+| `src` | Yes | URL to the font file. |
+| `descriptors` | No | Optional `@font-face` descriptors (see below). |
+
+### Font descriptors
+
+Descriptors tell the browser which variant a font file represents:
+
+| Descriptor | Example | Description |
+|------------|---------|-------------|
+| `weight` | `'700'` | Font weight (e.g. `'400'`, `'700'`, `'100 900'`). |
+| `style` | `'italic'` | Font style (`'normal'`, `'italic'`, `'oblique'`). |
+| `stretch` | `'condensed'` | Font stretch value. |
+| `unicodeRange` | `'U+0000-00FF'` | Unicode range the font covers. |
+
+## Assigning fonts
+
+Loaded fonts are assigned to the UI through CSS variables in `theme.styles`. The key variable is:
+
+- `--em-core-font-family--base` controls the default font for all text.
+
+You can also target specific components:
+
+```ts
+styles: {
+  '--em-core-font-family--base': "'Roboto'",
+  '--em-markdown-h1-font-family': "'Playfair Display'",
+  '--em-markdown-h2-font-family': "'Playfair Display'",
+}
+```
+
+For the full list of available CSS variables, see [Core tokens](/component-libraries/remarkable-pro/styling/core-tokens) and [Component tokens](/component-libraries/remarkable-pro/styling/component-tokens).
+
+## Full example
+
+A complete example loading multiple Google Fonts, a self-hosted font, and assigning them to different parts of the UI:
+
+```ts
+// embeddable.theme.ts
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/remarkable-pro';
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  return defineTheme(parentTheme, {
+    fonts: {
+      google: [
+        { name: 'Inter' },
+        { name: 'Roboto', weights: '400;700' },
+        { name: 'Playfair Display', weights: '400..700' },
+      ],
+      custom: [
+        {
+          family: 'BrandFont',
+          src: 'https://cdn.example.com/fonts/brandfont-regular.woff2',
+        },
+        {
+          family: 'BrandFont',
+          src: 'https://cdn.example.com/fonts/brandfont-bold.woff2',
+          descriptors: { weight: '700' },
+        },
+      ],
+    },
+    styles: {
+      '--em-core-font-family--base': "'Roboto'",
+      '--em-markdown-h1-font-family': "'Playfair Display'",
+      '--em-markdown-h2-font-family': "'Playfair Display'",
+      '--em-kpichart-font-family': "'BrandFont'",
+    },
+  }) as Theme;
+};
+
+export default themeProvider;
+```
+
+## Type reference
+
+```ts
+type ThemeFontGoogle = {
+  name: string;
+  weights?: string;
+};
+
+type ThemeFontCustomDescriptors = {
+  style?: string;
+  weight?: string;
+  stretch?: string;
+  unicodeRange?: string;
+};
+
+type ThemeFontCustom = {
+  family: string;
+  src: string;
+  descriptors?: ThemeFontCustomDescriptors;
+};
+
+type ThemeFonts = {
+  google?: ThemeFontGoogle[];
+  custom?: ThemeFontCustom[];
+};
+```
+
+These types are exported from `@embeddable.com/remarkable-pro`.

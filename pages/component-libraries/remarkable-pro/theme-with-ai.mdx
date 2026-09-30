@@ -1,0 +1,65 @@
+# Theme your dashboards with AI
+
+A [theme](/component-libraries/remarkable-pro/theming) is just TypeScript in your repo — `embeddable.theme.ts` plus `themes/*.theme.ts` files of [design tokens](/component-libraries/remarkable-pro/styling/introduction) — so you can brand your whole workspace by **prompting an AI agent** instead of picking tokens by hand. Embeddable ships a **Claude skill** that teaches the agent how [Remarkable Pro](/component-libraries/remarkable-pro/introduction) theming works, so it turns your brand — a screenshot, your website, a Figma export, or a plain-English description — into working light and dark themes.
+
+<Callout emoji="💡">
+Building the dashboards themselves? See [Build dashboards with AI](/dashboards/build-with-ai). There are also skills for the [components](/component-libraries/build-with-ai) and the [data models](/data-modeling/build-with-ai) underneath.
+</Callout>
+
+## The `theming` skill
+
+The skill ships in the [Remarkable Pro boilerplate](https://github.com/embeddable-hq/remarkable-pro-boilerplate) at `.claude/skills/theming/`. If you set up your workspace from the boilerplate, [Claude Code](https://www.claude.com/product/claude-code) discovers it automatically — there's nothing to install. If you cloned or forked the boilerplate before the skill was added, you can get the update with a simple `git pull` in the `main` branch. If you have any trouble, reach out to Embeddable Customer Success!
+
+It triggers whenever you ask for styling work — phrases like *"match our brand"*, *"make it look like our app"*, *"add a dark mode"*, *"change the chart colors"*, *"use our font"*, or *"white-label this"* — or whenever you edit `embeddable.theme.ts` or a `themes/*.theme.ts` file. Pasting a screenshot or a URL and saying *"make it look like this"* works too.
+
+When it runs, the agent:
+
+1. **Reads your current setup** — existing theme files, the theme provider, builder presets, and any custom components — and extends what's there rather than starting over. A small tweak like *"rounder corners"* gets a minimal, targeted edit with no further ceremony.
+2. **Takes your brand from any source** — Figma exports, screenshots, an existing website, a design-token file (a Tailwind config, CSS variables, a style guide), or a short interview if you have none of those.
+3. **Condenses it into a Brand Sheet** — a compact summary of colors, fonts, corner radius, shadows, and [chart palette](/component-libraries/remarkable-pro/chart-colors) that you confirm **once** before any code is written. Anything you leave out takes sensible defaults.
+4. **Maps it onto theme files** — a `themes/<brand>.theme.ts` exporting **light and dark variants** from one shared palette, the [theme provider](/component-libraries/remarkable-pro/theming) wiring in `embeddable.theme.ts`, and ["View as" presets](/getting-started/get-set-up/theme-components) so you can flip between themes in the builder.
+5. **Verifies its work** — typechecks the theme files, runs a local `embeddable:build`, checks text contrast, and hands you the exact presets to look at.
+
+Everything it produces is the same theme code you'd write yourself — fully reviewable in a normal code diff.
+
+The skill is scoped to **styling**. The theme also carries functional configuration — [translations](/component-libraries/remarkable-pro/i18n), [formatting](/component-libraries/remarkable-pro/formatting), [export options and date ranges](/component-libraries/remarkable-pro/customizations/export-options) — which it deliberately leaves alone and will flag rather than improvise.
+
+## Built to survive upgrades
+
+The skill styles at the [semantic token](/component-libraries/remarkable-pro/styling/semantic-tokens) level — the ~25 tokens every component maps onto — plus a few core primitives like font and corner radius, rather than pinning hundreds of per-[component tokens](/component-libraries/remarkable-pro/styling/component-tokens). That keeps the theme small, and it means new components — added in future library releases, or [built with AI](/component-libraries/build-with-ai) — pick up your brand automatically. It reaches for component tokens only when a specific, visible problem can't be fixed at the semantic level, and comments why.
+
+## Workflow
+
+<Steps>
+
+### Show it your brand
+
+Prompt Claude Code in plain English, with whatever you have. For example:
+
+> Theme our dashboards to match our app — here's a screenshot. We need a light and a dark mode, and charts should use our brand palette.
+
+### Confirm the Brand Sheet
+
+The agent presents the Brand Sheet it extracted — colors, fonts, radius, chart palette — before writing any code. This is the one design decision point: after your yes, it maps everything onto the theme with no further look-and-feel questions.
+
+### See it in the builder
+
+Run [`embeddable:dev`](/getting-started/development/local-environment) and use the ["View as" presets](/getting-started/get-set-up/theme-components) the skill added to flip between your new themes — light, dark, per-brand — across your dashboards.
+
+### Review and iterate
+
+Review the diff like any other code change. Iterate by prompting again — *"the table headers are too dark"*, *"try a warmer gray"* — or [edit the theme yourself](/component-libraries/remarkable-pro/theming).
+
+### Push when you're ready
+
+[Push](/getting-started/development/pushing-code) to ship the theme with your workspace bundle. Published dashboards pin their versions, so re-publish a dashboard to roll the new theme out to its live embeds.
+
+</Steps>
+
+<Callout emoji="⚠️">
+The skill **won't** run `embeddable:push` or start `embeddable:dev` for you — those stay your call. It also treats your theme's [client context](/component-libraries/client-context) keys (e.g. `theme: 'dark'`) as a stable contract, since your host app passes them at embed time — so rather than renaming one and breaking live embeds, it asks first and keeps old keys working as aliases.
+</Callout>
+
+## Other agents
+
+The skill is written for Claude Code, but it's just markdown — `SKILL.md` and its reference files live in your repo under `.claude/skills/theming/`. Any agent (Cursor, Codex, and others) can use the same guidance: point it at those files, or copy them into that tool's own rules/config format. What's specific to Claude Code is the *automatic* discovery and triggering. And since themes themselves are plain TypeScript, any agent can read and edit them regardless.

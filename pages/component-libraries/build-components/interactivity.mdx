@@ -1,0 +1,478 @@
+# Building Interactive Components
+
+By combining **events** and **variables**, you can build **interactive** components that let users change filters, choose granularities, or pick values that dynamically affect other components or data sources.
+
+- **No-Code Flexibility**: Non-technical teammates can build dashboards, hooking up interactive components in a no-code interface.
+- **Reuse & Scale**: One dropdown or date picker can drive multiple charts just by referencing the same variable.
+- **Modular Logic**: You decide how your component fires events (e.g. `onChange`, `onSelect`), and Embeddable handles mapping those to variables or other actions in the builder.
+
+## How It Works
+
+<Steps>
+
+### **Define Variables**
+
+- In the no-code builder, you can create variables like `granularity` or `selectedValue`.
+- You can also **pre-define** variables in your `.emb.ts` file (via `meta.variables`) to make life easier for non-technical users. The examples below demonstrate how to do this.
+
+### **Fire Events**
+
+- Your React component emits events (e.g. `onChange`) whenever the user interacts with a dropdown, textbox, or other control.
+- For instance, a dropdown might fire `onChange: { value: 'United States' }`.
+
+### **Update Variables**
+
+- Events can be mapped back to variables, updating their value inside Embeddable.
+- For instance, when a dropdown fires `onChange`, it might update a variable named `selectedCountry`.
+
+### **Propagate Changes**
+
+- In the no-code builder, you can connect variables to other components (or the same one) and datasets, essentially using variables as **filters** or **inputs**, causing data to **reload** or the UI to update.
+- For example, a chart referencing `selectedCountry` will re-fetch data whenever the variable changes.
+
+</Steps>
+
+<VideoComponent
+  src="/video/adding-interactivity.mp4"
+  width="1920"
+  height="1080"
+/>
+
+## Examples
+
+### A Basic Dropdown
+
+Below is an `.emb.ts` file for a dropdown component that loads a list of country values from a dataset. It leverages **events** and **variables** to provide an interactive experience.
+
+```jsx
+import {
+  defineComponent,
+  EmbeddedComponentMeta,
+  Inputs,
+} from '@embeddable.com/react';
+import { loadData, Value } from '@embeddable.com/core';
+import Component from './index';
+
+export const meta = {
+  name: 'BasicDropdownComponent',
+  label: 'Basic Dropdown',
+  defaultWidth: 320,
+  defaultHeight: 80,
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset to display',
+    },
+    {
+      name: 'values',
+      type: 'dimension',
+      label: 'Values',
+      config: {
+        dataset: 'ds',
+      },
+    },
+    {
+      name: 'defaultValue',
+      type: 'string',
+      label: 'Default value',
+      description: 'Initial value',
+    },
+  ],
+  events: [
+    {
+      name: 'onChange', // Pass an event called OnChange to your component as a prop
+      label: 'Change', // How this event appears in the builder UI when defining interactions
+      properties: [
+        {
+          name: 'value', // The property name to be passed back to the builder
+          type: 'string', // The value's expected type
+          array: false, // Set to true for a multi-select dropdown
+        },
+      ],
+    },
+  ],
+  variables: [
+    {
+      name: 'chosen value', // Variable created automatically when this component is added
+      type: 'string',
+      defaultValue: Value.noFilter(), // Initial variable value (this can also be set in the no-code builder)
+      inputs: ['defaultValue'], // Connects the variable to the 'defaultValue' input, which is passed into the React component
+      events: [{ name: 'onChange', property: 'value' }], // On the 'onChange' event, update the 'chosen value' variable with the 'value' property from the event
+    },
+  ],
+} as const satisfies EmbeddedComponentMeta;;
+
+export default defineComponent(Component, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    return {
+      ...inputs,
+      // Load dimension values for the dropdown
+      results: loadData({
+        from: inputs.ds,
+        select: [inputs.values],
+      }),
+    };
+  },
+  events: {
+    // Maps the 'onChange' event from your component to the event described in meta
+    onChange: (value) => ({ value: value || Value.noFilter() }),
+  },
+});
+```
+
+This file interacts with an `index.tsx` file in the same folder, which contains the actual React component logic. The component receives five props: `defaultValue`, `ds`, `values`, `results` (the loaded dimension values), and an `onChange` function to call whenever the user selects a new option.
+
+<Callout icon="💡">
+  Because of the way `defineComponent` works, the third parameter, the object that defines props and events, must be delivered inline (i.e. not as a separate variable). This prevents build errors.
+</Callout>
+
+Here is a very simple implementation of the `index.tsx` file you might pair with the above `.emb.ts` file:
+
+```tsx
+import { useState } from 'react';
+import { DataResponse, Dataset, Dimension } from '@embeddable.com/core';
+
+type Change = (text: string) => void;
+let timeout: NodeJS.Timeout | null = null;
+
+type Props = {
+  defaultValue?: string;
+  ds?: Dataset;
+  onChange?: Change;
+  results?: DataResponse;
+  values?: Dimension;
+};
+
+export default (props: Props) => {
+  const { defaultValue, ds, onChange, results, values } = props;
+  const [value, setValue] = useState(props.defaultValue || '');
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      onChange(newValue);
+    }, 500);
+  };
+
+  return (
+    <>
+      <select
+        style={{ width: '100%', height: 40, fontSize: 16 }}
+        value={value || defaultValue || ''}
+        onChange={(e) => handleChange(e.target.value)}
+        disabled={!ds}
+      >
+        {results?.data?.map((row, index) => {
+          const val = row[values.name];
+          return (
+            <option key={index} value={val} selected={val === value}>
+              {val}
+            </option>
+          );
+        })}
+      </select>
+    </>
+  );
+};
+```
+
+#### Usage Flow
+
+1. **Add Component**: A teammate drags the **BasicDropdownComponent** onto the canvas in the builder, choosing a dataset and picking a dimension.
+2. **Auto-Created Variable**: A variable named `chosenValue` is automatically added to the builder’s variable list and connected to the `defaultValue` input.
+3. **Data Loading**: The chosen dimension’s values are fetched and passed to the React component. `defaultValue` is also passed to the component - this may be empty or have an initial value (e.g. 'United States'), depending on what's been defined in the no-code builder.
+4. **Interactivity**: When an end-user selects an option from the dropdown, `onChange` fires, updating `chosenValue`. Other components (or filters) referencing `chosenValue` immediately respond - for instance, filtering a dataset by that value.
+
+The result is a **reusable** dropdown that non-technical users can drop into dashboards. The dropdown logic remains local to your React component, while the no-code builder manages hooking up the selected value to one or multiple charts or datasets.
+
+### Example: Granularity Picker
+
+Below is an `.emb` file for a **granularity picker** component that lets users choose day, week, or month.
+
+```ts
+// src/components/GranularityPicker/GranularityPicker.emb.ts
+
+import {
+  defineComponent,
+  EmbeddedComponentMeta,
+  Inputs,
+} from '@embeddable.com/react';
+import { Value } from '@embeddable.com/core';
+import GranularityPickerComponent from './index';
+
+export const meta = {
+  name: 'GranularityPicker',
+  label: 'Granularity Picker',
+  inputs: [
+    {
+      name: 'defaultGranularity',
+      type: 'string',
+      label: 'Default Granularity',
+      description: 'Initial granularity (e.g. "day", "week", or "month")',
+    },
+  ],
+  events: [
+    {
+      name: 'onPickGranularity',
+      label: 'Pick Granularity',
+      properties: [
+        {
+          name: 'value',
+          type: 'granularity',
+        },
+      ],
+    },
+  ],
+  variables: [
+    {
+      name: 'chosenGranularity',
+      type: 'granularity',
+      defaultValue: 'month', // or Value.noFilter() if you want no default
+      inputs: ['defaultGranularity'], // Ties the 'defaultGranularity' input to this variable
+      events: [
+        // Ties this variable to the onPickGranularity
+        {
+          name: 'onPickGranularity',
+          property: 'value',
+        },
+      ],
+    },
+  ],
+} as const satisfies EmbeddedComponentMeta;
+
+export default defineComponent(GranularityPickerComponent, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    return {
+      ...inputs,
+    };
+  },
+  events: {
+    // Maps the 'onPickGranularity' event from your component to the event described in meta
+    onPickGranularity: (value) => ({ value: value || Value.noFilter() }),
+  },
+});
+```
+
+#### Usage Flow
+
+1. **Add Component**: A teammate drags the **Granularity Picker** onto the canvas.
+2. **Auto-Created Variable**: Embeddable auto-creates a variable called `chosenGranularity` in the no-code builder, connecting this to the `defaultGranularity` input. If no initial value is specified in the builder, then the default value is `month`, as defined in the code.
+3. **User Interacts**: The user clicks one of the Day/Week/Month buttons defined in the component, at which point, `onPickGranularity(value)` fires, sending an event to Embeddable and updating the `chosenGranularity` variable accordingly.
+4. **Other Components React**: Any component (or filter) referencing `chosenGranularity` will now automatically reload or update, applying the new granularity (e.g. timeDimensions in a line chart).
+
+The result is a **reusable** granularity picker that non-technical users can drop into dashboards. The picking logic remains local to your React component, while the no-code builder manages hooking up that granularity to one or multiple charts.
+
+## Pie Chart Example
+
+Below is a **minimal** pie chart configuration. When the user clicks on a pie segment, it triggers an `onClick` event and sends Embeddable the clicked `metric` and `dimension`.
+
+```ts
+// src/components/PieChart/PieChart.emb.ts
+
+import { Value, loadData } from '@embeddable.com/core';
+import {
+  EmbeddedComponentMeta,
+  Inputs,
+  defineComponent,
+} from '@embeddable.com/react';
+import PieChartComponent from './index';
+
+export const meta = {
+  name: 'PieChart',
+  label: 'Pie Chart',
+  category: 'Charts',
+  inputs: [
+    {
+      name: 'ds',
+      type: 'dataset',
+      label: 'Dataset to display',
+    },
+    {
+      name: 'slice',
+      type: 'dimension',
+      label: 'Slice',
+      config: { dataset: 'ds' },
+    },
+    {
+      name: 'metric',
+      type: 'measure',
+      label: 'Metric',
+      config: { dataset: 'ds' },
+    },
+  ],
+  events: [
+    {
+      name: 'onClick', // Prop name in the React component
+      label: 'Click', // The event label in the builder
+      properties: [
+        { name: 'slice', type: 'string' },
+        { name: 'metric', type: 'number' },
+      ],
+    },
+  ],
+} as const satisfies EmbeddedComponentMeta;
+
+export default defineComponent(PieChartComponent, meta, {
+  props: (inputs: Inputs<typeof meta>) => {
+    return {
+      ...inputs,
+      results: loadData({
+        from: inputs.ds,
+        select: [inputs.slice, inputs.metric],
+      }),
+    };
+  },
+  events: {
+    // If a slice is clicked, send back 'slice' and 'metric' values or 'noFilter'
+    onClick: (value) => ({
+      slice: value.slice || Value.noFilter(),
+      metric: value.metric || Value.noFilter(),
+    }),
+  },
+});
+```
+
+### Usage flow
+
+1. **Add Component**: A teammate drags the **PieChart** onto the canvas in the no-code builder.
+
+2. **Data Loading**: Based on the selected dataset, dimension, and measure, `loadData` fetches the necessary rows. These rows become available under `props.results.data` in your React component.
+
+3. **Rendering**: The Pie Chart component receives `props.results.data`, along with any other inputs (`title`, `showLegend`). It contains the logic to render the pie chart (perhaps using a charting library like ChartJS or HighCharts).
+
+4. **Variable creation**: No variables are configured in the code, so the user needs to [configure one manually](/dashboards/interactivity) in the builder, or two to capture both the dimension and metric. They might call these `clickedDimension` and `clickedMetric`.
+
+5. **Interactivity**: When a user **clicks** on a slice, the React component calls `props.onClick({ slice, metric })`. Embeddable translates this into an event described in the `.emb.ts` file, updating the created variable in the builder with the dimension name (e.g. `"Europe"`) and the measure (e.g. `12345`).
+
+6. **Dashboard Updates**: Connected components or datasets react to the update. For instance, a table component whose underlying dataset is being filtered by the `clickedDimension` variable immediately filters rows to show only `"Europe"` sales.
+
+This flow shows how **no-code configuration** meets **full-code logic**, letting non-technical users pick the data and handle events while you focus on rendering and behavior in the **React** component.
+
+## `filters`: a native variable type
+
+Alongside `text`, `number`, `time`, and the rest, Embeddable supports a native **`filters`** variable type. Where a normal variable holds a single value, a `filters` variable holds an entire filter *expression* — one or more conditions combined with `AND`/`OR`, including nested groups. This is what powers filter-builder style components, letting an end user construct arbitrary filter logic (e.g. “Country equals *United States* AND (Status equals *Active* OR Status equals *Pending*)”) and apply the whole thing to a dataset in one go.
+
+### The `Filters` shape
+
+A `filters` variable's value is either a single condition, or a group of conditions joined by an operator:
+
+```ts
+type FilterOperator =
+  | 'equals' | 'notEquals'
+  | 'contains' | 'notContains'
+  | 'startsWith' | 'endsWith'
+  | 'gt' | 'gte' | 'lt' | 'lte'
+  | 'set' | 'notSet'
+  | 'measureFilter'
+  | 'inDateRange' | 'notInDateRange'
+  | 'beforeDate' | 'afterDate'
+  | 'onTheDate' | 'beforeOrOnDate' | 'afterOrOnDate';
+
+type TimeRange = {
+  from: string | Date;
+  relativeTimeString: string;
+  to: string | Date;
+};
+
+type FilterValue =
+  | string
+  | boolean
+  | number
+  | Date
+  | TimeRange
+  | Array<string | boolean | number | Date>;
+
+type QueryFilter = {
+  property: Dimension | Measure;
+  operator: FilterOperator;
+  value?: FilterValue; // omit for 'set' / 'notSet', which don't take a value
+};
+
+type Filters =
+  | QueryFilter
+  | { operator: 'and' | 'or' | 'AND' | 'OR'; clauses: Filters[] };
+```
+
+See [Available Filter Operators](/component-libraries/build-components/loading-data#available-filter-operators) for what each of these means.
+
+Because `clauses` can itself contain nested groups, you can build arbitrarily deep AND/OR logic. For example:
+
+```json
+{
+  "operator": "and",
+  "clauses": [
+    { "property": "country", "operator": "equals", "value": "United States" },
+    {
+      "operator": "or",
+      "clauses": [
+        { "property": "country", "operator": "equals", "value": ["Germany", "France"] },
+        { "property": "customers.age", "operator": "notEquals", "value": 0 }
+      ]
+    }
+  ]
+}
+```
+
+Before reaching your data warehouse, Embeddable translates this into [Cube's boolean logical operator format](https://cube.dev/docs/product/apis-integrations/rest-api/query-format#boolean-logical-operators).
+
+### Declaring a `filters` event and variable
+
+To build a component that sets a `filters` variable — a filter-builder UI, for example — declare a `filters`-typed event property and variable in your `.emb.ts` file:
+
+```ts
+events: [
+  {
+    name: 'onApply',
+    label: 'Apply',
+    properties: [{ name: 'value', type: 'filters' }],
+  },
+],
+variables: [
+  {
+    name: 'my filter',
+    type: 'filters',
+    events: [{ name: 'onApply', property: 'value' }],
+    // `defaultValue` and `inputs` aren't supported for the `filters` type
+  },
+],
+```
+
+Unlike other variable types, `filters` variables don't support `defaultValue` or `inputs` — there's no default filter state to configure, and (as noted below) a `filters` variable can't be fed into a component as an input.
+
+A teammate can also create a `filters` variable directly in the no-code builder's **Variables** panel and connect it to your component's event, the same way they would [connect any other variable to a component event](/dashboards/interactivity#example-click-a-pie-chart-segment-to-filter-data). Unlike other variable types, a `filters` variable has no default value to configure — it always starts out empty (`{}`) until something sets it.
+
+<ImageGrid width='50%' images={["/img/filters-as-variables-add.png"]}/>
+
+### Applying a `filters` variable to a dataset
+
+Once a `filters` variable holds a value, it can be applied to a dataset in either of the usual places:
+
+- **The dataset settings modal** — open the dataset's settings and add the `filters` variable as a filter, the same way you'd link any other variable to a field-level filter.
+- **A component's dataset filters** — when configuring a component's dataset input, add the `filters` variable to that component's own filter list.
+
+Either way, the variable's filter logic is combined with any other filters already on the dataset using `AND` — it's layered on top of your existing filters rather than replacing them or being OR'd against them.
+
+<Callout emoji="🚨">
+  A `filters` variable can currently only be used to filter datasets — it can't be wired up as an input on a component.
+</Callout>
+
+## Clearing Values
+
+If your component needs to “reset” a chosen value - like clearing a text field or returning a dropdown to “no selection” - you can use **`Value.noFilter()`**. This tells Embeddable that any associated variable should be emptied i.e. it no longer has a specific value.
+
+```ts
+import { Value } from '@embeddable.com/core';
+
+export default defineComponent(MyComponent, meta, {
+  events: {
+    onChange: (value) => {
+      // If 'value' is empty or null, revert to noFilter
+      return { value: value || Value.noFilter() };
+    },
+  },
+});
+```

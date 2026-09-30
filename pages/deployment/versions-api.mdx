@@ -1,6 +1,6 @@
 # Versions API
 
-The **Versions API** lets you programmatically manage saved versions of a dashboard (Embeddable) in your workspace. You can list saved versions and publish a specific version to an environment tag (`development`, `staging`, or `production`). This is the foundation for fully automated, CI/CD-driven deployment workflows.
+The **Versions API** lets you programmatically manage saved versions of a dashboard (Embeddable) in your workspace. You can list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace, and fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of any saved version. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow. You can also publish a specific version to an environment tag (`development`, `staging`, or `production`). This is the foundation for fully automated, CI/CD-driven deployment workflows.
 
 <Bruno/>
 
@@ -160,6 +160,67 @@ A typical automated workflow using this API:
 4. After QA sign-off, the same call is repeated targeting `production`.
 
 ---
+
+## Get version metadata
+
+Fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of a specific saved version, as JSON.
+
+### Endpoint
+
+```
+GET https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/{version}/metadata
+```
+
+### Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/{version}/metadata', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`).
+
+### Example Response
+
+Returns the dashboard's definition in the same JSON shape as its YAML [dashboards-as-code](/dashboards/dashboards-as-code) source — variables, datasets, and widgets — as it existed at that saved version.
+
+```json
+{
+  "name": "my-embeddable",
+  "title": "My Embeddable",
+  "variables": [
+    { "name": "date-range", "type": "timeRange", "defaultValue": { "from": "2024-01-01", "to": "2024-12-31" } }
+  ],
+  "datasets": [
+    {
+      "name": "filtered-data",
+      "model": "daily_listens",
+      "filters": [
+        { "member": "daily_listens.date", "operator": "inDateRange", "value": "date-range", "valueType": "VARIABLE" }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "component": "BarChart",
+      "position": { "x": 0, "y": 0 },
+      "dimensions": { "width": 12, "height": 6 },
+      "inputs": [
+        { "input": "metric", "inputType": "measure", "value": "daily_listens.count" }
+      ]
+    }
+  ]
+}
+```
 
 ## Related Topics
 

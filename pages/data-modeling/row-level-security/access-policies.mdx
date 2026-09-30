@@ -1,6 +1,6 @@
 # Access Policies
 
-**Access Policies** let you control which rows of data a user can see in Embeddable by defining them in [cube models](/data-modeling/defining-models) or [views](/data-modeling/views). They are applied at query time and affect [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models).
+**Access Policies** let you control which rows of data a user can see in Embeddable by defining them in [cube models](/data-modeling/writing-data-models/defining-models) or [views](/data-modeling/writing-data-models/views). They are applied at query time and affect [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models).
 
 ## Why use Access Policies
 
@@ -22,7 +22,7 @@
 
 ## How to define Access Policies
 
-Here's a simple example of an access policy defined on a [view](/data-modeling/views).
+Here's a simple example of an access policy defined on a [view](/data-modeling/writing-data-models/views).
 
 **Token security context:**
 
@@ -67,7 +67,7 @@ SELECT * FROM public.customers WHERE user_id = '123';
 
 **Things to notice:**
 
-- The `customers_view` brings in all columns from the `customers` model. The access policy is applied at the view level, so you only need to define it once instead of repeating it across every model. Learn more about views [here](/data-modeling/views).
+- The `customers_view` brings in all columns from the `customers` model. The access policy is applied at the view level, so you only need to define it once instead of repeating it across every model. Learn more about views [here](/data-modeling/writing-data-models/views).
 - The role `customer` is taken from the token. Think of roles as simple tags you attach to a user. The user's access is the **UNION** of all policies for the roles in their token.
     - For example, if a user is granted both `Finance Ops` and `Developer Ops` roles, they will see all the data available to Finance Ops **plus** all the data available to Developer Ops.
 - The filter matches the `user_id` in the cube to the `user_key` from the token.
@@ -164,7 +164,7 @@ Important things to notice about member-level access:
 
 - In cube models, member-level rules are combined with public parameters using **AND** logic. Both sets of rules apply.
 - In cube views, only the member-level rules defined in the view apply. Rules in underlying cubes are ignored.
-- You can define data access policies in both cubes and views. We recommend [keeping cubes private](/data-modeling/views#how-to-define-cube-views) and defining access policies only in views. This makes policies easier to maintain and reason about, especially for member-level access.
+- You can define data access policies in both cubes and views. We recommend [keeping cubes private](/data-modeling/writing-data-models/views#how-to-define-cube-views) and defining access policies only in views. This makes policies easier to maintain and reason about, especially for member-level access.
 
 **Deny all by default**
 
@@ -392,7 +392,7 @@ AND subscription_tier = 'Premium'
 
 ## Notes & best practices
 
-- Prefer defining access policies in [views](/data-modeling/views) and [keep cubes private](/data-modeling/views#how-to-define-cube-views). This reduces duplication and makes policies easier to maintain.
+- Prefer defining access policies in [views](/data-modeling/writing-data-models/views) and [keep cubes private](/data-modeling/writing-data-models/views#how-to-define-cube-views). This reduces duplication and makes policies easier to maintain.
 - Keep role names consistent with your application's authentication system. For example, if your auth layer defines groups like admin or employee, pass those directly in the token and reference the same names in your access policies.
 - Start with a restrictive `default` role.
 - Avoid `*` unless combined with conditions.

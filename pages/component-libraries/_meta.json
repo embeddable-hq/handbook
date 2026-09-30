@@ -1,4 +1,8 @@
 {
   "remarkable-pro": "Remarkable Pro",
-  "custom-canvas-components": "Custom Canvas"
+  "build-with-ai": "Build with AI",
+  "build-components": "Build components",
+  "custom-canvas-components": "Custom Canvas UI",
+  "client-context": "Client Context",
+  "theming": "Theming"
 }

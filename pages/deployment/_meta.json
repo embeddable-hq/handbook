@@ -6,5 +6,6 @@
     "custom-canvas": "Deploying Custom Canvas",
     "versions-api": "Versions API",
     "embeddables-api": "Embeddables API",
+    "dashboard-export": "Dashboard Export API",
     "deployment-regions": "Deployment Regions"
 }

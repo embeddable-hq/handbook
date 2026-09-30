@@ -2,12 +2,18 @@
 
 The theme is where you shape Remarkable Pro. 
 
-It lives in your repo, inside `embeddable.theme.ts` and is your control panel for branding, styling, internationalisation, and the global options that power your analytics experience.
+It lives in your repo, inside `embeddable.theme.ts` and is your control panel for:
+- branding
+- styling
+- internationalisation
+- the global options that power your analytics experience (e.g. the chart export options)
 
 You can create **multiple themes** and switch between them. Many teams use:
 - a light and dark mode.
 - separate themes for demos or internal environments.
 - a dedicated theme per customer.
+
+Prefer not to hand-pick tokens? You can [theme with AI](/component-libraries/remarkable-pro/theme-with-ai) — Embeddable ships a Claude skill that turns a screenshot, your website, or a Figma export into working light and dark themes.
 
 **Example theme**
 
@@ -40,18 +46,29 @@ export default themeProvider;
 ```
 
 **Things to notice**
-- While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from Embeddable’s overall [theming system](/development/theming).
+- While **Remarkable’s theme has its own shape**, the *mechanics* of theming (e.g. `themeProvider` and the `defineTheme` helper) come from Embeddable’s overall [theming system](/component-libraries/theming).
 - Remarkable ships with a **full set of defaults**. That’s why the theme uses `defineTheme(parentTheme, newTheme)` - it merges your overrides with the built-in parent theme, giving you a clean way to extend only what you need.
-- You can pass **dynamic values** via  to your theme at run-time via **Client Context** (e.g. client-specific colors, or the name of a theme to apply), as well as create presets for testing in the builder. [Learn more here](/getting-started/theme-components).
+- You can pass **dynamic values** via  to your theme at run-time via **Client Context** (e.g. client-specific colors, or the name of a theme to apply), as well as create presets for testing in the builder. [Learn more here](/getting-started/get-set-up/theme-components).
 - The `themeProvider` has one job: take the incoming client context and decide which values to apply to the theme.
 
 
 ## Where to start
 
-The best place to start is to **define your brand colors**. These will be used inside all your charts. 
+The best place to start is to **define your brand colors**. These will be used inside all your charts.
 
 <CardGrid>
-  <LinkCard title="Define your chart colors" href="/component-libraries/remarkable-pro/chart-colors" icon="🎨"/> 
+  <LinkCard title="Define your chart colors" href="/component-libraries/remarkable-pro/chart-colors" icon="🎨"/>
+  <LinkCard title="Explore the Remarkable Pro showcase" href="https://remarkable.embeddable.com/" icon="👀"/>
+</CardGrid>
+
+The showcase displays every component with all available theming tokens applied, making it easy to understand what you can style.
+
+## Custom Fonts
+
+Remarkable Pro supports custom Google Fonts and self-hosted fonts, configurable via the theme. You can load any font and assign it to specific parts of the UI using CSS variables.
+
+<CardGrid>
+  <LinkCard title="Configure custom fonts" href="/component-libraries/remarkable-pro/styling/fonts" icon="🔤"/> 
 </CardGrid>
 
 ## Theming vs Builder Customizations 

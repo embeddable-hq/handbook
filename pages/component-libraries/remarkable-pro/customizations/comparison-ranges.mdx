@@ -39,23 +39,7 @@ type ComparisonPeriodOption = {
 };
 ```
 
-You can access the defaults from the `parentTheme` like so:
-
-```ts
-
-// embeddable.theme.ts
-
-const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
-
-  const myTheme = {
-    defaults: {
-      comparisonPeriodsOptions: parentTheme.defaults.comparisonPeriodsOptions,
-    },
-  };
-
-  return defineTheme(parentTheme, myTheme) as Theme;
-};
-```
+You typically start from the defaults in `parentTheme.defaults.comparisonPeriodsOptions`, transform the array, and pass the result back via `defineTheme` - as shown in the examples below.
 
 **Things to notice**
 
@@ -168,5 +152,5 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 ## Making new options appear in the Builder
 
 - When you add a new comparison period option, it will automatically appear in any Remarkable Pro (or custom) components that use `comparisonPeriodsOptions`, such as the Comparison Period Select Field.
-- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default comparison setting), you’ll also need to extend Embeddable’s custom comparison period type (e.g. `ComparisonPeriodType`). Learn more about defining custom types [here](/development/custom-types).
+- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default comparison setting), you’ll also need to extend Embeddable’s custom comparison period type (e.g. `ComparisonPeriodType`). Learn more about defining custom types [here](/component-libraries/build-components/custom-types).
 - View the Comparison Period custom type in the Remarkable library [here](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts).  

@@ -2,6 +2,10 @@
 
 Whenever a user accesses an Embeddable dashboard in your app, you should fetch a **security token** from our **Tokens API**. This token applies [row-level security](/data-modeling/row-level-security/introduction) (and more) to their dashboard session.
 
+<Callout emoji="💡">
+  Using **Cube Cloud** or another external Cube deployment? Pass the `dataProvider` field (see the [comprehensive example](#comprehensive-example) below) — set up in [Bring your own Cube](/data/bring-your-own-cube).
+</Callout>
+
 <Bruno/>
 
 ## Example: Fetch a Token
@@ -84,6 +88,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user custom dashboard state
     customCanvasReadOnly: false, // turns off custom dashboard editing for your end-user (if "custom canvas" is enabled)
+    export: false, // set to true ONLY for tokens used with the Dashboard Export API (see "Exporting dashboards" below)
 
     //
     // managed Cube (default)
@@ -132,7 +137,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
         {% endif %}
     ```
     
-- **`roles`** optional field, only needed if you’re using [Access Policies](/data-modeling/row-level-security/access-policies). Grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/defining-models), [views](/data-modeling/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the "default" role. Refer to [Access Policies](/data-modeling/row-level-security/access-policies) for details on how roles drive visibility.
+- **`roles`** optional field, only needed if you’re using [Access Policies](/data-modeling/row-level-security/access-policies). Grants the user one or more access policy roles. The roles you include determine which [cube models](/data-modeling/writing-data-models/defining-models), [views](/data-modeling/writing-data-models/views), and rows the user can see across [dashboards](/dashboards/introduction) and [data playground](/data-modeling/testing-models). If you don’t pass any roles, Embeddable assigns the "default" role. Refer to [Access Policies](/data-modeling/row-level-security/access-policies) for details on how roles drive visibility.
 
 - **`filters`** optional array of filter objects, each with `member`, `operator`, and `values`. When provided, Embeddable automatically applies these filters to every query in the dashboard session. Any query that cannot apply the filter (for example, because there is no join path to the filtered model) will fail with an error. This is the simplest way to ensure row-level security is applied globally across all your data models. See [Security Filters](/data-modeling/row-level-security/security-filters#security-filters) for details.
 
@@ -147,9 +152,24 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 - **`expiryInSeconds`** is the number of seconds until the token expires. The default is 7 days (60 * 60 * 24 * 7). Tokens are standard JWTs, and contain `iat` and `exp` when decoded. On your front-end, you can keep track of the token expiry and refresh it as needed with a call to the Embeddable Tokens API, without needing to reload the page.
 
-- **`customCanvasState`** is only needed if you are using [Custom Canvas](/dashboards/custom-canvas). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field [here](./custom-canvas).  
+- **`customCanvasState`** is only needed if you are using [Custom Canvas](/self-serve/custom-canvas/introduction). Embeddable stores a custom canvas layout (per `embeddableId`) for each unique value of `customCanvasState` that you pass to the Tokens API.  Learn how to use this field [here](./custom-canvas).  
 
-- **`customCanvasReadOnly`** is also only needed if you are using [Custom Canvas](/dashboards/custom-canvas).  If `true` the end-user will only be able to view (and interact with) the dashboard, but not edit it (add/remove/move/resize charts). It defaults to `false`.  Learn more [here](./custom-canvas).
+- **`customCanvasReadOnly`** is also only needed if you are using [Custom Canvas](/self-serve/custom-canvas/introduction).  If `true` the end-user will only be able to view (and interact with) the dashboard, but not edit it (add/remove/move/resize charts). It defaults to `false`.  Learn more [here](./custom-canvas).
+
+- **`export`** is only needed if you are using the [Dashboard Export API](/deployment/dashboard-export). It defaults to `false`. Set it to `true` **only** for a token you pass to that API. An export token has a different lifecycle to a normal token, so the two are not interchangeable — see [Exporting dashboards](#exporting-dashboards) below.
+
+## Exporting dashboards
+
+To export a dashboard with the [Dashboard Export API](/deployment/dashboard-export), request a token with **`export: true`** and pass it to that API. Everything else about the token works as usual — RLS, `filters`, `roles`, `securityContext`, `variables` and `savedVersion` all apply to the export exactly as they would to an embedded dashboard.
+
+Export tokens and normal embedding tokens are **not interchangeable**:
+
+- A token **without** `export: true` is **rejected** by the Dashboard Export API.
+- A token **with** `export: true` is **rejected** if you try to use it to embed a dashboard normally (in your `<em-beddable>` element).
+
+<Callout emoji="💡">
+  Create a fresh token with `export: true` for each export, and use your normal tokens for embedding. Learn more in the [Dashboard Export API](/deployment/dashboard-export) guide.
+</Callout>
 
 ## Testing Security Contexts
 

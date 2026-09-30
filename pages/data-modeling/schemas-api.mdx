@@ -1,0 +1,134 @@
+# Schemas API
+
+The **Schemas API** returns the structure of your connected database — schemas, tables, and columns.
+
+Use these endpoints together to explore your database structure: schemas → tables → columns, which you can introduce in your programmatic workflows either manually or through coding agents.
+
+<Bruno/>
+
+Learn more about `region` [here](/deployment/deployment-regions).
+
+## List Schemas
+
+List all schemas available in a connection.
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/connections/<connectionName>/schemas', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  }
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+**Example Response:**
+```json
+[
+  { "schemaName": "spotify" },
+  { "schemaName": "public" },
+  { "schemaName": "dbt_sample_db" }
+]
+```
+
+- **`connectionName`**: Name of your connection. Use the [Connections API](/data/connect-your-database#connections-api) to retrieve your available connections.
+- **`schemaName`**: Name of your schema.
+
+## List Tables
+
+List all tables within one or more schemas.
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/connections/<connectionName>/tables', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  },
+  body: JSON.stringify(["spotify"])
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+- **Request body**: An array of schema names.
+
+**Example Response:**
+```json
+[
+  { "schemaName": "spotify", "tableName": "daily_listens" },
+  { "schemaName": "spotify", "tableName": "artists" },
+  { "schemaName": "spotify", "tableName": "tracks" }
+]
+```
+
+- **`schemaName`**: Name of your schema.
+- **`tableName`**: Table name.
+
+## List Columns
+
+List column definitions for one or more tables.
+
+```ts
+fetch('https://api.<region>.embeddable.com/api/v1/connections/<connectionName>/columns', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  },
+  body: JSON.stringify([
+    { "schemaName": "spotify", "tableName": "daily_listens" },
+    { "schemaName": "spotify", "tableName": "artists" },
+    { "schemaName": "spotify", "tableName": "tracks" }
+  ])
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+- **Request body**: An array of `{ schemaName, tableName }` objects.
+
+**Example Response:**
+```json
+[
+  {
+    "columnName": "artist_id",
+    "tableName": "artists",
+    "schemaName": "spotify",
+    "dataType": "character varying",
+    "attributes": ["primaryKey"],
+    "foreignKeys": []
+  },
+  {
+    "columnName": "artist_name",
+    "tableName": "artists",
+    "schemaName": "spotify",
+    "dataType": "character varying",
+    "foreignKeys": []
+  },
+  {
+    "columnName": "track_id",
+    "tableName": "daily_listens",
+    "schemaName": "spotify",
+    "dataType": "character varying",
+    "foreignKeys": [
+      {
+        "targetTable": "tracks",
+        "targetColumn": "track_id"
+      }
+    ]
+  }
+]
+```
+
+- **`columnName`**: Column name.
+- **`tableName`**: Table name.
+- **`schemaName`**: Name of your schema.
+- **`dataType`**: Database data type (e.g. `character varying`, `boolean`, `timestamp without time zone`).
+- **`attributes`**: Optional. Currently supports `"primaryKey"`.
+- **`foreignKeys`**: Foreign key references. Each entry has `targetTable` and `targetColumn`.

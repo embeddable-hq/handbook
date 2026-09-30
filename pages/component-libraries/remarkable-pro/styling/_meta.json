@@ -1,6 +1,7 @@
 {
     "introduction": "Introduction",
     "quick-start": "Quick-start guide",
+    "fonts": "Custom fonts",
     "core-tokens": "Core tokens",
     "semantic-tokens": "Semantic tokens",
     "component-tokens": "Component tokens"
