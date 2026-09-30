@@ -1,16 +1,20 @@
 # Versions API
 
-The **Versions API** allows you to programmatically list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow.
+The **Versions API** lets you programmatically manage saved versions of a dashboard (Embeddable) in your workspace. You can list saved versions and publish a specific version to an environment tag (`development`, `staging`, or `production`). This is the foundation for fully automated, CI/CD-driven deployment workflows.
 
 <Bruno/>
 
-## Endpoint
+---
+
+## List Saved Versions
+
+### Endpoint
 
 ```
 GET https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions
 ```
 
-## Example Request
+### Example Request
 
 ```ts
 // Important: Always call this server-side, never from client-side code
@@ -26,7 +30,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
   .then(console.log);
 ```
 
-## Example Response
+### Example Response
 
 ```json
 {
@@ -49,7 +53,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 }
 ```
 
-## Field Reference
+### Field Reference
 
 - **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
 - **`saved-versions[]`**: Each saved version, newest first.
@@ -59,11 +63,103 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
   - **`saved-at`**: When the snapshot was taken.
   - **`components-version / models-version / cube-version`**: The underlying versions that this saved version references.
 
-## Notes
+### Notes
 
 - Version values are **per embeddable** and are not shared across different dashboards.
 - The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
-- You can use this API endpoint to build custom deployment workflows, such as automatically promoting versions from development to production based on your CI/CD processes.
+
+---
+
+## Publish a Version to an Environment
+
+Use this endpoint to assign an environment tag (`development`, `staging`, or `production`) to a specific saved version. This replaces the need to manually click **Publish** in the UI, making it suitable for fully automated CI/CD pipelines.
+
+### Endpoint
+
+```
+POST https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/{version}/publish
+```
+
+- **`{version}`** — the saved version number to publish, e.g. `v3`. Must be a version number, not a tag name.
+- **`{embeddableId}`** — the UUID of the dashboard.
+
+### Request Body
+
+```json
+{
+  "tags": ["staging"]
+}
+```
+
+- **`tags`** — an array of one or more environment tags to assign this version to. Valid values: `"development"`, `"staging"`, `"production"`. Must not be empty.
+- You can promote to multiple tags in a single call, e.g. `["staging", "production"]`.
+
+### Example Request
+
+```ts
+// Important: Always call this server-side, never from client-side code
+fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/v3/publish', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${apiKey}` // Keep your API key secure
+  },
+  body: JSON.stringify({
+    tags: ['staging']
+  })
+})
+  .then((res) => res.json())
+  .then(console.log);
+```
+
+### Example Response
+
+Returns the updated tag map for the dashboard:
+
+```json
+{
+  "tags": {
+    "development": { "version": "v1", "updatedAt": "2025-10-15T09:15:33.396135Z" },
+    "staging":     { "version": "v3", "updatedAt": "2026-09-24T09:15:45.216583Z" },
+    "production":  { "version": "v5", "updatedAt": "2026-07-08T10:39:59.997373Z" }
+  }
+}
+```
+
+### Error Responses
+
+| HTTP | Error Code | Cause |
+|------|-----------|-------|
+| `400` | `BUILDER-172` | `{version}` is a tag name (e.g. `production`) instead of a version number (e.g. `v3`). |
+| `400` | `BUILDER-996` | `tags` array is empty or missing. |
+| `404` | `BUILDER-117` | One or more values in `tags` are not valid environment tags for this workspace. |
+| `404` | `BUILDER-120` | The saved version number does not exist for this dashboard. |
+| `401` | `BUILDER-998` | Missing or invalid API key. |
+
+### Notes
+
+- The call is **idempotent** — publishing the same version to the same tag repeatedly is safe, which makes it suitable for CI retries.
+- Only one saved version can be assigned to a given tag at a time. Publishing a new version to a tag moves the tag; other tags are unaffected.
+- The endpoint only accepts explicit version numbers (e.g. `v3`). You cannot pass a tag name in the `{version}` position.
+- Any token that references a tag (e.g. `"savedVersion": "staging"`) will automatically resolve to the newly published version — no token regeneration needed.
+
+### CI/CD Example
+
+A typical automated workflow using this API:
+
+1. Code is merged to `main` — your CI pushes a new components build to Embeddable.
+2. CI calls the **List Saved Versions** endpoint to find the latest `v{N}` that corresponds to that build.
+3. CI calls **Publish** to move `staging` to that version:
+   ```bash
+   curl -X POST "https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved-versions/v3/publish" \
+     -H "Authorization: Bearer $EMBEDDABLE_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"tags":["staging"]}'
+   ```
+4. After QA sign-off, the same call is repeated targeting `production`.
+
+---
 
 ## Related Topics
 

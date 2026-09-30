@@ -164,4 +164,11 @@ In the builder UI, you can then choose **“View as”** → “Example customer
 
 ## Deploying Versions
 
-Once you have set up your environments, you can **deploy versions** of your dashboard that are specific to each environment. This allows you to test changes in a safe environment before promoting them to production. [Learn more about deploying dashboard versions](/deployment/versions).
+Once you have set up your environments, you can **deploy versions** of your dashboard to each environment tag (`development`, `staging`, `production`). This allows you to test changes safely before promoting them to production.
+
+You can do this in two ways:
+
+- **In the builder UI** — open the **Saved Versions** panel and click **Publish** next to the version you want to deploy.
+- **Via the API** — use the [Versions API](/deployment/versions-api#publish-a-version-to-an-environment) to assign a saved version to one or more environment tags programmatically. This is the recommended approach for CI/CD pipelines, allowing you to promote versions automatically without any manual steps in the UI.
+
+[Learn more about managing dashboard versions →](/deployment/versions)
