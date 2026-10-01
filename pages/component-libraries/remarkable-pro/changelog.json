@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.11.0",
+    "date": "2026-10-01",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.11.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.11.0",
+    "notes": [
+      "`FunnelChartPro` has received new taper controls and improved legend behaviour. New **Taper from** and **Taper amount** inputs let you control where funnel sections narrow (top, middle, bottom, or not at all) and how much they shrink. Clicking a legend label now fully hides the corresponding section rather than collapsing it while leaving empty space. **Breaking change:** the `stageDimension` input has been renamed to `sectionDimension`, and `showStageLabels` has been renamed to `showSectionLabels` — existing funnel charts must re-configure these inputs."
+    ]
+  },
+  {
     "version": "v0.10.0",
     "date": "2026-09-24",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.10.0",
