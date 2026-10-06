@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.11.1",
+    "date": "2026-10-05",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.11.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.11.1",
+    "notes": [
+      "Fixed **Other** group behaviour in `BarChartGroupedPro`, `BarChartGroupedHorizontalPro`, `BarChartStackedPro`, `BarChartStackedHorizontalPro`, and `LineChartGroupedPro`: the **Other** bucket now only appears when the number of groups exceeds the configured limit — previously it always appeared as an empty series, and exactly-at-limit data was incorrectly bucketed into **Other** instead of being shown directly. Grouped series are also now sorted alphabetically, with **Other** always placed last, fixing tooltips and legends that previously showed **Other** mid-list."
+    ]
+  },
+  {
     "version": "v0.11.0",
     "date": "2026-10-01",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.11.0",
