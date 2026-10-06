@@ -1,6 +1,6 @@
 # Custom Canvas UI
 
-[Custom Canvas](/self-serve/custom-canvas/introduction) is a feature that lets your users build their own dashboards inside your product. This page covers **styling** its interface; see also [Deploying Custom Canvas](/deployment/custom-canvas).
+[Custom Canvas](/self-serve/custom-canvas/introduction) is a feature that lets your users build their own dashboards inside your product. This page covers **styling** and **translating** its interface; see also [Deploying Custom Canvas](/deployment/custom-canvas).
 
 The UI components powering Custom Canvas (panels, forms, buttons, cards) are built on [Remarkable UI](https://github.com/embeddable-hq/remarkable-ui). These components are _currently_ fixed - you can't swap them out or modify their behavior - but you can **style them** to match your brand using CSS variables.
 
@@ -21,6 +21,283 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 ```
 
 For full theming details, see [Theming Remarkable Pro](/component-libraries/remarkable-pro/theming) and [How Styling Works](/component-libraries/remarkable-pro/styling/introduction).
+
+---
+
+## Translating the Interface
+
+Custom Canvas ships its labels in English - "Add a chart", "Select a template", validation messages, and so on. The drill-down modal does the same. You can replace any of them from your theme, under `theme.embeddableApp.i18n`.
+
+This is separate from [Remarkable Pro's internationalization](/component-libraries/remarkable-pro/i18n), which lives under `theme.i18n` and covers your components. `theme.embeddableApp` belongs to the platform itself, so it works the same way whether or not you use Remarkable Pro.
+
+### How to translate
+
+```ts
+// embeddable.theme.ts
+const themeProvider = (clientContext: any, parentTheme: Theme) => {
+  return defineTheme(parentTheme, {
+    embeddableApp: {
+      i18n: {
+        language: clientContext?.language || "en",
+        translations: {
+          de: {
+            customCanvas: {
+              addChart: "Diagramm hinzufügen",
+              templateSelection: {
+                title: "Vorlage auswählen",
+                populateTitle: "{{templateName}} ausfüllen",
+              },
+              validation: {
+                valueRequired: "Wert ist erforderlich",
+              },
+            },
+            drillDown: {
+              step: "Schritt {{number}}",
+            },
+          },
+        },
+      },
+    },
+  });
+};
+```
+
+**Things to notice**
+
+1. `embeddableApp.i18n.language` selects the active catalogue, and defaults to `en`. The platform reserves no [Client Context](/component-libraries/client-context) fields of its own, so map your own locale field onto it, as above.
+2. Translate only the keys you need. Anything you leave out falls back to the built-in English, so a partial catalogue is a valid catalogue.
+3. `{{...}}` are placeholders, filled in when the label is rendered. You can move them: `Populate {{templateName}}` becomes `{{templateName}} ausfüllen` in German. Never assemble a label by joining pieces together - word order differs between languages.
+4. Each `<em-beddable>` resolves its own labels, so several embeddables on one page can run different languages.
+
+To try it in the Builder, add presets to your `client-contexts.cc.yml`:
+
+```yaml
+# src/embeddable.com/presets/client-contexts.cc.yml
+
+- name: German
+  clientContext:
+    language: de
+
+- name: Spanish
+  clientContext:
+    language: es
+```
+
+Switching between them swaps the language of the whole interface:
+
+<ImageGrid images={["/img/custom-canvas-localisation.gif"]}/>
+
+### Changing the English wording
+
+The built-in English is a catalogue like any other. If you only want the interface to match your product's terminology, override it without translating anything:
+
+```ts
+embeddableApp: {
+  i18n: {
+    language: "en",
+    translations: {
+      en: {
+        customCanvas: { addChart: "Add a widget" },
+      },
+    },
+  },
+},
+```
+
+Your `en` catalogue also acts as the base for every other language. A label you reword there shows up in German too, unless your `de` catalogue gives it its own value - so terminology changes only need writing once.
+
+Labels resolve in this order:
+
+1. the catalogue for `language`
+2. your `en` catalogue
+3. the built-in English
+
+### What isn't translated here
+
+1. **Template names and descriptions** are authored in the [Builder](/self-serve/custom-canvas/building-it) and are shown exactly as written there.
+2. **Your components' own labels** - titles, axis labels, column headers and data values - belong to your component library. On Remarkable Pro, translate them under [`theme.i18n`](/component-libraries/remarkable-pro/i18n).
+
+### Type safety
+
+`@embeddable.com/core` exports the types for this namespace, so your editor autocompletes the keys and a mistyped key fails the build rather than silently rendering English:
+
+```ts
+// embeddable.theme.ts
+import { defineTheme, EmbeddableTheme } from "@embeddable.com/core";
+import { Theme } from "@embeddable.com/remarkable-pro";
+
+type AppTheme = Theme & EmbeddableTheme;
+
+const themeProvider = (clientContext: any, parentTheme: Theme): AppTheme =>
+  defineTheme<AppTheme>(parentTheme, {
+    embeddableApp: { i18n: { /* ... */ } },
+  });
+
+export default themeProvider;
+```
+
+Requires `@embeddable.com/core` 2.15.0 or later.
+
+### Key reference
+
+Keys are grouped by the part of the interface they appear in. The English value is what renders when you don't provide a translation.
+
+#### Canvas
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.addChart` | Add a chart |
+| `customCanvas.editDashboard` | Edit dashboard |
+| `customCanvas.done` | Done |
+| `customCanvas.emptyStateTitle` | Start building your dashboard |
+| `customCanvas.loading` | Loading your dashboard |
+| `customCanvas.editingUnavailableOnSmallScreens` | Editing is only available on larger screens. |
+
+#### Template selection
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.templateSelection.title` | Select a template |
+| `customCanvas.templateSelection.populateTitle` | Populate `{{templateName}}` |
+| `customCanvas.templateSelection.search` | Search templates |
+| `customCanvas.templateSelection.selectTemplate` | Select `{{templateName}}` template |
+| `customCanvas.templateSelection.add` | Add |
+| `customCanvas.templateSelection.noResultsTitle` | 0 results |
+| `customCanvas.templateSelection.noResultsMessage` | Clear your search and try again. |
+| `customCanvas.templateSelection.goBack` | Go back |
+| `customCanvas.templateSelection.close` | Close |
+| `customCanvas.templateSelection.loadingForm` | Loading form… |
+| `customCanvas.templateSelection.formUnavailable` | Form unavailable |
+
+#### Configurator
+
+`defaultCategory` is the heading shown above inputs whose component declares no category of its own.
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.configurator.cancel` | Cancel |
+| `customCanvas.configurator.addToDashboard` | Add to dashboard |
+| `customCanvas.configurator.saveChanges` | Save changes |
+| `customCanvas.configurator.previewPlaceholder` | Populate the required fields to see a preview |
+| `customCanvas.configurator.required` | Required |
+| `customCanvas.configurator.selectDataset` | Select a dataset |
+| `customCanvas.configurator.selectField` | Select `{{field}}` |
+| `customCanvas.configurator.booleanTrue` | True |
+| `customCanvas.configurator.booleanFalse` | False |
+| `customCanvas.configurator.moreOptions` | More options |
+| `customCanvas.configurator.lessOptions` | Less options |
+| `customCanvas.configurator.defaultCategory` | Chart settings |
+
+#### Dimension and measure fields
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.fields.selectDimension` | Select a dimension |
+| `customCanvas.fields.selectMeasure` | Select a measure |
+| `customCanvas.fields.selectDimensionOrMeasure` | Select a dimension or measure |
+| `customCanvas.fields.selectGranularity` | Select a granularity |
+| `customCanvas.fields.selectGranularities` | Select granularities |
+| `customCanvas.fields.granularity` | Granularity |
+| `customCanvas.fields.selectDatasetFirst` | Select a dataset first |
+| `customCanvas.fields.noDimensions` | No dimensions available |
+| `customCanvas.fields.noMeasures` | No measures available |
+| `customCanvas.fields.noDimensionsOrMeasures` | No dimensions or measures available |
+
+#### Validation messages
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.validation.valueRequired` | Value is required |
+| `customCanvas.validation.filterRequired` | Filter is required |
+| `customCanvas.validation.operatorRequired` | Operator is required |
+| `customCanvas.validation.sortByRequired` | Sort by is required |
+| `customCanvas.validation.limitRequired` | Limit is required |
+| `customCanvas.validation.limitNotANumber` | Must be a valid number |
+| `customCanvas.validation.limitBelowMinimum` | Minimum limit is `{{min}}` |
+| `customCanvas.validation.limitAboveMaximum` | Limit can not exceed `{{max}}` |
+| `customCanvas.validation.filtersHaveErrors` | One or more filters have validation errors |
+| `customCanvas.validation.sortsHaveErrors` | One or more sorts have validation errors |
+
+#### Widget actions
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.widgetActions.edit` | Edit widget |
+| `customCanvas.widgetActions.clone` | Clone widget |
+| `customCanvas.widgetActions.delete` | Delete widget |
+| `customCanvas.widgetActions.resize` | Resize widget |
+
+#### Duplicate dialog
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.duplicateDialog.title` | Duplicate this chart? |
+| `customCanvas.duplicateDialog.message` | This will create a copy of the selected chart with the same settings. You can rename and adjust it by clicking edit. |
+| `customCanvas.duplicateDialog.confirm` | Yes, duplicate |
+| `customCanvas.duplicateDialog.cancel` | No, cancel |
+
+#### Dataset settings
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.datasetSettings.filter` | Filter |
+| `customCanvas.datasetSettings.sort` | Sort |
+| `customCanvas.datasetSettings.limit` | Limit |
+| `customCanvas.datasetSettings.addFilter` | Add Filter |
+| `customCanvas.datasetSettings.addSort` | Add Sort |
+| `customCanvas.datasetSettings.filterPlaceholder` | Add a filter |
+| `customCanvas.datasetSettings.selectOperator` | Select operator |
+| `customCanvas.datasetSettings.selectValue` | Select value |
+| `customCanvas.datasetSettings.selectTime` | Select time |
+| `customCanvas.datasetSettings.selectRange` | Select range |
+| `customCanvas.datasetSettings.enterValue` | Enter value |
+| `customCanvas.datasetSettings.enterLimit` | Enter limit |
+| `customCanvas.datasetSettings.sortBy` | Sort by |
+| `customCanvas.datasetSettings.sortAscending` | Sort ascending |
+| `customCanvas.datasetSettings.sortDescending` | Sort descending |
+| `customCanvas.datasetSettings.selectSortByFirst` | Select sort by first |
+| `customCanvas.datasetSettings.deleteFilter` | Delete |
+| `customCanvas.datasetSettings.deleteSort` | Delete sort |
+| `customCanvas.datasetSettings.filterNotInDataModel` | The filter "`{{member}}`" is not included in the selected data model |
+| `customCanvas.datasetSettings.sortNotInDataModel` | The sort "`{{sortBy}}`" is not included in the selected data model |
+
+#### Relative date presets
+
+These are the labels shown in filter dropdowns. The underlying values are sent to your data model unchanged, so translating a label doesn't affect filtering.
+
+| Key | English default |
+| --- | --- |
+| `customCanvas.datasetSettings.timePresets.today` | Today |
+| `customCanvas.datasetSettings.timePresets.yesterday` | Yesterday |
+| `customCanvas.datasetSettings.timePresets.oneWeekAgo` | 1 week ago |
+| `customCanvas.datasetSettings.timePresets.oneMonthAgo` | 1 month ago |
+| `customCanvas.datasetSettings.timePresets.threeMonthsAgo` | 3 months ago |
+| `customCanvas.datasetSettings.timePresets.sixMonthsAgo` | 6 months ago |
+| `customCanvas.datasetSettings.timePresets.oneYearAgo` | 1 year ago |
+| `customCanvas.datasetSettings.timePresets.thisWeek` | This week |
+| `customCanvas.datasetSettings.timePresets.lastWeek` | Last week |
+| `customCanvas.datasetSettings.timePresets.last7Days` | Last 7 days |
+| `customCanvas.datasetSettings.timePresets.thisMonth` | This month |
+| `customCanvas.datasetSettings.timePresets.lastMonth` | Last month |
+| `customCanvas.datasetSettings.timePresets.last30Days` | Last 30 days |
+| `customCanvas.datasetSettings.timePresets.thisQuarter` | This quarter |
+| `customCanvas.datasetSettings.timePresets.lastQuarter` | Last quarter |
+| `customCanvas.datasetSettings.timePresets.last6Months` | Last 6 months |
+| `customCanvas.datasetSettings.timePresets.last12Months` | Last 12 months |
+| `customCanvas.datasetSettings.timePresets.thisYear` | This year |
+| `customCanvas.datasetSettings.timePresets.lastYear` | Last year |
+
+#### Drill-down
+
+| Key | English default |
+| --- | --- |
+| `drillDown.goBack` | Go back |
+| `drillDown.close` | Close |
+| `drillDown.closeModal` | Close modal |
+| `drillDown.breadcrumbNavigation` | Breadcrumb navigation |
+| `drillDown.step` | Step `{{number}}` |
+| `drillDown.loading` | Loading... |
+| `drillDown.loadError` | Failed to load embeddable |
 
 ---
 
