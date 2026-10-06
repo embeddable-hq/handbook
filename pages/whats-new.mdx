@@ -16,6 +16,223 @@ It's ideal for scheduled reports, email attachments, and archiving — and becau
 
 Learn more in the [Dashboard Export API](/deployment/dashboard-export) guide.
 
+## August 2026
+
+### 1. Keyboard navigation across the platform
+
+The Embeddable workspace is now fully operable from the keyboard. We rebuilt focus handling from the ground up — a consistent focus ring, a "skip to main content" link, and proper keyboard and ARIA support for modals, dropdowns, selects, multi-selects, radios, tags, text fields, the code editor and list re-ordering.
+
+### 2. Connected environments and per-connection Cube versions
+
+The data connection screens now show a **Connected environments** table, so you can see at a glance which environments a connection is serving. You can also pick the [Cube version](/cube-versions) a connection uses and have it applied when you test the connection, rather than only at publish time.
+
+### 3. Connection concurrency
+
+Query concurrency is now a dedicated field on a data connection instead of a hidden setting, so you can tune how many queries Embeddable runs against your warehouse in parallel.
+
+Learn more about `Connecting your database` [here](/data/connect-your-database).
+
+### 4. Faster building in Custom Canvas
+
+Small things that add up when you build a lot of dashboards:
+
+- Search the templates list in the Custom Canvas builder
+- Duplicate a widget from the dashboard toolbar, or a card in the template library
+- Deleting a measure or dimension in a template form no longer reloads the page
+
+Learn more about `Building a Custom Canvas` [here](/self-serve/custom-canvas/building-it).
+
+### 5. Filter builders that follow your app
+
+`FilterBuilderPro` and `FilterBuilderWithGroupingPro` gained an opt-in **Track default filters** setting. With it on, the component adopts host-driven changes to `defaultFilters` *after* mount — so you can switch between saved filter sets, or reset them, without remounting the embed. Both components also emit `embeddable-user-interaction` events for analytics.
+
+See the [Remarkable Pro changelog](/component-libraries/remarkable-pro/changelog) for the full list.
+
+
+## June–July 2026
+
+### 1. AI Chatbot and AI Endpoints
+
+Your end users can now **ask questions of their data in plain language**. The AI Chatbot component drops into a dashboard and answers from your data models, and the AI Endpoints let you build your own conversational experience on top of the same engine.
+
+Learn more about the [AI Chatbot](/self-serve/ai-chatbot) and the [AI Endpoints](/self-serve/ai-endpoints).
+
+### 2. Build with AI
+
+New guides for using AI coding assistants with Embeddable, covering the two places it saves the most time:
+
+- [Build components with AI](/component-libraries/build-with-ai)
+- [Build data models with AI](/data-modeling/build-with-ai)
+
+### 3. A Self-serve section in the docs
+
+Everything about letting your end users build their own dashboards — Custom Canvas, Starter Canvas, and the AI experiences — now lives in one place, and the Getting Started, Development and Components sections were restructured around the journey rather than the feature list.
+
+Start at the [Self-serve introduction](/self-serve/introduction).
+
+### 4. Microsoft Fabric
+
+Microsoft Fabric joins the list of supported data warehouses.
+
+Learn more about `Connecting your database` [here](/data/connect-your-database).
+
+### 5. Export options per component
+
+Components can now declare which export options they offer, configurable from the builder's component settings.
+
+Learn more about `Export options` [here](/component-libraries/remarkable-pro/customizations/export-options).
+
+### 6. Saved version metadata endpoint
+
+A new endpoint returns metadata for a saved dashboard version, so your CI/CD can inspect what it is about to publish.
+
+Learn more about the [Versions API](/deployment/versions-api).
+
+
+## April–May 2026
+
+### 1. Dashboards as Code
+
+Define dashboards in your repository, version them with your application, and push them with the CLI — the same workflow you already use for components and data models. We also published a tutorial for driving it with a Claude skill.
+
+Learn more about [Dashboards as Code](/dashboards/dashboards-as-code) and [building dashboards with AI](/dashboards/build-with-ai).
+
+### 2. Schemas API
+
+Programmatic access to your data model schemas, for tooling, validation and automated checks.
+
+Learn more about the [Schemas API](/data-modeling/schemas-api).
+
+### 3. FILTER_PARAMS
+
+Push dashboard filters down into the SQL of a data model, so expensive queries are filtered at the source rather than after the fact.
+
+Learn more about [FILTER_PARAMS](/data-modeling/filter-params).
+
+### 4. Time zones, properly
+
+Time zone support now runs through the Remarkable Pro components themselves: KPIs, charts, gap-filling and the date range pickers all anchor to the reporting time zone from `clientContext` instead of UTC.
+
+Learn more about `Time zones` [here](/component-libraries/remarkable-pro/i18n).
+
+### 5. Five new chart types
+
+Scatter, Bubble, Area, Bar + Line combo, and a Line Comparison chart with KPI tabs — plus sort and limit controls on bar charts, and a `FilterBuilderPro` component for building filter clauses on the dashboard.
+
+See the [Remarkable Pro changelog](/component-libraries/remarkable-pro/changelog) for details.
+
+### 6. AWS PrivateLink
+
+For customers who would rather not expose their warehouse to the public internet, Embeddable can now connect over AWS PrivateLink. Talk to us if you would like it enabled.
+
+
+## February–March 2026
+
+### 1. Drill-down
+
+Click a chart and open a deeper view of what you just clicked — configured in the builder, with variable overrides passed from the source widget to the drill-down target, and previewed before you publish.
+
+Learn more about [Drill-down](/dashboards/drill-down), or watch the [Quick Hit tutorial](/video-tutorials/quick-hits/drill-down).
+
+### 2. Starter Canvas
+
+A pre-built starting point for end-user dashboard building: ship your users a canvas that already has widgets on it, instead of a blank page.
+
+Learn more about `Starter Canvas` [here](/self-serve/custom-canvas/introduction).
+
+### 3. The Remarkable Pro changelog, in the docs
+
+Every Remarkable Pro release is now published to the handbook automatically, so you can see exactly what changed between versions without leaving the docs.
+
+Read the [Remarkable Pro changelog](/component-libraries/remarkable-pro/changelog).
+
+### 4. Security Filters as the primary row-level security method
+
+We reworked the row-level security docs to lead with **Security Filters**, which are simpler to reason about than hand-written SQL for the majority of cases. Access Policies and SQL-based RLS are still fully supported.
+
+Learn more about [Security Filters](/data-modeling/row-level-security/security-filters).
+
+### 5. Custom fonts in themes
+
+Load your own font into a Remarkable Pro theme, rather than working around the bundled ones.
+
+Learn more about `Fonts` [here](/component-libraries/remarkable-pro/styling/fonts).
+
+### 6. A new look
+
+Embeddable has a new logo, a new typeface pairing and a refreshed workspace background.
+
+
+## December 2025 – January 2026
+
+### 1. Remarkable Pro
+
+Our new component library. Remarkable Pro is a complete, themeable set of analytics components — KPIs, line, bar and stacked charts, pivot tables with sub-rows, heatmaps, scrollable and paginated tables, date range pickers with presets, granularity selectors, markdown blocks and layout helpers — built on design tokens so it matches your product rather than ours.
+
+Learn more about [Remarkable Pro](/component-libraries/remarkable-pro/introduction).
+
+### 2. Vanilla Components moves to Legacy
+
+With Remarkable Pro available, Vanilla Components moved into its own Legacy section of the docs. Existing dashboards keep working; new projects should start with Remarkable Pro.
+
+See the [Vanilla Components](/legacy/vanilla-components/introduction) section.
+
+### 3. Generate data models from SQL
+
+Paste a SQL query and get a data model back, instead of writing the YAML by hand.
+
+Learn more about [generating data models](/data-modeling/writing-data-models/generate-data-models).
+
+### 4. Angular and Vue
+
+Official guidance and wrappers for embedding in Angular and Vue, alongside the existing React and TypeScript support.
+
+Learn more about [Embedding](/deployment/embedding).
+
+### 5. One-command setup
+
+`npx @embeddable.com/init` scaffolds a working Embeddable project, and the onboarding flow in the workspace was rebuilt around it.
+
+Learn more in the [Quick start guide](/getting-started/get-set-up/quick-start-guide).
+
+### 6. Quick Hits video tutorials
+
+Short, single-topic videos covering datasets, dataset filters, variables and the debug button.
+
+Browse the [Quick Hits](/video-tutorials/quick-hits/datasets).
+
+
+## October–November 2025
+
+### 1. Custom Canvas is generally available
+
+Custom Canvas came out of preview — the "coming soon" banners are gone and the docs cover the whole thing: building it, theming it, and what your end users see.
+
+Learn more about [Custom Canvas](/deployment/custom-canvas) and the [end-user experience](/self-serve/custom-canvas/end-user-experience).
+
+### 2. dbt and Cube Cloud
+
+A full guide to using Embeddable with Cube Cloud and dbt, plus expanded pre-aggregation documentation covering indexes, `rollup_join` and when each kind of pre-aggregation pays off.
+
+Learn more about [using Cube Cloud with dbt](/data/using-cube-cloud-with-dbt) and [pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations).
+
+### 3. `countRows` in loadData
+
+Get the total row count alongside a page of results, without a second query.
+
+Learn more about [loading data](/component-libraries/build-components/loading-data).
+
+### 4. Embedding with TypeScript and React
+
+A dedicated section on embedding in a typed React codebase, including the typed wrapper around the web component.
+
+Learn more about [Embedding](/deployment/embedding).
+
+### 5. Extending types
+
+Extend Embeddable's native input types with your own, so component inputs can speak your domain's language.
+
+Learn more about [extending types](/component-libraries/build-components/extending-types).
 
 ## September 2025
 
