@@ -1,5 +1,24 @@
 [
   {
+    "version": "v0.12.1",
+    "date": "2026-10-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.12.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.12.1",
+    "notes": [
+      "PNG exports from chart cards are now rendered at 2× resolution — a 436×304 card produces an 872×608 PNG. During export, Chart.js canvases are temporarily re-rendered at 2× before capture and restored afterwards, ensuring sharp chart bodies regardless of the screen's device pixel ratio.",
+      "Fixed KPI values using auto-sizing being left-aligned in exported PNG images. An inline style conflict between `AutoTextSize` and the export clone prevented the computed centring styles from applying; the fix strips inline styles from cloned nodes before capture so alignment is correct in the exported image."
+    ]
+  },
+  {
+    "version": "v0.12.0",
+    "date": "2026-10-08",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.12.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.12.0",
+    "notes": [
+      "Chart menu options can now carry an optional `options` object that is passed to the option's `onClick` callback. The first use is a new `backgroundColor` setting for PNG exports — previously exported PNGs always had a transparent background; setting `options.backgroundColor` on a PNG menu option passes the colour through to the underlying image export. Both fields are optional, so existing themes and custom `onClick` handlers need no changes."
+    ]
+  },
+  {
     "version": "v0.11.1",
     "date": "2026-10-05",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.11.1",
