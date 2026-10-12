@@ -1,5 +1,23 @@
 [
   {
+    "version": "v0.12.3",
+    "date": "2026-10-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.12.3",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.12.3",
+    "notes": [
+      "Fixed numeric values in CSV and XLSX exports. Numeric measures and number dimensions are now exported as actual numbers — previously everything was stored as a string, causing Excel to show the \"number stored as text\" warning and preventing SUM and chart functions from working on those cells. CSV cells are now quoted only when needed (when they contain a comma, quote, newline, or surrounding whitespace), rather than every cell always being wrapped in double quotes."
+    ]
+  },
+  {
+    "version": "v0.12.2",
+    "date": "2026-10-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.12.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.12.2",
+    "notes": [
+      "The package is now declared side-effect-free (except CSS files), allowing compatible bundlers to tree-shake unused modules. Custom Embeddable components that import from `@embeddable.com/remarkable-pro` no longer pull in every component definition — for example, a component importing only `ChartCard` dropped from 599.9 KB to 322.7 KB gzip (41 bundled component definition modules reduced to 0)."
+    ]
+  },
+  {
     "version": "v0.12.1",
     "date": "2026-10-08",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.12.1",
