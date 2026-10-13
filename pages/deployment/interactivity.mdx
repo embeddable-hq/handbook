@@ -86,6 +86,46 @@ const embeddableElement = document.querySelector('em-beddable');
 embeddableElement.addEventListener('componentsLoad', handleComponentsLoad);
 ```
 
+## Know When Pre-aggregations are Building
+
+When a component requests data that isn't covered by an existing [pre-aggregation](/data-modeling/caching/level-2-cache/pre-aggregations), Cube builds that pre-aggregation on-demand before it can return results, which may take some time. This typically happens after a data import, or for a security context that has not been configured via the [Caching API](/data-modeling/caching/level-2-cache/caching-api).
+
+You can listen for the `preAggregation` event to tell your users that their data is still being prepared, rather than leaving them looking at a dashboard that appears to be stuck.
+
+The event's `detail` property contains:
+
+| Property            | Description                                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `status`            | `started`, `completed` or `failed` (see below).                                                                                          |
+| `queryId`           | Identifies the data request. The `started` event and its terminal event share the same `queryId`.                                        |
+| `query`             | The query that triggered the build, including the `componentId` of the component that issued it.                                         |
+| `externalRequestId` | Cube's own request ID, where Cube reported one. Useful when raising a support request.                                                    |
+| `error`             | Only present when `status` is `failed`.                                                                                                  |
+
+Each data request fires `started` at most once, followed by exactly one terminal event:
+
+- `started`: the request has triggered a pre-aggregation build.
+- `completed`: the request returned its data, so the build it was waiting on has finished.
+- `failed`: the request did not complete. Either it errored, or it was superseded by a newer request (for example, because a user changed a filter while the build was still running).
+
+Here is an example of how to listen to pre-aggregation builds in your Embeddable:
+
+```tsx
+const handlePreAggregation = (e) => {
+  if (e.detail.status === 'started') {
+    showMessage('Preparing your data. This may take a few moments.');
+  } else {
+    hideMessage();
+  }
+};
+const embeddableElement = document.querySelector('em-beddable');
+embeddableElement.addEventListener('preAggregation', handlePreAggregation);
+```
+
+<Callout emoji="💡">
+Several components can trigger builds at the same time, each with its own `queryId`. To show a single message for the whole dashboard, keep track of the `queryId`s you have seen `started` for, remove each one when its terminal event arrives, and hide your message once none are left.
+</Callout>
+
 ## Pass Client Context
 
 Client Context allows you to pass information about the user or environment to your React components. This is accomplished by passing a `client-context` attribute in your web component that contains an arbitrary JSON string. This can be useful for localization, theming, or other context-specific behavior. You can [learn more here](/component-libraries/client-context), including detailed examples.
