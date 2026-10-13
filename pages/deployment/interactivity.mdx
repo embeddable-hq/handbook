@@ -94,13 +94,10 @@ You can listen for the `preAggregation` event to tell your users that their data
 
 The event's `detail` property contains:
 
-| Property            | Description                                                                                                                              |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `status`            | `started`, `completed` or `failed` (see below).                                                                                          |
-| `queryId`           | Identifies the data request. The `started` event and its terminal event share the same `queryId`.                                        |
-| `query`             | The query that triggered the build, including the `componentId` of the component that issued it.                                         |
-| `externalRequestId` | Cube's own request ID, where Cube reported one. Useful when raising a support request.                                                    |
-| `error`             | Only present when `status` is `failed`.                                                                                                  |
+| Property      | Description                                                       |
+| ------------- | ----------------------------------------------------------------- |
+| `status`      | `started`, `completed` or `failed` (see below).                   |
+| `componentId` | The component whose data request triggered the build.             |
 
 Each data request fires `started` at most once, followed by exactly one terminal event:
 
@@ -123,7 +120,7 @@ embeddableElement.addEventListener('preAggregation', handlePreAggregation);
 ```
 
 <Callout emoji="💡">
-Several components can trigger builds at the same time, each with its own `queryId`. To show a single message for the whole dashboard, keep track of the `queryId`s you have seen `started` for, remove each one when its terminal event arrives, and hide your message once none are left.
+Several components can trigger builds at the same time. Because every `started` is followed by exactly one `completed` or `failed`, you can show a single message for the whole dashboard by keeping a count: add one on `started`, subtract one on either terminal status, and show your message while the count is above zero.
 </Callout>
 
 ## Pass Client Context
