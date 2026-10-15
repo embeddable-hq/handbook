@@ -54,6 +54,40 @@ const embeddableElement = document.querySelector('em-beddable');
 embeddableElement.addEventListener('variablesChange', handleVariableChange);
 ```
 
+## Listen to Component Events
+
+Components fire their own events as users interact with them — a bar chart when a bar is clicked, a table when a row is clicked, a dropdown when a value is picked. In the builder, these events are usually [connected to a variable](/dashboards/interactivity#example-click-a-pie-chart-segment-to-filter-data) so that the rest of the dashboard reacts to them. You can also listen to them directly in your app with the `componentEvent` event, and let a dashboard interaction drive your own UI instead — opening a report, navigating to another page, or updating something outside the Embeddable.
+
+The event's `detail` property contains:
+
+| Property        | Description                                                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `eventName`     | The event the component fired, as named in its `meta.events` (e.g. `onBarClicked`).                                |
+| `componentId`   | The component that fired it.                                                                                       |
+| `componentName` | The type of that component (e.g. `BarChartStackedPro`).                                                            |
+| `value`         | The event's properties, as declared in `meta.events[].properties`. A property the user cleared arrives as `null`.  |
+| `isDrillDown`   | `true` when the event comes from an Embeddable opened in a [drill-down](/dashboards/drill-down) modal.             |
+
+Here is an example of how to listen to component events in your Embeddable:
+
+```tsx
+const handleComponentEvent = (e) => {
+  if (e.detail.eventName === 'onBarClicked') {
+    navigateTo(`/reports/${e.detail.value.axisDimensionValue}`);
+  }
+};
+const embeddableElement = document.querySelector('em-beddable');
+embeddableElement.addEventListener('componentEvent', handleComponentEvent);
+```
+
+Every event a component fires reaches your listener, whether or not it is connected to a variable, and any interactions you have already configured in the builder keep working alongside it. Unlike a variable, an event is not state: a user clicking the same bar twice fires `componentEvent` twice, even though the value has not changed.
+
+Which events a component fires, and what each one puts in `value`, is defined by the component itself. If you build your own components, you declare both [in your `.emb.ts` file](/component-libraries/build-components/interactivity).
+
+<Callout emoji="💡">
+If you embed more than one Embeddable on a page, `event.target` is the `<em-beddable>` element the event came from, so you can tell them apart by listening on each element separately. The one exception is drill-down: a dashboard opened in a drill-down modal reports against the element it was opened from, which is what `isDrillDown` is there to distinguish.
+</Callout>
+
 ## Handle Component Errors
 
 You can listen to errors that occur in your Embeddable by adding an event listener for the `onEmbeddableError` event. This event is fired each time an error occurs in your Embeddable (e.g., network error, invalid token). The event's `detail` property contains an object with the error message and error detail.
