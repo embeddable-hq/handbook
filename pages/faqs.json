@@ -559,9 +559,9 @@
       "created_at": "2024-05-03T15:39:30.692Z"
     },
     {
-      "question": "How Should I Handle Split Repos for FE and BE?",
-      "slug": "how-should-i-handle-split-repos-for-fe-and-be",
-      "answer": "**Embeddable now supports** `componentsSrc` **and** `modelsSrc` **folders outside** `src/` SDK version:\n\n\"@embeddable.com/sdk-core\": \"^3.1.8\"\n\nTo configure `components` and `models` folders outside src, you can set this in `config.js` like so:\n\nexport default defineConfig({ plugins: [react] componentsSrc: './src', modelsSrc: './src',\n\n**Note**: these fields are optional. When not defined, `./src` folder path will be used by default, and cube models will be looked up in this folder recursively.\n\nImportantly: once **components** and **models** are pushed to Embeddable (using `npm run embeddable:push`) we do actually separate them, and only the **components** will be rendered on the client-side. The **models** are only ever used by the server-side of Embeddable (to generate the SQL) and are never included in any code that is available to the browser.\n\nWhen embedding, it is important that retrieval of the security token is done on the BE, as you never want to expose your API Key to the FE.",
+      "question": "How Should I Handle Split Repos for Components and Data?",
+      "slug": "how-should-i-handle-split-repos-for-components-and-data",
+      "answer": "You can control what gets pushed from a repo in the `embeddable.config.ts` file. Specifically, you can set `pushModels` and `pushComponents` to `true` or `false` depending on whether you want to push models or components from that repo. This would allow you to have one repo for your components and another repo for your data models.",
       "created_at": "2024-05-02T09:02:09.218Z"
     },
     {
@@ -597,26 +597,8 @@
     {
       "question": "Is the Embeddable Background Transparent?",
       "slug": "is-the-embeddable-background-transparent",
-      "answer": "Yes! It will be the colour of wherever you embed the Embeddable. Note: the canvas background is white and we use a white background in the Preview.",
+      "answer": "Yes! It will be the color of wherever you embed the Embeddable. Note: the canvas background is white and we use a white background in the Preview.",
       "created_at": "2024-03-27T13:53:23.040Z"
-    },
-    {
-      "question": "How Do I Connect to a Private Database?",
-      "slug": "how-do-i-connect-to-a-private-database",
-      "answer": "Embeddable uses `jump-server` to securely connect to customer databases which are not publicly accessible. To connect to a private database, a secure connection between Embeddable servers and the client’s Bastion host must be established first. To establish a secure connection SSH tunnel is used. \n\nTo connect your private database, you need to:\n\n1. Whitelist Embeddable IP addresses:\n\n```jsx\nembeddable IPs: \"34.23.233.7\", \"34.23.153.222\"\n```\n\n2. Add the following public key to bastion user which will be used for establishing SSH tunnel:\n\n```json\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDigxP9eVpGM8TQFxltewdAWZ2jy4QZSRSdlnSC/YTFv9ETbXY/ucX+3UtTT5Sq1UphLAkytFEuZMdaxW//UJOHjm/draTqe+hDcz1SDT5On/3n56X0ZPUt0l/CNNgO6vB2R8oxgb7Xlkp+ud4INCau9NWD7z5yyIaU6DITBwsSypgLo1m3rf2uuJO9h6hx9Oj2MwP5xi2OPqifQb4kMBMoJhBagZgBL/ZV8ktnOgG2Zd8qyKeapyY4RM4rqpWQLNncJ+sv26NMkS/Azesqj4UoQ/MEHn/8YrVheQHfh3IpfR6NBdMJsWJX6UpXXnGx6fSp6AgtL8MGyYBu2Q6mCQdBBycgT9XSoZ+zbnhDcOGfkKKSa9PtMTnej1au7GE0JKtPF0xnimeXraaOt5sq16xsi8mww75RfttIzpaAKH5TxTB/LVY1BAfdu1oHFFQ/mL5AzB23DRzNk+lfXYSc+2TJ1qg1IuJ9Wn0on5Tj35Zr1N7VQmXvo3h3r0AlXbw3q+U= jump-server@embeddable.com\n```\n\n3. Share the following info with our team:\n    1. Bastion user\n    2. Bastion host\n    3. Host and port of the database (must be accessible from Bastion host)\n    4. Database credentials needed by Cube",
-      "created_at": "2024-03-27T13:51:07.445Z"
-    },
-    {
-      "question": "How Do I Create a Custom Time Range Type?",
-      "slug": "how-do-i-create-a-custom-time-range-type",
-      "answer": "Create a file named`src/types/MyTimeRange.type.emb.js`\n\nContaining:\n\n```jsx\nimport { defineType, defineOption } from \"@embeddable.com/core\";\n\nconst MyTimeRange = defineType(\"myTimeRange\", {\n  label: \"My Time Range\",\n  toString: (option) => option.name,\n  toNativeDataType: {\n    timeRange: (value) => value.relativeTimeString\n        ? value.relativeTimeString\n        : [value.from, value.to],\n  },\n});\n\nconst now = new Date()\n\ndefineOption(MyTimeRange, { \n\tname: 'Today', \n\trelativeTimeString: 'today' \n});\ndefineOption(MyTimeRange, { \n\tname: 'Last week', \n\trelativeTimeString: 'last week' \n});\ndefineOption(MyTimeRange, { \n  name: 'Last month', \n  from: new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()), \n  to: new Date(now.getFullYear(), now.getMonth(), now.getDate())\n});\n\nexport default MyTimeRange;\n```\n\n[Screen recording of how you can use this time range type](http://recordit.co/YJ80I9SjOI)\n\nAnd for more info, we have an example dropdown component that uses the time range type:\n\n- [Video demo using the dropdown](http://recordit.co/NcmpUR7NO5)\n- You can access the code here:\nhttps://github.com/embeddable-hq/embeddable_starter_basics/tree/custom-time-example\n- The custom type:\nhttps://github.com/embeddable-hq/embeddable_starter_basics/blob/custom-time-example/src/types/MyTimeRange.type.emb.js\n- The dropdown:\nhttps://github.com/embeddable-hq/embeddable_starter_basics/tree/custom-time-example/src/components/TimeRangeDropdown",
-      "created_at": "2024-03-27T13:47:53.338Z"
-    },
-    {
-      "question": "Why Do I Get a Cube Playground Error?",
-      "slug": "why-do-i-get-a-cube-playground-error",
-      "answer": "If you are getting an error while running Cube locally, please check that your `cubes` folder only contains `models` and no other files.\n\nIf you have already checked this and it’s not resolved, please message our team!",
-      "created_at": "2024-03-27T13:47:18.336Z"
     },
     {
       "question": "Are There Any Global Dependencies?",
@@ -637,12 +619,6 @@
       "created_at": "2024-03-27T13:43:30.714Z"
     },
     {
-      "question": "How Do I Do a Custom Type?",
-      "slug": "how-do-i-do-a-custom-type",
-      "answer": "Please check out our example here:\n\nhttps://github.com/embeddable-hq/embeddable_starter_basics/commit/01ad267fbe3623f25bc4ef229b8a9c7543b86866",
-      "created_at": "2024-03-27T13:40:39.422Z"
-    },
-    {
       "question": "How Does the Dev Environment Work?",
       "slug": "how-does-the-dev-environment-work",
       "answer": "The dev environment is a separate workspace where you can make changes and preview them locally, instead of doing a build -> push step every time.\n\nIf you want those changes to show in your live workspace (i.e. not Preview workspace) you need to do the `embeddable:build` + `embeddable:push` steps.\n\nWhen you first create your dev workspace it will be automatically connected to our sample database. Pop us a message to get it hooked up to your database 😊",
@@ -657,7 +633,7 @@
     {
       "question": "Do I Need to Pay for a License for a Charting Library (e.g. Highcharts)?",
       "slug": "do-i-need-to-pay-for-a-license-for-a-charting-library-eg-highcharts",
-      "answer": "Yes - any javascript libraries that require a license, will require you to have that license.",
+      "answer": "If you're using Embeddable's built-in [Remarkable Pro Components](https://docs.embeddable.com/component-libraries/remarkable-pro), you do not need to worry about additional licenses for the charting library. If you're bringing your own library (eg HighCharts), you are responsible for ensuring you have the appropriate licenses for any third-party libraries you use.",
       "created_at": "2024-03-27T13:27:40.163Z"
     },
     {
@@ -673,12 +649,6 @@
       "created_at": "2024-03-27T13:24:11.854Z"
     },
     {
-      "question": "Can We Apply CSS in the No-Code Builder?",
-      "slug": "can-we-apply-css-in-the-no-code-builder",
-      "answer": "Currently, all CSS should be applied in the component code, however, if you want to support customisation in the no-code builder, you can define custom types (e.g. themes) and expose these as UI elements in the no-code builder. Message us [via our Slack community](https://join.slack.com/t/embeddableworkspace/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) for help!",
-      "created_at": "2024-03-27T13:23:22.242Z"
-    },
-    {
       "question": "How Do We Make Inputs Appear as Groups in the Component Modal?",
       "slug": "how-do-we-make-inputs-appear-as-groups-in-the-component-modal",
       "answer": "To group inputs in the component modal, just set the \"category\" field for each input.",
@@ -687,7 +657,7 @@
     {
       "question": "How Do I Filter Data via Some Info in My URL?",
       "slug": "how-do-i-filter-data-via-some-info-in-my-url",
-      "answer": "**Coming soon**\n\nTo load different data based on some info in your url, e.g. country name, you can either:\n\npass in the info (e.g. country) via the security context when retrieving the security token (see [Tokens API](/deployment/tokens-api))\n\npass it in via the web component e.g:\n\n```\n<em-beddable embeddableId='...' token='...' componentConfig={{ country: 'Ghana' }} />\n```",
+      "answer": "You can use [Security Context](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security) to pass information from your URL into the Embeddable component.\n\nFor example, if you want to filter data based on the country specified in the URL, you can pass it via the security context when retrieving the security token:\n\n```\nconst token = await fetch('/api/get-token', {\n  method: 'POST',\n  body: JSON.stringify({\n    securityContext: {\n      country: 'Ghana'\n    }\n  })\n});\n```\n\nThen, in your Embeddable component, you can access this information and apply it as a filter.\n\nYou can also use [Client Context](https://docs.embeddable.com/component-libraries/client-context) to pass information from your frontend into the Embeddable component.",
       "created_at": "2024-03-27T13:19:10.868Z"
     },
     {
@@ -711,7 +681,7 @@
     {
       "question": "Where Can I See Practical Examples of Components?",
       "slug": "where-can-i-see-practical-examples-of-components",
-      "answer": "[You can check out our components here](https://embeddable.com/components)",
+      "answer": "[You can check out our components here](https://remarkable.embeddable.com/)",
       "created_at": "2024-03-27T12:10:35.196Z"
     },
     {
