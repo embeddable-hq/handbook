@@ -12,6 +12,7 @@ import Bruno from './components/Bruno'
 import { InkeepChat } from './components/InkeepChatButton'
 import CodeContainer from './components/CodeContainer'
 import ChangelogPaginated from './components/ChangelogPaginated'
+import FaqPaginated from './components/FaqPaginated'
 
 const config: DocsThemeConfig = {
   logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
@@ -33,7 +34,8 @@ const config: DocsThemeConfig = {
     'ExternalVideo': ExternalVideo,
     'Pill': Pill,
     'CodeContainer': CodeContainer,
-    'ChangelogPaginated': ChangelogPaginated
+    'ChangelogPaginated': ChangelogPaginated,
+    'FaqPaginated': FaqPaginated
   },
   useNextSeoProps: () => {
     return {

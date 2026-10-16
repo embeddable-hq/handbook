@@ -1,0 +1,694 @@
+{
+  "faqs": [
+    {
+      "question": "Are Cancelled Queries on Dashboard Load Normal?",
+      "slug": "are-cancelled-queries-on-dashboard-load-normal",
+      "answer": "When your dashboards are loading, sometimes you might see cancelled queries in the network tab, like so:\n\n![Screenshot 2026-03-26 at 19.25.55|620x224](/img/faq/f9551210e69c3ca5ecae7764cc5af3783662a2af.png)\n\nThis happens when a component immediately updates variable values after they are rendered and is nothing to worry about ☺️ If you have any concerns please drop our team a message.",
+      "created_at": "2026-03-26T19:27:47.882Z"
+    },
+    {
+      "question": "How Do I Use Tailwind CSS Inside Embeddable Custom Components (Remarkable)?",
+      "slug": "how-do-i-use-tailwind-css-inside-embeddable-custom-components-remarkable",
+      "answer": "Tailwind utility classes don’t apply consistently inside Embeddable components because the embedded experience runs inside a **shadow DOM**, which blocks external stylesheets from penetrating the component scope. CSS variables do pass through the shadow DOM boundary, but class-based styles do not.\n\nYou don’t need to abandon Tailwind — here’s how to make it work.\n\n#### Step 1: Add a Tailwind config to your boilerplate repo\n\nCreate a `tailwind.config.js` at the top level of your boilerplate repo. At minimum it should look like this:\n\n```js\n/** @type {import('tailwindcss').Config} */\nmodule.exports = {\n  darkMode: 'class',\n  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n};\n```\n\n#### Step 2: Add an index.css to your components folder\n\nCreate a `src/components/index.css` (or equivalent) that begins with:\n\n```css\n@tailwind base;\n@tailwind components;\n@tailwind utilities;\n```\n\nThis injects the necessary Tailwind styles so your classes resolve correctly at runtime.\n\n#### Arbitrary values won’t work — extend the config instead\n\nEmbeddable doesn’t support Tailwind arbitrary values like `border-[#888888]`. Instead, extend your Tailwind config with named tokens:\n\n```js\ntheme: {\n  extend: {\n    borderColor: {\n      'controls-multiselector': 'var(--embeddable-controls-multiSelector-borderColor)',\n    },\n  },\n},\n```\n\nThen reference them as standard utility classes like `border-controls-multiselector`.\n\n#### Tailwind 4 note\n\nThe approach above is confirmed working with Tailwind 3. If you’re on Tailwind 4, some tweaks may be needed — reach out if you run into issues and we can help you through it.",
+      "created_at": "2026-03-25T11:19:13.906Z"
+    },
+    {
+      "question": "How Do I Call Table-Valued Functions With FILTER_PARAMS?",
+      "slug": "how-do-i-call-table-valued-functions-with-filterparams",
+      "answer": "If your database has an existing **table-valued function (TVF)** that accepts parameters (e.g. a date range), you can call it dynamically from a Cube model using `FILTER_PARAMS`. The function executes with the exact range the user selects in the dashboard — no static table scan required.\n\n**How it works**\n\nWrite the cube’s `sql` as a subquery that:\n\n1. Uses `FILTER_PARAMS` twice — once to extract the `from` boundary, once for the `to` boundary — using a lambda that returns just one value each time.\n2. Passes those values as parameters to your function via `CROSS JOIN LATERAL` (PostgreSQL) or the equivalent for your database.\n\n```yaml\ncubes:\n  - name: my_tvf_cube\n    sql: |\n      SELECT t.*\n      FROM (\n        SELECT\n          {FILTER_PARAMS.my_tvf_cube.event_time.filter(\n            lambda x, y: f\"{x}\"\n          )}::timestamp AS from_time,\n          {FILTER_PARAMS.my_tvf_cube.event_time.filter(\n            lambda x, y: f\"{y}\"\n          )}::timestamp AS to_time\n      ) params\n      CROSS JOIN LATERAL public.my_function(params.from_time, params.to_time) t\n\n    dimensions:\n      - name: event_time\n        sql: event_time\n        type: time\n\n      # ... other columns returned by your function\n```\n\nThe `lambda x, y: f\"{x}\"` / `lambda x, y: f\"{y}\"` callbacks tell Cube to extract just the start or end boundary of the filter — rather than generating a full `col >= x AND col <= y` condition.\n\n**Supported databases**\n\n| Database | Lateral join syntax |\n|----|----|\n| PostgreSQL | `CROSS JOIN LATERAL my_func(from_time, to_time) t` |\n| Snowflake | `TABLE(my_func(from_time, to_time))` in the `FROM` clause |\n| BigQuery | `CROSS JOIN UNNEST(my_tvf(from_time, to_time))` |\n| SQL Server | `CROSS APPLY dbo.my_func(from_time, to_time)` |\n\n**Can a TVF cube join to other models?**\n\nYes. You can define `joins` on a TVF cube exactly as you would on any other cube. `FILTER_PARAMS` resolves correctly when the cube is queried alongside a joined model. A common pattern is enriching TVF results with a dimension table (e.g. businesses, users, products):\n\n```yaml\njoins:\n  - name: businesses\n    sql: \"{CUBE}.business_id = {businesses}.id\"\n    relationship: many_to_one\n```\n\nTwo things to keep in mind:\n\n* **Only matched rows are returned** — dimension table rows with no corresponding TVF results are excluded. If a business has no transactions in the selected date range, it won’t appear in the results.\n* **The join is defined on the TVF cube** — the TVF cube owns the foreign key and declares the `many_to_one` relationship to the dimension table.\n\n**Do I need a TVF, or will a stored procedure work?**\n\nYou need a **table-valued function**. Stored procedures won’t work here.\n\nThe reason is that `CROSS JOIN LATERAL` (and its equivalents) require something that returns a result set — i.e. something you can `SELECT` from. TVFs satisfy this because they return a table. Stored procedures do not — they use `CALL` and have no return value that can sit in a `FROM` clause.\n\nThis applies across all supported databases:\n\n| Database | Stored procedure | Table-valued function |\n|----|----|----|\n| PostgreSQL | `CREATE PROCEDURE` + `CALL` — not queryable | `CREATE FUNCTION ... RETURNS TABLE` ✓ |\n| SQL Server | `CREATE PROCEDURE` + `EXEC` — not queryable | `CREATE FUNCTION ... RETURNS TABLE` ✓ |\n| Snowflake | `CREATE PROCEDURE` + `CALL` — not queryable | `CREATE FUNCTION ... RETURNS TABLE` ✓ |\n\nIf you’re currently using a stored procedure, convert it to a table-valued function first. In PostgreSQL, that means replacing `CREATE PROCEDURE` with `CREATE FUNCTION ... RETURNS TABLE (...)`.\n\n**Limitations**\n\n* **Time ranges only** — the `x`/`y` callback only populates for `inDateRange` filters. Other filter types (equals, contains, etc.) don’t provide two boundary values.\n* **No filter = likely error** — if the user doesn’t apply a date range, both values are `null`, which will typically cause a database error or return no rows. Enforce a default date range in your component to prevent this.\n* **No pre-aggregation support** — pre-aggregations cannot accelerate queries built on TVFs.\n\n## Related docs\n\n* [Filter Params](https://cube.dev/docs/product/data-modeling/reference/context-variables#filter_params)",
+      "created_at": "2026-03-24T11:46:06.972Z"
+    },
+    {
+      "question": "Which Multi-Stage Calculations and Nested Aggregates Work in Embeddable (Cube v1.3.24)?",
+      "slug": "which-multi-stage-calculations-and-nested-aggregates-work-in-embeddable-cube-v1324",
+      "answer": "**Q: What are multi-stage calculations and nested aggregates in Cube?**\n\n[Multi-stage calculations](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations) are computed measures that depend on the results of other aggregated measures — essentially, calculations built on top of calculations. [Nested aggregates](https://cube.dev/docs/product/data-modeling/recipes/nested-aggregates) are a related concept where one aggregate function is applied over the result of another. Both features allow you to express more complex analytical queries directly in your Cube data model.\n\n---\n\n**Q: Don't these features require the Tesseract SQL planner?**\n\nAccording to Cube's documentation, multi-stage calculations and nested aggregates are listed as requiring the [Tesseract SQL planner](https://cube.dev/docs/product/configuration/reference/environment-variables#cubejs_tesseract_sql_planner) (enabled via the `CUBEJS_TESSERACT_SQL_PLANNER` environment variable). However, our testing with Cube v1.3.24 in the Embeddable workspace revealed that a significant subset of these features work correctly even without Tesseract fully enabled.\n\n---\n\n**Q: What exactly was tested?**\n\nWe created separate data models for each feature — multi-stage calculations and nested aggregates — and validated them against the Embeddable workspace running Cube v1.3.24. The goal was to determine which capabilities are functional out of the box and which are blocked by the absence of full Tesseract support.\n\n---\n\n**Q: What features work in Cube v1.3.24 without Tesseract?**\n\nThe following features were validated and work correctly:\n\n| Docs | Feature | Notes |\n|----|----|----|\n| [Rolling Window](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#rolling-window) | Rolling window (trailing, unbounded) | Date range filter required |\n| [Period-to-date](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#period-to-date) | Period-to-date (type: to_date YTD/QTD/MTD) | Date range filter required |\n| [Time-shift](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#time-shift) | Time shift (time_shift) | ✅ |\n| [Fixed dimension](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#fixed-dimension) | Fixed dimension / percent of total (group_by) | ✅ |\n| [Nested aggregated (add_group_by)](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#nested-aggregate) | Nested aggregate (add_group_by) | ✅ |\n| [nested aggregated (sub_query: true)](https://cube.dev/docs/product/data-modeling/recipes/nested-aggregates) | Classic nested aggregates (sub_query: true) | ✅ No Tesseract needed |\n| Listed here on [docs](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations). | Pre-aggregations with multi-stage | ❌ Not accelerated — documented Cube limitation, not version-specific |\n\n**Q: What features do NOT work in Cube v1.3.24?**\n\n| Docs | Feature | Why it fails |\n|----|----|----|\n| [Ranking](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#ranking) | type: rank on measures | Build error — not in accepted enum values |\n| [Switch in dimension](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#example-3) | type: switch on dimensions | Build error — not in accepted enum values |\n| [Conditional Measure](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#conditional-measure) | Conditional measure (case/switch) | Blocked by type: switch not being supported |\n| [Rolling Windows without filter](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#stages) | Rolling windows without a date range filter | Runtime error: \"Time series queries without dateRange aren't supported\" — resolved in Tesseract |\n\n---\n\n**Q: Why do rolling windows require a date range filter?**\n\nIn Cube v1.3.24 without Tesseract, time series queries — including rolling windows and period-to-date calculations — require an explicit date range filter to function. Without one, the query fails at runtime. Tesseract resolves this by supporting time series queries without a mandatory date range, but until Tesseract is fully available, you'll need to ensure a date range filter is always applied.\n\n![image](/img/faq/1cbb1d3346e99798a3c13c69132e3cb565fa8ddf_2_690x108.png)\n\n---\n\n**Q: What should I do if a feature I need isn't supported?**\n\nIf your use case depends on ranking, switch-based dimensions, conditional measures, or filterless rolling windows, these are currently blocked in Cube v1.3.24 without Tesseract. Your options include restructuring the logic using supported features (e.g., using `sub_query: true` for [nested aggregates,](https://cube.dev/docs/product/data-modeling/recipes/nested-aggregates) or applying date range filters for [rolling windows](https://cube.dev/docs/product/data-modeling/concepts/multi-stage-calculations#rolling-window)), or reaching out to the Embeddable or Cube support teams for guidance on workarounds. Full support is expected when Tesseract becomes available in a future Cube release.\n\n---\n\n**Q: Will full Tesseract support be available in a future version?**\n\nTesseract is an actively developed component of the Cube platform. Full support is expected in future releases, which would unlock the complete set of multi-stage and nested aggregate capabilities — including ranking, switch types, conditional measures, and filterless rolling windows. Check the Cube changelog and Embeddable release notes for updates on Tesseract availability.",
+      "created_at": "2026-03-13T10:24:27.232Z"
+    },
+    {
+      "question": "Do I Need to Provide Security Context in the Tokens API?",
+      "slug": "do-i-need-to-provide-security-context-in-the-tokens-api",
+      "answer": "Technically, yes, `securityContext` is a required body value when using the tokens API to retrieve a token. Most users do need it, in order to enforce row level security. If row level security is not a concern, or you are enforcing it in some other way, or you’re testing, you can provide a blank object as the value and the tokens API will return successfully:\n\n```\nsecurityContext: {},\n```",
+      "created_at": "2026-03-06T15:55:06.008Z"
+    },
+    {
+      "question": "How Do I Use OR Filters (e.g. country = FR OR CA) in Embeddable?",
+      "slug": "how-do-i-use-or-filters-eg-country-fr-or-ca-in-embeddable",
+      "answer": "## Can I build an **OR** filter like `country = 'FR' OR country = 'CA'`?\n\nYes — if you pass **multiple values** to a single filter, Embeddable treats it as an **OR** (SQL `IN`).\n\n**Example (code-based datasets / `loadData`)**\n\n```\nloadData({\n  filters: [\n    { property: \"country\", operator: \"equals\", value: [\"FR\", \"CA\"] },\n  ],\n})\n\n```\n\nThis generates SQL like:\n\n```\nWHERE country IN (?, ?)\n\n```\n\n---\n\n### Why doesn’t it work if I add two filters?\n\nBecause **multiple separate filters** are combined with **AND** logic.\n\n* ✅ **Single filter + array of values** → OR (`IN`)\n\n* ❌ **Two filters on the same field** → AND (`country = 'FR' AND country = 'CA'`)\n\n---\n\n### Can I do this from the **Dashboard / Dataset UI** (no code)?\n\nYes — use this workaround:\n\n#### Workaround: Multi-value **text variable**\n\n1. Create a **Text** variable.\n\n2. Enable **Multiple values**.\n\n3. Enter each value on a new line, for example:\n\n   ```\n   FR\n   CA\n   \n   ```\n\n4. Go to your **dataset**, add a filter:\n\n   * Operator: **equals**\n\n   * Value: **connect it to the variable** you created\n\nResult: the dataset will return rows where `country` is **FR OR CA**, which works well for things like **KPI components** that reuse a dataset.\n\n---\n\n### Can I build more complex logic like `(A AND B) OR C`?\n\nNot yet. Dataset filters currently apply simple **AND across filters**. [Nested AND/OR logic is a roadmap item - give it a vote!](https://roadmap.embeddable.com/roadmap/support-for-nested-and-and-or-logic-in-dataset-filters)",
+      "created_at": "2026-03-03T09:49:56.721Z"
+    },
+    {
+      "question": "What’s the Difference Between Embeddable Managed Cube and My Own Cube Core / Cube Cloud?",
+      "slug": "whats-the-difference-between-embeddable-managed-cube-and-my-own-cube-core-cube-cloud",
+      "answer": "## What are the two ways to use Cube with Embeddable?\n\nEmbeddable supports two ways of working with Cube:\n\n### 1️⃣ Embeddable Managed Cube (Default)\n\nThis is the built-in, fully managed Cube layer that comes included with Embeddable.\nIt is the default experience and what most of our [documentation](https://docs.embeddable.com/) refers to.\n\nWith Embeddable Managed Cube:\n\n* Data modelling is done inside Embeddable.\n\n* Database connections are configured in Embeddable.\n\n* Environments are managed in Embeddable.\n\n* Caching and pre-aggregations are managed by Embeddable.\n\n---\n\n### 2️⃣ Cube Core / Cube Cloud (BYOC — Bring Your Own Cube)\n\nIn this setup, you run your own Cube instance:\n\n* Self-hosted [Cube Core](https://cube.dev/docs/product/getting-started/core), or\n\n* Managed [Cube Cloud](https://cube.dev/docs/product/getting-started)\n\nYou connect your Cube instance to Embeddable via the **[Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api)**.\n\nWith BYOC:\n\n* All data modelling is done in your own Cube instance.\n\n* Database connections are configured in Cube.\n\n* Environments are managed in Cube.\n\n* Caching and pre-aggregations are managed in Cube.\n\nEmbeddable connects only through the [Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api).\n\n---\n\n## Why does the UI look different for Cube Core / Cloud customers?\n\nMost of Embeddable’s UI and [documentation](https://docs.embeddable.com/) assume you are using Embeddable Managed Cube.\n\nIf you are using Cube Core or Cube Cloud, some features will not appear or will not apply to you — and this is expected behaviour.\n\nBelow are the key differences.\n\n---\n\n## Why can’t I see the Data Model Editor?\n\nThe **[Data Model Editor](https://docs.embeddable.com/data-modeling/getting-setup)** is only available to Embeddable Managed Cube customers.\n\nIf you are using Cube Core or Cube Cloud:\n\n* You define and manage models inside your own Cube instance.\n\n* Those models are then synced into Embeddable.\n\n* You do not need the Data Model Editor in Embeddable.\n\nIf you cannot see it, nothing is wrong — it simply doesn’t apply to your setup.\n\n![image|690x372](/img/faq/e888641e4ac561a64c1416738d7eced6c7e29e0d_2_690x372.jpeg)\n\n![image|690x372](/img/faq/74c6f34d905764054732f8c1673dff0618688f17_2_690x372.jpeg)\n\n---\n\n## What is the “Refresh” button next to Datasets for?\n\nThe **Refresh** button is specifically for Cube Core / Cube Cloud customers.\n\nWhen you:\n\n1. Make changes to your models in Cube, and\n\n2. Want those changes reflected in Embeddable\n\nYou must click **Refresh** to sync the updated models via the [Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api).\n\n![image|560x499](/img/faq/3e21451aff54aaf1df1d9f98afce1470e6adadb6_2_560x499.png)\n\nEmbeddable Managed Cube customers do not typically need this.\n\n---\n\n## Do I need to use Environments or Connections in Embeddable?\n\nNo — not if you are using Cube Core or Cube Cloud.\n\nThe following pages are specific to Embeddable Managed Cube:\n\n* **[Environments](https://docs.embeddable.com/data/environments)**\n\n* **[Connections](https://docs.embeddable.com/data/connect-your-database)**\n\nIf you are using your own Cube instance:\n\n* Your database connections live in Cube.\n\n* Your environments live in Cube.\n\n* Embeddable only connects through the [Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api).\n\n---\n\n## Which documentation sections do NOT apply to Cube Core / Cloud customers?\n\nThe following sections are written for Embeddable Managed Cube customers and are not operationally relevant to BYOC customers:\n\n* Connect Your Data (except [Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api))\n\n* Data Modelling (except [SQL-Based Security](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security) (row-level security))\n\n* Caching / Pre-aggregations (managed within Embeddable)\n\n* Embeddable Caching API\n\nImportant exception:\n**[SQL-Based Security](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security) (row-level security) does apply to all customers**, including Cube Core / Cloud.\n\n---\n\n## Can Cube Core / Cloud customers still read the data modelling docs?\n\nYes.\n\nThe Embeddable data modelling docs are helpful for understanding concepts.\n\nHowever:\n\n👉 Your source of truth for modelling, schema definitions, caching, and pre-aggregations is the **[Cube documentation](https://cube.dev/docs/product/introduction).**\n\nAll configuration must be done in your Cube instance.\n\n---\n\n## What features apply to ALL customers?\n\nThe following areas apply equally to both setups:\n\n* Building components\n\n* Creating dashboards\n\n* Embedding\n\n* Theming\n\n* Component SDK\n\n* Row-level security ([SQL-based security](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security))\n\nEverything related to the UI and embedding experience works the same way.\n\n---\n\n## How does Row-Level Security (RLS) work for Cube Core / Cloud customers?\n\nAll customers — including [BYOC](https://docs.embeddable.com/data/bring-your-own-cube) — can test RLS in the Embeddable Builder using:\n\n```\npresets/security-contexts.sc.yml\n```\n\nThis file defines named security context presets used during testing.\n\n### Example\n\n```\n- name: default\n  securityContext:\n    country: United States\n    language: English\n  dataProvider: default \n \n- name: main-instance\n  securityContext:\n    country: Germany\n    language: German\n  dataProvider: main-instance\n```\n\nEach preset:\n\n* Defines RLS identifiers (e.g. `country`, `customer_id`)\n\n* Specifies which `dataProvider` to use\n\nThis allows you to test [SQL-based security](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security) directly in the Embeddable Builder.\n\n---\n\n## How do Cube Core / Cloud customers connect to Embeddable?\n\nYou connect using the **[Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api)**.\n\nThat is the only required integration point.\n\nYou do NOT need to:\n\n* Configure database connections in Embeddable\n\n* Set up environments in Embeddable\n\n* Create data models in Embeddable\n\nAll of that is handled in Cube.\n\n---\n\n## Where do I check errors?\n\nIf you are using Cube Core / Cube Cloud:\n\n* Errors originating from Cube must be investigated in your Cube logs and monitoring tools.\n\n* Embeddable does not have visibility into your Cube instance.\n\nIf you are using Embeddable Managed Cube:\n\n* Our team has full log visibility.\n\n* We can help investigate lower-level Cube issues directly.\n\n---",
+      "created_at": "2026-03-02T16:22:20.470Z"
+    },
+    {
+      "question": "How Can I Sort by Days of the Week / Months of the Year in Remarkable?",
+      "slug": "how-can-i-sort-by-days-of-the-week-months-of-the-year-in-remarkable",
+      "answer": "## How can I sort days of the week in the correct order (Mon–Sun) in a table?\n\nIf you can’t sort by a field that isn’t displayed, the recommended workaround is to **map to a dimension that already includes the sort key**.\n\n**Example approach**\n\n1. **Create a new dimension in your model** that prefixes the label with a numeric sort value, for example:\n\n   * `01 - Monday`\n\n   * `02 - Tuesday`\n\n   * …\n\n   * `07 - Sunday`\n\n2. **Use this new dimension in the table** (so sorting works correctly).\n\n3. **Translate the displayed label** via your theme so users only see `Monday`, `Tuesday`, etc.\n\nThis ensures the table sorts correctly (by the numeric prefix) while still showing clean day names to end users.\n\n---\n\n### Why do I need to change the dimension instead of sorting by a hidden field?\n\nIn some setups, **sorting is only available on fields that are actually used in the visualization**. By embedding the sort value into the same dimension you display, you avoid needing a separate “hidden” sort field.\n\n---\n\n### Can I keep the numeric prefix from showing to users?\n\nYes — after you create the prefixed dimension (e.g. `01 - Monday`), you can add a **theme translation** that maps:\n\n* `01 - Monday` → `Monday`\n\n* `02 - Tuesday` → `Tuesday`\n\n* etc.\n\nSo you get correct ordering *and* clean labels.",
+      "created_at": "2026-02-26T10:16:35.948Z"
+    },
+    {
+      "question": "How Do Security Tokens Behave?",
+      "slug": "how-do-security-tokens-behave",
+      "answer": "### Do you support domain restrictions for tokens?\n\nNot currently.\n\nAt the moment, tokens can be used on any domain. That said, the practical risk is low:\n\n* Tokens are generated using your API key (which should remain secure).\n\n* An attacker would need to obtain a valid, unexpired token.\n\n* Any embedded dashboard would only expose data that the token holder already has access to.\n\nWe’ve added domain restriction support as a roadmap item:\n[https://roadmap.embeddable.com/roadmap/restrict-domain-for-security-token-use](https://roadmap.embeddable.com/roadmap/restrict-domain-for-security-token-use)\n\n---\n\n### Is there an endpoint to validate whether a token is still valid?\n\nWe don’t provide a token validation endpoint.\n\nEmbeddable tokens are standard JWTs. You can:\n\n* Decode the token using any JWT library.\n\n* Inspect the `exp` (expiry) claim in the payload.\n\n* Check whether the token has expired.\n\nSince tokens remain valid until their expiry time, checking the expiration date is all that’s required to determine validity.\n\n**Recommended flow:**\n\n1. Decode the token.\n\n2. If it hasn’t expired, continue using it.\n\n3. If it has expired, generate a new token.\n\n---\n\n### Can tokens be invalidated on logout (instead of relying on time-based expiry)?\n\nNot currently.\n\nTokens are valid until they expire, and we don’t yet support manual invalidation (e.g. “logout” or “invalidate all tokens” flows).\n\nWe’ve added this as a roadmap item:\n[https://roadmap.embeddable.com/roadmap/api-to-invalidate-security-tokens](https://roadmap.embeddable.com/roadmap/api-to-invalidate-security-tokens)",
+      "created_at": "2026-02-25T12:54:49.628Z"
+    },
+    {
+      "question": "How Do I Connect Embeddable to MySQL Version 8 / 8.4?",
+      "slug": "how-do-i-connect-embeddable-to-mysql-version-8-84",
+      "answer": "When connecting a MySQL 8 or MySQL 8.4 (LTS) database to Embeddable, you may encounter the following error:\n\n```\nER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server\n```\n\nThis happens because MySQL 8+ uses `caching_sha2_password` as its default authentication plugin, while Embeddable connects successfully using `mysql_native_password`.\n\n**How to Check Your MySQL Version and Authentication Plugin**\n\nYou can confirm your MySQL version and user authentication method with:\n\n```\nSELECT VERSION();\nSELECT user, host, plugin FROM mysql.user WHERE user = 'your_user';\n```\n\nIf:\n\n* Your version is **8.x (especially 8.4)**, and\n\n* The `plugin` column shows **`caching_sha2_password`**,\n\nthen this is the cause of the connection failure.\n\n**Solution: Create a user/ Alter existing user with `mysql_native_password`**\n\nTo connect Embeddable to MySQL 8/8.4, create a user that uses `mysql_native_password` instead of the default authentication method as mentioned [here](https://cube.dev/docs/product/configuration/data-sources/mysql#connecting-to-mysql-8).\n\nIn MySQL 8.4, `mysql_native_password` is **disabled by default** and you must enable it at the MySQL server level.\n\n### If MySQL is installed on a server or VM\n\n1. Edit your MySQL configuration file (commonly one of the following):\n\n   * `/etc/my.cnf`\n\n   * `/etc/mysql/my.cnf`\n\n   * `/etc/mysql/mysql.conf.d/mysqld.cnf`\n\n2. Under the `[mysqld]` section, add:\n\n```\nmysql_native_password=ON\n```\n\n3. Restart MySQL:\n\n```\nsudo systemctl restart mysqld\n```\n\nor\n\n```\nsudo systemctl restart mysql\n```\n\n---\n\n### If MySQL is running in Docker\n\nStart the container with native authentication enabled:\n\n```\n--mysql-native-password=ON\n```\n\n(Refer to your container configuration for where to add this option.)\n\n### If Using a Managed Service (e.g., RDS, Cloud SQL)\n\nSome managed MySQL services may restrict authentication plugin configuration.\n\nConsult your provider’s documentation to determine whether `mysql_native_password` can be enabled or whether users can be created explicitly with that plugin.\n\n## Step 2: Create a Native Authentication User\n\nOnce `mysql_native_password` is enabled, create a new user:\n\n```\nCREATE USER 'emb_user'@'%' IDENTIFIED WITH mysql_native_password BY 'your_password';\nGRANT ALL PRIVILEGES ON your_database.* TO 'emb_user'@'%';\nFLUSH PRIVILEGES;\n```\n\nor alter your existing user:\n\n```\nALTER USER 'emb_user'@'%' IDENTIFIED WITH mysql_native_password BY 'your_password';\nGRANT ALL PRIVILEGES ON your_database.* TO 'emb_user'@'%';\nFLUSH PRIVILEGES;\n```\n\n---\n\n## Step 3: Use This User in Embeddable\n\nConfigure your Embeddable connection using:\n\n* Host\n\n* Database\n\n* Port (typically 3306)\n\n* Username: `emb_user`\n\n* Password: your password\n\nThe connection should now succeed.",
+      "created_at": "2026-02-23T19:18:54.618Z"
+    },
+    {
+      "question": "How Do I Stay Up to Date With Embeddable Package Updates?",
+      "slug": "how-do-i-stay-up-to-date-with-embeddable-package-updates",
+      "answer": "You can run `npm run embeddable:upgrade` to get the latest versions of all Embeddable NPM packages, including our SDKs and Remarkable Pro. This will update your `package.json` file automatically, and then you’ll need to run `npm i`. If you want to automate this process, we recommend setting up a cron job that runs the commands daily, along with the `npm run embeddable:build`and `npm run embeddable:push` steps (if desired).\n\nNote: there is currently no way to automatically publish these new versions - that still requires a manual step. The reason for this is because if there are any compatibility issues or breaking changes, it gives the opportunity to fix things before your clients ever see a problem.",
+      "created_at": "2026-02-18T13:56:44.350Z"
+    },
+    {
+      "question": "Do You Have a Figma for the Remarkable Components?",
+      "slug": "do-you-have-a-figma-for-the-remarkable-components",
+      "answer": "Yes! You can check it out here: https://www.figma.com/community/file/1581738195673665795",
+      "created_at": "2026-02-09T15:44:55.370Z"
+    },
+    {
+      "question": "Can I Track When My Custom Canvas Is Ready?",
+      "slug": "can-i-track-when-my-custom-canvas-is-ready",
+      "answer": "You absolutely can. We’ve introduced a new event, `customCanvasReady`, that you can listen for like this:\n\n```\nconst handleCustomCanvasReady = () => {\n  // do whatever you like here\n}\nelement.addEventListener('customCanvasReady', handleCustomCanvasReady);\n```\n\nMore information on handling events can be found in our [“Interacting With Your Embeddables”](https://docs.embeddable.com/deployment/interactivity) documentation.",
+      "created_at": "2026-01-23T14:44:32.665Z"
+    },
+    {
+      "question": "How Do the Default Environment and data_source Behave?",
+      "slug": "how-do-the-default-environment-and-datasource-behave",
+      "answer": "### Why does every environment require a default `data_source`?\n\nEmbeddable requires each environment to have a default `data_source` due to how the underlying data modelling layer (Cube.js) resolves queries. This is an implementation detail and is not a configuration requirement in most cases.\n\n---\n\n### How is the default `data_source` chosen?\n\nWhen an environment is created, the default `data_source` is automatically assigned to the first connection included in the environment definition.\n\n---\n\n### When is the default `data_source` used?\n\nThe default `data_source` is only used if a model does not explicitly define a `data_source`. If all models specify a `data_source`, the default is never used.\n\n---\n\n### What is the default environment?\n\nThe default environment is an automatically generated environment that cannot be edited. It reflects the current set of available connections and exists as a fallback when no environment is explicitly specified. It is also used by Embeddable sample models.",
+      "created_at": "2026-01-19T16:00:24.047Z"
+    },
+    {
+      "question": "Why Can’t I Remove a Connection From the Default Environment?",
+      "slug": "why-cant-i-remove-a-connection-from-the-default-environment",
+      "answer": "The **default environment** is automatically generated and cannot be modified directly. This is intended behavior.\n\nIf you need to remove a connection from the default environment, delete the connection itself. When a connection is deleted, it is automatically removed from the default environment.",
+      "created_at": "2026-01-19T15:54:43.973Z"
+    },
+    {
+      "question": "Why Aren’t My Changes to Models / Components Showing in the Embeddable Builder?",
+      "slug": "why-arent-my-changes-to-models-components-showing-in-the-embeddable-builder",
+      "answer": "If you have made a change to your models or components and it’s not showing within the Embeddable builder, these are the things to check:\n\n* Make sure you have re-built your repo after your changes (`npm run embeddable:build`)\n* Make sure you have pushed the re-built changes to your workspace (`npm run embeddable:push`)\n* Refresh your browser\n* Check your builder is using your latest models/components version (this should happen automatically)\n\nIf you’re still having issues please contact the team and we’ll be happy to help 😊",
+      "created_at": "2026-01-14T14:44:40.982Z"
+    },
+    {
+      "question": "Why Won't My Dev Server Work in Brave?",
+      "slug": "why-wont-my-dev-server-work-in-brave",
+      "answer": "By default, Brave not only denies access to Localhost resources, but does not even enable its pop-up asking if you want to grant access or not. If you’re getting “please make sure your dev server is running” errors even though `embeddable:dev` is running, please try the following:\n\n1. navigate to brave://flags\n2. search for “localhost”\n3. change “enable Localhost access permission prompt” to “enabled”\n4. restart Brave\n5. refresh the dev server window\n\nThis *should* give you a prompt asking you if you want to allow Embeddable to connect to local resources. If it doesn’t, it’s possible the setting has already been disabled. To correct that, you should be able to do the following:\n\n1. Navigate to settings: privacy and security: site and shield settings: view permissions and data stored across sites\n2. Click “[embeddable.com](https://embeddable.com)”\n3. Click “app.\\[your region\\].embeddable.com”\n4. Change “Localhost Access” to “Allow”\n5. Refresh your dev server window\n\nIf you’re still running into trouble, don’t hesitate to reach out!",
+      "created_at": "2026-01-14T11:39:00.839Z"
+    },
+    {
+      "question": "How Do I Pick Which Remarkable Components to Include When Publishing to Our Workspace?",
+      "slug": "how-do-i-pick-which-remarkable-components-to-include-when-publishing-to-our-workspace",
+      "answer": "You can selectively choose which components are included from the Remarkable Pro chart library to appear in your workspace like so:\n\n```\ncomponentLibraries: [{\n   name: '@embeddable.com/remarkable-ui',\n   include: ['BarChart', 'DateRangePicker']\n}],\n```",
+      "created_at": "2026-01-09T08:37:08.099Z"
+    },
+    {
+      "question": "What Should I Check When Renaming Dimensions or Measures in a Cube Model?",
+      "slug": "what-should-i-check-when-renaming-dimensions-or-measures-in-a-cube-model",
+      "answer": "### ⚠️ Important: Prefer `title` property Over Renaming (Best Practice)\n\nIf your goal is **only to change how a dimension or measure appears to end users**, **do not rename it**.\n\nInstead, use the `title` property.\n\nThe `title` property is a **non-breaking way** to update display names without affecting:\n\n* Cube model references\n\n* Joins and pre-aggregations\n\n* Embeddable dashboards\n\n#### How the `title` Property Works\n\n* `name` → Internal, stable identifier (used in all references)\n\n* `title` → Display label shown to end users only\n\n```yaml\ncubes:\n  - name: orders\n    sql_table: orders\n\n    dimensions:\n      - name: customer_id\n        sql: customer_id\n        type: number\n        title: \"Customer ID\"\n\n    measures:\n      - name: total_revenue\n        sql: amount\n        type: sum\n        title: \"Total Sales Revenue\"\n```\n\n👉 **Only rename `name` when a true semantic change is required.**\n\nIf you must rename, follow the checklist below.\n\n---\n\n### 1. References Within the Same Cube\n\n**Derived measures**\nCheck measures that reference other measures or dimensions.\n\n```yaml\nmeasures:\n  - name: profit_margin\n    sql: 100.0 * ({profit} / {revenue})\n```\n\n**Computed / filtered dimensions**\nLook for dimensions that reference other dimensions or measures.\n\n```yaml\ndimensions:\n  - name: is_completed\n    sql: \"{CUBE}.status = 'completed'\"\n\n```\n\n---\n\n### 2. References in Joins and Across Cubes\n\n**Join conditions**\nUpdate all join SQL that references the renamed field.\n\n```yaml\njoins:\n  - name: customers\n    sql: \"{CUBE}.customer_id = {customers}.id\"\n\n```\n\n**Cross-cube references**\nCheck other cubes that reference this field.\n\n```yaml\nsql: \"{orders}.status\"\n```\n\n---\n\n### 3. Pre-Aggregation References\n\nIf the renamed field is used in a pre-aggregation, update:\n\n* `measures`\n\n* `dimensions`\n\n* `time_dimension`\n\n* `partition_dimension`\n\n```yaml\npre_aggregations:\n  - name: orders_by_month\n    measures: total_revenue\n    dimensions: status\n    time_dimension: created_at\n\n```\n\n---\n\n### 4. Embeddable Frontend Usage\n\nIf the renamed field is used as a **time dimension** in an Embeddable FE component:\n\n* Ensure the **generated query in the Embeddable Builder** uses the new name\n\n* Otherwise, the component will error due to a stale reference\n\n### 5. Testing Process\n\nAfter completing the rename:\n\n1. **Global search**\n   Search the entire project for the old field name to catch missed references.\n\n2. **Direct usage tests**\n   Run queries that reference the renamed dimension or measure directly.\n\n3. **Indirect dependency tests**\n   Test queries that rely on the renamed field indirectly (joins, derived measures, filters, pre-aggregations).",
+      "created_at": "2026-01-08T10:57:57.840Z"
+    },
+    {
+      "question": "How Can I See the Custom Canvas Dashboards My Users Have Created / Customised for Themselves?",
+      "slug": "how-can-i-see-the-custom-canvas-dashboards-my-users-have-created-customised-for-themselves",
+      "answer": "The custom canvas created by a user gets stored against the `customCanvasState` key that you pass to Tokens API. This is explained in detail [here](https://docs.embeddable.com/deployment/custom-canvas). In order to see the dashboard that a user has created, simply generate a token using their `embeddableId` and their `customCanvasState` and use that to render an embeddable and you'll see exactly what they see. You can even pass `customCanvasReadOnly: true` to the Tokens API to make sure that you're only seeing a read-only view of what they see.",
+      "created_at": "2025-12-11T13:15:56.134Z"
+    },
+    {
+      "question": "What Changed in the Caching API Per-Environment Update?",
+      "slug": "what-changed-in-the-caching-api-per-environment-update",
+      "answer": "### What’s changing\n\nWe’ve updated the Caching API to support per-environment management of scheduled refresh contexts. You can now update caching configurations for specific environments (e.g., “staging”) without affecting other environments (e.g., “production”).\n\n### Do I need to change anything?\n\n**No.** This update is fully backward compatible:\n\n* If you use a single environment (default): No changes needed\n* If you use multiple environments: No changes needed - the API now behaves more safely\n\n### How did it work before?\n\nPreviously, `POST /api/v1/caching/refresh-contexts` replaced ALL scheduled refresh contexts for your workspace. This worked well for single-environment setups. For multi-environment setups, you needed to include all environments in every request to avoid overwriting them.\n\n### How does it work now?\n\n**Smart Replacement** (enabled by default):\n\n* When you update contexts, only the environments being updated are replaced\n* Other environments remain untouched\n* Example: Updating “staging” contexts won’t affect “production” contexts\n\n**Master Reset**:\n\n* To clear ALL contexts across ALL environments, send an empty list: `{ \"scheduledRefreshContexts\": [] }`\n\n### Are there new endpoints?\n\nYes! You can now manage contexts per environment:\n\n| Method | Endpoint | Description |\n|----|----|----|\n| PUT | `/api/v1/caching/refresh-contexts/environments/{env}` | Replace contexts for a specific environment |\n| GET | `/api/v1/caching/refresh-contexts/environments/{env}` | Get contexts for a specific environment |\n| DELETE | `/api/v1/caching/refresh-contexts/environments/{env}` | Delete all contexts for a specific environment |\n\n### Can I still use the global endpoint?\n\nYes. The existing `POST /api/v1/caching/refresh-contexts` endpoint works exactly as before, but now with smart replacement behavior - it only replaces contexts for the environments you’re updating.\n\n### Example: Updating a specific environment\n\n**Before (old behavior):**\n\n```bash\n# This would DELETE all contexts (including production!)\n# then create only staging contexts\nPOST /api/v1/caching/refresh-contexts\n{\n  \"scheduledRefreshContexts\": [\n    { \"environment\": \"staging\", \"securityContext\": {...} }\n  ]\n}\n```\n\n**After (smart replacement):**\n\n```bash\n# This only replaces \"staging\" contexts\n# Production contexts remain untouched\nPOST /api/v1/caching/refresh-contexts\n{\n  \"scheduledRefreshContexts\": [\n    { \"environment\": \"staging\", \"securityContext\": {...} }\n  ]\n}\n```\n\n**Or use the new environment-specific endpoint:**\n\n```bash\nPUT /api/v1/caching/refresh-contexts/environments/staging\n{\n  \"scheduledRefreshContexts\": [\n    { \"securityContext\": {...} }\n  ]\n}\n```",
+      "created_at": "2025-11-27T13:57:24.444Z"
+    },
+    {
+      "question": "Can I Change the Start Day for Weeks?",
+      "slug": "can-i-change-the-start-day-for-weeks",
+      "answer": "We don’t currently support changing the start day for weeks in Embeddable to anything other than Monday, but there *is* a workaround for it that will allow you and your users to select other options. You can extend the `granularity` type via your Cube models and a custom type file, [as described here](https://docs.embeddable.com/development/extending-types#update-your-data-models), to add a “Week starting on \\[day\\]” option to the picker. This won’t replace the existing “weekly” option, which will still consider Monday the start of the week, but it will make your other choice(s) available to your users.",
+      "created_at": "2025-10-28T14:34:55.179Z"
+    },
+    {
+      "question": "Why Do I See “This API Is Disabled for This Workspace and External System” When Using the Connections API?",
+      "slug": "why-do-i-see-this-api-is-disabled-for-this-workspace-and-external-system-when-using-the-connections-api",
+      "answer": "This error means the [Connections API](https://docs.embeddable.com/data/connect-your-database#connections-api) is not available for your workspace setup.\nIf you’re using your **own Cube instance** instead of Embeddable’s hosted cube, you should use the [Data Provider API](https://docs.embeddable.com/data/cube-cloud#data-provider-api) instead.\n\nSimilarly, if you see this error while using the **Data Provider API**, it means your workspace is configured to use **Connections API** and not the Data Provider API.",
+      "created_at": "2025-10-14T11:07:25.495Z"
+    },
+    {
+      "question": "What Changed in the Pre-Aggregations / Level 2 Caching Update?",
+      "slug": "what-changed-in-the-pre-aggregations-level-2-caching-update",
+      "answer": "**What’s changing**\nWe’ve updated our pre-aggregations set-up to support more functionality: partitioning, incremental, and refreshKeys that you can use in your model.\n\n**Can I use refresh keys directly in the model?**\nYes. You can pass a time period (e.g. “x hours”), an SQL parameter like `SELECT MAX(created_at) FROM orders`, or a cron schedule (e.g. “refresh at 8 AM”).\n\nHere’s what your model and pre-aggregation looks like before and after the change:\n\n![image|690x336](/img/faq/ba3b863679264476b06e9802d224933eaa113932_2_690x336.jpeg)\n\n**Do I still need to provide security contexts via the caching API?**\nYes - you’ll provide these via the caching API - [Cube docs here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts). However the refreshInterval isn’t needed anymore.\n\nHere’s what your caching api request looks like before and after the change:\n\n![image|690x269](/img/faq/3d72bef201576abe09570f4f8ecbdac3b2deb3c1_2_690x269.jpeg)\n\n**Is there still a limit on security contexts?**\nNo. The old limit of 30 has been removed.\n\n**Do I need to pass timezones?**\nIf your client requires a timezone, it must still be passed via the caching API.\n\nWe will be updating our main docs page shortly - bear with us 😊",
+      "created_at": "2025-09-29T08:41:33.621Z"
+    },
+    {
+      "question": "Why Am I Seeing an Error About \"SWC\" When I Run `embeddable:dev`?",
+      "slug": "why-am-i-seeing-an-error-about-swc-when-i-run-embeddabledev",
+      "answer": "SWC is a piece of technology used by Embeddable’s core SDK. When the node module for it is installed, it’s supposed to build a binary file, but this file doesn’t always get built reliably. If you run into the error, these steps should trigger a full rebuild:\n\n1. Delete the `node_modules` folder\n2. Delete `package-lock.json`\n3. Re-run `npm install`\n\nIf you’re on Windows, you may need to make sure you have Microsoft Visual C++ Redistributable installed first: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist\n\nThis should get you up and running!",
+      "created_at": "2025-09-17T13:49:34.859Z"
+    },
+    {
+      "question": "What's the Best Practice for the Automatic Granularity Pickers?",
+      "slug": "whats-the-best-practice-for-the-automatic-granularity-pickers",
+      "answer": "Whenever you choose a time-series Dimension, a granularity picker also shows up automatically. This behavior is intended to replace the previous need to define a granularity input in your `emb.ts` file. If you have built custom components that use granularity inputs, you have two options:\n\n1. **Our suggested choice** - remove the granularity input and use the automatic granularity instead. This may require you to move from passing `dimensions` and `measures` separately to `loadData` and instead use `select` - see [the loadData documentation](https://docs.embeddable.com/development/loading-data) for examples.\n2. The alternate choice - on your dimension definition in the `emb.ts` file, you can add `hideGranularity: true` to the `config` property to disable the automatic granularity. Here’s a full example:\n\n```\n    {\n      name: 'xAxis',\n      type: 'dimension',\n      label: 'X-Axis',\n      config: {\n        dataset: 'ds',\n        supportedTypes: ['time'],\n        hideGranularity: true,\n      },\n      category: 'Chart data',\n    },\n```",
+      "created_at": "2025-09-10T08:22:34.993Z"
+    },
+    {
+      "question": "How Does Z-Index Stacking Work With Shadow DOM?",
+      "slug": "how-does-z-index-stacking-work-with-shadow-dom",
+      "answer": "**What’s going on?**\nShadow DOM creates isolated stacking contexts. To ensure overlays (e.g., dropdowns) render above content below them, rows inside our component receive incrementing `z-index` values. This is intentional.\n\n**Can I turn off the per-row `z-index`?**\nNo. It’s required for correct layering within a single Shadow DOM component.\n\n**How do I control which component appears on top at the page level?**\nSet `z-index` on the component’s host/container (outside the Shadow DOM). Don’t override internal row values.\n\n```\n/* Page-level layering between separate Shadow DOM hosts */\n.component-a { position: relative; z-index: 2; } /* above */\n.component-b { position: relative; z-index: 1; } /* below */\n\n```\n\n**Gotchas**\n\n* `z-index` only works on positioned elements (`position: relative|absolute|fixed|sticky`).\n\n* Large `z-index` jumps aren’t necessary - just ensure the intended order.\n\n* Keep page-level stacking in the host; leave intra-component stacking to the component.",
+      "created_at": "2025-08-28T17:56:11.082Z"
+    },
+    {
+      "question": "What Are Best Practices for Running Embeddable in Angular?",
+      "slug": "what-are-best-practices-for-running-embeddable-in-angular",
+      "answer": "Getting your Embeddable working in an Angular application is very straightforward, but there are a few small things you need to be aware of!\n\nEmbedding web components in Angular requires you to include their `CUSTOM_ELEMENTS_SCHEMA`in order to avoid throwing errors. This can be solved in the component TS file by importing `CUSTOM_ELEMENTS_SCHEMA`from `angular/core`and then referencing it in the options you pass to `@Component` like this:\n\n```\n@Component({\n  imports: [RouterOutlet],\n  schemas: [CUSTOM_ELEMENTS_SCHEMA],\n  selector: 'app-root',\n  templateUrl: './app.html',\n}) \n```\n\nOnce you have that working, you should be able to include your `em-beddable` webcomponent code in your app without seeing any errors. However, if you want to add dynamic client context values, you’ll need to go a bit further. We recommend adding a `clientContext` method that employs `signal` like this:\n\n```\n  protected readonly clientContext = signal(\n    JSON.stringify({ theme: this.theme })\n  );\n```\n\nAnd then to change the value, you’ll want to employ the `set` method like this:\n\n```\nthis.clientContext.set(JSON.stringify({ theme: this.theme }));\n```\n\n(You would, in this example, run that command after the theme value changes)\n\nLooking for more details? Check out `client-angular` in [our example web component repo](https://github.com/embeddable-hq/web-component-example/)!",
+      "created_at": "2025-08-25T15:22:41.072Z"
+    },
+    {
+      "question": "What Is the Maximum I Can Set the refreshKey to for the L1 Cache?",
+      "slug": "what-is-the-maximum-i-can-set-the-refreshkey-to-for-the-l1-cache",
+      "answer": "The maximum you can set the refreshKey for L1 caching is 2 minutes - i.e. the data will be refreshed every 2 minutes.",
+      "created_at": "2025-08-15T10:35:18.772Z"
+    },
+    {
+      "question": "How Do I Set Up Embeddable in a Yarn/Nx Monorepo?",
+      "slug": "how-do-i-set-up-embeddable-in-a-yarnnx-monorepo",
+      "answer": "1) Monorepo baseline (Yarn workspaces + Nx)\n\n* Your repo uses Yarn workspaces, managed by Nx.\n\n* All packages extend a root `tsconfig.json` and target modern ESM:\n\n`{   \"compilerOptions\": {     \"target\": \"ES6\",     \"module\": \"esnext\",     \"moduleResolution\": \"node\"   } } `\n\n2) Add an Embeddable app/package\n\n* Create a new workspace package (e.g. `@your/embeddable`) based on the **Remarkable Pro Boilerplate** repository.\n\n* Wire it into Nx for dev/build so you can use caching and a single command surface.\n\nThis standalone setup should run cleanly in the monorepo.\n\nJust so you know\n\n* You may see the SDK complain about not finding a TypeScript compiler. Running the command with `--force` is a safe workaround and is unrelated to the integrations below.\n\n3) Start consuming shared code\n\nWhen you’re ready to import code from other workspace packages, add a workspace dep and (optionally) a path alias.\n\n**package.json**\n\n`{   \"name\": \"@your/embeddable\",   \"dependencies\": {     \"@your/insights\": \"workspace:*\"   } } `\n\n**tsconfig.json**\n\n`{   \"compilerOptions\": {     \"paths\": {       \"@your/insights\": [\"path/to/insights\"]     }   } } `\n\nJust so you know (and how to work around it)\n\nWhen introducing **tsconfig paths** and **workspace dependencies**, some setups hit module-resolution edge cases (e.g., “can’t import from directory,” “module not found,” or CommonJS interop errors from deep deps). If you see that:\n\n**Workaround A — Preferred: feed Embeddable clean ESM builds**\n\n* Prebundle the shared package(s) you import into **ESM output** (e.g., `.es.js`) using your bundler of choice (Rollup, tsup, Vite build).\n\n* Point your `emb.ts` imports at those built ESM entry points.\n\n* In Nx, make your Embeddable build depend on the shared package build (so ESM outputs exist first).\n\nThis keeps responsibility clear: your shared packages output ESM; Embeddable then bundles those ESM inputs.\n\n**Workaround B — Smooth CJS interop when needed**\nIf some private/first-party deps are CommonJS:\n\n* In the Embeddable package `tsconfig.json`, enable:\n\n  `{   \"compilerOptions\": {     \"esModuleInterop\": true,     \"allowSyntheticDefaultImports\": true   } } `\n\n* Prefer ESM builds of your internal libs where possible, or export dual targets (`module` ESM + `main` CJS) and import the ESM entry.\n\n**Workaround C — Resolve path alias reliably**\n\n* Point alias paths to the **built ESM dist** of the workspace package (e.g., `dist/insights/index.es.js`) rather than raw source, so Embeddable sees standard ESM files.\n\n* Alternatively, remove the alias and import via the package name (after building), which avoids path resolution quirks.\n\n4) Nx target wiring (example)\n\nHave the shared libs build first, then Embeddable:\n\n`// apps/embeddable/project.json {   \"targets\": {     \"build\": {       \"executor\": \"nx:run-commands\",       \"options\": { \"command\": \"embeddable build --force\" },       \"dependsOn\": [\"^build\"] // builds upstream libs first     },     \"dev\": {       \"executor\": \"nx:run-commands\",       \"options\": { \"command\": \"embeddable dev --force\" },       \"dependsOn\": [\"^build\"]     }   } } `\n\n5) Keep bundles lean\n\nPrebundling per component can bloat size. A few easy wins:\n\n* **Bundle per package**, not per component (one ESM entry that re-exports components).\n\n* Mark packages **tree-shakable** (`\"sideEffects\": false` where valid).\n\n* Import **named exports** so Embeddable can treeshake.\n\n* Let Nx cache builds to avoid unnecessary rebuilds.",
+      "created_at": "2025-08-12T15:59:05.751Z"
+    },
+    {
+      "question": "How Can I Model Percentile Aggregates (10th Percentile, 90th Percentile, etc.) for Individual Fields in ClickHouse?",
+      "slug": "how-can-i-model-percentile-aggregates-10th-percentile-90th-percentile-etc-for-individual-fields-in-clickhouse",
+      "answer": "You can define percentile aggregates using ClickHouse’s native functions without needing `number_agg`. For example, to model the 90th percentile of a `latency_ms` field, use:\n\n\n```\n- name: latency_p90_ms  \n  type: number  \n  sql: quantile(0.9)(latency_ms)\n```\n\nThis works directly with the `number` type and supports custom window functions like percentiles.",
+      "created_at": "2025-07-28T16:23:14.727Z"
+    },
+    {
+      "question": "Why Can't Embeddable Find My Database Connection in My Environment?",
+      "slug": "why-cant-embeddable-find-my-database-connection-in-my-environment",
+      "answer": "If you're seeing this error:\n```\nEmbeddable Error: Could not find a database connection for data_source '[DATA SOURCE NAME]' in environment '[ENVIRONMENT NAME]'\\\"\n```\nThe most likely culprit is that you are referencing that data source in one of your models, but it hasn't been mapped in all of your environments. All data sources referenced in your models must exist in all of your environments. So for example, if you have a data source called `postgres`, and environments called `staging` and `prod` you would want to create two connections:\n1. `postgres-staging`\n2. `postgrest-prod`\n\nThen when configuring your environments, you would map the `postgres` data source to `postgres-staging` in the `staging` environment, and map the `postgres` data source to `postgrest-prod` in the `prod` environment. This ensures that your models will compile properly when using either environment.",
+      "created_at": "2025-07-18T10:08:29.880Z"
+    },
+    {
+      "question": "Why Is My KPI Compare Component Not Working?",
+      "slug": "why-is-my-kpi-compare-component-not-working",
+      "answer": "If you're using the KPI Compare component and trying to compare “This Week” vs “Last Week\" using the hard-coded date dropdowns, you will see issues with the component.\n\nGood news - you don’t need a custom component—but you *do* need to connect it properly. The KPI Compare component relies on a **comparison date filter** to pass in two distinct time ranges. Hard-coding the dates inside the component won’t work. Instead, use the comparison date filter component and connect it via the generated date variables to ensure both ranges are applied correctly.",
+      "created_at": "2025-07-17T15:45:08.403Z"
+    },
+    {
+      "question": "Can I Link Items in the Table Component?",
+      "slug": "can-i-link-items-in-the-table-component",
+      "answer": "Yes!\n\nWhat you'll need to do is provide a standard markdown-formatted link, like this:\n\n`[Click Here](https://embeddable.com)`\n\nAnd the table will detect that and convert it to:\n\n`<a href=\"https://embeddable.com\" target=\"_blank\">Click Here</a>`\n\nIt’s improbable that you're storing links as markdown directly in their DB, so what you'll need to do is create a Measure in your model file(s) that does the conversion. Here's an example:\n\n```\n- name: link_to_product\n   sql: FORMAT('[%s](%s)', name, 'https://www.google.com/search?q='||name)\n   type: string\n```\n\nThe SQL is taking the `name` of the product, and then concatenating it into a URL. You would probably not be linking to Google, but it’s the same basic strategy. This could get as complicated as you want, eg a URL that contains an id, a name, a tracking number, etc.",
+      "created_at": "2025-07-16T10:30:16.585Z"
+    },
+    {
+      "question": "Is There Any Way of Defining a Display Order of Components When a Mobile View Is Being Used?",
+      "slug": "is-there-any-way-of-defining-a-display-order-of-components-when-a-mobile-view-is-being-used",
+      "answer": "Unfortunately this is not possible at the moment.  The order is based on the order (top-to-bottom, left-to-right) that your components are layed out on the canvas.\n\nWhat you can do as a workaround is have a desktop version of the dashboard as one Embeddable, and then a separate Embeddable for the mobile view.  Then serve up the right Embeddable depending on the view",
+      "created_at": "2025-07-10T08:47:01.121Z"
+    },
+    {
+      "question": "How Can We Translate the Text That Is Entered Into the Inputs When Building a Chart?",
+      "slug": "how-can-we-translate-the-text-that-is-entered-into-the-inputs-when-building-a-chart",
+      "answer": "If your platform is available in multiple languages, you may want to translate the text that you enter when creating charts in the Embeddable builder. For example, you might have a chart title input with the text \"Welcome\".\n\nIn this case you would write `labels.welcomeText` in the text field in the builder, then create this in the client-context preset file, and set the text “Welcome” there.\n\nThen code your components so that you would first try to look for the text in the clientContext instead wherever there is a text field.\n\nYou can even do `labels.welcomeText|Welcome` where the part right of the pipe is the fallback. \n\nYou can read more about [working with clientContext](https://docs.embeddable.com/development/client-context) here.",
+      "created_at": "2025-07-02T09:41:02.557Z"
+    },
+    {
+      "question": "What Changed in Cube Version v1.3.24?",
+      "slug": "what-changed-in-cube-version-v1324",
+      "answer": "We're very excited to announce that we've upgraded our internal Cube version from v0.35.34 to v1.3.24.\n\nExciting new features:\n\n* Custom granularities (define your own granularities, like weeks starting on Sundays, non-standard quarters or custom intervals): [ https://cube.dev/blog/cube-core-v0-36-playground-2-0-custom-granularities-query-pushdown#custom-time-dimension-granularities ](https://cube.dev/blog/cube-core-v0-36-playground-2-0-custom-granularities-query-pushdown#custom-time-dimension-granularities)\n\n* Performance improvements: [ https://cube.dev/blog/cube-core-v1-2-data-access-policies-hierarchies-and-folders-updates-to#performance-optimizations ](https://cube.dev/blog/cube-core-v1-2-data-access-policies-hierarchies-and-folders-updates-to#performance-optimizations)\n\nBreaking changes:\n\n* For anybody using Cube Views (top-level 'includes' and 'excludes' are no longer supported): [ https://cube.dev/blog/cube-core-v1-3-performance-improvements-and-upgrades#breaking-removal-of-top-level-includes-and-excludes-in-views ](https://cube.dev/blog/cube-core-v1-3-performance-improvements-and-upgrades#breaking-removal-of-top-level-includes-and-excludes-in-views)\n\n* For anybody writing their models in JS (version of Node used by Cube has been updated): [ https://cube.dev/blog/cube-core-v0-36-playground-2-0-custom-granularities-query-pushdown#breaking-changes-to-docker-images ](https://cube.dev/blog/cube-core-v0-36-playground-2-0-custom-granularities-query-pushdown#breaking-changes-to-docker-images)\n\nComing very soon:\n\n* Access policies (define row-level security in YAML rather than SQL): [ https://cube.dev/blog/cube-core-v1-2-data-access-policies-hierarchies-and-folders-updates-to#data-access-policies ](https://cube.dev/blog/cube-core-v1-2-data-access-policies-hierarchies-and-folders-updates-to#data-access-policies)",
+      "created_at": "2025-06-30T12:50:12.169Z"
+    },
+    {
+      "question": "Why Is My Embeddable Just a Blank White Box?",
+      "slug": "why-is-my-embeddable-just-a-blank-white-box",
+      "answer": "If you're seeing this behavior, the first thing is to make sure that you're not inserting any blank spaces at the end of your token value in your `<em-beddable>` code, as that can result in unexpected behavior. If you're confident that the token is being inserted correctly, the next thing to check is the network tab in your browser's developer tools (please perform a full reload once you're on that tab and have it set to recording). If you see any errors there, check the response for data that may help you diagnose the issue. If you're still having trouble, or if there are no errors, please reach out to support!",
+      "created_at": "2025-06-23T09:14:11.383Z"
+    },
+    {
+      "question": "Why Does My Embeddable Throw Crypto Errors When Running on a Custom Local Domain?",
+      "slug": "why-does-my-embeddable-throw-crypto-errors-when-running-on-a-custom-local-domain",
+      "answer": "If you're seeing `crypto.randomUUID is not a function` when running on a custom local domain for development purposes (eg using `localdev.mysite.com:8080` instead of `localhost:8080`), the reason for the error is because browsers only allow use of security functions like Node crypto in either `https` or `localhost` environments, and don't recognize custom local domains as localhost. There's a way to override this in the browser, as mentioned in [this Stack Overflow link](https://stackoverflow.com/a/78397011/3093766).\n1. Go to chrome://flags/#unsafely-treat-insecure-origin-as-secure.\n2. Add the origin which you want to treat as secure i.e., [http://example.com:8080](http://example.com:8080/).\n3. Relaunch Chrome.\n4. Verify by visiting [http://example.com:8080](http://example.com:8080/) and typing crypto.subtle in the DevTools Console.",
+      "created_at": "2025-06-19T09:56:03.294Z"
+    },
+    {
+      "question": "Why Does My Build Break With Styled Components?",
+      "slug": "why-does-my-build-break-with-styled-components",
+      "answer": "There's a known TypeScript issue with Styled Components that throws errors if you import them via the default import. An easy fix is, instead of using:\n```\nimport styled from 'styled-components';\n```\nuse:\n```\nimport { styled } from 'styled-components';\n```\nThis should allow your build to proceed, and allow you to use Styled Components as you're used to.",
+      "created_at": "2025-06-16T13:02:16.502Z"
+    },
+    {
+      "question": "How Do I Export an Embeddable as PDF?",
+      "slug": "how-do-i-export-an-embeddable-as-pdf",
+      "answer": "Currently this is an [item on our roadmap](https://roadmap.embeddable.com/roadmap/end-users-can-download-embeddables-as-pdf). \n\nIn the meantime, you can achieve this by building an export component and using a tool like https://restpack.io/ or [pdf.js](https://mozilla.github.io/pdf.js/) to export your dashboard.",
+      "created_at": "2025-06-09T10:43:30.039Z"
+    },
+    {
+      "question": "How Do I Test the securityContext With Cube Core in Embeddable When Using driverFactory?",
+      "slug": "how-do-i-test-the-securitycontext-with-cube-core-in-embeddable-when-using-driverfactory",
+      "answer": "The `securityContext` argument below is exactly the content of the `securityContext` as passed to [Tokens API](https://docs.embeddable.com/deployment/tokens-api#example-fetch-a-token). For testing in the Embeddable dashboard builder, you can follow the instructions [here](https://docs.embeddable.com/data-modeling/row-level-security#testing-security-contexts-in-embeddable).\n\nmodule.exports = { driverFactory: ({ securityContext, dataSource }) => { ... } };",
+      "created_at": "2025-06-09T10:15:41.982Z"
+    },
+    {
+      "question": "Why Isn't My New Data Model Displaying?",
+      "slug": "why-isnt-my-new-data-model-displaying",
+      "answer": "If you have created a new model in Embeddable's data model editor, but it's not showing in your Data Playground or in the models options in the Embeddable builder, the most likely culprit is that the model is set to Public: false. You can see in the \"More configuration\" options for your model, there is a setting called \"Public\". When this is set to \"False\", the model will not be visible in Embeddable. To enable the data model to be used, set this to true.\n\n![Screenshot 2025-06-09 at 11.08.19|690x240](/img/faq/25eca7c17140eca99d182be0930aeb839aa02b95_2_690x240.png)",
+      "created_at": "2025-06-09T10:09:19.694Z"
+    },
+    {
+      "question": "Why Can’t I Sort in the Table Component Once a ‘Default Sort’ Is Set?",
+      "slug": "why-cant-i-sort-in-the-table-component-once-a-default-sort-is-set",
+      "answer": "This is a known behaviour of the current table component - if you set a default sort, it overrides the table sorts. Similarly, I believe if you create any sorts with the \"sort\" button, it also overrides the table sorts. This has to do with the way `loadData` presently behaves, where once a value is in the props, it can't be removed - so even if it looks like the code is eliminating the `defaultSort` value, it'll still show up in the props.",
+      "created_at": "2025-05-26T12:37:01.639Z"
+    },
+    {
+      "question": "How Do I Build Dashboard Delivery in Embeddable?",
+      "slug": "how-do-i-build-dashboard-delivery-in-embeddable",
+      "answer": "Example implementation of dashboard delivery:\n\n1. We built a UI page thats called reports - this allows users to select an \"Embeddable\" to display. On that page we built a Nav with a button called \"Export\". Clicking this button will open a dialog that supports the ability to add in some emails / cadence time that is recored in our DB. e.g [john@gmail.com](mailto:john@gmail.com)/Twice a week/3pm.\n\n2. We wrote a client in the backend that will query Embeddable API's using `/web-component/v1/query` and builds up a payload - see below a short `api-documentation` that shows how we achieved this for one component - but the logic is repeatable for what ever components you want to choose. To query the api you can just follow the [documentation](https://docs.embeddable.com/deployment/tokens-api) to get your security token and then build your CSV from the attached .md\n3. We then pop that payload into a Pub/Sub - Scheduler - Cron job ( How ever you want to achieve it ) and then hit what ever SMTP service provider you want to use to send the email\n\n# Web Component Query API Documentation\n\n## Step 1: Retrieve Widget Information\n\n### API Endpoint\n- URL: `https://app-api.eu.embeddable.com/web-component/v1/embeddable`\n- Method: GET\n\n### curl Command\n```bash\ncurl 'https://app-api.eu.embeddable.com/web-component/v1/embeddable' \\\n  -H 'accept: */*' \\\n  -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'authorization: Bearer [YOUR_ACCESS_TOKEN]' \\\n  -H 'origin: [YOUR_ORIGIN]' \\\n  -H 'referer: [YOUR_REFERER]' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"24\", \"Chromium\";v=\"128\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: cross-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'\n```\n\n### Response Structure\n```json\n{\n  \"embeddable\": {\n    \"widgets\": [\n      {\n        \"id\": \"component_id\",\n        \"inputConfiguration\": {\n          // ... other properties ...\n        }\n      }\n    ]\n  }\n}\n```\n\n## Step 2: Extract Required Data\n\nFrom the response, extract the following information for each widget:\n\n1. `componentId`: `widgets[i].id`\n2. `limit`: `widgets[i].inputConfiguration.limit.value`\n3. `datasetId`: `widgets[i].inputConfiguration.ds.value.datasetId`\n4. `inputName`: `widgets[i].inputConfiguration.columns.inputMeta.config.dataset`\n5. `dimensions`: Extract all `name` properties from `widgets[i].inputConfiguration.columns.value`\n6. `order`:\n   - Start with `widgets[i].inputConfiguration.defaultSort.value.name` as the first item\n   - Add remaining dimensions in the order they appear in `widgets[i].inputConfiguration.columns.value`\n\nExample Python code to extract dimensions:\n```python\ndimensions = [item['name'] for item in widget['inputConfiguration']['columns']['value']]\n```\n\n### Explanation of the `order` parameter\n\nThe `order` parameter is an array of arrays, where each inner array contains two elements:\n1. The dimension name\n2. The sort direction (\"desc\" for descending or \"asc\" for ascending)\n\nThe first item in the `order` array should always be the default sort dimension, which is specified by `inputConfiguration.defaultSort.value.name`. The remaining items should be the other dimensions in the order they appear in `inputConfiguration.columns.value`.\n\nFor example, if `balances.account_id` is the default sort, the `order` array would look like this:\n\n```json\n[\n  [\"balances.account_id\", \"desc\"],\n  [\"balances.account_number\", \"desc\"],\n  [\"balances.country\", \"desc\"],\n  [\"balances.account_code\", \"desc\"],\n  [\"balances.amount\", \"desc\"],\n  [\"balances.currency\", \"desc\"],\n  [\"balances.balance_date\", \"desc\"]\n]\n```\n\nExample to construct this `order` array programmatically:\n\n1. Start with the default sort dimension:\n   ```python\n   default_sort = widget['inputConfiguration']['defaultSort']['value']['name']\n   order = [[default_sort, \"desc\"]]\n   ```\n\n2. Add the remaining dimensions:\n   ```python\n   dimensions = [item['name'] for item in widget['inputConfiguration']['columns']['value']]\n   for dim in dimensions:\n       if dim != default_sort:\n           order.append([dim, \"desc\"])\n   ```\n\n## Step 3: Construct Query Payload\n\nUsing the extracted data, construct a payload for the query API:\n\n```json\n{\n  \"inputName\": \"<extracted_input_name>\",\n  \"datasetId\": \"<extracted_dataset_id>\",\n  \"dimensions\": [\"<dimension1>\", \"<dimension2>\", ...],\n  \"order\": [\n    [\"<default_sort_dimension>\", \"desc\"],\n    [\"<dimension1>\", \"desc\"],\n    [\"<dimension2>\", \"desc\"],\n    ...\n  ],\n  \"offset\": 0,\n  \"limit\": <extracted_limit>,\n  \"componentId\": \"<extracted_component_id>\",\n  \"timezone\": \"Europe/Amsterdam\"\n}\n```\n\n## Step 4: Query Data\n\n### API Endpoint\n- URL: `https://app-api.eu.embeddable.com/web-component/v1/query`\n- Method: POST\n\n### curl Command\n```bash\ncurl 'https://app-api.eu.embeddable.com/web-component/v1/query?' \\\n  -H 'accept: */*' \\\n  -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \\\n  -H 'authorization: Bearer [YOUR_ACCESS_TOKEN]' \\\n  -H 'content-type: application/json' \\\n  -H 'origin: [YOUR_ORIGIN]' \\\n  -H 'referer: [YOUR_REFERER]' \\\n  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"24\", \"Chromium\";v=\"128\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: cross-site' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' \\\n  --data-raw '{\n    \"inputName\": \"ds\",\n    \"datasetId\": \"[DATASET_ID]\",\n    \"dimensions\": [\n        \"balances.account_number\",\n        \"balances.country\",\n        \"balances.account_code\",\n        \"balances.account_id\",\n        \"balances.amount\",\n        \"balances.currency\",\n        \"balances.balance_date\"\n    ],\n    \"order\": [\n        [\"balances.account_id\", \"desc\"],\n        [\"balances.account_number\", \"desc\"],\n        [\"balances.country\", \"desc\"],\n        [\"balances.account_code\", \"desc\"],\n        [\"balances.amount\", \"desc\"],\n        [\"balances.currency\", \"desc\"],\n        [\"balances.balance_date\", \"desc\"]\n    ],\n    \"offset\": 0,\n    \"limit\": 1000,\n    \"componentId\": \"[COMPONENT_ID]\",\n    \"timezone\": \"Europe/Amsterdam\"\n  }'\n```\n\n### Example Payload\n```json\n{\n  \"inputName\": \"ds\",\n  \"datasetId\": \"[DATASET_ID]\",\n  \"dimensions\": [\n    \"balances.account_number\",\n    \"balances.country\",\n    \"balances.account_code\",\n    \"balances.account_id\",\n    \"balances.amount\",\n    \"balances.currency\",\n    \"balances.balance_date\"\n  ],\n  \"order\": [\n    [\"balances.account_id\", \"desc\"],\n    [\"balances.account_number\", \"desc\"],\n    [\"balances.country\", \"desc\"],\n    [\"balances.account_code\", \"desc\"],\n    [\"balances.amount\", \"desc\"],\n    [\"balances.currency\", \"desc\"],\n    [\"balances.balance_date\", \"desc\"]\n  ],\n  \"offset\": 0,\n  \"limit\": 1000,\n  \"componentId\": \"[COMPONENT_ID]\",\n  \"timezone\": \"Europe/Amsterdam\"\n}\n```\n\n### Explanation of the Example Payload:\n1. `inputName`: Set to \"ds\" as specified in the original data.\n2. `datasetId`: Taken from the `inputConfiguration.ds.value.datasetId`.\n3. `dimensions`: List of all dimension names from `inputConfiguration.columns.value`.\n4. `order`:\n   - The first item is \"balances.account_id\", assuming it was the `defaultSort.value.name`.\n   - The remaining items are all other dimensions, in the order they appear in `dimensions`.\n   - All are set to \"desc\" (descending) order.\n5. `offset`: Set to 0 to start from the beginning of the dataset.\n6. `limit`: Set to 1000, as specified in the original `inputConfiguration.limit.value`.\n7. `componentId`: Taken from the `id` field of the widget.\n8. `timezone`: Set to \"Europe/Amsterdam\" as a default value.\n\n## Notes\n- Filters are automatically applied by the API and don't need to be included in the query payload - the data returned will be filtered automatically.\n- The `timezone` and `variableValues` fields in the query payload are optional.\n- Replace all placeholder values (marked with [BRACKETS]) with your actual values.",
+      "created_at": "2025-05-26T08:43:43.236Z"
+    },
+    {
+      "question": "If We Want to Use Our Own Datepicker, Is There Anything We Need to Be Aware of to Continue Using Other Embeddable Components?",
+      "slug": "if-we-want-to-use-our-own-datepicker-is-there-anything-we-need-to-be-aware-of-to-continue-using-other-embeddable-components",
+      "answer": "As long as your datepicker outputs the same variables as our date picker, it should be fine. It's just a question of making sure the data coming from the datepicker is what our loadData is expecting in the Embeddable components. \n\nIf you're hitting any issues reach out to us on Slack and we can help!",
+      "created_at": "2025-05-23T16:03:21.165Z"
+    },
+    {
+      "question": "Why Do I Get a Cube Error With embeddableIds in the Caching API?",
+      "slug": "why-do-i-get-a-cube-error-with-embeddableids-in-the-caching-api",
+      "answer": "If you are getting an error like so:\n\n```\n{\n    \"errorCode\": \"BUILDER-996\",\n    \"errorMessage\": \"Request validation failed\",\n    \"requestId\": \"ea7be19a-bac6-4feb-971e-028b136e689d\",\n    \"errorMetadata\": {},\n    \"underlyingErrorMessage\": \"Validation failed for field 'embeddableIds'. Reason: Instantiation of [simple type, class com.embeddable.backend.publicapi.dto.CreateScheduledSecurityContextsDto] value failed for JSON property embeddableIds due to missing (therefore NULL) value for creator parameter embeddableIds which is a non-nullable type\"\n}\n```\n\nPlease check if you have any typos in your `embeddableIds` configuration - this is often caused by a stray \":\" or similar 😊\n\nIf this does not resolve the issue, reach out to our team on Slack or on support@embeddable.com",
+      "created_at": "2025-05-23T10:01:00.509Z"
+    },
+    {
+      "question": "How Do Compound Filters Work in Embeddable?",
+      "slug": "how-do-compound-filters-work-in-embeddable",
+      "answer": "We're currently limited to `AND` filters in Embeddable. If you would like to structure your filters like:\n `(A AND B) OR C`\n\nYou will need our upcoming feature: [Support for nested AND and OR logic in dataset filters](https://roadmap.embeddable.com/roadmap/support-for-nested-and-and-or-logic-in-dataset-filters)\n\nYou can see the current format in the Typescript definition:\n![Screenshot 2025-05-22 at 11.39.49|376x165](/img/faq/f90c09941b3fd7b0524589a62dd5c0d30206eb77.png)\n![Screenshot 2025-05-22 at 11.40.11|492x108](/img/faq/57fd203e430b4f12ea410a66cf07c1741ffcd5d0.png)",
+      "created_at": "2025-05-23T05:57:33.997Z"
+    },
+    {
+      "question": "What Is the Interval Is to Which Component Heights Snap in the Editor and How Does That Work With the defaultHeight That I Set?",
+      "slug": "what-is-the-interval-is-to-which-component-heights-snap-in-the-editor-and-how-does-that-work-with-the-defaultheight-that-i-set",
+      "answer": "The vertical snap is 21px. While you can set a default height, there's not currently a way to set a minimum height. So if you drag the component to be smaller than the default, it respects the new size you dragged to. When you set a defaultHeight, it renders to the nearest snap point, so eg a default height of `100` ends up at `106` when first inserted into the builder.",
+      "created_at": "2025-05-13T15:36:29.352Z"
+    },
+    {
+      "question": "How Do I Work Around TypeScript Errors?",
+      "slug": "how-do-i-work-around-typescript-errors",
+      "answer": "If you are getting typescript errors, you can use `ts-ignore` or `ts-expect-error` for right now so they can continue developing. Please let our team know if you believe it is an issue on our side so we can get a ticket in.",
+      "created_at": "2025-05-12T16:44:54.810Z"
+    },
+    {
+      "question": "Why Is My Dropdown Filtering Itself?",
+      "slug": "why-is-my-dropdown-filtering-itself",
+      "answer": "When using a dropdown component, you will need to add a specific dataset (in the bottom right-hand modal) for your dropdown.\n\nIf you use the same dataset for your dropdown and to power your charts, when you select an option from the dropdown and pass that variable as a filter on the dataset, the dataset will be filtered everywhere it's used - including in your dropdown!\n\nWe suggest adding a specific dataset called 'dropdown dataset' or 'unfiltered dataset' for your dropdowns.",
+      "created_at": "2025-05-12T16:39:34.482Z"
+    },
+    {
+      "question": "Why Am I Getting 0 Results From My Pre-Aggregations?",
+      "slug": "why-am-i-getting-0-results-from-my-pre-aggregations",
+      "answer": "**Getting 0 results**\nIf you are getting 0 results for a security context that you think should have data there are a few things you can try:\n\n* Check that your environments are configured correctly for the pre-aggregations for the specific security context\n* Check the query against your database using the Embeddable user to make sure the relevant permissions are there",
+      "created_at": "2025-04-23T17:30:32.612Z"
+    },
+    {
+      "question": "What Can We Change in the Theme File?",
+      "slug": "what-can-we-change-in-the-theme-file",
+      "answer": "Here is the default theme used by Embeddable's out-of-the-box components:\n\n```\nimport { Theme } from './theme';\n\nexport const defaultTheme: Theme = {\n  brand: {\n    primary: '#6778DE',\n    secondary: '#FF997C',\n  },\n  charts: {\n    colors: [\n      '#6778DE',\n      '#FF997C',\n      '#9EA4F4',\n      '#B8B8D1',\n      '#FF6B6C',\n      '#FFC145',\n      '#9DC7FF',\n      '#FF805B',\n      '#CD9FFF',\n      '#E6DEDE',\n      '#FFA6A6',\n      '#FFD98D',\n    ],\n    options: {\n      toolTipEnabled: true,\n      usePointStyle: true,\n    },\n    textJustify: 'start',\n    fontWeights: {\n      description: 400,\n      kpiNumber: 700,\n      pagination: 400,\n      title: 700,\n    },\n    /* Custom overrides for certain charts */\n    bar: {\n      borderRadius: 4,\n      borderSkipped: 'bottom',\n      borderWidth: 0,\n      font: {\n        size: 12,\n      },\n    },\n    bubble: {\n      font: {\n        size: 12,\n      },\n    },\n    kpi: {\n      alignment: 'center',\n      font: {\n        negativeColor: '#FF6B6C',\n        size: 32,\n      },\n    },\n    line: {\n      font: {\n        size: 12,\n      },\n      lineTension: 0.1,\n    },\n    pie: {\n      font: {\n        size: 12,\n      },\n    },\n    scatter: {\n      font: {\n        size: 12,\n      },\n    },\n    /* End custom chart overrides */\n  },\n  container: {\n    backgroundColor: 'transparent',\n    border: '1px solid #ddd',\n    borderRadius: '12px',\n    boxShadow: 'none',\n    padding: '15px',\n  },\n  controls: {\n    backgrounds: {\n      colors: {\n        heavy: '#D1D5DB',\n        normal: '#F3F4F6',\n        soft: '#FFFFFF',\n        transparent: 'transparent',\n      },\n    },\n    buttons: {\n      active: {\n        background: '#FFFFFF',\n        border: '#D1D5DB',\n        fontColor: '#000',\n      },\n      hovered: {\n        background: '#FFFFFF',\n        border: '#A1A5AA',\n        fontColor: '#000',\n      },\n      pressed: {\n        background: '#F3F3F4',\n        border: '#D1D5DB',\n        fontColor: '#000',\n      },\n      fontSize: '14px',\n      height: '50px',\n      paddingY: '16px',\n      paddingX: '32px',\n      radius: 'calc(infinity+1px)',\n    },\n    borders: {\n      colors: {\n        normal: '#DADCE1',\n        heavy: 'D1D5DB',\n      },\n      padding: 8,\n      radius: '12px',\n    },\n    datepicker: {\n      backgrounds: {\n        colors: {\n          accent: '#f3f4f6',\n          rangeEnd: '#7d899b',\n          rangeEndDate: '#7d899b',\n          rangeMiddle: '#f3f4f6',\n          rangeStart: '#7d899b',\n        },\n      },\n      font: {\n        colors: {\n          accent: '#7d899b',\n          rangeEnd: '#ffffff',\n          rangeMiddle: '#7d899b',\n          rangeStart: '#ffffff',\n          rangeStartDate: '#7d899b',\n          today: '#111111',\n        },\n      },\n      outsideOpacity: 0.4,\n      radiuses: {\n        buttonEnd: '0px 4px 4px 0px',\n        buttonStart: '4px 0px 0px 4px',\n        weekNumber: '4px',\n      },\n    },\n    inputs: {\n      colors: {\n        hover: '#F3F4F6',\n        selected: '#F3F4F6',\n      },\n    },\n    tooltips: {\n      radius: '4px',\n    },\n  },\n  dateFormats: {\n    year: 'yyyy',\n    quarter: 'MMM yy',\n    month: 'MMM yy',\n    day: 'd MMM',\n    week: 'd MMM',\n    hour: 'eee HH:mm',\n    minute: 'eee HH:mm',\n    second: 'HH:mm:ss',\n  },\n  font: {\n    color: '#888888',\n    colorNormal: '#333942',\n    colorSoft: '#e3e3e3',\n    family:\n      '-apple-system, \"system-ui\", \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"',\n    size: `14px`,\n    weight: 400,\n  },\n  png: {\n    backgroundColor: '#FFFFFF',\n  },\n  svg: {\n    fillBkg: '#FFFFFF',\n    fillNormal: '#474752',\n    fillStrong: '#1D1E22',\n    strokeSoft: '#474752',\n    strokeNormal: '#959CA8',\n    strokeStrong: '#101010',\n  },\n};\n\nexport default defaultTheme;\n```\n\nHere is the full `theme.ts` file with all the changes you can make to the theme:\n\n```\nexport type ChartType = 'bar' | 'bubble' | 'kpi' | 'line' | 'pie' | 'scatter';\n\ntype ButtonSettings = {\n  background: string;\n  fontColor: string;\n  border: string;\n};\n\ntype BarChartBorderRadius = {\n  topRight: number;\n  topLeft: number;\n  bottomRight: number;\n  bottomLeft: number;\n};\n\nexport type Theme = {\n  brand: {\n    primary: string;\n    secondary: string;\n  };\n  charts: {\n    colors: string[];\n    options: {\n      toolTipEnabled: boolean;\n      usePointStyle: boolean;\n    };\n    textJustify:\n      | 'start'\n      | 'end'\n      | 'center'\n      | 'between'\n      | 'around'\n      | 'evenly'\n      | 'stretch'\n      | 'baseline'\n      | 'normal';\n    fontWeights: {\n      description: number;\n      kpiNumber: number;\n      pagination: number;\n      title: number;\n    };\n    bar: {\n      borderRadius: number | BarChartBorderRadius;\n      borderSkipped:\n        | 'start'\n        | 'end'\n        | 'middle'\n        | 'bottom'\n        | 'left'\n        | 'top'\n        | 'right'\n        | false\n        | true;\n      borderWidth: number;\n      colors?: string[];\n      font: {\n        size: number;\n      };\n    };\n    bubble: {\n      colors?: string[];\n      font: {\n        size: number;\n      };\n    };\n    kpi: {\n      alignment: string;\n      colors?: string[];\n      font: {\n        negativeColor: string;\n        size: number;\n      };\n    };\n    line: {\n      colors?: string[];\n      font: {\n        size: number;\n      };\n      lineTension: number;\n    };\n    pie: {\n      colors?: string[];\n      font: {\n        size: number;\n      };\n    };\n    scatter: {\n      colors?: string[];\n      font: {\n        size: number;\n      };\n    };\n  };\n  container: {\n    backgroundColor: string;\n    border: string;\n    borderRadius: string;\n    boxShadow: string;\n    padding: string;\n  };\n  controls: {\n    backgrounds: {\n      colors: {\n        heavy: string;\n        normal: string;\n        soft: string;\n        transparent: string;\n      };\n    };\n    buttons: {\n      active: ButtonSettings;\n      hovered: ButtonSettings;\n      pressed: ButtonSettings;\n      fontSize: string;\n      height: string;\n      paddingY: string;\n      paddingX: string;\n      radius: string;\n    };\n    borders: {\n      colors: {\n        normal: string;\n        heavy: string;\n      };\n      padding: number;\n      radius: string;\n    };\n    datepicker: {\n      backgrounds: {\n        colors: {\n          accent: string;\n          rangeEnd: string;\n          rangeEndDate: string;\n          rangeMiddle: string;\n          rangeStart: string;\n        };\n      };\n      font: {\n        colors: {\n          accent: string;\n          rangeEnd: string;\n          rangeMiddle: string;\n          rangeStart: string;\n          rangeStartDate: string;\n          today: string;\n        };\n      };\n      outsideOpacity: number;\n      radiuses: {\n        buttonEnd: string;\n        buttonStart: string;\n        weekNumber: string;\n      };\n    };\n    inputs: {\n      colors: {\n        hover: string;\n        selected: string;\n      };\n    };\n    tooltips: {\n      radius: string;\n    };\n  };\n  dateFormats: {\n    year: string;\n    quarter: string;\n    month: string;\n    day: string;\n    week: string;\n    hour: string;\n    minute: string;\n    second: string;\n  };\n  font: {\n    color: string;\n    colorNormal: string;\n    colorSoft: string;\n    family: string;\n    size: string;\n    weight: number;\n  };\n  png: {\n    backgroundColor: string;\n  };\n  svg: {\n    fillBkg: string;\n    fillStrong: string;\n    fillNormal: string;\n    strokeNormal: string;\n    strokeStrong: string;\n    strokeSoft: string;\n  };\n};\n\ntype ThemeDeepPartial<T> = {\n  [P in keyof T]?: T[P] extends object ? ThemeDeepPartial<T[P]> : T[P];\n};\n\nexport type ThemePartial = ThemeDeepPartial<Theme>;\n```",
+      "created_at": "2025-04-18T12:25:53.457Z"
+    },
+    {
+      "question": "Can I Add Images to the Components?",
+      "slug": "can-i-add-images-to-the-components",
+      "answer": "Yes! If you want to add icons or images to your components, you can import all the required icons as modules inside the component and create a map of string values. Based on the value entered (i.e. the icon name) when configuring the component, the corresponding icon is displayed dynamically.",
+      "created_at": "2025-04-18T09:14:20.529Z"
+    },
+    {
+      "question": "Is It Possible to Have Different Calculations for Different Customers?",
+      "slug": "is-it-possible-to-have-different-calculations-for-different-customers",
+      "answer": "If you have customers in the UK and in the US, you might need different calculations for each region, for example due to tax. You can do this using `securityContext`. E.g.:\n\n      - name: price_incl_tax\n        type: sum\n        sql: price * {COMPILE_CONTEXT.securityContext.tax_rate}\n\nWhere you would use '1' for countries with tax included, or 1.2 for the others.",
+      "created_at": "2025-04-09T13:43:11.059Z"
+    },
+    {
+      "question": "Is It Possible to Call a loadData Function After Finishing Another One?",
+      "slug": "is-it-possible-to-call-a-loaddata-function-after-finishing-another-one",
+      "answer": "Right now, we don't have an *official* way of doing `loadData(...).then(...)`, but we have a react hook called `useEmbeddableState` which you can use to \"hack it\" if you really need to`useEmbeddableState` basically allows you to pass `state` back and forth between your `.emb.ts` file and the react component (example [here](https://docs.embeddable.com/development/loading-data#2-filtering-example)). Because of that, you can set up a flow like this:\n\n* first `loadData` runs in your `.emb.ts` file\n* results are passed to react component\n* you can use `useEmbeddableState` to pass appropriate state back to the `.emb.ts` file\n* `.emb.ts` file reacts to the change of state, and calls the second `loadData` call",
+      "created_at": "2025-04-02T12:37:51.897Z"
+    },
+    {
+      "question": "Is There a Way That I Can Set a Font-Size for the HTML Element of the Embeddable Builder?",
+      "slug": "is-there-a-way-that-i-can-set-a-font-size-for-the-html-element-of-the-embeddable-builder",
+      "answer": "You can to override the rem setting by adding something like:\n\nhtml { font-size: 16px !important // whatever you like }\n\nto `custom-canvas.css` - this file gets injected at the top level of each Embeddable.",
+      "created_at": "2025-03-28T11:25:25.546Z"
+    },
+    {
+      "question": "Can I Create a Wrapper for My Embeddable?",
+      "slug": "can-i-create-a-wrapper-for-my-embeddable",
+      "answer": "In Embeddable, each component runs in its own instance of the shadow DOM and we don't have a container element around all of them that's defined in the component repo. However, you can create your own wrapper around your <em-beddable> code and style it however you like, and then adjust these lines in index.css to remove the border/padding/etc from every component:\n:host(.inside-card) {\n  /*  box-shadow: 0px 1px 4px rgba(28, 28, 33, 0.2);*/\n  border-radius: 12px;\n  padding: 15px !important;\n  border: 1px solid #ddd;\n}\nWhich would yield a similar result.",
+      "created_at": "2025-03-21T09:40:49.496Z"
+    },
+    {
+      "question": "Why Do I Get an “Invalid Token” Error From Cube Cloud?",
+      "slug": "why-do-i-get-an-invalid-token-error-from-cube-cloud",
+      "answer": "If you are getting an error saying 'invalid token' and you are using a Cube Cloud connection to Embeddable, please check you authentication setup - usually this means something is interfering with the auth in Embeddable.",
+      "created_at": "2025-03-11T12:40:25.455Z"
+    },
+    {
+      "question": "Why Is My BOOLEAN Filter Not Working?",
+      "slug": "why-is-my-boolean-filter-not-working",
+      "answer": "If you are using a BOOLEAN filter and you get an error like this:\n\n![Screenshot 2025-03-11 at 09.25.55](/img/faq/18663e453bf1eb62c3d2d4800a40df24c321e85e.png)\n\nCheck if your database supports TRUE/FALSE values. Certain databases, like MySQL, only support 0 and 1.",
+      "created_at": "2025-03-11T09:26:57.660Z"
+    },
+    {
+      "question": "Why Isn’t My Query Hitting My Pre-Aggregation?",
+      "slug": "why-isnt-my-query-hitting-my-pre-aggregation",
+      "answer": "Building pre-aggregations can allow you to take queries from a 5-minute loading time to **under a second** - great news! However, you might set up your pre-aggregation and find sometimes your query is still hitting your database. \n\nFor example, let's say you have a pre-aggregation set up with the granularity \"month\". This means that any combination of whole months should hit the pre-aggregation.\nIf you want to test this, you can do so in [Cube’s playground](https://github.com/embeddable-hq/vanilla-components/blob/main/README.md#debugging-data-models) by trying different combinations of date ranges and seeing which get accelerated or not.\n\nAn example: if you apply a filter asking for 1st June to 31st August on your pre-aggregation that has the \"month\" granularity, then it can use a monthly pre-aggregation (by adding June, July and August together).\nBut if you ask for 1st June 11:00 to 1st September 11:00, even though it’s the same range of time, Cube can’t match this to a monthly pre-aggregation, as that pre-aggregation only has data from midnight to midnight, so no combination of the pre-aggregated data will give an accurate result. So it will miss the cache (as it should).",
+      "created_at": "2025-02-19T11:47:04.912Z"
+    },
+    {
+      "question": "Can I Include Nested Objects / Arrays in My securityContext?",
+      "slug": "can-i-include-nested-objects-arrays-in-my-securitycontext",
+      "answer": "You can nest your arrays/objects as deep as you like. Your `securityContext` is made up of any arbitrary JSON, so if it's valid JSON, it'll work.",
+      "created_at": "2025-02-11T15:13:26.432Z"
+    },
+    {
+      "question": "How Do I Troubleshoot My Databricks Connection?",
+      "slug": "how-do-i-troubleshoot-my-databricks-connection",
+      "answer": "If you get the following error following connecting your Databricks database:\n\n```\nerrorCode: 'BUILDER-038'\n\n```\nPlease try adding `EnableArrow=0` at last in the jdbc url, as suggested in https://community.databricks.com/t5/data-engineering/jdbc-driver-support-for-openjdk-17/td-p/32584",
+      "created_at": "2025-02-10T09:23:20.889Z"
+    },
+    {
+      "question": "How Can We Validate Data Integrity (e.g. After SQL Schema Change)?",
+      "slug": "how-can-we-validate-data-integrity-eg-after-sql-schema-change",
+      "answer": "If you want automated tests for your data integrity, the best way is to run tests against the REST API of a running cube container.",
+      "created_at": "2025-02-07T15:37:11.601Z"
+    },
+    {
+      "question": "What's the Difference Between \"{CUBE}.id = {orders}.product_id\" and \"{CUBE}.id = {orders.customer_id}\"?",
+      "slug": "whats-the-difference-between-cubeid-ordersproductid-and-cubeid-orderscustomerid",
+      "answer": "You might sometimes see a join structured:\n\n`\"{CUBE}.id = {orders}.product_id\"`\n\nor\n\n`\"{CUBE}.id = {orders.customer_id}\"`\n\nBasically everything inside { and } relates to the cubes, whereas everything outside is SQL.\nSo `{orders}.product_id` references the `product_id` column in the database, whereas `{orders.customer_id` references the `customer_id` dimension in the `orders` model.",
+      "created_at": "2025-02-06T13:51:41.810Z"
+    },
+    {
+      "question": "How Do I Connect Different Environments in Cube Cloud?",
+      "slug": "how-do-i-connect-different-environments-in-cube-cloud",
+      "answer": "You can set up branches in your Cube Cloud instance, for example for 'dev', and 'prod'. Then when you connect your Cube Cloud instance to Embeddable you can define which branch to use.\n\nIf you have separate Cube instances with their own CUBE_JS_API_SECRETs then we have a workaround, which is to set up 2 workspaces, each connected to a separate instance.\n\nIf you want to test two different Cube endpoints locally, you can run `embeddable:dev` like so:\n`CUBE_CLOUD_ENDPOINT=some_url npm run embeddable:dev` \n\nIn this case, you can point at any endpoint (unlike the production workspace, where it's only linked to one fixed endpoint).\n\nAlternatively, you can add `CUBE_CLOUD_ENDPOINT` to a `.env` file",
+      "created_at": "2025-02-05T11:45:50.208Z"
+    },
+    {
+      "question": "How Can We Add Info to the Code Version in the Embeddable Builder?",
+      "slug": "how-can-we-add-info-to-the-code-version-in-the-embeddable-builder",
+      "answer": "In the builder you will see we have a 'code version' tab, which enables you to switch between different code versions that you have pushed. Sometimes it's helpful to add context to these code versions. You can do this by adding a message to your push step, like so:\n\n`npm run embeddable:push -- --api-key <API Key> --email <Email> --message <Message>`",
+      "created_at": "2025-01-14T17:54:27.908Z"
+    },
+    {
+      "question": "Do Pre-Aggregations Create Tables in My Database?",
+      "slug": "do-pre-aggregations-create-tables-in-my-database",
+      "answer": "Yes, for certain database types, Cube will need to create tables in your database. You can [read more about Cube pre-aggregation strategies here](https://cube.dev/docs/product/caching/using-pre-aggregations#pre-aggregation-build-strategies).\n\nIf you want to check which strategy your database type uses, go to the [data sources page](https://cube.dev/docs/product/configuration/data-sources), select your database type and scroll down to 'Pre-aggregation build strategies'.",
+      "created_at": "2025-01-10T15:25:36.052Z"
+    },
+    {
+      "question": "Can We Rotate Our securityContext?",
+      "slug": "can-we-rotate-our-securitycontext",
+      "answer": "Yes, at the moment our team will need to help you with this. Please reach out via the Slack community or to your account manager to arrange this.",
+      "created_at": "2025-01-07T19:26:31.913Z"
+    },
+    {
+      "question": "How Does Embeddable's Caching Handle First Loading?",
+      "slug": "how-does-embeddables-caching-handle-first-loading",
+      "answer": "Embeddable has two types of caching, Level 1 cache (standard refresh cache) and Level 2 cache (custom indexes and materialised views for high performance).\n\n* Level 1 cache is created on first load, so doesn’t speed up first load.\n* Level 2 cache can be used on first load to retrieve data, so will speed up first load.",
+      "created_at": "2025-01-06T10:29:02.687Z"
+    },
+    {
+      "question": "How Should We Work With JSON Fields in Embeddable?",
+      "slug": "how-should-we-work-with-json-fields-in-embeddable",
+      "answer": "Some teams store custom data as a JSON inside a database field, like this: \n{\"Ford\": \"Transit\", \"Renault\": \"Clio\", \"Volkswagen\": \"Polo\"}\n\nYou can put as many fields in the JSON as you like. To use the values themselves in your charts you need to do one of two things:\n\n1. define a separate dimension in your model for each field that you want to have access to, or\n2. have a dimension that returns the whole JSON object, but then modify your chart component to handle the JSON object (i.e. use JavaScript to extract the values you need)",
+      "created_at": "2025-01-06T09:44:34.229Z"
+    },
+    {
+      "question": "How Do I Change the Default Limit in Components?",
+      "slug": "how-do-i-change-the-default-limit-in-components",
+      "answer": "For the limit functionality, unset limits default to 100:\n![Screenshot 2024-12-12 at 10.59.09|225x179, 100%](/img/faq/bb59a7e404b10952e0f43f0dbedc2b537509c23c.png)\nYou can get around this by setting the limit in the loadData function that's in your emb.ts file, so for example if you don't want to give the user an option to adjust the limit via an input, you could do something like:\n   \n```\n   results: loadData({\n        from: inputs.ds,\n        limit: 5000,\n        dimensions: [inputs.xAxis],\n        measures: [inputs.metric],\n      }),\n```\nBut if you do have an input that allows the end user to set their own limit, you could do:\n \n```\n     results: loadData({\n        from: inputs.ds,\n        limit: inputs.limit || 5000,\n        dimensions: [inputs.xAxis],\n        measures: [inputs.metric],\n      }),\n```",
+      "created_at": "2024-12-12T13:49:03.695Z"
+    },
+    {
+      "question": "Is There a Way to Filter Columns in a Data Model via Security Context?",
+      "slug": "is-there-a-way-to-filter-columns-in-a-data-model-via-security-context",
+      "answer": "Currently you cannot filter your columns in Embeddable, however you can have the columns show a blank result for certain customers - this really only makes sense in a table component, for example.\n\nIf you want to ensure certain customers do not have access to certain columns (i.e. column-level security instead of row-level security), the best way to do this is to create 2 Embeddables, one with the data you don't want to use hidden, and then to surface the correct Embeddable on your UI depending on the customer. \n\nThis works best because alternatively, the customers who don't have access would see charts with 'no results' due to not having access to the dimensions (columns) required to populate the chart data.",
+      "created_at": "2024-12-10T15:40:25.504Z"
+    },
+    {
+      "question": "How Can I Clear the Cache?",
+      "slug": "how-can-i-clear-the-cache",
+      "answer": "If you have a scenario where you want to invalidate the cache you can:\n\n* click publish\n* call our cache API\n\nBoth of those actions will instantly cause the cache to refresh.\n\nYou can also have the cache clear programatically:\n\nIf you are using our L1 cache - i.e. using scheduled caching with  refreshKey, you can set your cache to refresh if there are new results:\n- [Cube example here](https://cube.dev/docs/product/caching#refresh-keys)\n\n\nIf you are using our pre-aggregations cache (L2 cache) you can also do something similar, where if the results of the SQL refresh key differ from the last execution, then the pre-aggregation will be refreshed:\n\n- [Cube example here](https://cube.dev/docs/reference/data-model/pre-aggregations#sql)",
+      "created_at": "2024-12-09T12:50:52.511Z"
+    },
+    {
+      "question": "Why Do I Get “Error: Password Authentication Failed”?",
+      "slug": "why-do-i-get-error-password-authentication-failed",
+      "answer": "If you get an error stating: 'Error: password authentication failed' but you are sure you are using the correct password, please check if your password has a special character sequence, such as: \n`P\\b\\V-{`\n\nYou may need to add an additional backlash to escape the special characters, such as: \n`P\\\\b\\\\V-{`",
+      "created_at": "2024-11-26T11:42:24.258Z"
+    },
+    {
+      "question": "Are There Any Solutions for Displaying Something Outside a Component and on Top of Everything Else?",
+      "slug": "are-there-any-solutions-for-displaying-something-outside-a-component-and-on-top-of-everything-else",
+      "answer": "Embeddable automatically applies a z-index to every component on the canvas. This means that you can add additional components (e.g. tooltips, dropdowns, etc.) as long as they expand downwards - but not sideways or upwards. This is because z-indexes are lower as you go down the page.\n\nIf you want to add a component that opens as a new modal for example, to work around this, you could use the variable listener on the embedded web component (see [Embedding an Embeddable](/deployment/interactivity#listen-to-variable-changes) in the handbook). That way you could listen to the appropriate variable change, and then open a modal in your react app, on top of the Embeddable dashboard.",
+      "created_at": "2024-11-11T15:56:42.672Z"
+    },
+    {
+      "question": "How Can I Customize Import Paths in Embeddable?",
+      "slug": "how-can-i-customize-import-paths-in-embeddable",
+      "answer": "In Embeddable, you can customize your import paths (e.g. have absolute paths in your React components) and add path aliases.\n\nTo enable this, you need to add it in two places:\n\n```\n// embeddable.config.ts\n\n{\n     ...\n      viteConfig: {\n        resolve: {\n          alias: {\n            \"@/custom-alias\": path.resolve(__dirname, \"src/custom-alias\"),\n          },\n        },\n      },\n    }\n```\n```\n// tsconfig.json (TypeScript configuration file placed in the root of the repository)\n\n{\n  \"compilerOptions\": {\n    ...\n    \"paths\": {\n      \"@/custom-alias/*\": [\"src/custom-alias/*\"]\n    }\n  }\n}\n```\nAnd finally, this will enable imports like\n```\nimport SomeComponent from \"@/custom-alias/Component\"\n```\nAdditionally, the following is required for __dirname and to work in the `path.resolve(__dirname, '../src/components')` :\n```\nimport path from 'path'; import { fileURLToPath } from 'url'; // Get the equivalent of __dirname for ES modules const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);\n```",
+      "created_at": "2024-09-17T14:27:14.706Z"
+    },
+    {
+      "question": "How Do I Troubleshoot Embedding in Next.js?",
+      "slug": "how-do-i-troubleshoot-embedding-in-nextjs",
+      "answer": "If you are having an issue with embedding your Embeddable in a NextJs frontend, this could be due to the strategy.\n\nPlease make sure that the script has strategy=”lazyOnload”\n\nIf this does not resolve your issue, please get in contact with our team.",
+      "created_at": "2024-08-28T13:37:39.062Z"
+    },
+    {
+      "question": "Why Do I Get an Error With Cube Models in My Live Workspace (MySQL Database)?",
+      "slug": "why-do-i-get-an-error-with-cube-models-in-my-live-workspace-mysql-database",
+      "answer": "If you are getting a 'Bad Request' error accessing your cube models in your live workspace and you are connected to a MySQL database you may need to update  your connection script to:\n\n`ssl: false`",
+      "created_at": "2024-08-26T16:20:06.959Z"
+    },
+    {
+      "question": "Why Isn’t the MUI Select Popover Rendering Correctly?",
+      "slug": "why-isnt-the-mui-select-popover-rendering-correctly",
+      "answer": "When using the MUI select component in Embeddable, you might notice the popover may not render correctly. There are 2 options for using the Material UI select component:\n\n1. Make usage of the native MUI components (in this case the NativeSelect).\n2. Use the normal MUI Select, and try to restyle it.\n\nThese are example files:\n\n```\nWrapper\n\nimport createCache from '@emotion/cache';\nimport { CacheProvider } from '@emotion/react';\nimport { CssBaseline, ThemeProvider, createTheme } from '@mui/material';\nimport { LocalizationProvider } from '@mui/x-date-pickers';\nimport { AdapterDateFns } from '@mui/x-date-pickers/node/AdapterDateFns/index.js';\nimport React from 'react';\n\nconst ThemeWrapper = ({ children }: any) => {\n  const ref = React.useRef<HTMLDivElement>(null);\n  const [cache, setCache] = React.useState<any>();\n  const [theme, setTheme] = React.useState<any>();\n\n  React.useEffect(() => {\n    if (ref.current === null) return;\n\n    const shadowContainer = ref.current.getRootNode() as ShadowRoot;\n    const shadowRootElement = document.createElement('div');\n    shadowContainer.appendChild(shadowRootElement);\n\n    const cache = createCache({\n      key: 'css',\n      prepend: true,\n      container: shadowContainer\n    });\n\n    setCache(cache);\n\n    const theme = createTheme({\n      components: {\n        // If not using the NativeSelect, uncomment this block\n        // MuiPopover: {\n        //   defaultProps: {\n        //     container: shadowRootElement\n        //   }\n        // },\n        // MuiPopper: {\n        //   defaultProps: {\n        //     container: shadowRootElement\n        //   }\n        // }\n      }\n    });\n\n    setTheme(theme);\n  }, [ref]);\n\n  if (!cache || !theme) return <div ref={ref}>loading...</div>;\n\n  return (\n    <LocalizationProvider dateAdapter={AdapterDateFns}>\n      <CacheProvider value={cache}>\n        <ThemeProvider theme={theme}>\n          <CssBaseline />\n          {children}\n        </ThemeProvider>\n      </CacheProvider>\n    </LocalizationProvider>\n  );\n};\n\nexport default ThemeWrapper;\n\n```\n\n```\nselect component\n\nimport {\n  Button,\n  FormControl,\n  InputLabel,\n  MenuItem,\n  NativeSelect,\n  Select,\n  SelectChangeEvent\n} from '@mui/material';\nimport React from 'react';\n\nimport MUI from './MUI';\n\ntype Props = {};\n\nexport default (props: Props) => {\n  const [age, setAge] = React.useState('');\n\n  const handleChange = (event: SelectChangeEvent) => {\n    setAge(event.target.value as string);\n  };\n\n  return (\n    <MUI>\n      <FormControl fullWidth>\n        {/* This commented Select, positions the popover no right bellow the select input */}\n        {/* Style it to change the position of it (re-style classes), or make usage of the NativeSelect bellow */}\n        {/* <InputLabel id=\"demo-simple-select-label\">Age</InputLabel>\n        <Select\n          labelId=\"demo-simple-select-label\"\n          id=\"demo-simple-select\"\n          value={age}\n          label=\"Age\"\n          onChange={handleChange}\n        >\n          <MenuItem value={10}>Ten</MenuItem>\n          <MenuItem value={20}>Twenty</MenuItem>\n          <MenuItem value={30}>Thirty</MenuItem>\n        </Select> */}\n        <InputLabel variant=\"standard\" htmlFor=\"uncontrolled-native\">\n          Age\n        </InputLabel>\n        <NativeSelect\n          defaultValue={30}\n          inputProps={{\n            name: 'age',\n            id: 'uncontrolled-native'\n          }}\n        >\n          <option value={10}>Ten</option>\n          <option value={20}>Twenty</option>\n          <option value={30}>Thirty</option>\n        </NativeSelect>\n      </FormControl>\n    </MUI>\n  );\n};\n\n```",
+      "created_at": "2024-08-09T14:12:33.186Z"
+    },
+    {
+      "question": "How Should We Refresh the Token?",
+      "slug": "how-should-we-refresh-the-token",
+      "answer": "It's important that you never expose the API key to your frontend. What you can do to refresh the token is set it up so that whenever you want to update it, you call your server side to get a new token. That way, you don't need to expose the API key because it sits securely on your server side.",
+      "created_at": "2024-08-09T14:00:22.963Z"
+    },
+    {
+      "question": "How Do I Add Embeddable to My CI/CD Flow?",
+      "slug": "how-do-i-add-embeddable-to-my-cicd-flow",
+      "answer": "Just add these three steps to your CI/CD:\n![Screenshot 2024-08-07 at 22.44.46|687x500](/img/faq/4b8e7c3849afcc3ba8d130437c660adef3ce6e72_2_687x500.png)\n\n[CI/CD example in the Versions API docs](/deployment/versions-api#cicd-example)",
+      "created_at": "2024-08-08T13:32:14.852Z"
+    },
+    {
+      "question": "How Do I Use My Own Custom Font in Embeddable?",
+      "slug": "how-do-i-use-my-own-custom-font-in-embeddable",
+      "answer": "To use your own custom font, add it to our `constants.ts` file. The font will need to be hosted somewhere, e.g. in a public S3 bucket or google cloud storage or similar.",
+      "created_at": "2024-08-02T10:17:01.109Z"
+    },
+    {
+      "question": "How Do the Code Versions Work?",
+      "slug": "how-do-the-code-versions-work",
+      "answer": "* each code version contains a snapshot of the code at the moment it was pushed\n\n    * so if you switch to a previous code version (before a component was deleted) that component will be there (and will work as it used to)\n    * i.e. deleting a component from your code does not delete it from a previous code version\n\n* pushing a new code version (i.e. doing `npm run embeddable:push`) creates a new code version in the builder, but it does not affect the published dashboard until you re-publish",
+      "created_at": "2024-07-31T15:52:20.580Z"
+    },
+    {
+      "question": "How Do I Build a Tabbed Embeddable?",
+      "slug": "how-do-i-build-a-tabbed-embeddable",
+      "answer": "We have a simple example here of how to build a tabbed dashboard experience using Embeddable:\nhttps://github.com/embeddable-hq/web-component-example/commit/0bb136290496085e18e49f877994180caced0e30\n\n![Screenshot 2025-01-14 at 11.22.37|690x352](/img/faq/8133b92cd5ba624bb721c8ed03d185455c57edf1_2_690x352.jpeg)",
+      "created_at": "2024-07-15T11:19:36.556Z"
+    },
+    {
+      "question": "How Can I Import amCharts?",
+      "slug": "how-can-i-import-amcharts",
+      "answer": "You can import amCharts to use in Embeddable like so:\n\n`useLayoutEffect(() => {`\n`    import('@amcharts/amcharts5').then((am5) => {`\n`      import('@amcharts/amcharts5/xy.js').then((am5xy) => {`\n`        import('@amcharts/amcharts5/themes/Animated.js').then((am5themes_Animated) => {`\n`          setAm5({ am5, am5xy, am5themes_Animated });`\n`        });`\n`      });`\n`    });`\n`  }, []);`",
+      "created_at": "2024-07-12T16:46:18.690Z"
+    },
+    {
+      "question": "How Can I Add Currency?",
+      "slug": "how-can-i-add-currency",
+      "answer": "This can be achieved by using \"meta.pretext\" and \"meta.posttext\" in the data model. Additionally, many Remarkable Pro components support the ability to add custom formatting via sub-inputs on the dimensions or measures you've chosen.",
+      "created_at": "2024-06-24T18:46:01.193Z"
+    },
+    {
+      "question": "How Do I Get the Latest SDK Version?",
+      "slug": "how-do-i-get-the-latest-sdk-version",
+      "answer": "You can always bump to the latest version by running:\n\n`npx npm-check-updates -u \"/@embeddable/\"`\n\n```\n    \"@embeddable.com/core\": \"2.5.7\",\n    \"@embeddable.com/react\": \"2.5.8\",\n    \"@embeddable.com/sdk-core\": \"3.3.1\",\n    \"@embeddable.com/sdk-react\": \"3.3.1\",\n```\n![image (2)|468x142](/img/faq/4ec5f6e616801cac62988a83522a6349d9dd23ea.png)",
+      "created_at": "2024-06-11T16:07:51.763Z"
+    },
+    {
+      "question": "Can I Use Jinja?",
+      "slug": "can-i-use-jinja",
+      "answer": "You can use jinja in your Cube data models!\n[Check out our SQL-based security docs to get started](/data-modeling/row-level-security/sql-based-security#conditional-sql) using jinja pre-processing syntax in your data models\ne.g.\n\n```\ncubes:\n  - name: customers\n    title: My customers\n    sql: >\n      select * \n      from public.customers \n\t  {% if COMPILE_CONTEXT.securityContext.superUser %}\n\t\twhere 1 = 1\n\t  {% else %}\t\n\t    where organisationId in {{ list(COMPILE_CONTEXT.securityContext.orgIds) }}\n\t  {% endif %}\n```",
+      "created_at": "2024-06-10T15:38:22.183Z"
+    },
+    {
+      "question": "How Do I Pass Variables via the Web Component?",
+      "slug": "how-do-i-pass-variables-via-the-web-component",
+      "answer": "We've added support to allow variables to be passed in via the web component, as well as listen to variable changes.\nTo interact with variables on the <em-beddable...> web component, you can define your Embeddable like so:\n\n```\nfunction Embeddable({token, onComponentsLoad, variables, onVariablesChange}) {\n  const ref = React.useRef(null);\n  function handleVariableChange(e) {\n    if(onVariablesChange) {\n      onVariablesChange(\n        Object.fromEntries(\n          e.detail.map(c => [c.variableName, c.newValue])\n        )\n      )  \n    }\n  }\n  React.useEffect(() => {\n    ref.current.addEventListener('variablesChange', handleVariableChange);\n    ref.current.addEventListener('componentsLoad', onComponentsLoad);\n    return () => {\n      ref.current.removeEventListener('componentsLoad', onComponentsLoad);\n      ref.current.removeEventListener('variablesChange', handleVariableChange);\n    };\n  }, []);\n  return React.createElement('em-beddable', {\n    ref, \n    token, \n    variables: JSON.stringify(variables)\n  });\n}\n```\nand then use it like so:\n\n```\n<Embeddable \n  variables={{ 'Country': 'Germany'}}\n  onVariablesChange={v => console.log(v)}\n  onComponentsLoad={() => setIsLoading(false)}\n  token=\"...\"\n/>\n```",
+      "created_at": "2024-06-10T15:36:13.986Z"
+    },
+    {
+      "question": "How Do I Create Two Environments and Test Them in Embeddable?",
+      "slug": "how-do-i-create-two-environments-and-test-them-in-embeddable",
+      "answer": "A question we often get is how to create two environments - for example “Production” and “Staging” and test them in Embeddable. To achieve this, you can define your `.cube.yml` files like so:\n\n```\ncubes:\n  - name: customers\n    title: My customers\n    data_source: default # can omit, as `data_source` has value `default` by default\n    sql: >\n        ...\n\n```\n\nAnd use the [Connections API](/data/environments#define-connections) to provide your db credentials like so:\n\n```\nbody: JSON.stringify({\n\tname: 'production-postgres',\n\ttype: 'postgres',\n\tcredentials: {\n\t\t...\n\n```\n\nand\n\n```\nbody: JSON.stringify({\n\tname: 'staging-postgres',\n\ttype: 'postgres',\n\tcredentials: {\n\t\t...\n\n```\n\nand then just [create two environments](/data/environments#create-environments) like so:\n\n```\nbody: JSON.stringify({\n\tname: 'production',\n\tdatasources: [\n\t\t{ data_source: 'default', connection: 'production-postgres'}\n\t]\n})\n\n```\n\nand\n\n```\nbody: JSON.stringify({\n\tname: 'staging',\n\tdatasources: [\n\t\t{ data_source: 'default', connection: 'staging-postgres'}\n\t]\n})\n\n```\n\nand then when [generating your security token](/deployment/tokens-api), simply pass either \"production\" or \"staging\" to the `environment` field. When you pass \"production\" to the `environment` field it will dynamically map all the models whose `data_source` is \"default\" to the \"production-postgres\" database.  Whereas for \"staging\" it will map them to the \"staging-postgres\" database.\n\nTo test this in the Embeddable no-code builder, just update your `src/presets/security-contexts.sc.yml` file to specify the environment, like so:\n\n```\n- name: Example customer 1\n  securityContext:\n    country: United States\n  environment: production\n\n- name: Example customer 2\n  securityContext:\n    country: Germany\n  environment: staging\n\n```\n\nNow you can test against staging data as well as production data in the builder, before clicking \"publish\".",
+      "created_at": "2024-05-10T16:13:57.223Z"
+    },
+    {
+      "question": "Why Do I Get an Error Using MUI AdapterDayjs?",
+      "slug": "why-do-i-get-an-error-using-mui-adapterdayjs",
+      "answer": "If you run into an error such as:\n`AdapterDayjs is not supported`\n\nPlease try to do the import as follows: `import { AdapterDayjs } from '@mui/x-date-pickers/node/AdapterDayjs/index.js';`",
+      "created_at": "2024-05-08T10:10:14.965Z"
+    },
+    {
+      "question": "How Can I Use React Material UI (MUI) in Our Components?",
+      "slug": "how-can-i-use-react-material-ui-mui-in-our-components",
+      "answer": "To use MUI with Embeddable, you'll need a wrapper. \n\n[Here is the simplest version, just using our MUI wrapper.](https://github.com/embeddable-hq/vanilla-components/blob/material-ui/src/components/vanilla/controls/MaterialDatePicker/index.tsx)\n\nAnd the MUI wrapper itself has the `ThemeProvider` - [see example here](https://github.com/embeddable-hq/vanilla-components/blob/material-ui/src/components/vanilla/MUI.tsx)",
+      "created_at": "2024-05-03T15:39:30.692Z"
+    },
+    {
+      "question": "How Should I Handle Split Repos for Components and Data?",
+      "slug": "how-should-i-handle-split-repos-for-components-and-data",
+      "answer": "You can control what gets pushed from a repo in the `embeddable.config.ts` file. Specifically, you can set `pushModels` and `pushComponents` to `true` or `false` depending on whether you want to push models or components from that repo. This would allow you to have one repo for your components and another repo for your data models.",
+      "created_at": "2024-05-02T09:02:09.218Z"
+    },
+    {
+      "question": "Why Do I Get “Error: Self Signed Certificate in Certificate Chain” (Postgres)?",
+      "slug": "why-do-i-get-error-self-signed-certificate-in-certificate-chain-postgres",
+      "answer": "If you get this error:\n\n```\nError: self signed certificate in certificate chain\n```\nPlease change your SSL settings from:\n\n```\n{\n  \"name\": \"   \",\n  \"type\": \"postgres\",\n  \"credentials\": {\n    \"database\": \"  \",\n    \"host\": \"  \",\n    \"user\": \"  \",\n    \"password\": \"  \",\n    \"port\": \"  \",\n    \"ssl\": \"true\"\n  }\n}\n```\n\nto:\n\n```\n ssl: {\n        rejectUnauthorized: false,\n      }\n```\n\nAnd use the relevant instructions for `CREATE` or `UPDATE` from our [Connections API documentation](/data/environments#define-connections)",
+      "created_at": "2024-04-30T11:22:00.584Z"
+    },
+    {
+      "question": "Why Do I Get “Error: Embeddable Version Mismatch”?",
+      "slug": "why-do-i-get-error-embeddable-version-mismatch",
+      "answer": "The error \"Embeddable version mismatch\" means that you have two dashboards using different code versions.\nPlease go to each of your dashboards in your workspace and \"publish\" them again, so that all published dashboards are using the same code version. If the issue persists, [please contact our team](https://join.slack.com/t/embeddableworkspace/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA).",
+      "created_at": "2024-04-18T16:01:56.448Z"
+    },
+    {
+      "question": "Does meta const Have to Be Statically Defined If I Want to Reuse Common Parts of Configuration?",
+      "slug": "does-meta-const-have-to-be-statically-defined-if-i-want-to-reuse-common-parts-of-configuration",
+      "answer": "In summary:\n\n* yes, `meta` needs to be statically defined (it can’t be defined using a function, it must be defined using an object)\n* but, since `sdk-*` version `3.0.0` it is possible to extract parts of the `meta` object into separate constants, and even import them from different files",
+      "created_at": "2024-04-11T19:52:52.559Z"
+    },
+    {
+      "question": "How Long Is a Token Valid For?",
+      "slug": "how-long-is-a-token-valid-for",
+      "answer": "It's up to you! You define the token expiry - check out our [Tokens API documentation here](/deployment/tokens-api)",
+      "created_at": "2024-04-11T15:21:43.752Z"
+    },
+    {
+      "question": "If I Have Different Schema in the Same ClickHouse Instance, Do I Need a Separate Connection?",
+      "slug": "if-i-have-different-schema-in-the-same-clickhouse-instance-do-i-need-a-separate-connection",
+      "answer": "For different schema in the same instance, we shouldn’t need to change the connection.  You can just change your SQL in your models to point to the new schema.",
+      "created_at": "2024-04-10T09:45:28.707Z"
+    },
+    {
+      "question": "Is the Embeddable Background Transparent?",
+      "slug": "is-the-embeddable-background-transparent",
+      "answer": "Yes! It will be the color of wherever you embed the Embeddable. Note: the canvas background is white and we use a white background in the Preview.",
+      "created_at": "2024-03-27T13:53:23.040Z"
+    },
+    {
+      "question": "Are There Any Global Dependencies?",
+      "slug": "are-there-any-global-dependencies",
+      "answer": "No, we use [Vite.js](https://vitejs.dev/) as our JavaScript bundler.",
+      "created_at": "2024-03-27T13:46:56.947Z"
+    },
+    {
+      "question": "How Does Embeddable Work With dbt?",
+      "slug": "how-does-embeddable-work-with-dbt",
+      "answer": "[Check out our section here on how we work with dbt](/data/using-cube-cloud-with-dbt)",
+      "created_at": "2024-03-27T13:44:18.865Z"
+    },
+    {
+      "question": "Why Am I Having Problems With the react-select Library?",
+      "slug": "why-am-i-having-problems-with-the-react-select-library",
+      "answer": "Libraries like `react-select` use the `emotion` css framework.  Due to components in Embeddable sitting inside a `shadow DOM` you’ll need to wrap the components in the `cache provider` from Emotion.\n\nPlease see an example here:\n![Screen Shot 2023-12-22 at 12.20.29 (1)|653x500](/img/faq/1e311fe26368355b963ceb6fa94dcd6231acaec7_2_653x500.png)\n\nOfficial documentation here: https://emotion.sh/docs/@emotion/cache",
+      "created_at": "2024-03-27T13:43:30.714Z"
+    },
+    {
+      "question": "How Does the Dev Environment Work?",
+      "slug": "how-does-the-dev-environment-work",
+      "answer": "The dev environment is a separate workspace where you can make changes and preview them locally, instead of doing a build -> push step every time.\n\nIf you want those changes to show in your live workspace (i.e. not Preview workspace) you need to do the `embeddable:build` + `embeddable:push` steps.\n\nWhen you first create your dev workspace it will be automatically connected to our sample database. Pop us a message to get it hooked up to your database 😊",
+      "created_at": "2024-03-27T13:37:40.562Z"
+    },
+    {
+      "question": "How Do I Create an ‘Apply’ Button?",
+      "slug": "how-do-i-create-an-apply-button",
+      "answer": "Detail:\nThe general idea is to `onClick` take the values of two variables and set them as the values of two other variables. The destination variables may be defined outside of the scope of this button, e.g. declared manually as part of the dashboard or declared by some other component on the dashboard.\n\nSolution:\n\n```jsx\nimport { EmbeddedComponentMeta, defineComponent } from '@embeddable.com/react';\nimport { Value } from '@embeddable.com/core';\n\nimport Component from './index';\n\nexport const meta: EmbeddedComponentMeta = {\n  name: 'BasicButtonComponent',\n  label: 'Basic Button',\n  inputs: [\n    {\n      name: 'label',\n      type: 'string',\n      label: 'Label',\n      description: 'The text on the button'\n    },\n  ],\n  events: [\n    {\n      name: 'onClick',\n      label: 'Click',\n      properties: []\n    }],\n};\n\ntype Inputs = {\n  label: string;\n}\n\nexport default defineComponent<Inputs>(Component, meta, {\n  props: (inputs) => {\n    return {\n      ...inputs\n    };\n  },\n  events: {\n    onClick: (e) => ({ })\n  }\n});\n```\n\nThen the `props` for your react button component will be:\n\n```jsx\nconst { label, onClick } = props\n```\n\nThen in the builder, just assign one variable to the other like so:\n\n![Screenshot 2024-01-03 at 10.41.31|281x500](/img/faq/44e49ce4607dfb890ba01927e110ba3325815d4d_2_281x500.png)\n\nFor this case, you’d define two interactions (one for each variable)",
+      "created_at": "2024-03-27T13:33:25.240Z"
+    },
+    {
+      "question": "Do I Need to Pay for a License for a Charting Library (e.g. Highcharts)?",
+      "slug": "do-i-need-to-pay-for-a-license-for-a-charting-library-eg-highcharts",
+      "answer": "If you're using Embeddable's built-in [Remarkable Pro Components](https://docs.embeddable.com/component-libraries/remarkable-pro), you do not need to worry about additional licenses for the charting library. If you're bringing your own library (eg HighCharts), you are responsible for ensuring you have the appropriate licenses for any third-party libraries you use.",
+      "created_at": "2024-03-27T13:27:40.163Z"
+    },
+    {
+      "question": "How Is Mobile-Readiness Handled in Embeddable?",
+      "slug": "how-is-mobile-readiness-handled-in-embeddable",
+      "answer": "For mobile-readiness, we allow you to set a `mobileWidth` which is the width in pixels, under which, the dashboard will automatically jump to being a single column, with components one below the other.",
+      "created_at": "2024-03-27T13:25:40.254Z"
+    },
+    {
+      "question": "Can We Define Cubes With JavaScript Instead of YAML?",
+      "slug": "can-we-define-cubes-with-javascript-instead-of-yaml",
+      "answer": "Yes! You can define data models using javascript `.cube.js` files",
+      "created_at": "2024-03-27T13:24:11.854Z"
+    },
+    {
+      "question": "How Do We Make Inputs Appear as Groups in the Component Modal?",
+      "slug": "how-do-we-make-inputs-appear-as-groups-in-the-component-modal",
+      "answer": "To group inputs in the component modal, just set the \"category\" field for each input.",
+      "created_at": "2024-03-27T13:21:38.207Z"
+    },
+    {
+      "question": "How Do I Filter Data via Some Info in My URL?",
+      "slug": "how-do-i-filter-data-via-some-info-in-my-url",
+      "answer": "You can use [Security Context](https://docs.embeddable.com/data-modeling/row-level-security/sql-based-security) to pass information from your URL into the Embeddable component.\n\nFor example, if you want to filter data based on the country specified in the URL, you can pass it via the security context when retrieving the security token:\n\n```\nconst token = await fetch('/api/get-token', {\n  method: 'POST',\n  body: JSON.stringify({\n    securityContext: {\n      country: 'Ghana'\n    }\n  })\n});\n```\n\nThen, in your Embeddable component, you can access this information and apply it as a filter.\n\nYou can also use [Client Context](https://docs.embeddable.com/component-libraries/client-context) to pass information from your frontend into the Embeddable component.",
+      "created_at": "2024-03-27T13:19:10.868Z"
+    },
+    {
+      "question": "Can I Connect Using an Older Version of Elasticsearch?",
+      "slug": "can-i-connect-using-an-older-version-of-elasticsearch",
+      "answer": "We currently only support connecting to Elasticsearch in the way outlined [here](https://cube.dev/docs/product/configuration/data-sources/elasticsearch)",
+      "created_at": "2024-03-27T12:59:58.816Z"
+    },
+    {
+      "question": "Can We Supply Filters and Have Them Stored So Users Return to a Pre-Filtered Embeddable?",
+      "slug": "can-we-supply-filters-and-have-them-stored-so-users-return-to-a-pre-filtered-embeddable",
+      "answer": "You can preset a filter for our Custom Canvas dashboard using dashboardState. It will apply to all users of the dashboard. Note: for non-Custom Canvas dashboards, you can also do this but you’ll need to store their selected variables in your frontend and then pass them back into Embeddable when that user returns.\n\nIf you look at the [Tokens API](/deployment/tokens-api), you’ll see we ask for a `user` key. This is so we can store a dashboardState against each user (e.g. remember which filters have been set).",
+      "created_at": "2024-03-27T12:13:59.038Z"
+    },
+    {
+      "question": "What Are Common BigQuery Errors?",
+      "slug": "what-are-common-bigquery-errors",
+      "answer": "### Timestamp error\n\n`Error: No matching signature for operator >= for argument types: DATETIME, TIMESTAMP. Supported signature: ANY >= ANY at [4:87]`\n\nIf you come across this error, it’s because Cube expects Timestamps instead of DateTime objects. You can solve this by changing the SQL to:\n\n```\nsql: TIMESTAMP(partition_date) \n```",
+      "created_at": "2024-03-27T12:11:03.800Z"
+    },
+    {
+      "question": "Where Can I See Practical Examples of Components?",
+      "slug": "where-can-i-see-practical-examples-of-components",
+      "answer": "[You can check out our components here](https://remarkable.embeddable.com/)",
+      "created_at": "2024-03-27T12:10:35.196Z"
+    },
+    {
+      "question": "Which Datasources Does Embeddable Support?",
+      "slug": "which-datasources-does-embeddable-support",
+      "answer": "Embeddable supports any of the databases supported by cube.dev - you can [find the list here](https://cube.dev/docs/product/configuration/data-sources).",
+      "created_at": "2024-03-27T12:10:10.443Z"
+    }
+  ]
+}
