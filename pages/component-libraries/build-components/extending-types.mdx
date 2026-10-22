@@ -1,4 +1,9 @@
-# Extending Existing Native Types
+# Extending Existing Types
+
+This page covers two things:
+
+- adding options to [native types](#extending-the-time-type) (`time`, `timeRange`, `granularity`)
+- adding or removing options on [custom types from a component library](#updating-custom-types-from-a-component-library), e.g. Remarkable Pro's comparison periods
 
 There are three [existing native types](/component-libraries/build-components/define-component-function#native-input-types) that can be extended with additional options: `time`, `timeRange`, and `granularity`. These types are used in various components to provide date and time selection functionality.
 
@@ -9,7 +14,11 @@ There are three [existing native types](/component-libraries/build-components/de
 To extend these types with additional options, you can use `defineOption` (explained in detail in ["Defining Custom Types"](/component-libraries/build-components/custom-types#the-defineoption-function)) that build upon the existing native types.
 
 <Callout emoji="⚠️">
-  When extending native types, best practice is to create a new `type.emb.ts` file as if you were creating a custom type, but avoid using the `defineType` function, as this will cause build errors. The native type is already defined in the core library. You only need the `defineOption` function to add new options to it.
+  When extending native types, best practice is to create a new `type.emb.ts`
+  file as if you were creating a custom type, but avoid using the `defineType`
+  function, as this will cause build errors. The native type is already defined
+  in the core library. You only need the `defineOption` function to add new
+  options to it.
 </Callout>
 
 Below are examples of how to extend each type:
@@ -26,18 +35,27 @@ Create a new file named `Time.type.emb.ts` in your types directory.
 Add the following code to extend the `time` type with your desired new options.
 
 ```typescript
-import { defineOption } from '@embeddable.com/core';
+import { defineOption } from "@embeddable.com/core";
 
 // Example options
-defineOption('time', { date: new Date(1980, 3, 28), name: 'My birthday' })
-defineOption('time', { relativeTimeString: 'next week', name: 'Next week' })
+defineOption("time", { date: new Date(1980, 3, 28), name: "My birthday" });
+defineOption("time", { relativeTimeString: "next week", name: "Next week" });
 ```
+
 ### Test Your New Options
 
 Use a date picker component in your Embeddable and note that the new options are available for selection.
+
 </Steps>
 
 ## Extending the `timeRange` Type
+
+<Callout>
+  This only changes the Builder options. If you use Remarkable Pro, change what
+  components show (e.g. the Date-Range Picker - Presets) in the theme instead.
+  See [Date range
+  overrides](/component-libraries/remarkable-pro/customizations/date-ranges).
+</Callout>
 
 <Steps>
 ### Create Type File
@@ -47,16 +65,26 @@ Create a new file named `TimeRange.type.emb.ts` in your types directory.
 ### Extend Types
 
 Add the following code to extend the `timeRange` type with your desired new options.
+
 ```typescript
-import { defineOption } from '@embeddable.com/core';
+import { defineOption } from "@embeddable.com/core";
 
 // Example options
-defineOption('timeRange', { from: new Date(2000, 1, 1), to: new Date(), name: 'This millennium' })
-defineOption('timeRange', { relativeTimeString: 'last quarter', name: 'Last quarter' })
+defineOption("timeRange", {
+  from: new Date(2000, 1, 1),
+  to: new Date(),
+  name: "This millennium",
+});
+defineOption("timeRange", {
+  relativeTimeString: "last quarter",
+  name: "Last quarter",
+});
 ```
+
 ### Test Your New Options
 
 Use a date range picker component in your Embeddable and note that the new options are available for selection.
+
 </Steps>
 
 ## Extending the `granularity` Type
@@ -90,11 +118,12 @@ Create a new file named `Granularity.type.emb.ts` in your types directory.
 ### Extend Types
 
 Add the following code to extend the `granularity` type with your desired new options.
+
 ```typescript
-import { defineOption } from '@embeddable.com/core';
+import { defineOption } from "@embeddable.com/core";
 // Example options
-defineOption('granularity', 'quarter_hour');
-defineOption('granularity', 'week_starting_on_sunday');
+defineOption("granularity", "quarter_hour");
+defineOption("granularity", "week_starting_on_sunday");
 ```
 
 ### Update Custom Components
@@ -108,7 +137,6 @@ Note: The Date Picker with Granularity component will display your new `granular
 See below for a complete example
 
 </Steps>
-
 
 ### Updating Custom Components to Use Extended Granularities
 
@@ -170,7 +198,7 @@ const getFromWindow = (): NativeTypesShape | undefined => {
 };
 
 export const getCustomGranularities = (): string[] => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const nativeTypes = getFromWindow();
     return nativeTypes?.granularity?.options || [];
   } else {
@@ -184,7 +212,7 @@ export const getCustomGranularities = (): string[] => {
 First, we get our custom granularities. These are found under the `__EMBEDDABLE__` property that's added to the `window` object by the Embeddable SDK.
 
 ```tsx
-import { getCustomGranularities } from '../../../util/getCustomGranularities';
+import { getCustomGranularities } from "../../../util/getCustomGranularities";
 
 const [customGranularities, setCustomGranularities] = useState<string[]>([]);
 
@@ -201,7 +229,9 @@ Then we ensure that our final list of granularities includes our custom ones if 
 const granularityOptions = (): GranularityResponse => {
   const data: { value: Granularity }[] = [];
   // display options selected by user
-  options.filter((option) => props[option])?.forEach((option) => data.push({ value: option }));
+  options
+    .filter((option) => props[option])
+    ?.forEach((option) => data.push({ value: option }));
 
   // Handle custom granularities from window object
   let customOptions: { value: Granularity }[] = [];
@@ -237,7 +267,65 @@ Finally, we pass the results of that function to the Dropdown component:
 One final important thing we need to adjust is to ensure visual consistency between the default granularities (lowercase with spaces) and the custom granularities (lowercase with underscores). This is just a matter of stripping any underscores and replacing them with spaces on display:
 
 ```tsx
-{o[props.property?.name || ''].replaceAll('_', ' ')}
+{
+  o[props.property?.name || ""].replaceAll("_", " ");
+}
 ```
 
 In this fashion, the dropdown passes the proper value (with underscores) but displays a user-friendly version (with spaces).
+
+## Updating custom types from a component library
+
+Component libraries like [Remarkable Pro](/component-libraries/remarkable-pro) ship their own custom types, e.g. [`ComparisonPeriod.type.emb.ts`](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts). Their options are the values you can pick for variables and component inputs of that type in the Builder.
+
+You can add or remove those options from your own repo, without forking the library.
+
+<Callout>
+  This only changes the Builder options. To change what components show (e.g.
+  the Comparison Period Select Field dropdown), use the theme instead. See
+  [Comparison period
+  overrides](/component-libraries/remarkable-pro/customizations/comparison-ranges).
+</Callout>
+
+### Example: change the comparison period options
+
+<Steps>
+### Create a type file
+
+Create `ComparisonPeriod.type.emb.ts` in your repo.
+
+### Re-define the type, then add or remove options
+
+Call `defineType` with the **same type name** as the library (`'comparisonPeriod'`). Then use `defineOption` to add options and `removeOption` to remove them.
+
+```typescript
+import { defineType, defineOption, removeOption } from "@embeddable.com/core";
+// import the type you want to re-define
+import { ComparisonPeriodType } from "@embeddable.com/remarkable-pro";
+
+// add a new option
+defineOption(ComparisonPeriodType, "Two years ago");
+
+// remove options you don't want
+removeOption(ComparisonPeriodType, "Previous week");
+removeOption(ComparisonPeriodType, "Previous quarter");
+```
+
+These changes only affect the Builder. To keep component options in sync, make the same changes in the [theme](/component-libraries/remarkable-pro/customizations/comparison-ranges).
+
+### Check the Builder
+
+Run `embeddable:dev` and open a variable or component input of this type. You should see your updated list of options.
+
+</Steps>
+
+**Things to notice**
+
+- `removeOption` matches by value:
+  - strings must be equal (`'Previous week'`, case-sensitive)
+  - objects must have the same properties **in the same order**
+- Removed options stay removed, even though the library still calls `defineOption` for them.
+
+<Callout emoji="⚠️">
+  `removeOption` requires `@embeddable.com/core` `2.15.1` or later.
+</Callout>

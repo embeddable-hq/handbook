@@ -32,7 +32,7 @@ type TimeRange = {
 };
 
 type ComparisonPeriodOption = {
-  value: string;                     // e.g. 'previous-period'
+  value: string;                     // e.g. 'Previous period'
   label: string;                     // e.g. 'defaults.comparisonPeriodOptions.previousPeriod | Previous period'
   dateFormat: string;                // e.g. 'DD MMM YYYY'
   getRange: (timeRange: TimeRange) => TimeRange; // how the comparison range is calculated
@@ -44,6 +44,7 @@ You typically start from the defaults in `parentTheme.defaults.comparisonPeriods
 **Things to notice**
 
 - The default list is just an array of `ComparisonPeriodOption`, so you can manipulate it using normal array utilities like `filter`, `map`, `sort`, `concat`, etc.
+- To find the exact `value` of each default option (to filter or replace it), see the [default comparison period options](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/theme/defaults/defaults.ComparisonPeriods.constants.ts) in the Remarkable Pro library.
 - `getRange` takes a single `dateRange: TimeRange` argument. This is the **primary** date range (for example, “This month”), and `getRange` returns the **comparison** range.
   - For example, if `dateRange` represents **today** and the comparison period is **“Previous period”**, then `getRange(dateRange)` should return **yesterday** as a `TimeRange`.
 
@@ -58,10 +59,10 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const defaults = parentTheme.defaults.comparisonPeriodsOptions;
 
   const myOptions = [
-    // ensure 'previous-month' goes first if it exists
-    ...defaults.filter((option) => option.value === 'previous-month'),
+    // ensure 'Previous month' goes first if it exists
+    ...defaults.filter((option) => option.value === 'Previous month'),
     // then everything else
-    ...defaults.filter((option) => option.value !== 'previous-month'),
+    ...defaults.filter((option) => option.value !== 'Previous month'),
   ];
 
   const myTheme = {
@@ -88,7 +89,7 @@ Here’s how we might edit the `Previous period` option, changing:
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const myOptions = parentTheme.defaults.comparisonPeriodsOptions.map((option) => {
-    if (option.value === 'previous-period') {
+    if (option.value === 'Previous period') {
       return {
         ...option,
         label: 'defaults.comparisonPeriodOptions.priorPeriod | Prior period',
@@ -125,7 +126,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const myOptions: ComparisonPeriodOption[] = [
     ...parentTheme.defaults.comparisonPeriodsOptions,
     {
-      value: 'two-years-ago',
+      value: 'Two years ago',
       label: 'customOptions.twoYearsAgo | Two years ago',
       dateFormat: 'DD MMM YYYY',
       getRange: (dateRange: TimeRange): TimeRange => {
@@ -149,8 +150,15 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 - Comparison ranges should be returned in **UTC**. Remarkable Pro handles the timezone conversion for display.
 - The `dateFormat` controls how the comparison dates are rendered in the UI.
 
-## Making new options appear in the Builder
+## Theme options vs. Builder options
 
-- When you add a new comparison period option, it will automatically appear in any Remarkable Pro (or custom) components that use `comparisonPeriodsOptions`, such as the Comparison Period Select Field.
-- If you want the new option to appear in Embeddable’s Builder as well (for example, to select it as a default comparison setting), you’ll also need to extend Embeddable’s custom comparison period type (e.g. `ComparisonPeriodType`). Learn more about defining custom types [here](/component-libraries/build-components/custom-types).
-- View the Comparison Period custom type in the Remarkable library [here](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts).  
+These are two separate lists:
+
+| List | What it controls | How to change it |
+|---|---|---|
+| `theme.defaults.comparisonPeriodsOptions` | What components show and how ranges are calculated (e.g. the Comparison Period Select Field) | This page |
+| `comparisonPeriod` custom type | What you can pick for `comparisonPeriod` variables and inputs in the Builder | [Updating custom types from a component library](/component-libraries/build-components/extending-types#updating-custom-types-from-a-component-library) |
+
+Changing the theme does **not** change the Builder list, and vice versa.
+
+If you pick a value in the Builder, components look it up by the theme option's `value`. So for a new option like `'Two years ago'` to work end to end, add it to both lists with the same string.
