@@ -1,4 +1,9 @@
-# Extending Existing Native Types
+# Extending Existing Types
+
+This page covers two things:
+
+- adding options to [native types](#extending-the-time-type) (`time`, `timeRange`, `granularity`)
+- adding or removing options on [custom types from a component library](#updating-custom-types-from-a-component-library), e.g. Remarkable Pro's comparison periods
 
 There are three [existing native types](/component-libraries/build-components/define-component-function#native-input-types) that can be extended with additional options: `time`, `timeRange`, and `granularity`. These types are used in various components to provide date and time selection functionality.
 
@@ -38,6 +43,10 @@ Use a date picker component in your Embeddable and note that the new options are
 </Steps>
 
 ## Extending the `timeRange` Type
+
+<Callout>
+  This only changes the Builder options. If you use Remarkable Pro, change what components show (e.g. the Date-Range Picker - Presets) in the theme instead. See [Date range overrides](/component-libraries/remarkable-pro/customizations/date-ranges).
+</Callout>
 
 <Steps>
 ### Create Type File
@@ -105,7 +114,11 @@ By default, Embeddable's Remarkable Pro Components will work with your custom gr
 
 Note: The Date Picker with Granularity component will display your new `granularity` options, but they will always show (the native options are filtered so that only relevant options show in the list).
 
-See below for a complete example
+See [Updating Custom Components to Use Extended Granularities](#updating-custom-components-to-use-extended-granularities) for a complete example.
+
+### Test Your New Options
+
+Use a granularity picker component in your Embeddable and note that the new options are available for selection.
 
 </Steps>
 
@@ -241,3 +254,56 @@ One final important thing we need to adjust is to ensure visual consistency betw
 ```
 
 In this fashion, the dropdown passes the proper value (with underscores) but displays a user-friendly version (with spaces).
+
+## Updating custom types from a component library
+
+Component libraries like [Remarkable Pro](/component-libraries/remarkable-pro) ship their own custom types, e.g. [`ComparisonPeriod.type.emb.ts`](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/components/types/ComparisonPeriod.type.emb.ts). Their options are the values you can pick for variables and component inputs of that type in the Builder.
+
+You can add or remove those options from your own repo, without forking the library.
+
+<Callout>
+  This only changes the Builder options. To change what components show (e.g. the Comparison Period Select Field dropdown), use the theme instead. See [Comparison period overrides](/component-libraries/remarkable-pro/customizations/comparison-ranges).
+</Callout>
+
+### Example: change the comparison period options
+
+<Steps>
+### Create a type file
+
+Create `ComparisonPeriod.type.emb.ts` in your repo.
+
+### Add or remove options
+
+Import the library's type (`'comparisonPeriod'`). Do not call `defineType` again, the library already defined it. Use `defineOption` to add options and `removeOption` to remove them.
+
+```typescript
+import { defineOption, removeOption } from '@embeddable.com/core';
+// import the library's type
+import { ComparisonPeriodType } from '@embeddable.com/remarkable-pro';
+
+// add a new option
+defineOption(ComparisonPeriodType, 'Two years ago');
+
+// remove options you don't want
+removeOption(ComparisonPeriodType, 'Previous week');
+removeOption(ComparisonPeriodType, 'Previous quarter');
+```
+
+These changes only affect the Builder. To keep component options in sync, make the same changes in the [theme](/component-libraries/remarkable-pro/customizations/comparison-ranges).
+
+### Check the Builder
+
+Run `embeddable:dev` and open a variable or component input of this type. You should see your updated list of options.
+
+</Steps>
+
+**Things to notice**
+
+- `removeOption` matches by value:
+  - strings must be equal (`'Previous week'`, case-sensitive)
+  - objects must have the same properties **in the same order**
+- Removed options stay removed, even though the library still calls `defineOption` for them.
+
+<Callout emoji="⚠️">
+  `removeOption` requires `@embeddable.com/core` `2.15.1` or later.
+</Callout>
