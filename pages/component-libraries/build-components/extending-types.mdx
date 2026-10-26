@@ -26,6 +26,7 @@ Below are examples of how to extend each type:
 ## Extending the `time` Type
 
 <Steps>
+
 ### Create Type File
 
 Create a new file named `Time.type.emb.ts` in your types directory.
@@ -58,6 +59,7 @@ Use a date picker component in your Embeddable and note that the new options are
 </Callout>
 
 <Steps>
+
 ### Create Type File
 
 Create a new file named `TimeRange.type.emb.ts` in your types directory.
@@ -90,6 +92,7 @@ Use a date range picker component in your Embeddable and note that the new optio
 ## Extending the `granularity` Type
 
 <Steps>
+
 ### Update Your Data Models
 
 In order to use custom granularities, you will also need to add a few lines to your data model(s). This is done with a simple YAML addition to any time dimension, like so:
@@ -134,7 +137,11 @@ By default, Embeddable's Remarkable Pro Components will work with your custom gr
 
 Note: The Date Picker with Granularity component will display your new `granularity` options, but they will always show (the native options are filtered so that only relevant options show in the list).
 
-See below for a complete example
+See [Updating Custom Components to Use Extended Granularities](#updating-custom-components-to-use-extended-granularities) for a complete example.
+
+### Test Your New Options
+
+Use a granularity picker component in your Embeddable and note that the new options are available for selection.
 
 </Steps>
 
@@ -290,17 +297,18 @@ You can add or remove those options from your own repo, without forking the libr
 ### Example: change the comparison period options
 
 <Steps>
+
 ### Create a type file
 
 Create `ComparisonPeriod.type.emb.ts` in your repo.
 
-### Re-define the type, then add or remove options
+### Add or remove options
 
-Call `defineType` with the **same type name** as the library (`'comparisonPeriod'`). Then use `defineOption` to add options and `removeOption` to remove them.
+Import the library's type (`'comparisonPeriod'`). Do not call `defineType` again, the library already defined it. Use `defineOption` to add options and `removeOption` to remove them.
 
 ```typescript
-import { defineType, defineOption, removeOption } from "@embeddable.com/core";
-// import the type you want to re-define
+import { defineOption, removeOption } from "@embeddable.com/core";
+// import the library's type
 import { ComparisonPeriodType } from "@embeddable.com/remarkable-pro";
 
 // add a new option
