@@ -82,6 +82,7 @@ curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
 | `temperature` | number | No | Sampling temperature. Higher values produce more varied output. Provider default when omitted. |
 | `maxTokens` | integer | No | Maximum tokens generated per response. Provider default when omitted. |
 | `systemPrompt` | string | No | Prepended to every conversation to steer the assistant's tone and behavior. |
+| `userCreditsEnabled` | boolean | No | Turns on per-user spending limits. Default `false`. See [User credits](#user-credits). |
 
 To check the current config, call `GET /api/v1/llm-config` (the API key is masked in the response). It returns `404` if none is set.
 
@@ -178,6 +179,88 @@ In this setup, we recommend making the canvas **read-only** so the AI doesn't mo
 ```
 
 With a read-only token, the AI can still answer questions and preview charts in the conversation — it just can't add to or otherwise modify the Custom Canvas. Because the flag lives on the token, you can grant different users different levels of access with the same embedded widget.
+
+## User credits
+
+You pay your LLM provider directly (BYOK). User credits stop one end user from spending your whole budget: you give each user a balance in USD, and the chat stops answering them when it runs out.
+
+### Turn it on
+
+Set `userCreditsEnabled: true` when you [save your LLM configuration](#save-your-llm-configuration).
+
+- **Off (default)** — every user can chat without any spending limit. Usage is not tracked, and balances you set have no effect.
+- **On** — a user can chat only if they have a balance above `0`. A user with no balance is blocked.
+
+### How it works
+
+- The user is identified by the `user` field of their [security token](/deployment/tokens-api) — we call it `userKey` below.
+- Each answer's cost is estimated from the tokens used and the model's public price, then taken from the user's balance.
+- When the balance reaches `0`, the chat stops and shows: *"You have reached your AI usage limit. Please contact your administrator."*
+- The last answer can cost a little more than what was left. The API never shows a balance below `0`.
+
+### Manage balances
+
+All calls use your **Embeddable API key**, like the LLM config.
+
+**Set balances** (1 to 1,000 users per call):
+
+```bash
+curl -X POST https://api.<region>.embeddable.com/api/v1/ai-chat/user-balances \
+  -H "Authorization: Bearer <your-embeddable-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '[
+    { "userKey": "user-123", "balanceUsd": 50 },
+    { "userKey": "user-456", "balanceUsd": 20.5 }
+  ]'
+```
+
+- Only the users in the list are changed.
+- Each call **replaces** the balance: spent goes back to `0`. It does not add to what is left.
+- Returns `400` for an empty list, a duplicate `userKey`, a negative amount, or more than 8 decimals.
+
+**Get one user:**
+
+```bash
+curl "https://api.<region>.embeddable.com/api/v1/ai-chat/user-balance?userKey=user-123" \
+  -H "Authorization: Bearer <your-embeddable-api-key>"
+```
+
+```json
+{
+  "userKey": "user-123",
+  "startBalanceUsd": 50.00000000,
+  "currentBalanceUsd": 37.25000000,
+  "spentUsd": 12.75000000
+}
+```
+
+**List all users** (sorted by `userKey`, `size` max `100`):
+
+```bash
+curl "https://api.<region>.embeddable.com/api/v1/ai-chat/user-balances?page=0&size=50" \
+  -H "Authorization: Bearer <your-embeddable-api-key>"
+```
+
+Returns `items`, `page`, `size`, `totalItems` and `totalPages`.
+
+**Delete a user's balance** — the user is blocked from then on:
+
+```bash
+curl -X DELETE "https://api.<region>.embeddable.com/api/v1/ai-chat/user-balance?userKey=user-123" \
+  -H "Authorization: Bearer <your-embeddable-api-key>"
+```
+
+<Callout emoji="💡">
+  `userKey` goes in the query string, so **URL-encode it** — it may contain `@`, `/` or spaces. GET and DELETE return `404` (error `190`) when the user has no balance.
+</Callout>
+
+### Top up a user
+
+There is no "add" call. To add on top of what is left:
+
+1. `GET` the user and read `currentBalanceUsd`.
+2. Add your amount.
+3. `POST` the total.
 
 ## The end-user experience
 
