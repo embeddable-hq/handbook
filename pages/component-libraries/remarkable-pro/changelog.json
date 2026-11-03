@@ -1,5 +1,14 @@
 [
   {
+    "version": "v0.13.1",
+    "date": "2026-11-03",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.13.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.13.1",
+    "notes": [
+      "Charts with more than one measure (bar, line, combo, and comparison charts) now assign unique palette colors to each measure, ensuring no two measures share the same color on the same chart. Explicitly configured colors and theme-mapped colors are preserved and always take priority over the automatic assignment."
+    ]
+  },
+  {
     "version": "v0.13.0",
     "date": "2026-10-12",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.13.0",
