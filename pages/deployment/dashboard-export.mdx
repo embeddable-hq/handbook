@@ -166,7 +166,7 @@ The PDF stays a single page — that page just gets taller.
 Things to know:
 
 1. **Only widgets built for it grow.** A widget expands only if its component declares [`autoHeight`](/component-libraries/build-components/auto-height); the rest keep their designed height. The same rules apply as when [embedding with `height-mode="auto"`](/deployment/embedding#letting-widgets-grow-to-their-content): widgets never shrink, and a grown widget pushes down the widgets beneath it.
-2. **Each widget loads what its own inputs allow.** How many rows a table prints is set by that component's own row limit (`maxResults` on Embeddable's table components), not by the export request. A table told to load 1,000 rows prints at most 1,000 rows, however tall the page is allowed to be.
+2. **Each widget loads what its own inputs allow.** How many rows a table prints is set on the widget, not in the export request — on Embeddable's tables that is the **Max rows when expanded** input, which is separate from the download allowance. A table told to load 1,000 rows prints at most 1,000 rows, however tall the page is allowed to be.
 3. **Components say when rows were left out.** A component that supports auto height should report a truncated query in the PDF, since nobody can scroll to find out what's missing — a line such as "Showing 1,000 of 48,210 rows" under the table.
 
 ### Minimum SDK versions for auto height

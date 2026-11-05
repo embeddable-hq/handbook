@@ -86,10 +86,10 @@ export const meta = {
       }
     },
     {
-      name: 'maxResults',
+      name: 'autoHeightMaxResults',
       type: 'number',
-      label: 'Maximum rows',
-      defaultValue: 1000
+      label: 'Max rows when expanded',
+      defaultValue: 100
     },
   ]
 } as const;
@@ -110,7 +110,7 @@ export default defineComponent(TableComponent, meta, {
         from: inputs.ds,
         select: inputs.columns,
         ...(isAutoHeight
-          ? { offset: 0, limit: inputs.maxResults, countRows: true }
+          ? { offset: 0, limit: inputs.autoHeightMaxResults, countRows: true }
           : { offset: page * PAGE_SIZE, limit: PAGE_SIZE })
       })
     };
@@ -156,10 +156,10 @@ export default function TableComponent(props) {
 
 Things to notice:
 
-1. in auto height the query asks for `maxResults` rows **once**, instead of a page at a time. There is no scrolling and no paging, so every row has to arrive in the response the widget is measured on.
+1. in auto height the query asks for the whole allowance **once**, instead of a page at a time. There is no scrolling and no paging, so every row has to arrive in the response the widget is measured on.
 2. the Prev/Next buttons are hidden in auto height. Nothing is left to page through, and in a PDF nobody can click them.
 3. [`countRows: true`](/component-libraries/build-components/loading-data#params) makes the response carry `total`, the number of rows matching the query. It costs an extra count on your database, so only ask for it in the mode that uses it.
-4. the component says so when `maxResults` cut the query short, rather than presenting a shortened table as if it were complete. In a PDF this line is the reader's only clue that rows are missing.
+4. the component says so when the allowance cut the query short, rather than presenting a shortened table as if it were complete. In a PDF this line is the reader's only clue that rows are missing.
 
 <Callout emoji="⚠️">
   Rows a component has already loaded belong to the mode it loaded them in. If you append rows as the viewer pages or scrolls, replace them instead when the mode changes — otherwise a dashboard switched from auto back to fixed shows the auto-height rows plus a fresh page on top of them.
@@ -167,7 +167,9 @@ Things to notice:
 
 ## How many rows to allow
 
-Give the reader an input like `maxResults` above and keep its default modest. The query is the only limit on how tall the widget becomes, and a dashboard tall enough to hold tens of thousands of rows is slow to render, slow to export and awkward to read.
+Give the expanded mode an input of its own, as the example does, and keep its default modest. The query is the only limit on how tall the widget becomes, and a dashboard tall enough to hold tens of thousands of rows is slow to render, slow to export and awkward to read.
+
+Resist reusing a limit the component already has for something else — a "max results to download" that sizes a CSV export, say. The two numbers want to be different, because nobody wants as many rows on a page as in a spreadsheet, and separating them once the component has shipped means breaking the dashboards that tuned the shared one. Embeddable's own scrollable table keeps them apart for exactly that reason.
 
 Exports have a hard ceiling on top of that: a rendered dashboard above roughly **6,000 table rows** is refused rather than captured. See [Exporting in auto height](/deployment/dashboard-export#exporting-in-auto-height).
 
