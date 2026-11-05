@@ -109,6 +109,9 @@ fetch('https://api.<region>.embeddable.com/api/v1/dashboard-exports', {
     styles: {             // CSS applied to the dashboard element
       background: '#ffffff'
     },
+    layout: {
+      heightMode: 'auto'  // let capable widgets print their whole content
+    },
     animationSettleMs: 500 // extra wait for animations before capture
   })
 })
@@ -136,11 +139,53 @@ The API responds with **`202 Accepted`** and a `Retry-After` header — the job 
 - **`variables`** _(optional)_ — values that override the dashboard's [variables](/deployment/interactivity#pass-in-and-update-variables) (for example a date range or a selected filter), so you can export a specific view.
 - **`clientContext`** _(optional)_ — the same [client context](/component-libraries/client-context) object you pass when embedding (e.g. theme, language, timezone).
 - **`styles`** _(optional)_ — a map of CSS declarations applied to the dashboard element, e.g. `{ "background": "#ffffff" }`. A `background` here also paints the page behind the dashboard. Up to 50 declarations.
+- **`layout`** _(optional)_ — how the dashboard is laid out for the capture:
+  - **`heightMode`** — `"fixed"` (the default) renders each widget at its designed height, exactly as the embedded dashboard does. `"auto"` lets widgets that support it print their whole content instead of a scrollbar. See [Exporting in auto height](#exporting-in-auto-height).
 - **`animationSettleMs`** _(optional)_ — extra time, in milliseconds, to let animations and transitions settle before the snapshot is taken. Increase it if charts animate in and you see a mid-animation frame in the PDF.
 
 <Callout emoji="💡">
   The PDF is a faithful, **single-page** capture at the requested width: on-screen styling (not a print stylesheet), backgrounds included, rendered at high resolution. Multi-page / page-break handling is not part of this version.
 </Callout>
+
+## Exporting in auto height
+
+In a PDF there is nobody to scroll. A table with more rows than its tile prints the handful of rows that happen to be visible, and the rest of the data is simply absent from the file.
+
+Send **`layout: { heightMode: 'auto' }`** to export the whole content instead:
+
+```ts
+body: JSON.stringify({
+  token: '<export-token>',
+  format: 'PDF',
+  layout: { heightMode: 'auto' },
+})
+```
+
+The PDF stays a single page — that page just gets taller.
+
+Things to know:
+
+1. **Only widgets built for it grow.** A widget expands only if its component declares [`autoHeight`](/component-libraries/build-components/auto-height); the rest keep their designed height. The same rules apply as when [embedding with `height-mode="auto"`](/deployment/embedding#letting-widgets-grow-to-their-content): widgets never shrink, and a grown widget pushes down the widgets beneath it.
+2. **Each widget loads what its own inputs allow.** How many rows a table prints is set by that component's own row limit (`maxResults` on Embeddable's table components), not by the export request. A table told to load 1,000 rows prints at most 1,000 rows, however tall the page is allowed to be.
+3. **Components say when rows were left out.** A component that supports auto height should report a truncated query in the PDF, since nobody can scroll to find out what's missing — a line such as "Showing 1,000 of 48,210 rows" under the table.
+
+### Minimum SDK versions for auto height
+
+Auto height needs newer packages than export itself, because a component can't load the extra rows without `useEmbeddableLayout()`:
+
+| Package | Minimum version |
+|---------|-----------------|
+| `@embeddable.com/react` | `2.14.0` |
+| `@embeddable.com/sdk-core` | `4.10.0` |
+| `@embeddable.com/sdk-react` | `4.4.0` |
+
+An export that asks for `heightMode: "auto"` with components below these versions is rejected with a `400`. Exporting the same dashboard in fixed height still works — only the auto-height request is refused. To fix it, update the packages in your [components project](/getting-started/development/introduction), **push your components again**, and **re-publish** the dashboard.
+
+### How tall a page can get
+
+A rendered dashboard above roughly **6,000 table rows** is refused rather than captured, and the job fails with [`CONTENT_TOO_TALL`](#field-reference). That is a backstop against a dashboard nobody could read, not a target: a page that long is slow to render, slow to open, and some PDF readers struggle with it well before the limit.
+
+If you hit it, lower the row limit on the dashboard's tables or narrow the [variables](#parameters) you export with, then start the export again.
 
 ## 2. Check status & download
 
@@ -203,6 +248,7 @@ While the job is in progress it returns `status: "PENDING"` and a `Retry-After` 
 - **`failureReason`** — present only when `FAILED`:
   - **`RENDER_ERROR`** — the dashboard could not be fully rendered — for example a widget didn't receive its data in time (see [Database connections & concurrency](#database-connections--concurrency)), or a component errored. Re-running the same export usually won't help on its own — check the dashboard, keep its queries fast, and make sure your connection `concurrency` is high enough.
   - **`TIMEOUT`** — no result came back in time, typically transient backlog. A retry may succeed.
+  - **`CONTENT_TOO_TALL`** — the rendered dashboard was taller than the renderer will capture (see [How tall a page can get](#how-tall-a-page-can-get)). Retrying won't help; lower the row limit on the dashboard's tables or export a narrower slice of the data.
 
 ## Downloading the file
 
@@ -250,7 +296,7 @@ A few things to know when you're generating many PDFs — for example, one repor
 | Status | Meaning |
 |--------|---------|
 | `202 Accepted` | The export job was created. The body contains the `jobId`. |
-| `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, or when the dashboard's components are below the [minimum SDK versions](#sdk-versions). |
+| `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, when the dashboard's components are below the [minimum SDK versions](#sdk-versions), or when a `heightMode: "auto"` request is made against components below the [auto-height minimums](#minimum-sdk-versions-for-auto-height). |
 | `403 Forbidden` | An `export: true` token was used somewhere other than this API. Export tokens can only be used with the Dashboard Export API. |
 | `404 Not Found` | No job with that `jobId` exists in your workspace. |
 | `429 Too Many Requests` | The workspace has too many exports in flight. Retry after the delay in the `Retry-After` header. |

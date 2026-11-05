@@ -3,6 +3,7 @@
   "define-component-function": "The `defineComponent` function",
   "loading-data": "The `loadData` function",
   "interactivity": "Adding interactivity",
+  "auto-height": "Auto height",
   "custom-types": "Defining custom types",
   "extending-types": "Extending existing types"
 }
