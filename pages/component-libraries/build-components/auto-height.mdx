@@ -169,8 +169,6 @@ Things to notice:
 
 Give the expanded mode an input of its own, as the example does, and keep its default modest. The query is the only limit on how tall the widget becomes, and a dashboard tall enough to hold tens of thousands of rows is slow to render, slow to export and awkward to read.
 
-Resist reusing a limit the component already has for something else — a "max results to download" that sizes a CSV export, say. The two numbers want to be different, because nobody wants as many rows on a page as in a spreadsheet, and separating them once the component has shipped means breaking the dashboards that tuned the shared one. Embeddable's own scrollable table keeps them apart for exactly that reason.
-
 Exports have a hard ceiling on top of that: a rendered dashboard above roughly **6,000 table rows** is refused rather than captured. See [Exporting in auto height](/deployment/dashboard-export#exporting-in-auto-height).
 
 ## Related Topics
