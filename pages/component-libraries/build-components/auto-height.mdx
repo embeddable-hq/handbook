@@ -1,10 +1,10 @@
 # Auto Height
 
-Every widget on a dashboard is as tall as it was drawn in the builder. A component with more to show than fits in its tile — a table with more rows than the space it was given — scrolls inside it.
+Every widget on a dashboard is as tall as it was drawn in the builder, or as its [YAML definition](/dashboards/dashboards-as-code) specifies. A component with more to show than fits in its tile — a table with more rows than the space it was given — scrolls inside it.
 
 **Auto height** lets a widget grow to the height of its content instead, and pushes the widgets below it down the page. It matters most in a [PDF export](/deployment/dashboard-export), where there is nobody to scroll: a table that shows eight rows on screen can print all of them.
 
-The same dashboard in both modes. In fixed height the table scrolls inside its tile; in auto height it renders every row it loaded, says how many were left out, and the chart underneath moves down the page:
+Here is the same dashboard in both modes. In fixed height the table scrolls inside its tile. In auto height it renders every row it loaded, says how many were left out, and the chart underneath moves down the page. How many rows it loads is set on the widget itself, not by the mode:
 
 <ImageGrid images={["/img/auto-height/fixed.png", "/img/auto-height/auto.png"]}/>
 
@@ -53,7 +53,7 @@ Things to notice:
 
 1. `heightMode` is either `'fixed'` or `'auto'`, and `HEIGHT_MODES` gives you both values.
 2. it's a React hook, so it's only available inside your component. `props()` in your `.emb.ts` file **cannot** call it — to branch your query on the mode, pass it back through [Embeddable State](/component-libraries/build-components/loading-data#loading-data-dynamically), as the example below does.
-3. the host can switch the mode on a dashboard that is already on screen, so read it as a value that changes rather than one fixed when your component mounts.
+3. the host can switch the mode on a dashboard that is already on screen, so read it as a value that changes rather than one fixed when your component mounts. Anything you accumulated under the old mode has to be replaced rather than extended.
 
 ## Example: a table that pages on screen and prints in full
 
@@ -160,10 +160,6 @@ Things to notice:
 2. the Prev/Next buttons are hidden in auto height. Nothing is left to page through, and in a PDF nobody can click them.
 3. [`countRows: true`](/component-libraries/build-components/loading-data#params) makes the response carry `total`, the number of rows matching the query. It costs an extra count on your database, so only ask for it in the mode that uses it.
 4. the component says so when the allowance cut the query short, rather than presenting a shortened table as if it were complete. In a PDF this line is the reader's only clue that rows are missing.
-
-<Callout emoji="⚠️">
-  Rows a component has already loaded belong to the mode it loaded them in. If you append rows as the viewer pages or scrolls, replace them instead when the mode changes — otherwise a dashboard switched from auto back to fixed shows the auto-height rows plus a fresh page on top of them.
-</Callout>
 
 ## How many rows to allow
 
