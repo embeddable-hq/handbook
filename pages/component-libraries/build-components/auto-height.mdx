@@ -4,7 +4,7 @@ Every widget on a dashboard is as tall as it was drawn in the builder, or as its
 
 **Auto height** lets a widget grow to the height of its content instead, and pushes the widgets below it down the page. It matters most in a [PDF export](/deployment/dashboard-export), where there is nobody to scroll: a table that shows eight rows on screen can print all of them.
 
-Here is the same dashboard in both modes. In fixed height the table scrolls inside its tile. In auto height it renders every row it loaded, says how many were left out, and the chart underneath moves down the page. How many rows it loads is set on the widget itself, not by the mode:
+Here is the same dashboard in both modes. In fixed height the table is the size it was drawn and scrolls inside its tile; in auto height the tile grows to fit it, and the chart underneath moves down the page. The "Showing 20 of 30 rows" line is that table's own doing — how many rows a component loads is a setting on the widget, not something the mode decides:
 
 <ImageGrid images={["/img/auto-height/fixed.png", "/img/auto-height/auto.png"]}/>
 
