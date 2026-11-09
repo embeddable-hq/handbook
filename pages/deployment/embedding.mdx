@@ -141,6 +141,7 @@ declare module 'react' {
         token: string;
         variables?: string;
         'client-context'?: string;
+        'height-mode'?: string;
       };
     }
   }
@@ -281,6 +282,36 @@ Learn more about `region` [here](/deployment/deployment-regions).
 Learn how to generate a `token` [here](/deployment/tokens-api).
 
 Vue by default sanitizes user input, which can interfere with passing attributes to your embeddable (eg it may remove values you're passing to the `client-context` attribute). To avoid this, Vue offers [several methods to bind attributes safely](https://v2.vuejs.org/v2/guide/security).
+
+## Letting Widgets Grow to Their Content
+
+By default each widget is exactly as tall as it was drawn in the builder, or as its [YAML definition](/dashboards/dashboards-as-code) specifies, and a widget with more to show than fits — a long table, for example — scrolls inside its own tile.
+
+Add **`height-mode="auto"`** to let widgets grow to the height of their content instead:
+
+```html
+<em-beddable
+  token="eyJhbGciOiJI..."
+  height-mode="auto"
+></em-beddable>
+```
+
+What changes:
+
+- **Only widgets built for it grow.** A widget grows only if its component declares [`autoHeight`](/component-libraries/build-components/auto-height). Everything else keeps its designed height, so turning the mode on leaves the rest of the dashboard as it was laid out.
+- **Widgets never shrink.** The designed height is a floor: a table with few rows stays the size it was drawn.
+- **Widgets below move down.** A grown widget pushes down the widgets beneath it. Nothing moves up, sideways or out of order, so a dashboard where nothing grew comes out exactly as before.
+- **Columns stay independent.** A widget only pushes down what sits under it, so a tall table in one column doesn't move a widget alongside it.
+
+The value is read literally — anything other than `auto`, including leaving the attribute off, keeps the fixed-height behaviour.
+
+The builder's preview has the same switch, so you can see how a dashboard reacts before you change anything in your own app:
+
+<ImageGrid images={["/img/auto-height/mode-toggle.gif"]}/>
+
+<Callout emoji="💡">
+  Auto height is most useful when the dashboard is being **captured** rather than browsed. The [Dashboard Export API](/deployment/dashboard-export#exporting-in-auto-height) takes the same setting, and prints every row in place of a scrollbar.
+</Callout>
 
 ## Common Pitfalls
 

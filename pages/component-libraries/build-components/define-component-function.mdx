@@ -52,6 +52,7 @@ import Component from './index';
     classNames: ['container'],
     defaultWidth: 200,
     defaultHeight: 100,
+    autoHeight: true,
     inputs: [...],
     events: [...],
     variables [...],
@@ -65,6 +66,7 @@ import Component from './index';
 | `classNames`    | string[]          | ❌ No        |
 | `defaultWidth`  | number            | ❌ No        |
 | `defaultHeight` | number            | ❌ No        |
+| `autoHeight`    | boolean           | ❌ No        |
 | `inputs`        | [`InputMeta[]`](#inputmeta-definition)     | ❌ No        |
 | `events`        | [`EventMeta[]`](#eventmeta-definition)     | ❌ No        |
 | `variables`     | [`VariableMeta[]`](#variablemeta-definition)  | ❌ No        |
@@ -75,6 +77,7 @@ import Component from './index';
 - **`classNames`**: CSS class names for styling the container.
 - **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/component-libraries/build-components/custom-types)).
 - **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
+- **`autoHeight`**: Declares that this component renders its whole content with no scroll area of its own, so a dashboard embedded with `height-mode="auto"` may let the widget grow past its designed height. Learn more about [auto height](/component-libraries/build-components/auto-height).
 - **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](/component-libraries/build-components/interactivity). 
 - **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/component-libraries/build-components/interactivity).
 
