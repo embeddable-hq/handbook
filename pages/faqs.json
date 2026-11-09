@@ -1,6 +1,12 @@
 {
   "faqs": [
     {
+      "question": "How Do I Configure User Facing Datasets to Include or Exclude Joined Tables?",
+      "slug": "how-do-i-configure-user-facing-datasets-to-include-or-exclude-joined-tables",
+      "answer": "By default, if your data model includes joined tables, and you make that data model available to users, the data they have access to will **also include those joined tables**. This can be desirable, depending on the data, but there may be times when you only want users to be able to access the data from the primary model, and not from any joined tables.\n\nIn this case, you can use [Cube Views](/data-modeling/writing-data-models/views) to gain **fine-grained control** over what data from a particular table or set of tables is available to your users. This will allow you to restrict access (or grant it) as you prefer.",
+      "created_at": "2026-11-06T09:57:17.000Z"
+    },
+    {
       "question": "Are Cancelled Queries on Dashboard Load Normal?",
       "slug": "are-cancelled-queries-on-dashboard-load-normal",
       "answer": "When your dashboards are loading, sometimes you might see cancelled queries in the network tab, like so:\n\n![Screenshot 2026-03-26 at 19.25.55|620x224](/img/faq/f9551210e69c3ca5ecae7764cc5af3783662a2af.png)\n\nThis happens when a component immediately updates variable values after they are rendered and is nothing to worry about ☺️ If you have any concerns please drop our team a message.",
