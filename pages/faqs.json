@@ -63,7 +63,7 @@
     {
       "question": "How Do I Stay Up to Date With Embeddable Package Updates?",
       "slug": "how-do-i-stay-up-to-date-with-embeddable-package-updates",
-      "answer": "You can run `npm run embeddable:upgrade` to get the latest versions of all Embeddable NPM packages, including our SDKs and Remarkable Pro. This will update your `package.json` file automatically, and then you’ll need to run `npm i`. If you want to automate this process, we recommend setting up a cron job that runs the commands daily, along with the `npm run embeddable:build`and `npm run embeddable:push` steps (if desired).",
+      "answer": "You can run `npm run embeddable:upgrade` to get the latest versions of all Embeddable NPM packages, including our SDKs and Remarkable Pro. This will update your `package.json` file automatically, and then you’ll need to run `npm i`. If you want to automate this process, we recommend setting up a cron job that runs the commands daily, along with the `npm run embeddable:build`and `npm run embeddable:push` steps (if desired).\n\nYou can also use [Dashboards as Code](/dashboards/dashboards-as-code) to enable CI/CD build, push, and publish steps.",
       "created_at": "2026-02-18T13:56:44.350Z"
     },
     {
