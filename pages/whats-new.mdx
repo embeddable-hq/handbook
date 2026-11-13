@@ -1,6 +1,80 @@
 
 # 🚀 What’s New in Embeddable
 
+## November 2026
+
+### 1. Auto-height dashboards
+
+A dashboard can now grow to fit its content instead of scrolling inside a fixed tile. Components declare whether they support it with `meta.autoHeight` and read the current mode with `useEmbeddableLayout`, the Builder previews a dashboard in auto height and marks which components are capable, and a host opts in with `height-mode="auto"`.
+
+Learn more about [auto height](/component-libraries/build-components/auto-height).
+
+### 2. Scrollable tables that show every row
+
+`TableScrollable` is the first Remarkable Pro component to support auto height. In that mode it drops 50-row scroll paging for a single query with `countRows`, replaces rows rather than appending them, and says "Showing N of M rows" when the allowance cut the query short. How many rows it loads is its own input, **Max rows when expanded**, kept separate from the export row limit.
+
+### 3. A warning when joins widen end-user access
+
+The Builder now warns you when a data model reachable through a join exposes more to end users than you may have intended — the kind of thing that is easy to miss when models are composed rather than written whole.
+
+See the [FAQ](/faq) for how joined models affect access.
+
+### 4. Smoother downloads and clearer session expiry
+
+The download flow was reworked to give clearer feedback while a file is being prepared, and an expiring session now warns you before it logs you out instead of dropping you on a login screen mid-task.
+
+### 5. Remarkable Pro: colors, packaging and dark mode
+
+- Charts with more than one measure assign each measure a distinct color
+- `@embeddable.com/core` and `@embeddable.com/react` are now **peer dependencies**, which stops npm nesting a second copy of the SDK and breaking theme and layout context
+- The Custom Canvas overlay title stays light in dark mode
+
+See the [Remarkable Pro changelog](/component-libraries/remarkable-pro/changelog) for details.
+
+## October 2026
+
+### 1. Translate the Custom Canvas interface
+
+Custom Canvas and the drill-down modal ship their labels in English — "Add a chart", "Select a template", validation messages. You can now replace any of them from your theme, under `theme.embeddableApp.i18n`, with a full key reference in the docs.
+
+Translate only the keys you need: anything left out falls back to the built-in English, and each `<em-beddable>` resolves its own labels, so several embeds on one page can run different languages.
+
+Learn more about [translating the Custom Canvas interface](/component-libraries/custom-canvas-components#translating-the-interface).
+
+### 2. Two new web component events
+
+Your host app can now listen to what happens inside an embed:
+
+- **`componentEvent`** fires whenever a component fires one of its own events — a bar clicked, a row clicked, a value picked — whether or not it is wired to a variable. Use it to open a report or navigate your own UI from a dashboard interaction.
+- **`preAggregation`** reports `started`, `completed` or `failed` when a query triggers an on-demand pre-aggregation build, so you can tell users their data is still being prepared instead of leaving them on a dashboard that looks stuck.
+
+Learn more about [listening to events](/deployment/interactivity).
+
+### 3. Add or remove options on a library's custom types
+
+Component libraries ship custom types of their own — Remarkable Pro's comparison periods, for example. You can now add options with `defineOption` and take them away with `removeOption` from your own repo, without forking the library. The docs also spell out which list controls the Builder and which controls what components render.
+
+Learn more about [extending existing types](/component-libraries/build-components/extending-types#updating-custom-types-from-a-component-library).
+
+### 4. A searchable FAQ in the docs
+
+The FAQ now lives in the handbook, searchable alongside everything else, replacing the separate Embeddable Community site.
+
+Browse the [FAQ](/faq).
+
+### 5. Remarkable Pro: better exports and cleaner grouping
+
+Six releases (v0.11.0 – v0.13.0):
+
+- **PNG export** gained a configurable background colour, 2x resolution, and `captureFullCard` to export the title and description with the chart
+- **CSV and XLSX exports** write numbers as numbers, so Excel stops treating measures as text
+- The **"Other" group** only appears when there is genuinely something to bucket, and grouped series sort alphabetically with "Other" last
+
+Learn more about `Export options` [here](/component-libraries/remarkable-pro/customizations/export-options).
+
+### 6. Finding things in the workspace
+
+The embeddables list is now searchable, and onboarding has a new landing page with separate explore and build paths that tracks how far through you are.
 
 ## September 2026
 
@@ -15,6 +89,40 @@ It's ideal for scheduled reports, email attachments, and archiving — and becau
 - Enabled with a new `export: true` flag on the [Tokens API](/deployment/tokens-api#exporting-dashboards)
 
 Learn more in the [Dashboard Export API](/deployment/dashboard-export) guide.
+
+### 2. Publish a saved version from the API
+
+Publishing is no longer a Builder-only action. A new endpoint on the [Versions API](/deployment/versions-api) publishes a saved version to an environment, so a release can promote a dashboard from your own pipeline alongside everything else it ships.
+
+### 3. Filters as variables
+
+A filter clause can now be held in a dashboard variable and passed between components, so one filter control can drive several charts — and your host app can read or set it like any other variable.
+
+Learn more about `Interactivity` [here](/dashboards/interactivity).
+
+### 4. Theme with AI
+
+A new guide for handing your brand's colors, fonts and spacing to an AI assistant and getting a working Remarkable Pro theme back, rather than writing the token file by hand.
+
+Learn more about [theming with AI](/component-libraries/remarkable-pro/theme-with-ai).
+
+### 5. Workspace setup in one click, and downloadable embedding previews
+
+New workspaces can be set up in a single step from onboarding, instead of walking through each screen. And any saved version can now be downloaded as a ready-to-run embedding preview, which makes it easy to hand a stakeholder something that opens in a browser.
+
+Learn more in the [Quick start guide](/getting-started/get-set-up/quick-start-guide).
+
+### 6. Remarkable Pro: funnels, maximize, and grouped-series limits
+
+Nine releases landed across the month (v0.4.2 – v0.10.0):
+
+- **`FunnelChartPro`**, with section labels, tapering and click-to-hide legend entries
+- **Maximize** in the chart card menu — the chart expands into a full-viewport lightbox
+- **"Limit top group by"** on grouped and stacked bar charts and the grouped line chart: the server ranks groups by contribution and folds the tail into a single "Other" series
+- **Auto apply** on multi-select fields, so ticking a value applies immediately with no Apply button
+- Several **time zone corrections**, including date range pickers computing day boundaries in `clientContext.timezone` rather than UTC
+
+See the [Remarkable Pro changelog](/component-libraries/remarkable-pro/changelog) for the full list.
 
 ## August 2026
 
