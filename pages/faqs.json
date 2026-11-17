@@ -579,7 +579,7 @@
     {
       "question": "Does meta const Have to Be Statically Defined If I Want to Reuse Common Parts of Configuration?",
       "slug": "does-meta-const-have-to-be-statically-defined-if-i-want-to-reuse-common-parts-of-configuration",
-      "answer": "In summary:\n\n* yes, `meta` needs to be statically defined (it can’t be defined using a function, it must be defined using an object)\n* but, since `sdk-*` version `3.0.0` it is possible to extract parts of the `meta` object into separate constants, and even import them from different files",
+      "answer": "No. `meta` must be exported as `meta` from your `.emb.ts` file, and it must evaluate to a plain, JSON-serialisable object. The SDK evaluates the file at build time, so you can build `meta` from shared constants, imports or a helper function:\n\n```ts\nimport { EmbeddedComponentMeta } from '@embeddable.com/react';\nimport { datasetInput, buildMeta } from '../shared';\n\nexport const meta = buildMeta({\n  name: 'MyComponent',\n  label: 'My component',\n  inputs: [datasetInput, { name: 'title', type: 'string', label: 'Title' }],\n} as const) satisfies EmbeddedComponentMeta;\n```\n\nKeep it typed `as const` so input types are still inferred. Values that are not JSON (for example, a function as a `label`) fail the build.",
       "created_at": "2024-04-11T19:52:52.559Z"
     },
     {
