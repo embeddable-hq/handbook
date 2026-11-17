@@ -529,12 +529,6 @@
       "created_at": "2024-06-24T18:46:01.193Z"
     },
     {
-      "question": "How Do I Get the Latest SDK Version?",
-      "slug": "how-do-i-get-the-latest-sdk-version",
-      "answer": "Run:\n\n```\nnpm run embeddable:upgrade\nnpm i\n```\n\nThis updates all Embeddable packages (the SDKs and Remarkable Pro) to their latest versions.\n\nSee also [How Do I Stay Up to Date With Embeddable Package Updates?](/faq#how-do-i-stay-up-to-date-with-embeddable-package-updates)",
-      "created_at": "2024-06-11T16:07:51.763Z"
-    },
-    {
       "question": "Can I Use Jinja?",
       "slug": "can-i-use-jinja",
       "answer": "You can use jinja in your Cube data models!\n[Check out our SQL-based security docs to get started](/data-modeling/row-level-security/sql-based-security#conditional-sql) using jinja pre-processing syntax in your data models\ne.g.\n\n```\ncubes:\n  - name: customers\n    title: My customers\n    sql: >\n      select * \n      from public.customers \n\t  {% if COMPILE_CONTEXT.securityContext.superUser %}\n\t\twhere 1 = 1\n\t  {% else %}\t\n\t    where organisationId in {{ list(COMPILE_CONTEXT.securityContext.orgIds) }}\n\t  {% endif %}\n```",
