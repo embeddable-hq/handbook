@@ -9,7 +9,7 @@
     {
       "question": "Are Cancelled Queries on Dashboard Load Normal?",
       "slug": "are-cancelled-queries-on-dashboard-load-normal",
-      "answer": "When your dashboards are loading, sometimes you might see cancelled queries in the network tab, like so:\n\n![Screenshot 2026-03-26 at 19.25.55|620x224](/img/faq/f9551210e69c3ca5ecae7764cc5af3783662a2af.png)\n\nThis happens when a component immediately updates variable values after they are rendered and is nothing to worry about ☺️ If you have any concerns please drop our team a message.",
+      "answer": "When your dashboards are loading, sometimes you might see cancelled queries in the network tab, like so:\n\n![Screenshot 2026-03-26 at 19.25.55|620x224](/img/faq/f9551210e69c3ca5ecae7764cc5af3783662a2af.png)\n\nThis happens when a component immediately updates variable values after they are rendered. When a newer query starts for the same component, Embeddable cancels the earlier one, so you only get the latest results. This is nothing to worry about ☺️ If you have any concerns please drop our team a message.",
       "created_at": "2026-03-26T19:27:47.882Z"
     },
     {
