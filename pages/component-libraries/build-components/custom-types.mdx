@@ -1,11 +1,9 @@
 # Defining custom types
 
 <Callout emoji="⚠️">
-  Custom types are still in **Beta**:  
-   - You may experience **typescript errors** when using them.
-   - You may need to restart `embeddable:dev` for changes to take effect.
-   - Custom types are not yet supported in **Custom Canvas**. 
-   - We may make **breaking changes** to custom types in the future.
+  **Limitations:**
+   - You may see **TypeScript errors** when you use custom types. For example, inputs of a custom type are typed as `unknown` in your component props.
+   - Custom types are not yet supported in **Custom Canvas**.
 </Callout>
 
 Out of the box, we provide you with all the standard types, like `string`, `number`, `boolean`, `time` and `timeRange` (we call these [native types](/component-libraries/build-components/define-component-function#native-input-types)). But sometimes you'll want to create your own **custom types**.
