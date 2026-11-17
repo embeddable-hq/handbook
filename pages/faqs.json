@@ -195,7 +195,7 @@
     {
       "question": "Why Can't Embeddable Find My Database Connection in My Environment?",
       "slug": "why-cant-embeddable-find-my-database-connection-in-my-environment",
-      "answer": "If you're seeing this error:\n```\nEmbeddable Error: Could not find a database connection for data_source '[DATA SOURCE NAME]' in environment '[ENVIRONMENT NAME]'\\\"\n```\nThe most likely culprit is that you are referencing that data source in one of your models, but it hasn't been mapped in all of your environments. All data sources referenced in your models must exist in all of your environments. So for example, if you have a data source called `postgres`, and environments called `staging` and `prod` you would want to create two connections:\n1. `postgres-staging`\n2. `postgrest-prod`\n\nThen when configuring your environments, you would map the `postgres` data source to `postgres-staging` in the `staging` environment, and map the `postgres` data source to `postgrest-prod` in the `prod` environment. This ensures that your models will compile properly when using either environment.",
+      "answer": "If you're seeing this error:\n```\nEmbeddable Error: Could not find a database connection for data_source '[DATA SOURCE NAME]' in environment '[ENVIRONMENT NAME]'\\\"\n```\nThe most likely culprit is that you are referencing that data source in one of your models, but it hasn't been mapped in all of your environments. All data sources referenced in your models must exist in all of your environments. So for example, if you have a data source called `postgres`, and environments called `staging` and `prod` you would want to create two connections:\n1. `postgres-staging`\n2. `postgres-prod`\n\nThen when configuring your environments, you would map the `postgres` data source to `postgres-staging` in the `staging` environment, and map the `postgres` data source to `postgres-prod` in the `prod` environment. This ensures that your models will compile properly when using either environment.",
       "created_at": "2025-07-18T10:08:29.880Z"
     },
     {
@@ -213,7 +213,7 @@
     {
       "question": "Is There Any Way of Defining a Display Order of Components When a Mobile View Is Being Used?",
       "slug": "is-there-any-way-of-defining-a-display-order-of-components-when-a-mobile-view-is-being-used",
-      "answer": "Unfortunately this is not possible at the moment.  The order is based on the order (top-to-bottom, left-to-right) that your components are layed out on the canvas.\n\nWhat you can do as a workaround is have a desktop version of the dashboard as one Embeddable, and then a separate Embeddable for the mobile view.  Then serve up the right Embeddable depending on the view",
+      "answer": "Unfortunately this is not possible at the moment.  The order is based on the order (top-to-bottom, left-to-right) that your components are laid out on the canvas.\n\nWhat you can do as a workaround is have a desktop version of the dashboard as one Embeddable, and then a separate Embeddable for the mobile view.  Then serve up the right Embeddable depending on the view",
       "created_at": "2025-07-10T08:47:01.121Z"
     },
     {
@@ -393,7 +393,7 @@
     {
       "question": "What's the Difference Between \"{CUBE}.id = {orders}.product_id\" and \"{CUBE}.id = {orders.customer_id}\"?",
       "slug": "whats-the-difference-between-cubeid-ordersproductid-and-cubeid-orderscustomerid",
-      "answer": "You might sometimes see a join structured:\n\n`\"{CUBE}.id = {orders}.product_id\"`\n\nor\n\n`\"{CUBE}.id = {orders.customer_id}\"`\n\nBasically everything inside { and } relates to the cubes, whereas everything outside is SQL.\nSo `{orders}.product_id` references the `product_id` column in the database, whereas `{orders.customer_id` references the `customer_id` dimension in the `orders` model.",
+      "answer": "You might sometimes see a join structured:\n\n`\"{CUBE}.id = {orders}.product_id\"`\n\nor\n\n`\"{CUBE}.id = {orders.customer_id}\"`\n\nBasically everything inside { and } relates to the cubes, whereas everything outside is SQL.\nSo `{orders}.product_id` references the `product_id` column in the database, whereas `{orders.customer_id}` references the `customer_id` dimension in the `orders` model.",
       "created_at": "2025-02-06T13:51:41.810Z"
     },
     {
