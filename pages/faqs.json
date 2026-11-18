@@ -177,7 +177,7 @@
     {
       "question": "What Is the Maximum I Can Set the refreshKey to for the L1 Cache?",
       "slug": "what-is-the-maximum-i-can-set-the-refreshkey-to-for-the-l1-cache",
-      "answer": "The maximum you can set the refreshKey for L1 caching is 2 minutes - i.e. the data will be refreshed every 2 minutes.",
+      "answer": "There is no Embeddable maximum. By default, Cube checks a refresh key at most every 2 minutes (Cube's `refreshKeyRenewalThreshold` default), so L1-cached results can be up to about 2 minutes old after the underlying data changes.\n\nSee [Level 1 cache: in-memory](/data-modeling/caching/in-memory).",
       "created_at": "2025-08-15T10:35:18.772Z"
     },
     {
@@ -477,7 +477,7 @@
     {
       "question": "Why Do I Get an Error With Cube Models in My Live Workspace (MySQL Database)?",
       "slug": "why-do-i-get-an-error-with-cube-models-in-my-live-workspace-mysql-database",
-      "answer": "If you are getting a 'Bad Request' error accessing your cube models in your live workspace and you are connected to a MySQL database you may need to update  your connection script to:\n\n`ssl: false`",
+      "answer": "If you get a 'Bad Request' error when you access your Cube models in your live workspace, and you are connected to a MySQL database, check that the `ssl` setting in your connection matches your server.\n\nFor example, if your MySQL server does not accept SSL connections, set `ssl: false` in your connection credentials. See [MySQL credentials](/data/credentials#mysql--mariadb).",
       "created_at": "2024-08-26T16:20:06.959Z"
     },
     {
@@ -569,12 +569,6 @@
       "slug": "why-do-i-get-error-self-signed-certificate-in-certificate-chain-postgres",
       "answer": "If you get this error:\n\n```\nError: self signed certificate in certificate chain\n```\nPlease change your SSL settings from:\n\n```\n{\n  \"name\": \"   \",\n  \"type\": \"postgres\",\n  \"credentials\": {\n    \"database\": \"  \",\n    \"host\": \"  \",\n    \"user\": \"  \",\n    \"password\": \"  \",\n    \"port\": \"  \",\n    \"ssl\": \"true\"\n  }\n}\n```\n\nto:\n\n```\n ssl: {\n        rejectUnauthorized: false,\n      }\n```\n\nAnd use the relevant instructions for `CREATE` or `UPDATE` from our [Connections API documentation](/data/environments#define-connections)",
       "created_at": "2024-04-30T11:22:00.584Z"
-    },
-    {
-      "question": "Why Do I Get “Error: Embeddable Version Mismatch”?",
-      "slug": "why-do-i-get-error-embeddable-version-mismatch",
-      "answer": "The error \"Embeddable version mismatch\" means that you have two dashboards using different code versions.\nPlease go to each of your dashboards in your workspace and \"publish\" them again, so that all published dashboards are using the same code version. If the issue persists, [please contact our team](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA).",
-      "created_at": "2024-04-18T16:01:56.448Z"
     },
     {
       "question": "Does meta const Have to Be Statically Defined If I Want to Reuse Common Parts of Configuration?",
