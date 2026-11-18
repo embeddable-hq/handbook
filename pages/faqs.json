@@ -447,7 +447,7 @@
     {
       "question": "How Can I Clear the Cache?",
       "slug": "how-can-i-clear-the-cache",
-      "answer": "If you have a scenario where you want to invalidate the cache you can:\n\n* click publish\n* call our cache API\n\nBoth of those actions will instantly cause the cache to refresh.\n\nYou can also have the cache clear programatically:\n\nIf you are using our L1 cache - i.e. using scheduled caching with  refreshKey, you can set your cache to refresh if there are new results:\n- [Cube example here](https://cube.dev/docs/product/caching#refresh-keys)\n\n\nIf you are using our pre-aggregations cache (L2 cache) you can also do something similar, where if the results of the SQL refresh key differ from the last execution, then the pre-aggregation will be refreshed:\n\n- [Cube example here](https://cube.dev/docs/reference/data-model/pre-aggregations#sql)",
+      "answer": "There is no endpoint or button to clear the cache. The [Caching API](/data-modeling/caching/level-2-cache/caching-api) (`refresh-contexts`) is only for pre-aggregations: it tells Cube which security contexts to build pre-aggregations for.\n\nTo control when cached results refresh, use refresh keys:\n\n- **L1 cache (in-memory):** set a `refreshKey` on your cube. When the result of the refresh key changes, Cube refreshes the cached results. See [Level 1 cache: in-memory](/data-modeling/caching/in-memory) and the [Cube example](https://cube.dev/docs/product/caching#refresh-keys).\n- **L2 cache (pre-aggregations):** set a SQL `refresh_key` on your pre-aggregation. When the result of the SQL differs from the last execution, Cube rebuilds the pre-aggregation. See the [Cube example](https://cube.dev/docs/reference/data-model/pre-aggregations#sql).",
       "created_at": "2024-12-09T12:50:52.511Z"
     },
     {
@@ -633,7 +633,7 @@
     {
       "question": "How Is Mobile-Readiness Handled in Embeddable?",
       "slug": "how-is-mobile-readiness-handled-in-embeddable",
-      "answer": "Dashboards use a 12-column grid that reflows responsively. On narrow screens it becomes a single column, with components stacked one below the other. See [Layout](/dashboards/introduction#layout).",
+      "answer": "Dashboards use a 12-column grid that reflows responsively. When the dashboard is narrower than about 690px, it becomes a single column, with components stacked one below the other in canvas order (top-to-bottom, left-to-right). There is no setting to change this width. See [Layout](/dashboards/introduction#layout).",
       "created_at": "2024-03-27T13:25:40.254Z"
     },
     {
