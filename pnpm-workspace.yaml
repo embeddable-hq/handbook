@@ -1,0 +1,4 @@
+overrides:
+  '@ai-sdk/provider-utils': ^4.0.33
+  cross-spawn: ^6.0.6
+  postcss: ^8.5.23
