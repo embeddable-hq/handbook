@@ -1,3 +1,7 @@
+---
+description: "Enforce row-level security globally by passing a filters array when requesting a token, so unfilterable queries fail."
+---
+
 # Security filters
 
 Security filters are the simplest way to ensure row-level security is applied globally across all your data models. You pass a `filters` array when requesting a security token, and Embeddable automatically applies those filters to every query in the dashboard session — with no changes to your data models required.
