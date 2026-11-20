@@ -60,6 +60,8 @@ async function toMarkdown(content) {
   const out = segments.map((segment, i) => {
     if (i % 2 === 1) return segment // a code fence
     let s = segment
+    const inline = [] // inline code is restored untouched, like fences
+    s = s.replace(/`[^`\n]+`/g, (code) => `\u0000${inline.push(code) - 1}\u0000`)
     s = s.replace(/^(import|export)\s.*$/gm, '')
     s = s.replace(/<FaqPaginated\s*\/>/g, () =>
       faqs.map((f) => `## ${f.question}\n\n${f.answer}`).join('\n\n'),
@@ -92,7 +94,7 @@ async function toMarkdown(content) {
     s = s.replace(/<[A-Z][A-Za-z]*\b[^<]*?\/>/g, '') // other self-closing components, e.g. ImageGrid
     s = s.replace(/<\/?[A-Z][A-Za-z]*\b[^>]*>/g, '') // wrappers such as Steps, CardGrid: keep their text
     s = s.replace(/<br\s*\/?>/g, '')
-    return absolute(s)
+    return absolute(s).replace(/\u0000(\d+)\u0000/g, (_, i) => inline[i])
   })
   return out.join('').replace(/\n{3,}/g, '\n\n').trim()
 }
