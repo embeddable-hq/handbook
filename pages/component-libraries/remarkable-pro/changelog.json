@@ -1,5 +1,42 @@
 [
   {
+    "version": "v0.15.0",
+    "date": "2026-11-17",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.15.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.15.0",
+    "notes": [
+      "`TableChartPaginated` and `TableScrollable` now have a separate **Header align** column option. Setting it overrides the existing **Align** option for the column header only, leaving cell content alignment unchanged. Markdown and JSON columns now also honour the **Align** setting for their cell content."
+    ]
+  },
+  {
+    "version": "v0.14.2",
+    "date": "2026-11-13",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.14.2",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.14.2",
+    "notes": [
+      "Fixed the canvas overlay title color switching to dark in dark mode. The title now uses the new `--em-overlay-color` token introduced in remarkable-ui 3.9.0, keeping it light in both light and dark themes."
+    ]
+  },
+  {
+    "version": "v0.14.1",
+    "date": "2026-11-11",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.14.1",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.14.1",
+    "notes": [
+      "Updated the Embeddable SDK and supporting libraries to their latest versions."
+    ]
+  },
+  {
+    "version": "v0.14.0",
+    "date": "2026-11-09",
+    "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.14.0",
+    "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.14.0",
+    "notes": [
+      "`@embeddable.com/core` and `@embeddable.com/react` are now declared as peer dependencies instead of direct dependencies. Previously, if the host app's installed version range differed from remarkable-pro's, npm could nest a second copy of these packages — causing `useTheme()` to fall back to its empty default and `useEmbeddableLayout()` to silently report `fixed` regardless of the actual dashboard height mode. As peers, both packages resolve to the host app's installed version, and a genuine version mismatch is surfaced at install time.",
+      "`TableScrollable` now supports auto-height mode. When a dashboard tile has `height-mode=\"auto\"`, the table expands to fit all loaded rows instead of using scroll paging. In this mode a single query fetches up to the configured **Max rows when expanded** limit (new input, default 100), rows are replaced rather than appended on each response, and a \"Showing N of M rows\" footer appears when the row allowance is exceeded. Fixed-height mode is unchanged."
+    ]
+  },
+  {
     "version": "v0.13.1",
     "date": "2026-11-03",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.13.1",
