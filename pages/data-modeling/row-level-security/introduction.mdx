@@ -4,6 +4,10 @@ description: "Control which rows each user, customer or tenant can see, using se
 
 # Row-level security
 
+## How do you enforce tenant isolation in customer-facing analytics?
+
+In Embeddable, tenant isolation is enforced on the server. Your backend requests an embed token that carries a security context, such as the customer ID. You set its lifetime (7 days by default). Your data models use that context to filter every query; with security filters, a query that cannot be filtered fails instead of returning data.
+
 For **customer-facing analytics**, each **end-user** should only see the **data they're allowed to see** and nothing more. That's why row-level security (RLS) is a **first-class citizen** in Embeddable.
 
 There are three ways to do RLS in Embeddable:
