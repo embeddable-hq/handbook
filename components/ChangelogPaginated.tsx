@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "nextra-theme-docs";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import Pagination from "@mui/material/Pagination";
