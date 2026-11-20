@@ -65,6 +65,6 @@ Embeddable ships a production-ready React component suite (Remarkable Pro), and 
 Dashboards embed as an HTML web component (no iframe), authorised by a token your server mints. Saved versions let you publish to staging or production and roll back, and APIs let you manage everything programmatically.
 
 - [Embedding dashboards](https://docs.embeddable.com/deployment/embedding): Drop the web component into your app (React, Vue, Angular, or plain HTML) and pass a token.
-- [Tokens API](https://docs.embeddable.com/deployment/tokens-api): Create scoped embed tokens server-side that carry the user, environment, roles and row-level-security context. Tokens last 7 days by default.
+- [Tokens API](https://docs.embeddable.com/deployment/tokens-api): Create scoped embed tokens server-side that carry the user, environment, roles and row-level-security context. You set each token's lifetime.
 - [Deploying dashboard versions](https://docs.embeddable.com/deployment/versions): Publish to development, staging, or production — and roll back — using saved versions.
 - [Embeddables API](https://docs.embeddable.com/deployment/embeddables-api) and [Versions API](https://docs.embeddable.com/deployment/versions-api): Manage dashboards and deployments programmatically.
