@@ -39,7 +39,7 @@ Most of what you'll build along the way — [data models](/data-modeling/build-w
 
 ### Reference
 
-- [Tokens API](/deployment/tokens-api) - mint scoped, short-lived embed tokens
+- [Tokens API](/deployment/tokens-api) - mint scoped embed tokens with a lifetime you set
 - [Embeddables API](/deployment/embeddables-api) - manage embeddables programmatically
 - [Versions API](/deployment/versions-api) - manage deployments e.g. publish or roll back versions
 - [Schemas API](/data-modeling/schemas-api) - read your data model schema
@@ -84,7 +84,7 @@ You can set up **[multiple environments](/data/environments)** e.g. production, 
 
 ### Securing the embed
 
-The component never holds your credentials. When a user opens a dashboard, your server calls the [Tokens API](/deployment/tokens-api) server-side, so your API key stays secret, and receives a short-lived, scoped token.
+The component never holds your credentials. When a user opens a dashboard, your server calls the [Tokens API](/deployment/tokens-api) server-side, so your API key stays secret, and receives a scoped token with a lifetime you set.
 
 The token tells Embeddable which dashboard and version to load, who the user is, which environment to query, and which filters, roles, and row-level security context to apply.
 
