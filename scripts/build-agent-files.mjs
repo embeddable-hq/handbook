@@ -9,7 +9,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const SITE = 'https://docs.embeddable.com'
-const WRITE_TWINS = false // task A5 sets this to true
+const WRITE_TWINS = true
 
 const HEADER = `# Embeddable
 

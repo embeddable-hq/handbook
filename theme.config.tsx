@@ -59,12 +59,17 @@ const config: DocsThemeConfig = {
       twitter: { cardType: 'summary_large_image' },
     }
   },
-  head: (
-    <>
-      <link rel="icon" href="/img/favicon.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.png" />
-    </>
-  ),
+  head: function Head() {
+    const { asPath } = useRouter()
+    const path = asPath.split(/[?#]/)[0].replace(/\/$/, '') || '/index'
+    return (
+      <>
+        <link rel="icon" href="/img/favicon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.png" />
+        <link rel="alternate" type="text/markdown" href={`${SITE}${path}.md`} />
+      </>
+    )
+  },
   footer: {
     text: 'Embeddable Docs, 2025',
     component: () => <InkeepChat />
