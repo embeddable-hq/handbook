@@ -71,7 +71,7 @@ const config: DocsThemeConfig = {
     )
   },
   footer: {
-    text: 'Embeddable Docs, 2025',
+    text: 'Embeddable Docs',
     component: () => <InkeepChat />
   },
 }
