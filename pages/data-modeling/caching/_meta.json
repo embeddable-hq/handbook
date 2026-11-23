@@ -1,5 +1,5 @@
 {
-    "in-memory": "Level 1 cache: in-memory",
-    "level-2-cache": "Level 2 cache: pre-aggregations"
-  }
-  
+  "introduction": "Introduction",
+  "in-memory": "Level 1 cache: in-memory",
+  "level-2-cache": "Level 2 cache: pre-aggregations"
+}
