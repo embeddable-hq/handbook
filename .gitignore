@@ -6,3 +6,5 @@ robots.txt
 .env
 .DS_Store
 package-lock.json
+public/llms.txt
+public/llms-full.txt
