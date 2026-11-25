@@ -1,5 +1,6 @@
 import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
+import { useRouter } from 'next/router'
+import { DocsThemeConfig, useConfig } from 'nextra-theme-docs'
 import ImageGrid from './components/ImageGrid'
 import LinkCard from './components/LinkCard'
 import Pill from './components/Pill'
@@ -13,6 +14,10 @@ import { InkeepChat } from './components/InkeepChatButton'
 import CodeContainer from './components/CodeContainer'
 import ChangelogPaginated from './components/ChangelogPaginated'
 import FaqPaginated from './components/FaqPaginated'
+
+const SITE = 'https://docs.embeddable.com'
+const FALLBACK_DESCRIPTION =
+  'Documentation for Embeddable, a developer toolkit for building customer-facing analytics into your own application.'
 
 const config: DocsThemeConfig = {
   logo: <div style={{ display: "flex", alignItems: "center", fontWeight: "bold" }}><img style={{ height: "50px" }} src="/img/icon.png" />Embeddable Docs</div>,
@@ -38,19 +43,35 @@ const config: DocsThemeConfig = {
     'FaqPaginated': FaqPaginated
   },
   useNextSeoProps: () => {
+    const { asPath } = useRouter()
+    const { frontMatter } = useConfig()
+    const path = asPath.split(/[?#]/)[0].replace(/\/$/, '')
+    const description = frontMatter.description || FALLBACK_DESCRIPTION
     return {
-      // description: "Documentation for Embeddable.com",
-      titleTemplate: "%s | Embeddable Documentation"
-    };
+      titleTemplate: '%s | Embeddable Documentation',
+      description,
+      canonical: SITE + path,
+      openGraph: {
+        url: SITE + path,
+        description,
+        images: [{ url: SITE + '/img/og.png', width: 1200, height: 630 }],
+      },
+      twitter: { cardType: 'summary_large_image' },
+    }
   },
-  head: (
-    <>
-      <link rel="icon" href="/img/favicon.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.png" />
-    </>
-  ),
+  head: function Head() {
+    const { asPath } = useRouter()
+    const path = asPath.split(/[?#]/)[0].replace(/\/$/, '') || '/index'
+    return (
+      <>
+        <link rel="icon" href="/img/favicon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.png" />
+        <link rel="alternate" type="text/markdown" href={`${SITE}${path}.md`} />
+      </>
+    )
+  },
   footer: {
-    text: 'Embeddable Docs, 2025',
+    text: 'Embeddable Docs',
     component: () => <InkeepChat />
   },
 }

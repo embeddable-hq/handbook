@@ -4,6 +4,7 @@
   "description": "Embeddable Handbook",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/build-agent-files.mjs",
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start"
@@ -36,6 +37,8 @@
   },
   "devDependencies": {
     "@types/node": "18.11.10",
+    "globby": "^16.2.4",
+    "gray-matter": "^4.0.3",
     "typescript": "^5.0.0"
   }
 }

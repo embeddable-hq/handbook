@@ -1,0 +1,12 @@
+---
+description: "How Embeddable keeps queries fast and protects your database: an in-memory cache by default, plus optional pre-aggregations."
+---
+
+# Caching and query performance
+
+## How do you stop dashboards and self-serve users overloading your database?
+
+Embeddable protects your database in two layers. An in-memory cache is on by default and reduces repeated load on the database. Pre-aggregations compute and store summarised results in advance, so dashboards read from them instead of running heavy queries each time.
+
+- [Level 1 cache: in-memory](/data-modeling/caching/in-memory): on by default; controlled with refresh keys.
+- [Level 2 cache: pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations): optional; the biggest gain for slow dashboards.

@@ -32,6 +32,8 @@ module.exports = withNextra({
   },
   async redirects() {
     return [
+      { source: '/contact', destination: 'https://embeddable.com/', permanent: true },
+      { source: '/roadmap', destination: 'https://roadmap.embeddable.com/roadmap', permanent: true },
       {
         source: "/dashboards/custom-canvas",
         destination: "/self-serve/custom-canvas/introduction",
