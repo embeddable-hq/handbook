@@ -56,21 +56,22 @@ const absolute = (text) =>
 async function toMarkdown(content) {
   const faqs = (await readJson('pages/faqs.json')).faqs ?? []
   const changelog = await readJson('pages/component-libraries/remarkable-pro/changelog.json')
-  const segments = content.split(/(^```[\s\S]*?^```[^\n]*$)/m)
+  const expanded = content
+    .replace(/<FaqPaginated\s*\/>/g, () =>
+      faqs.map((f) => `## ${f.question}\n\n${f.answer}`).join('\n\n'),
+    )
+    .replace(/<ChangelogPaginated\s*\/>/g, () =>
+      (Array.isArray(changelog) ? changelog : [])
+        .map((c) => `### ${c.version} (${c.date})\n\n${(c.notes ?? []).map((n) => `- ${n}`).join('\n')}`)
+        .join('\n\n'),
+    )
+  const segments = expanded.split(/(^[ \t]*```[\s\S]*?^[ \t]*```[^\n]*$)/m)
   const out = segments.map((segment, i) => {
     if (i % 2 === 1) return segment // a code fence
     let s = segment
     const inline = [] // inline code is restored untouched, like fences
     s = s.replace(/`[^`\n]+`/g, (code) => `\u0000${inline.push(code) - 1}\u0000`)
     s = s.replace(/^(import|export)\s.*$/gm, '')
-    s = s.replace(/<FaqPaginated\s*\/>/g, () =>
-      faqs.map((f) => `## ${f.question}\n\n${f.answer}`).join('\n\n'),
-    )
-    s = s.replace(/<ChangelogPaginated\s*\/>/g, () =>
-      (Array.isArray(changelog) ? changelog : [])
-        .map((c) => `### ${c.version} (${c.date})\n\n${(c.notes ?? []).map((n) => `- ${n}`).join('\n')}`)
-        .join('\n\n'),
-    )
     s = s.replace(
       /^[ \t]*<LinkCard\b([^>]*)>([\s\S]*?)<\/LinkCard>/gm,
       (_, attrs, text) => {
