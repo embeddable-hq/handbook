@@ -39,18 +39,18 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 ```json
 {
   "tags": {
-    "development": { "version": "v3", "updated-at": "2025-06-27T09:32:10.004Z" },
-    "production": { "version": "v2", "updated-at": "2025-06-21T16:12:53.542Z" }
+    "development": { "version": "v3", "updatedAt": "2025-06-27T09:32:10.004Z" },
+    "production": { "version": "v2", "updatedAt": "2025-06-21T16:12:53.542Z" }
   },
-  "saved-versions": [
+  "savedVersions": [
     {
       "version": "v1",
-      "saved-by": "sina@embeddable.com",
+      "savedBy": "sina@embeddable.com",
       "description": "Our first publish!!",
-      "saved-at": "2025-06-19T09:01:03.023523Z",
-      "components-version": "2025-02-11T18:53:03.527633Z",
-      "models-version": "2025-02-11T18:53:03.527633Z", // cube-internal only
-      "cube-version": "1.3.22" // cube-internal only
+      "savedAt": "2025-06-19T09:01:03.023523Z",
+      "componentsVersion": "2025-02-11T18:53:03.527633Z",
+      "modelsVersion": "2025-02-11T18:53:03.527633Z", // cube-internal only
+      "cubeVersion": "1.3.22" // cube-internal only
     }
     // ... up to last 30
   ]
@@ -59,18 +59,18 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 
 ### Field Reference
 
-- **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
-- **`saved-versions[]`**: Each saved version, newest first.
+- **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updatedAt` is when the tag last changed.
+- **`savedVersions[]`**: Each saved version, newest first.
   - **`version`**: The generated version label (v1, v2, ...).
-  - **`saved-by`**: Email of the user who saved it.
+  - **`savedBy`**: Email of the user who saved it.
   - **`description`**: The Save version note. Also appears in the builder and publish modal.
-  - **`saved-at`**: When the snapshot was taken.
-  - **`components-version / models-version / cube-version`**: The underlying versions that this saved version references.
+  - **`savedAt`**: When the snapshot was taken.
+  - **`componentsVersion / modelsVersion / cubeVersion`**: The underlying versions that this saved version references.
 
 ### Notes
 
 - Version values are **per embeddable** and are not shared across different dashboards.
-- The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
+- The API returns the last 30 saved versions, ordered by the `savedAt` timestamp.
 
 ---
 

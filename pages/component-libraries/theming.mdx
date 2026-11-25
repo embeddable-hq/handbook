@@ -90,7 +90,8 @@ Because Client Context is arbitrary JSON, theme data can be sent directly in the
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from '@embeddable.com/remarkable-pro';
+import { defineTheme } from '@embeddable.com/core';
+import { Theme } from '@embeddable.com/remarkable-pro';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const { theme } = clientContext;

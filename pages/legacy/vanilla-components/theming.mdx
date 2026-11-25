@@ -43,7 +43,8 @@ That would apply the Inter font across the entire site and change all of the cha
 If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.theme.ts). Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
 
 ```tsx
-import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+import { defineTheme } from '@embeddable.com/core';
+import type { Theme } from '@embeddable.com/vanilla-components';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme =>
 	defineTheme(parentTheme, {
@@ -72,7 +73,7 @@ export default themeProvider;
 
 ```
 
-Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from the same repo, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in [`Theme`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts) which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
+Let’s break down what’s happening here. First, we’re bringing in the `Theme` type from Vanilla Components to help with type consistency, and the `defineTheme` function from `@embeddable.com/core`, which we use to help us merge our changes into the default Vanilla Components theme. Our `themeProvider` function has `clientContext` (which we’re not using in this example, but see below!) and `parentTheme` parameters. Without that `parentTheme`, we wouldn’t get all of the values from Vanilla Components. You could still go without it, but you’d have to define every single property specified in [`Theme`](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/theme.ts) which, as of this writing, is about 130 lines of code. Should you want that level of granular control, just skip using `defineTheme` at all, and return your theme object directly.
 
 <Callout emoji="💡">
 You can find the full list of available `Theme` properties (and their default values) [here](https://github.com/embeddable-hq/vanilla-components-v1/blob/main/src/themes/defaulttheme.ts).
@@ -90,57 +91,58 @@ Let’s show an example of how you might use multiple theme files by enabling li
 
 ```tsx
 // src/themes/light.theme.ts
-import { Theme } from '@embeddable.com/vanilla-components';
-const lightTheme: Theme = {
+import type { ThemePartial } from '@embeddable.com/vanilla-components';
+const lightTheme: ThemePartial = {
   controls: {
     borders: {
       colors: {
-			  primary: '#444444',
-			  secondary: '#888888',
-			},
-    };
+        heavy: '#444444',
+        normal: '#888888',
+      },
+    },
   },
   font: {
     color: '#444444',
     family: 'Inter',
-  };
+  },
   svg: {
-    fill: '#444444',
+    fillNormal: '#444444',
     fillBkg: '#FFFFFF',
-    stroke: '#444444',
-  };
+    strokeNormal: '#444444',
+  },
 };
 export default lightTheme;
 ```
 
 ```tsx
 // src/themes/dark.theme.ts
-import { Theme } from '@embeddable.com/vanilla-components';
-const darkTheme: Theme = {
+import type { ThemePartial } from '@embeddable.com/vanilla-components';
+const darkTheme: ThemePartial = {
   controls: {
     borders: {
       colors: {
-			  primary: '#EEEEEE',
-			  secondary: '#AAAAAA',
-			},
-    };
+        heavy: '#EEEEEE',
+        normal: '#AAAAAA',
+      },
+    },
   },
   font: {
     color: '#EEEEEE',
     family: 'Inter',
-  };
+  },
   svg: {
-    fill: '#EEEEEE',
+    fillNormal: '#EEEEEE',
     fillBkg: '#000000',
-    stroke: '#EEEEEE',
-  };
+    strokeNormal: '#EEEEEE',
+  },
 };
 export default darkTheme;
 ```
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+import { defineTheme } from '@embeddable.com/core';
+import type { Theme } from '@embeddable.com/vanilla-components';
 import lightTheme from './src/themes/light.theme';
 import darkTheme from './src/themes/dark.theme';
 
@@ -186,7 +188,8 @@ If you’re going to support more than a handful of themes, for example, if you 
 
 ```tsx
 // embeddable.theme.ts
-import { Theme, defineTheme } from '@embeddable.com/vanilla-components';
+import { defineTheme } from '@embeddable.com/core';
+import type { Theme } from '@embeddable.com/vanilla-components';
 
 const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
   const { theme } = clientContext;

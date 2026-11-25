@@ -163,6 +163,7 @@ export const meta = {
 } as const satisfies EmbeddedComponentMeta;
 
 export const preview = definePreview(Component, {
+  defaultValue: '',
   values: mockDimension('country', 'string', { title: 'Country' }),
   results: mockDataResponse(
     ['country'],

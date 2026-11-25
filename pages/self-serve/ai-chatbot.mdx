@@ -153,10 +153,10 @@ Choose between **inline** (fills its container) and **modal** (a floating panel 
 </em-ai-chat>
 ```
 
-`embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. The tokens define what the AI can see: include a token for each embeddable you want it to answer questions about (and extend, where Custom Canvas is enabled). The first token is used as the credential for the chat connection.
+`embeddable-tokens` takes a **JSON-encoded array** that must contain **exactly one** security token — the same token you pass to `<em-beddable>`. The token defines what the AI can see: the embeddable it can answer questions about (and extend, where Custom Canvas is enabled). If the array contains more than one token, the chat returns an error.
 
 <Callout emoji="💡">
-  **Match tokens with an on-page dashboard.** If the same page also renders one or more `<em-beddable>` dashboards, pass those **same token(s)** to `embeddable-tokens`. The chat only inspects `<em-beddable>` elements whose token matches one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
+  **Match tokens with an on-page dashboard.** If the same page also renders an `<em-beddable>` dashboard, pass that dashboard's **same token** to `embeddable-tokens`. The chat only inspects the `<em-beddable>` element whose token matches the one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
 
 The chat still works with a different or standalone token — it can add a chart to the canvas — but without a match it can't see the on-page dashboard's data or layout, so it can't position or resize what it adds effectively. This requirement is **temporary**; a future release will remove the need for the tokens to match.
 
@@ -298,7 +298,7 @@ Canvas editing requires a token without `customCanvasReadOnly` — with a read-o
 | Attribute                 | Type                                                           | Default       | Description                                                                                                                                |
 | ------------------------- | -------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `orchestrator-url`        | string                                                         | —             | WebSocket URL of the AI orchestrator: `wss://api.<region>.embeddable.com/ws`                                                               |
-| `embeddable-tokens`       | string                                                         | —             | JSON-encoded array of security tokens. The first token is used as the credential for the connection.                                       |
+| `embeddable-tokens`       | string                                                         | —             | JSON-encoded array with exactly one security token, used as the credential for the connection.                                            |
 | `client-context`          | string                                                         | —             | JSON-encoded client context — the same object you pass to your embeddables. Its `timezone` resolves dates consistently with the dashboard. |
 | `mode`                    | `"inline"` or `"modal"`                                        | `"inline"`    | `inline` fills its container; `modal` opens a floating, draggable panel from the trigger element                                           |
 | `placement`               | `"bottom-right"`, `"bottom-left"`, `"top-right"`, `"top-left"` | `"top-right"` | Where the modal panel appears relative to the trigger element                                                                              |

@@ -18,11 +18,11 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   },
   body: JSON.stringify({
     // ...
-    securityContext: [{
+    securityContext: {
       userId: 45,
-      orgIg: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
+      orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
       countries: ["us-east", "eu-west"],
-    }],
+    },
     // ...
   })
 })

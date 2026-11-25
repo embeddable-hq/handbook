@@ -416,7 +416,7 @@ Add a new widget to the custom canvas.
 | `id` | UUID | ✅ | — | Client-assigned UUID for the new widget instance |
 | `templateId` | UUID | ✅ | — | UUID of a template widget (from `templateWidgets` in metadata) |
 | `requestId` | UUID | ✅ | — | Idempotency key |
-| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name. Key names come from the template's definition — check `templateWidgets[].inputConfiguration` in the metadata response. Member values (dimensions, measures) must be full member objects, not plain strings (see example below). |
+| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name. Key names come from the template's definition — check `templateWidgets[].inputConfiguration` in the metadata response. Member values (dimensions, measures) must be full member objects, not plain strings (see example below). To set a dataset, use the template's dataset input name as the key: `"<datasetInputName>": { "datasetId": "<uuid>" }`. The dataset must be available in Custom Canvas (`availableInCustomCanvas: true`). If you leave a dataset input out, the template's own dataset is used. |
 | `subInputConfiguration` | Map\<string, Map\<string, Map\<string, any\>\>\> | ☐ | — | Nested per-value input overrides |
 | `filters` | Map\<string, Filter[]\> | ☐ | — | Per-dataset filter overrides |
 | `limit` | Map\<string, int\> | ☐ | — | Per-dataset row limit |
@@ -436,7 +436,7 @@ The `inputConfiguration` key for a measure input varies by chart type — for ex
   "templateId": "<uuid>",
   "requestId": "<uuid>",
   "inputConfiguration": {
-    "datasetId": "<uuid>",
+    "dataset": { "datasetId": "<uuid>" },
     "measure": {
       "name": "orders.count",
       "title": "Count",
@@ -481,7 +481,7 @@ Replace the configuration of an existing canvas widget. All supplied fields over
   "id": "<uuid>",
   "requestId": "<uuid>",
   "inputConfiguration": {
-    "datasetId": "<uuid>",
+    "dataset": { "datasetId": "<uuid>" },
     "measure": {
       "name": "orders.revenue",
       "title": "Revenue",
@@ -584,15 +584,42 @@ Change the dimensions of a canvas widget within the grid.
 
 ## Error handling
 
-All errors return `400 Bad Request` with the following body:
+Errors use the [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807) format, with the content type `application/problem+json`:
 
 ```json
 {
-  "errorType": "PROBLEM_LOADING_DATA",
-  "message": "...",
-  "retryMessage": "Try again later"
+  "type": "about:blank",
+  "title": "Validation failed",
+  "status": 400,
+  "detail": "...",
+  "instance": "/api/v1/...",
+  "code": "ai.validation_failed",
+  "errors": [
+    { "field": "prompt", "rule": "NotBlank", "expected": "...", "received": "..." }
+  ],
+  "traceId": "<uuid>",
+  "retryable": false
 }
 ```
+
+- **`code`**: a stable error code. Use it in your error handling (see the table below).
+- **`errors`**: only for validation errors. Each entry gives the `field`, the failed `rule`, and, if available, the `expected` and `received` values.
+- **`traceId`**: give this value to Embeddable support when you report a problem.
+- **`retryable`** and **`retryAfter`**: when present, tell you whether and when to try again. A `202` response also has a `Retry-After` header.
+
+| `code` | HTTP status | Meaning |
+|---|---|---|
+| `ai.validation_failed` | 400 | A field in the request is not valid |
+| `ai.malformed_request` | 400 | The request body cannot be read |
+| `ai.access_denied` | 403 | The API key or token does not give access |
+| `ai.not_found` | 404 | The resource does not exist |
+| `ai.method_not_allowed` | 405 | The HTTP method is not supported |
+| `ai.not_acceptable` | 406 | The `Accept` header is not supported |
+| `ai.conflict` | 409 | The request conflicts with the current state |
+| `ai.unsupported_media_type` | 415 | The `Content-Type` is not supported |
+| `ai.not_ready` | 202 | The result is not ready yet. Try again after `Retry-After` seconds |
+| `ai.service_unavailable` | 503 | The service is temporarily unavailable |
+| `ai.internal_error` | 500 | An unexpected error occurred |
 
 ---
 
