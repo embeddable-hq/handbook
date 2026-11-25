@@ -60,6 +60,7 @@ The **second parameter** is an object that takes the following properties:
 | `optionLabel`      | (object) => string  | Yes |
 | `cast`    | \{ [type]: (object) => any \}  | No   |
 | `toNativeDataType`    | \{ [type]: (object) => object \}  | No   |
+| `transform`    | (object) => any  | No   |
 
 
 - **`label`**: the human-readable name that appears in the UI.  You can change it anytime without impacting the underlying logic.  E.g. you can see our custom type, labeled 'Color', appearing here among the native types in the Variable Builder:
@@ -67,6 +68,7 @@ The **second parameter** is an object that takes the following properties:
 - **`optionLabel`**: This tells Embeddable how to render each **option** of this custom type in the UI ([learn more](/component-libraries/build-components/custom-types#the-defineoption-function)).
 - **`cast`**: an object specifying how to convert this custom type to other Embeddable types, so variables of this type can be used in component inputs of different types ([learn more](/component-libraries/build-components/custom-types#casting-between-types)).
 - **`toNativeDataType`**: an object specifying how to map this custom type to Cube-native data types, for use in **dataset filters** only ([learn more](/component-libraries/build-components/custom-types#using-custom-types-to-filter-datasets)). For component input interoperability, use `cast` instead.
+- **`transform`**: a function that converts the stored value before Embeddable passes it to a component input or to the editor.
 
 ## The `defineOption` function
 
@@ -102,7 +104,7 @@ The `defineOption` function takes the following parameters:
 
 The **first argument** is the **type** itself (e.g. `ColorType`).  This tells Embeddable which **type** you're adding the **option** to.
 
-The **second argument** is the javascript **value** that represents that option (e.g. `{ name: 'Orange', r: 256, g: 158, b: 84 }`).  This is the javascript value that will get passed to a component if that option is chosen (concrete example of this [below](/component-libraries/build-components/custom-types#using-a-type-in-a-component)).
+The **second argument** is the javascript **value** that represents that option (e.g. `{ name: 'Orange', r: 256, g: 158, b: 84 }`).  This is the javascript value that will get passed to a component if that option is chosen (concrete example of this [below](/component-libraries/build-components/custom-types#using-a-custom-type-in-a-component)).
 <Callout emoji="💡">
   In the example above we're using `name` and `r`, `g` and `b` to represent our type, but we could define the shape of the object however we like.  As long as the components that use this custom type know how to handle it.
 </Callout>
@@ -413,7 +415,7 @@ And then tell Embeddable about it (in a file called `ColorEditor/ColorEditor.emb
 
 ```ts
 import { defineEditor } from "@embeddable.com/react";
-import ColorType from "../../Color.type.emb.ts";
+import ColorType from '../../types/Color/Color.type.emb';
 import { Value } from "@embeddable.com/core";
 
 import Component from "./index";
@@ -459,22 +461,26 @@ It takes the following parameters:
 | `name` | string | Yes |
 | `label`      | string  | Yes |
 | `type`      | CustomType  | Yes |
+| `config`      | any  | No |
 
 - **`name`** is the name of this editor.  It must match the name of the file (e.g. `<EditorName>.emb.ts`)
 - **`label`** is not currently used, but may be used in the future if we add support for multiple editors per type.
 - **`type`** tells Embeddable which **custom type** that this editor should be an **editor** for.
+- **`config`** is passed to `inputs` as the third argument.
 
 **Inputs** contains the following properties:
 
 | **Property**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
-| `inputs` | (value, setter) => object | Yes |
+| `inputs` | (value, setter, config) => object | Yes |
 | `events` | object | Yes |
+| `mapProps` | (props) => object | No |
 
 - Whatever `inputs` returns is what will be passed as the `props` to our React component.
 - The `setter` is the function that must be called to **update** the value of the custom type (the value passed to it must match the shape expected by the type, e.g. `setter(Value.of({ r: 97, g: 153, b: 243 }))`)
 - The `value` tells us the current value of our custom type.
 - `events` is required by the `defineEditor` type. Pass an empty object (`{}`).
+- `mapProps` receives the props of the editor wrapper. Whatever it returns is also passed as `props` to our React component.
 
 We should now be able to use our custom editor like so:
 <ImageGrid width='60%' images={["/img/component-color-editor.png"]} />

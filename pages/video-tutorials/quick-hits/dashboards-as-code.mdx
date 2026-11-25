@@ -14,9 +14,9 @@ Hi, welcome to Embeddable Quick Hits. In this video, we’re going to talk about
 
 Dashboards as Code allows you to create and update Embeddables right from your repo, without using the no-code builder. From adding components and setting up inputs, to sizing and positioning, to Embeddable Custom Canvas, if you can do it in the builder, you can do it in code. Today, we’re going to create a dashboard with a simple YAML file, and then we’re going to use the Claude skill that Embeddable provides to rapidly make some changes and enhancements to the dashboard.
 
-We begin with the Remarkable-Pro Boilerplate Repository. If you’ve followed any of our instructions for setting up your workspace, you should already have this. If you haven’t made it that far yet, we suggest running through [the getting started documentation](https://docs.embeddable.com/getting-started/get-set-up/quick-start-guide) before circling back to this video! 
+We begin with the Remarkable-Pro Boilerplate Repository. If you’ve followed any of our instructions for setting up your workspace, you should already have this. If you haven’t made it that far yet, we suggest running through [the getting started documentation](/getting-started/get-set-up/quick-start-guide) before circling back to this video! 
 
-We’re going to create a new YAML file. We recommend keeping these in `/src/embeddable.com/dashboards` but as long as the file ends in `.embeddable.yml` it should be picked up by the builder regardless of location. I’m going to name my file `sample1.embeddable.yml`. From here we *could* have Claude do most of the work, but let’s start by doing things manually so we understand what’s happening before turning things over to the robot overlords.
+We’re going to create a new YAML file. We recommend keeping these in `/src/embeddable.com/embeddables` but as long as the file ends in `.embeddable.yml` it should be picked up by the builder regardless of location. I’m going to name my file `sample1.embeddable.yml`. From here we *could* have Claude do most of the work, but let’s start by doing things manually so we understand what’s happening before turning things over to the robot overlords.
 
 We’re going to build a simple Embeddable with two KPIs and a bar chart. Nothing fancy. We’ll use the default Spotify data models that Embeddable comes with, but this would apply to your own models as well. We’ll need three things: a basic set of dashboard data, a list of datasets, and a list of widgets (which is how we refer to components in the YAML). We could also add variables, interactions, custom canvas directives, and more, but for this tutorial we’re keeping things simple.
 
@@ -24,14 +24,14 @@ Let’s start with the basics:
 
 ```yaml
 embeddables:
-  - name: sample-dashboard-1 # Cannot contains spaces
+  - name: sample-dashboard-1 # Cannot contain spaces
     title: Sample Dashboard 1 # Can contain spaces, shown in the workspace
     description: Our basic sample dashboard for Embeddable Quick Hits
     datasets:
     widgets:
 ```
 
-Pretty uncomplicated, right? The most important thing to remember is that in YAML, indentation **really matters**, so you’ll need to follow the layout in this code exactly in order to keep things working. With that in mind, let’s create a dataset by adding a few items below that line:
+Pretty uncomplicated, right? We fill in `datasets` and `widgets` next. Until then, the file does not pass validation, because an empty key is not a list. The most important thing to remember is that in YAML, indentation **really matters**, so you’ll need to follow the layout in this code exactly in order to keep things working. With that in mind, let’s create a dataset by adding a few items below that line:
 
 ```yaml
     datasets:
@@ -42,7 +42,7 @@ Pretty uncomplicated, right? The most important thing to remember is that in YAM
 That’s all we need. We could add filters here but, again we’re trying to keep this simple. Let’s move on to the actual components. Underneath the `widgets` line we’re going to create our first KPI chart. This one’s not too complex:
 
 ```yaml
-		widgets:
+    widgets:
       - component: KpiChartNumberPro
         position:
           x: 0
@@ -67,7 +67,7 @@ That’s all we need. We could add filters here but, again we’re trying to kee
             value: 'Total Listens'
 ```
 
-This tells the builder to use the KPI Chart Number Pro component, position it at the top left, and make if 4 units wide (which is one third of the dashboard width) and 12 units tall. You’ll get a feel for heights as you work with Dashboards as Code more, but 4x12 units works out to “a decent sized KPI chart”. We then give it a handful of inputs: we configure the dataset, the measure to be displayed, and the title to display above that measure. Note that we’re seeing a lot of `valueType: VALUE` lines. The other option for `valueType` is `VARIABLE` but that’s outside the scope of this tutorial. You can always [check out our documentation for full details](https://docs.embeddable.com/dashboards/dashboards-as-code).
+This tells the builder to use the KPI Chart Number Pro component, position it at the top left, and make it 4 units wide (which is one third of the dashboard width) and 12 units tall. You’ll get a feel for heights as you work with Dashboards as Code more, but 4x12 units works out to “a decent sized KPI chart”. We then give it a handful of inputs: we configure the dataset, the measure to be displayed, and the title to display above that measure. Note that we’re seeing a lot of `valueType: VALUE` lines. The other option for `valueType` is `VARIABLE` but that’s outside the scope of this tutorial. You can always [check out our documentation for full details](/dashboards/dashboards-as-code).
 
 Let’s add a second KPI widget. This goes directly below the first (a line break for padding and readability is totally fine) and should be on the same indent level inside of the `widgets` section. It looks like this:
 
@@ -103,7 +103,7 @@ Let’s add a second KPI widget. This goes directly below the first (a line brea
             value: 'Total Royalty Revenue'
 ```
 
-This is very similar to our first KPI but there’s two important things to note. The first is that while the dimensions are the same, the component is positioned at `x: 4`. This makes sense since the first component starts at `x: 0` and is four units wide, so units `0`, `1`, `2`, and `3` will be filled up by the first KPI. The second KPI will start at unit `4` and then also take up `5`, `6`, and `7`. We’re not going to put anything in units `8` through `12` in this tutorial, at least not on this same horizontal line, but you absolutely could.
+This is very similar to our first KPI but there’s two important things to note. The first is that while the dimensions are the same, the component is positioned at `x: 4`. This makes sense since the first component starts at `x: 0` and is four units wide, so units `0`, `1`, `2`, and `3` will be filled up by the first KPI. The second KPI will start at unit `4` and then also take up `5`, `6`, and `7`. We’re not going to put anything in units `8` through `11` in this tutorial, at least not on this same horizontal line, but you absolutely could.
 
 The second thing to note is that we’ve added sub-inputs to our measure. This is because we want to specify that the measure is a currency in US Dollars and that it should always display two decimal places, even if the value is something like `4.00` or `4.10`. We don’t want that to just display, for example `$4.1` as that’s not how US currency is typically shown.
 
@@ -246,6 +246,6 @@ And here’s what they look like!
 
 Pretty impressive! This is barely the tip of the iceberg. With Dashboards as Code, you can do everything the no-code builder can do, with or without the help of agents. You can also keep your dashboards in version control, gain better access control, quickly clone and adjust existing dashboards or components, and iterate quickly while testing.
 
-If you’d like more information about Dashboards as Code, you can [check out our documentation](https://docs.embeddable.com/dashboards/dashboards-as-code). We've also got a [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) you can join, where we're happy to answer your questions.
+If you’d like more information about Dashboards as Code, you can [check out our documentation](/dashboards/dashboards-as-code). We've also got a [Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA) you can join, where we're happy to answer your questions.
 
 See you next time!

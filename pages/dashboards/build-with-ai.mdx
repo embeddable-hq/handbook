@@ -18,7 +18,7 @@ It triggers whenever you ask for dashboard work — phrases like *"create a dash
 
 When it runs, the agent:
 
-1. **Discovers the components** available in your repo and component libraries (e.g. [Remarkable Pro](/component-libraries/remarkable-pro)), reading each one's metadata so it picks the right chart and inputs.
+1. **Discovers the components** available in your repo and component libraries (e.g. [Remarkable Pro](/component-libraries/remarkable-pro/introduction)), reading each one's metadata so it picks the right chart and inputs.
 2. **Reads your [data models](/data-modeling/introduction)** to confirm the cubes, dimensions, and measures you reference actually exist.
 3. **Writes or edits the YAML** under `src/embeddable.com/embeddables/`, using valid components, inputs, positions, [variables](/dashboards/interactivity), and [Custom Canvas](/self-serve/custom-canvas/introduction) templates.
 4. **Checks build validation** (when `embeddable:dev` is running) and fixes issues such as overlapping widgets.

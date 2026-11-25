@@ -94,7 +94,7 @@ If you embed more than one Embeddable on a page, `event.target` is the `<em-bedd
 
 ## Handle Component Errors
 
-You can listen to errors that occur in your Embeddable by adding an event listener for the `onEmbeddableError` event. This event is fired each time an error occurs in your Embeddable (e.g., network error, invalid token). The event's `detail` property contains an object with the error message and error detail.
+You can listen to errors that occur in your Embeddable by adding an event listener for the `embeddableError` event. This event is fired each time an error occurs in your Embeddable (e.g., network error, invalid token). The event's `detail` property contains an object with the error message and error detail.
 
 Here is an example of how to listen to errors in your Embeddable:
 
@@ -110,7 +110,7 @@ You can use this to log errors, show error messages to users, or take other acti
 
 ## Know When Components are Loaded
 
-You can listen to when your Embeddable has finished loading its components by adding an event listener for the `onComponentsLoad` event. This event is fired each time the Embeddable has finished loading all its components (e.g., charts, tables). This can be useful for showing a loading spinner while the Embeddable is loading, and then hiding it once the components are ready.
+You can listen to when your Embeddable has finished loading its components by adding an event listener for the `componentsLoad` event. This event is fired each time the Embeddable has finished loading all its components (e.g., charts, tables). This can be useful for showing a loading spinner while the Embeddable is loading, and then hiding it once the components are ready.
 
 This event fires once all of the Embeddable's components have loaded and rendered, but each component may still be in an individual loading state, as this event does not wait for any `loadData` requests to return.
 

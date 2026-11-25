@@ -32,13 +32,14 @@ Each option has the following shape:
 
 ```ts
 type TimeRange = {
-  from?: Date;
-  to?: Date;
-};
+  from: Date | undefined;
+  to: Date | undefined;
+  relativeTimeString: string | undefined;
+} | undefined;
 
 type DateRangeOption = {
   value: string;              // e.g. 'Yesterday'
-  label: string;              // e.g. 'defaults.dateRangesOptions.yesterday | Yesterday'
+  label: string;              // e.g. 'defaults.dateRangeOptions.yesterday | Yesterday'
   dateFormat: string;         // e.g. 'MMM DD'
   getRange: (timezone?: string) => TimeRange; // timezone: the viewer's timezone, if set
 };
@@ -89,7 +90,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     if (option.value === 'Week to date') {
       return {
         ...option,
-        label: 'defaults.dateRangesOptions.weekSoFar | Week so far',
+        label: 'defaults.dateRangeOptions.weekSoFar | Week so far',
         getRange: (timezone) => {
           // your custom function returning a TimeRange in the given timezone
         },

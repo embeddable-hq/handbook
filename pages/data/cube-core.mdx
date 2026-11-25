@@ -99,7 +99,7 @@ and you can [embed your dashboard](/deployment/embedding) by calling the [Tok
 
 ```jsx
 POST /api/v1/security-token
-  embbeddableId: '...',
+  embeddableId: '...',
   securityContext: { /* ... */ },
   #
   # other fields...
@@ -131,7 +131,7 @@ Watch this short video demonstrating Cube Core and Embeddable in action:
 
 ## Testing multiple data providers
 
-For **separate deployments**, you'll need to **set up a data provider for each one**. Since each deployment has its **own REST API Endpoint and `CUBEJS_API_SECRET`**, just repeat the same configuration steps for each deployment as described earlier [**here**](/data/cube-core#find-your-cube-credentials).
+For **separate deployments**, you'll need to **set up a data provider for each one**. Since each deployment has its **own REST API Endpoint and `CUBEJS_API_SECRET`**, just repeat the same configuration steps for each deployment as described earlier [**here**](/data/cube-core#1-find-your-cube-credentials).
 
 ### Development and Production Cube Core instances
 

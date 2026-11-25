@@ -51,7 +51,7 @@ To support multiple themes, there are two possible approaches: create multiple t
 
 ### Using Theme File Imports
 
-This is the approach taken in the boilerplate repo above. Each theme file should export a `DeepPartial<Theme>` object. Use Client Context to determine which theme to apply, then merge it with the parent theme using `defineTheme`. For example:
+This is the approach taken in the [boilerplate repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate). Each theme file should export a `DeepPartial<Theme>` object. Use Client Context to determine which theme to apply, then merge it with the parent theme using `defineTheme`. For example:
 
 ```tsx
 //embeddable.theme.ts
@@ -70,7 +70,7 @@ export default themeProvider;
 ```
 
 **Tips:**
-1. Adjust the `ClientContext` interface to include any other values passed in via Client Context for better type safety.
+1. Replace `clientContext: any` with an interface that includes the values passed in via Client Context for better type safety.
 2. This approach can be expanded to support as many themes as needed by adding more imports
 
 ### Sending Theme Objects Via Client Context

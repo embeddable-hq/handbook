@@ -79,7 +79,6 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     // required fields
     //
     embeddableId: '<dashboard-id>', //the id of the dashboard you want to load
-    savedVersion: 'production', // or 'development' or 'staging', etc.
     expiryInSeconds: 60 * 60 * 24 * 7, // token expiry (e.g. 1 week)
     securityContext: { // any context (key-value pairs) you want to provide to the SQL data models
       userId: '9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf',
@@ -90,6 +89,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
     //
     // optional fields
     //
+    savedVersion: 'production', // or 'development' or 'staging', etc.
     customCanvasState: 'user-1-dashboard-7', // optional key used by "custom canvas" functionality to store end-user custom dashboard state
     customCanvasReadOnly: false, // turns off custom dashboard editing for your end-user (if "custom canvas" is enabled)
     export: false, // set to true ONLY for tokens used with the Dashboard Export API (see "Exporting dashboards" below)
@@ -121,7 +121,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 ### Parameters
 
-- **`embeddableId`** is the id of the Embeddable dashboard that you want to load.  Click 'save version' or 'publish' on your Embeddable dashboard to get the id.
+- **`embeddableId`** is the id of the Embeddable dashboard that you want to load (or the dashboard name, for [dashboards as code](/dashboards/dashboards-as-code)).  Click 'save version' or 'publish' on your Embeddable dashboard to get the id.
 - **`savedVersion`** this is the [saved version](/deployment/versions) of the Embeddable dashboard that you want to load.  Available options include: 
   - 'production' (default) - the saved version published with the 'Production' tag.  This will be used by default if `savedVersion` is omitted.
   - 'staging' - the saved version published with the 'Staging' tag
@@ -164,7 +164,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 ## Exporting dashboards
 
-To export a dashboard with the [Dashboard Export API](/deployment/dashboard-export), request a token with **`export: true`** and pass it to that API. Everything else about the token works as usual — RLS, `filters`, `roles`, `securityContext`, `variables` and `savedVersion` all apply to the export exactly as they would to an embedded dashboard.
+To export a dashboard with the [Dashboard Export API](/deployment/dashboard-export), request a token with **`export: true`** and pass it to that API. Everything else about the token works as usual — RLS, `filters`, `roles`, `securityContext` and `savedVersion` all apply to the export exactly as they would to an embedded dashboard. Pass `variables` in the export request.
 
 Export tokens and normal embedding tokens are **not interchangeable**:
 

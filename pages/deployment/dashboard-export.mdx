@@ -297,9 +297,10 @@ A few things to know when you're generating many PDFs — for example, one repor
 |--------|---------|
 | `202 Accepted` | The export job was created. The body contains the `jobId`. |
 | `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, when the dashboard's components are below the [minimum SDK versions](#sdk-versions), or when a `heightMode: "auto"` request is made against components below the [auto-height minimums](#minimum-sdk-versions-for-auto-height). |
-| `403 Forbidden` | An `export: true` token was used somewhere other than this API. Export tokens can only be used with the Dashboard Export API. |
 | `404 Not Found` | No job with that `jobId` exists in your workspace. |
 | `429 Too Many Requests` | The workspace has too many exports in flight. Retry after the delay in the `Retry-After` header. |
+
+If you use an `export: true` token in your `<em-beddable>` element, the request fails with `403 Forbidden`. Export tokens can only be used with the Dashboard Export API.
 
 ## Full example — start, poll, download
 

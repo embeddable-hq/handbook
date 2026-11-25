@@ -177,7 +177,7 @@ cubes:
       - name: total_price
         title: "Total USD"
         type: sum
-        sql: price_in_cents / 100.0
+        sql: price_usd
 
     dimensions:
       - name: id
@@ -214,7 +214,7 @@ Data modeling may seem slightly daunting at first, but there’s just a few simp
   ```yml
       sql_table: public.orders
   ```
-- The `measures` are the metrics we want to be able to calculate (`count`, `sum`, `count_distinct`, `max`, `min` etc.).   You can expect to see these in the `SELECT` and `HAVING` clauses of the generated SQL. E.g. `SELECT sum(price_in_cents / 100.0)`
+- The `measures` are the metrics we want to be able to calculate (`count`, `sum`, `count_distinct`, `max`, `min` etc.).   You can expect to see these in the `SELECT` and `HAVING` clauses of the generated SQL. E.g. `SELECT sum(price_usd)`
   ```yml
       measures:
       - name: count
@@ -224,7 +224,7 @@ Data modeling may seem slightly daunting at first, but there’s just a few simp
       - name: total_price
         title: "Total USD"
         type: sum
-        sql: price_in_cents / 100.0
+        sql: price_usd
   ```
 - The `dimensions` are the **virtual columns** that we want to expose to the Embeddable dashboard builder
   ```yml
@@ -338,7 +338,7 @@ And that’s it.  You now understand how to create basic model files and how tho
 - you can also learn more about:
     - joins ([here](/data-modeling/writing-data-models/joins))
     - row-level security ([here](/data-modeling/row-level-security/introduction))
-    - caching ([here](/data-modeling/caching/in-memory))
+    - caching ([here](/data-modeling/caching/introduction))
 
 Let us know on slack if you get stuck.  We’re here to help 😊.
 

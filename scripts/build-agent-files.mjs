@@ -49,11 +49,14 @@ async function sidebarInfo(route) {
   return { order, title, external }
 }
 
-const absolute = (text) =>
-  text.replace(/\]\(\/(?!\/)/g, `](${SITE}/`).replace(/(src|href)="\/(?!\/)/g, `$1="${SITE}/`)
+const absolute = (text, route) =>
+  text
+    .replace(/\]\(\/(?!\/)/g, `](${SITE}/`)
+    .replace(/(src|href)="\/(?!\/)/g, `$1="${SITE}/`)
+    .replace(/\]\((?![a-z][a-z0-9+.-]*:|#|\/)([^)\s]+)\)/gi, (_, href) => `](${new URL(href, SITE + route).href})`)
 
 // MDX to plain Markdown. Code fences are left exactly as they are.
-async function toMarkdown(content) {
+async function toMarkdown(content, route) {
   const faqs = (await readJson('pages/faqs.json')).faqs ?? []
   const changelog = await readJson('pages/component-libraries/remarkable-pro/changelog.json')
   const expanded = content
@@ -95,7 +98,7 @@ async function toMarkdown(content) {
     s = s.replace(/<[A-Z][A-Za-z]*\b[^<]*?\/>/g, '') // other self-closing components, e.g. ImageGrid
     s = s.replace(/<\/?[A-Z][A-Za-z]*\b[^>]*>/g, '') // wrappers such as Steps, CardGrid: keep their text
     s = s.replace(/<br\s*\/?>/g, '')
-    return absolute(s).replace(/\u0000(\d+)\u0000/g, (_, i) => inline[i])
+    return absolute(s, route).replace(/\u0000(\d+)\u0000/g, (_, i) => inline[i])
   })
   return out.join('').replace(/\n{3,}/g, '\n\n').trim()
 }
@@ -113,7 +116,7 @@ for (const file of await globby('pages/**/*.{md,mdx}')) {
     order,
     title: data.title && data.title !== 'Home' ? data.title : h1 ?? title ?? route,
     description: data.description ?? '',
-    body: await toMarkdown(content),
+    body: await toMarkdown(content, route),
   })
 }
 pages.sort((a, b) => {

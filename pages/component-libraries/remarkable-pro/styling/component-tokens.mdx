@@ -26,11 +26,11 @@ Visit the [Remarkable Pro showcase](https://remarkable.embeddable.com/) to see h
 ```ts
 '--em-{component}-{property}'
 '--em-{component}-{property}[--{variant}]'
-'—-em-{component}-{property}[—-{state}]'
-'—-em-{component}-{slot}-{property}'
-'—-em-{component}-{slot}-{property}[—-{variant}]'
-'—-em-{component}-{slot}-{property}[—-{state}]'
-'—-em-{component}-{slot}-{property}[—-{size}]'
+'--em-{component}-{property}[--{state}]'
+'--em-{component}-{slot}-{property}'
+'--em-{component}-{slot}-{property}[--{variant}]'
+'--em-{component}-{slot}-{property}[--{state}]'
+'--em-{component}-{slot}-{property}[--{size}]'
 ```
 
 ## Pattern breakdown
@@ -167,7 +167,7 @@ Used in `src/components/charts/lines/lines.utils.ts`
 - `--em-linechart-point-size` (Default: `var(--em-core-size--0200)`)
 - `--em-linechart-point-size--hover` (Default: `var(--em-core-size--0300)`)
 
-#### Pie Charts (default, donut, TODO)
+#### Pie Charts (default, donut)
 
 Used in `src/components/charts/pies/pies.utils.ts`
 
@@ -328,8 +328,8 @@ Used in `src/components/shared/Field/FieldFeedback.module.css`
 
 Used in `src/components/shared/GhostButton/GhostButton.module.css`
 
-- `--em-ghostbutton-background--active` (Default: `var(--em-sem-background--light)`)
-- `--em-ghostbutton-background--hover` (Default: `var(--em-sem-background)`)
+- `--em-ghostbutton-background--active` (Default: `var(--em-sem-background--subtle)`)
+- `--em-ghostbutton-background--hover` (Default: `var(--em-sem-background--light)`)
 - `--em-ghostbutton-border-radius` (Default: `var(--em-core-border-radius--100)`)
 - `--em-ghostbutton-color` (Default: `var(--em-sem-text)`)
 - `--em-ghostbutton-color--disabled` (Default: `var(--em-sem-text--subtle)`)
@@ -347,7 +347,7 @@ Used in `src/components/shared/GhostButton/GhostButton.module.css`
 
 Used in `src/components/shared/Overlay/Overlay.module.css`
 
-- `--em-overlay-background` (Default: `rgb(33 33 41 / 80%)`)
+- `--em-overlay-background` (Default: `rgb(33 33 41 / 90%)`)
 
 #### Skeleton
 
@@ -381,10 +381,10 @@ Used in `src/components/editors/selects/shared/SelectFieldContent/SelectFieldCon
 - `--em-selectfield-content-border-radius` (Default: `var(--em-core-border-radius--300)`)
 - `--em-selectfield-content-max-height` (Default: `320px`)
 - `--em-selectfield-content-max-width` (Default: `400px`)
-- `--em-selectfield-content-opacity--loading` (Default: `50px`)
+- `--em-selectfield-content-opacity--loading` (Default: `0.5`)
 - `--em-selectfield-content-padding` (Default: `var(--em-core-spacing--0200)`)
 - `--em-selectfield-content-shadow-blur` (Default: `var(--em-core-shadow-blur)`)
-- `--em-selectfield-content-shadow-color` (Default: `rgb(33 33 41 / 25%)`)
+- `--em-selectfield-content-shadow-color` (Default: `var(--em-core-shadow-color)`)
 - `--em-selectfield-content-shadow-position-x` (Default: `var(--em-core-shadow-position-x)`)
 - `--em-selectfield-content-shadow-position-y` (Default: `var(--em-core-shadow-position-y)`)
 - `--em-selectfield-content-shadow-spread` (Default: `var(--em-core-shadow-spread)`)

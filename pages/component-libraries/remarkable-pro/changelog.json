@@ -387,7 +387,7 @@
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.11",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.11",
     "notes": [
-      "Added an `ignoreEmptyData` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
+      "Added an `ignoreEmptyDate` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
     ]
   },
   {

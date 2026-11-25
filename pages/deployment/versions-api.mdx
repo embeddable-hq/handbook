@@ -85,7 +85,7 @@ POST https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved
 ```
 
 - **`{version}`** — the saved version number to publish, e.g. `v3`. Must be a version number, not a tag name.
-- **`{embeddableId}`** — the UUID of the dashboard.
+- **`{embeddableId}`** — the UUID of the dashboard, or the dashboard name for [dashboards as code](/dashboards/dashboards-as-code).
 
 ### Request Body
 
@@ -136,6 +136,7 @@ Returns the updated tag map for the dashboard:
 | HTTP | Error Code | Cause |
 |------|-----------|-------|
 | `400` | `BUILDER-172` | `{version}` is a tag name (e.g. `production`) instead of a version number (e.g. `v3`). |
+| `400` | `BUILDER-119` | One or more values in `tags` are disabled environment tags for this workspace. |
 | `400` | `BUILDER-996` | `tags` array is empty or missing. |
 | `404` | `BUILDER-117` | One or more values in `tags` are not valid environment tags for this workspace. |
 | `404` | `BUILDER-120` | The saved version number does not exist for this dashboard. |
@@ -191,7 +192,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
   .then(console.log);
 ```
 
-`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`).
+`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`), or a tag such as `production`. `{embeddableId}` is the UUID of the dashboard, or the dashboard name for [dashboards as code](/dashboards/dashboards-as-code).
 
 ### Example Response
 
@@ -229,5 +230,5 @@ Returns the dashboard's definition in the same JSON shape as its YAML [dashboard
 ## Related Topics
 
 - **[Token Targeting](/deployment/tokens-api)**: How to use saved versions in your Embeddable tokens.
-- **[Promotion Strategies](/deployment/versions#savedversion-strategies)**: Best practices for managing and promoting dashboard
+- **[Promotion Strategies](/deployment/versions#saved-versions-via-the-api)**: Best practices for managing and promoting dashboard versions.
 

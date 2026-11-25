@@ -70,7 +70,8 @@ Status 204 (No Content)
    - `securityContext`: (required) a JSON object [passed to your data models](/data-modeling/row-level-security/sql-based-security) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
    - `filters`: optional. An array of filter objects (each with `member`, `operator`, and `values`) matching those passed to the [Tokens API](/deployment/tokens-api). Ensures the cache is built with the correct filters applied for that security context.
    - `environment`: (required) the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
-   - `timezone` is the timezone you want the pre-aggregation to be built for.  When your components call [loadData](/component-libraries/build-components/loading-data), they can **only** use pre-aggregations that match their `timezone`.  Timezone must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC' if omitted.
+   - `timezones`: (optional) an array of timezones you want the pre-aggregation to be built for.  When your components call [loadData](/component-libraries/build-components/loading-data), they can **only** use pre-aggregations that match their `timezone`.  Each timezone must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC' if omitted.
+   - `roles`: (optional) an array of [access policy](/data-modeling/row-level-security/access-policies) roles to use for all security contexts in the request. Defaults to `default` if omitted.
 
 If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.  Cube will therefore build the requested pre-aggregation on-demand, which may take some time.
 
@@ -78,4 +79,6 @@ If you load a dashboard using a security token containing a security context tha
 `Non-scheduled` security contexts are built once. Cube won’t refresh them or check their refresh keys.
 </Callout>
 
-Each time you call this it will **override** the previous settings. For example, if you want to stop a security context from refreshing, just call the API again with all security contexts except the one you want to stop.
+Each time you call this it will **override** the previous settings. For example, if you want to stop a security context from refreshing, just call the API again with all security contexts except the one you want to stop. If you omit `scheduledRefreshContexts`, the existing security contexts are kept and only `embeddables` and `roles` are updated.
+
+To read the current settings, call `GET /api/v1/caching/refresh-contexts`. To read, replace or delete the settings of one environment only, call `GET`, `PUT` or `DELETE` on `/api/v1/caching/refresh-contexts/environments/{environment}`.

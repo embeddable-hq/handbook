@@ -106,7 +106,7 @@ This approach lets **no-code users** decide **which data to load**, while your c
 
 ## Parameters
 
-Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/component-libraries/build-components/defining-components#inputmeta-definition) in your `.emb.ts` file.
+Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/component-libraries/build-components/define-component-function#inputmeta-definition) in your `.emb.ts` file.
 
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
@@ -137,7 +137,7 @@ OFFSET <offset>
 - `from` is a `Dataset` which is defined in the no-code builder.  It defines which [data model](/data-modeling/writing-data-models/defining-models) to use, as well as any filters that should be applied to the query.
 
 
-- `select` is an array of [dimensions](/data-modeling/writing-data-models/dimensions-and-measures#dimensions), [measures](/data-modeling/writing-data-models/dimensions-and-measures#dimensions) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
+- `select` is an array of [dimensions](/data-modeling/writing-data-models/dimensions-and-measures#dimensions), [measures](/data-modeling/writing-data-models/dimensions-and-measures#measures) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
 
   ```ts
   select: [
@@ -242,6 +242,10 @@ Depending on whether a filter applies to a dimension or measure, Embeddable tran
     value: ["2025-01-01"] // an array of one element in YYYY-MM-DD format
   }
   ```
+
+<Callout emoji="⚠️">
+The SDK `FilterOperator` type does not include `set`, `notSet`, `onTheDate`, `beforeOrOnDate` and `afterOrOnDate`, so TypeScript reports an error for them. They work at runtime. To use them, cast the operator, for example `operator: 'set' as any`.
+</Callout>
 
 ## A Full Example
 
@@ -412,7 +416,7 @@ Here, `mainResults` and `secondaryResults` each return their own `isLoading`, `e
 
 ## Loading Data Dynamically
 
-Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/component-libraries/build-components/defining-components#definecomponent-config-reference). 
+Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/component-libraries/build-components/define-component-function#3-config). 
 
 ### 1. Pagination Example
 

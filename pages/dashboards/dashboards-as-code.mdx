@@ -13,7 +13,7 @@ This is the recommended approach when you want a **single source of truth** for 
 <ImageGrid width='100%' images={["/img/dashboards-as-code/in-code-editor.png"]}/>
 
 <Callout emoji="💡">
-To use dashboards as code, you must be on the latest Embeddable SDKs. To update, you can run `npm run embeddable:upgrade` and then `npm i` in your project, and it will install the latest versions of all Embeddable packages. If you have any issues or questions during the upgrade process, please reach out to the Embeddable team for support.
+To use dashboards as code, you must be on the latest Embeddable SDKs. To update, you can run `npm run embeddable:upgrade` and then `npm i` in your project, and it will install the latest versions of all Embeddable packages. If you have any issues or questions during the upgrade process, please reach out to the Embeddable team for support. Editing visually in the local builder needs `@embeddable.com/sdk-core` 4.8.0 or later.
 </Callout>
 
 You can [find a complete introductory tutorial here](/video-tutorials/quick-hits/dashboards-as-code), including both video and text. Below is a more detailed reference for the feature.
@@ -32,11 +32,11 @@ You can [find a complete introductory tutorial here](/video-tutorials/quick-hits
 
 ### Define your dashboard in a `<dashboard-name>.embeddable.yml` file
 
-Add a file like `my-dashboard.embeddable.yml` anywhere in your repo. The root key is `embeddables`, and each entry defines one dashboard:
+Add a file like `my-dashboard.embeddable.yml` anywhere under your `src/` folder. The root key is `embeddables`, and each entry defines one dashboard:
 
 ```yaml
 embeddables:
-  - name: my-embeddable # Cannot contains spaces
+  - name: my-embeddable # Cannot contain spaces
     title: My Embeddable # Can contain spaces, shown in the workspace
     variables:
       - name: date-range
@@ -287,7 +287,7 @@ export default defineConfig({
 
 ## Constraints
 
-- Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
+- Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable Pro](/component-libraries/remarkable-pro/introduction)). They cannot reference models or dashboards defined only in the platform.
 - Once pushed, coded dashboards can't be edited in the **workspace** builder — the code stays the source of truth. To change one, edit its `<dashboard-name>.embeddable.yml` (directly, or visually in the local builder — see [Editing locally](#editing-locally)) and push again.
 - Coded dashboards can't be **deleted** from the workspace builder either — remove the dashboard from its `<dashboard-name>.embeddable.yml` file (or delete the file) in your repo and push again.
 

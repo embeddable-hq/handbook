@@ -105,7 +105,7 @@ export const meta = {
       events: [{ name: 'onChange', property: 'value' }], // On the 'onChange' event, update the 'chosen value' variable with the 'value' property from the event
     },
   ],
-} as const satisfies EmbeddedComponentMeta;;
+} as const satisfies EmbeddedComponentMeta;
 
 export default defineComponent(Component, meta, {
   props: (inputs: Inputs<typeof meta>) => {
@@ -183,9 +183,9 @@ export default (props: Props) => {
 #### Usage Flow
 
 1. **Add Component**: A teammate drags the **BasicDropdownComponent** onto the canvas in the builder, choosing a dataset and picking a dimension.
-2. **Auto-Created Variable**: A variable named `chosenValue` is automatically added to the builder’s variable list and connected to the `defaultValue` input.
+2. **Auto-Created Variable**: A variable named `chosen value` is automatically added to the builder’s variable list and connected to the `defaultValue` input.
 3. **Data Loading**: The chosen dimension’s values are fetched and passed to the React component. `defaultValue` is also passed to the component - this may be empty or have an initial value (e.g. 'United States'), depending on what's been defined in the no-code builder.
-4. **Interactivity**: When an end-user selects an option from the dropdown, `onChange` fires, updating `chosenValue`. Other components (or filters) referencing `chosenValue` immediately respond - for instance, filtering a dataset by that value.
+4. **Interactivity**: When an end-user selects an option from the dropdown, `onChange` fires, updating `chosen value`. Other components (or filters) referencing `chosen value` immediately respond - for instance, filtering a dataset by that value.
 
 The result is a **reusable** dropdown that non-technical users can drop into dashboards. The dropdown logic remains local to your React component, while the no-code builder manages hooking up the selected value to one or multiple charts or datasets.
 
@@ -354,7 +354,7 @@ This flow shows how **no-code configuration** meets **full-code logic**, letting
 
 ## `filters`: a native variable type
 
-Alongside `text`, `number`, `time`, and the rest, Embeddable supports a native **`filters`** variable type. Where a normal variable holds a single value, a `filters` variable holds an entire filter *expression* — one or more conditions combined with `AND`/`OR`, including nested groups. This is what powers filter-builder style components, letting an end user construct arbitrary filter logic (e.g. “Country equals *United States* AND (Status equals *Active* OR Status equals *Pending*)”) and apply the whole thing to a dataset in one go.
+Alongside `string`, `number`, `time`, and the rest, Embeddable supports a native **`filters`** variable type. Where a normal variable holds a single value, a `filters` variable holds an entire filter *expression* — one or more conditions combined with `AND`/`OR`, including nested groups. This is what powers filter-builder style components, letting an end user construct arbitrary filter logic (e.g. “Country equals *United States* AND (Status equals *Active* OR Status equals *Pending*)”) and apply the whole thing to a dataset in one go.
 
 ### The `Filters` shape
 
@@ -397,7 +397,7 @@ type Filters =
   | { operator: 'and' | 'or' | 'AND' | 'OR'; clauses: Filters[] };
 ```
 
-See [Available Filter Operators](/component-libraries/build-components/loading-data#available-filter-operators) for what each of these means.
+See [Available Filter Operators](/component-libraries/build-components/loading-data#available-filter-operators) for what each of these means, and for a TypeScript note about `set`, `notSet`, `onTheDate`, `beforeOrOnDate` and `afterOrOnDate`.
 
 Because `clauses` can itself contain nested groups, you can build arbitrarily deep AND/OR logic. For example:
 

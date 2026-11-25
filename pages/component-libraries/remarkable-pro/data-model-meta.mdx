@@ -22,12 +22,14 @@ Control how values are displayed across all charts. These can be overridden per-
 | `currency` | Number | Currency code (e.g. `USD`, `GBP`, `EUR`) |
 | `abbreviateLargeNumber` | Number | Abbreviate large values (e.g. `1.2k`, `3.4M`) |
 | `granularity` | Time | Date label format only (e.g. `month` shows month and year). Does not change the query granularity |
+| `displayNullAs` | All types | Text shown when the value is null |
+| `displayFormat` | All types | Show the value as `Json` (pretty-printed) or `Markdown` |
 
 See [Formatting](/component-libraries/remarkable-pro/formatting) for full details and examples.
 
 ### "Other" bucket aggregation (`aggType`)
 
-When a chart limits results to N items (via `maxItems`), the remaining rows are collapsed into an **"Other"** bucket. By default this is calculated by **summing** the tail values — correct for `sum` and `count` measures, but wrong for `avg`, `min`, and `max`.
+When a chart limits results to N items (via **Max x-axis items**, **Max y-axis items** or **Max legend items**), the remaining rows are collapsed into an **"Other"** bucket. By default this is calculated by **summing** the tail values — correct for `sum` and `count` measures, but wrong for `avg`, `min`, and `max`.
 
 Use `aggType` to control how the "Other" bucket is calculated:
 
@@ -49,7 +51,7 @@ measures:
 
 If `aggType` is not set, the "Other" bucket falls back to **sum**.
 
-Applies to: Bar chart, Bar+Line chart, Pie chart.
+Applies to: Bar chart, Bar+Line chart, Pie chart, Line chart, grouped Line chart. Grouped and stacked charts only add an "Other" bucket for `sum` and `count` measures (or when `aggType` is not set).
 
 <Callout type="warning" emoji="⚠️">
   `count_distinct` and `count_distinct_approx` measures cannot produce a correct "Other" bucket value. Distinct counts cannot be recalculated from pre-aggregated data — summing distinct counts across groups would double-count values that appear in multiple groups.

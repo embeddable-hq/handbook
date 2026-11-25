@@ -59,11 +59,12 @@ You can disable the import of any chart or control from the package by specifyin
 ```tsx
 export default defineConfig({
   plugins: [react],
-  // don't import the default vanilla pie chart or pivot table
+  // don't import the default vanilla bar chart or date range picker
   componentLibraries: [{
     name: '@embeddable.com/vanilla-components',
     exclude: ['BarChart', 'DateRangePicker'],
   }],
+});
 ```
 
 With these components excluded, you can copy your components over to the new folder and they’ll work in Embeddable as expected. Note: these components will *not* be using themes … yet. You can adjust them to do so. [See **Using Themes** for full details](theming).
@@ -72,7 +73,7 @@ With these components excluded, you can copy your components over to the new fol
 
 This allows you to retain every single packaged Vanilla chart *and* use your charts as well, but it comes with a serious complication.
 
-Let’s say you heavily modified the Vanilla Components `v0` pie chart, and for this example let’s say your company name is “CloseBrace” - you could rename your pie chart folder to CloseBracePieChart and rename `PieChart.emb.ts` to `CloseBracePieChart.ts`. Then update the `name` and `label` values inside `CloseBracePieChart.emb.ts` to `CloseBracePieChart` and `CloseBrace Pie Chart` respectively.
+Let’s say you heavily modified the Vanilla Components `v0` pie chart, and for this example let’s say your company name is “CloseBrace” - you could rename your pie chart folder to CloseBracePieChart and rename `PieChart.emb.ts` to `CloseBracePieChart.emb.ts`. Then update the `name` and `label` values inside `CloseBracePieChart.emb.ts` to `CloseBracePieChart` and `CloseBrace Pie Chart` respectively.
 
 Copy all of that over from your original repo to the boilerplate repo, and now you have both the Vanilla Components default Pie Chart, and your modified pie chart.
 

@@ -1,5 +1,5 @@
 ---
-title: "Theming (Vanilla Components, deprecated)"
+title: "Legacy: Theming Vanilla Components"
 description: "Deprecated. Control Vanilla Components styling through a single TypeScript theme object."
 ---
 
@@ -18,7 +18,7 @@ Theming Vanilla Components is a straightforward approach to styling your dashboa
 />
 
 <Callout emoji="⚠️">
-  Were you working with the previous version of Vanilla components that required you to clone that entire repo? [Go here for full instructions on switching!](theme-welcome.mdx)
+  Were you working with the previous version of Vanilla components that required you to clone that entire repo? [Go here for full instructions on switching!](theme-welcome)
 </Callout>
 
 ### The Basics
@@ -252,13 +252,13 @@ There are two ways to access themes in your components. The first is through CSS
 The good news is: you don’t have to create or update all of these yourself. In fact, you don’t have to update *any* of them yourself. They’re auto-generated. All of these variables are prefaced with `embeddable` to help avoid conflicts, and they are structured exactly like the theme object. Here is a very small example of them:
 
 ```css
---embeddable-brand-primary: '#0066FF';
---embeddable-controls-backgrounds-colors-transparent: 'transparent';
---embeddable-controls-buttons-fontSize: '14px;
---embeddable-font-color: '#888888';
+--embeddable-brand-primary: #0066FF;
+--embeddable-controls-backgrounds-colors-transparent: transparent;
+--embeddable-controls-buttons-fontSize: 14px;
+--embeddable-font-color: #888888;
 ```
 
-These variables are injected into the Embeddable at build time and are available to all components, whether they come from our Vanilla library or are custom-written by your team. You can leverage these variables using Tailwind, like the Vanilla Components do, or in any other capacity you’d like.
+These variables are injected into the Embeddable at runtime, by the `onThemeUpdated` lifecycle hook, and are available to all components, whether they come from our Vanilla library or are custom-written by your team. You can leverage these variables using Tailwind, like the Vanilla Components do, or in any other capacity you’d like.
 
 **Theme Provider**
 

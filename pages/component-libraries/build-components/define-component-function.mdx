@@ -25,7 +25,7 @@ When you call `defineComponent` in your `.emb.ts` file, you pass in three argume
 | ----------- | --------- | ------------ |
 | `component` | Component | ✅ Yes       |
 | `meta`      | [Meta](#2-meta)      | ✅ Yes       |
-| `config`    | [Config](#3-config)   | ✅ Yes       |
+| `config`    | [Config](#3-config)   | ❌ No        |
 
 
 - **`component`**: your React component.
@@ -59,7 +59,7 @@ import Component from './index';
     autoHeight: true,
     inputs: [...],
     events: [...],
-    variables [...],
+    variables: [...],
   } as const satisfies EmbeddedComponentMeta;
 ```
 
@@ -67,6 +67,8 @@ import Component from './index';
 | --------------- | ----------------- | ------------ |
 | `name`          | string            | ✅ Yes       |
 | `label`         | string            | ✅ Yes       |
+| `description`   | string            | ❌ No        |
+| `category`      | string            | ❌ No        |
 | `classNames`    | string[]          | ❌ No        |
 | `defaultWidth`  | number            | ❌ No        |
 | `defaultHeight` | number            | ❌ No        |
@@ -122,7 +124,7 @@ export const meta: EmbeddedComponentMeta = {
 | `label`       | string                                 | ✅ Yes       |
 | `description` | string                                 | ❌ No        |
 | `defaultValue`| any                                    | ❌ No        |
-| `config`      | object                                 | ❌ No        |
+| `config`      | object                                 | ❌ No (✅ Yes, with `dataset`, for `dimension`, `measure` and `dimensionOrMeasure` inputs) |
 | `array`       | boolean                                | ❌ No        |
 | `category`    | string                                 | ❌ No        |
 | `required`    | boolean                                | ❌ No        |
@@ -136,7 +138,7 @@ export const meta: EmbeddedComponentMeta = {
 - **`category`**: Assigns an optional grouping for this input in the builder UI. Inputs sharing the same category appear together.
 - **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. A common use-case includes specifying the dataset for `dimension` or `measure` inputs and limiting the options that display based on their type.
-- **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
+- **`array`**: Allows users in the builder to **select or add multiple values**. Applies to any input type, for example `dimension`, `measure`, and `string`. 
 - **`inputs`**: allows you to define sub-inputs for a given input.  Can **only** be applied to inputs of `type` "dimension", "measure", or "dimensionOrMeasure". Learn more [below](#subinputmeta-definition).
 
 #### `SubInputMeta` definition
@@ -151,6 +153,7 @@ export const meta: EmbeddedComponentMeta = {
         {
             name: 'ds',
             type: 'dataset',
+            label: 'Dataset',
             required: true
         },
         {
@@ -176,9 +179,10 @@ export const meta: EmbeddedComponentMeta = {
               {
                 name: 'prefix',
                 type: 'string',
+                label: 'Prefix',
                 supportedTypes: ['string']
               }
-            ]
+            ],
             config: {
               dataset: 'ds',
             }
@@ -275,12 +279,13 @@ When defining `inputs` in your `.emb.ts` file, you can select from a set of **na
 - **`dataset`** lets users pick a **dataset** in the builder.
 - **`measure`** represents a [**measure**](/data-modeling/writing-data-models/dimensions-and-measures) (count, sum, etc.), as defined in your data models.
 - **`dimension`** represents a [**dimension**](/data-modeling/writing-data-models/dimensions-and-measures) (e.g. group by country or category), as defined in your data models.
-- **`granularity`** for grouping time dimensions in [`loadData`](/component-libraries/build-components/loading-data#types).   
+- **`granularity`** for grouping time dimensions in [`loadData`](/component-libraries/build-components/loading-data#params).   
     ```ts
     const g: Granularity = 'day'
     // or 'week', 'month', 'year', etc.
     ```
 - **`dimensionOrMeasure`** represents an input that can be **either** a dimension **or** a measure, letting the user choose in the builder.
+- **`filters`** holds a list of filters that you can apply to a dataset. Learn more about [`filters`](/component-libraries/build-components/interactivity#filters-a-native-variable-type).
 
 If you need more specialized behavior than these native types provide (e.g., custom date pickers or advanced styling), you can define **custom types** along with a custom editor. These built-in types, however, cover most standard use cases for text, numbers, booleans, time inputs, and data references.
 
@@ -360,12 +365,14 @@ export const meta: EmbeddedComponentMeta = {
 | -------------- | ------------------------------ | ------------ |
 | `name`         | string                         | ✅ Yes       |
 | `type`         | `CustomType` or `NativeType`   | ✅ Yes       |
+| `array`        | boolean                        | ❌ No        |
 | `defaultValue` | any                            | ❌ No        |
 | `inputs`       | string[]                       | ❌ No        |
 | `events`       | [`EventRef[]`](#eventref-definition)               | ❌ No        |
 
 - **`name`**: The variable’s name when auto-created in the builder.
 - **`type`**: The variable type (`string`, `boolean`, etc.).
+- **`array`**: Set to `true` if the variable holds a list of values.
 - **`defaultValue`**: The initial value for the variable.
 - **`inputs`**: A list of inputs whose value should be linked to the variable. The names must match the name of an input defined in `inputs.name` in your `meta`.
 - **`events`**: If you want certain events to update this variable’s value.
@@ -388,7 +395,7 @@ export const meta: EmbeddedComponentMeta = {
 
 | **Param** | **Type**                                                       | **Required** |
 | --------- | -------------------------------------------------------------- | ------------ |
-| `props`   | `(inputs: Inputs<typeof meta>, [state, setState], clientContext) => any` | ✅ Yes       |
+| `props`   | `(inputs: Inputs<typeof meta>, [state, setState], clientContext) => any` | ❌ No        |
 | `events`  | `{ [eventName: string]: (payload: any) => any }`               | ❌ No        |
 
 - **`props(inputs, [state, setState], clientContext)`**  

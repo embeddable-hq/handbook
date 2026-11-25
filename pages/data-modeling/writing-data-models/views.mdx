@@ -106,12 +106,12 @@ views:
 
 Things to notice:
 
-- `views` Even though views have the same file structure as cubes (i.e. their file must end in `.cube.yml`), the root of the file starts with `views` instead of `cubes`.
+- `views` Even though views have the same file structure as cubes (i.e. their file must end in `.cube.yml` (or `.cube.yaml`)), the root of the file starts with `views` instead of `cubes`.
 - `name` This is the unique name used internally by Embeddable and Cube to reference this View. Updating it once it’s in use can potentially break your dashboards.
 - `title` This is an optional, human-readable name that appears in the UI. You can change it anytime without impacting the underlying logic.
 - `cubes` This lists the cubes that you want to give access to in your View.
 - `join_path` In its simplest form this is the name of the cube to include in the View, but you can use dot-notation to tell Cube which join path to use when querying members (dimensions and measures) of this model.  Learn more [here](/data-modeling/writing-data-models/views#join-paths).
-- `prefix` Setting this to `true` will prefix the `name` of all the members (dimensions and members) of this model with the model `name` (e.g. turning `created_at` in `products` into `products_created_at`).  This is quite useful as it avoids conflicts where two models have members with the same name (e.g. `customers` and `products` may both have a measure named `count`).  You can also solve this conflict problem by defining an `alias`.  Learn more [here](/data-modeling/writing-data-models/views#alias-and-title).
+- `prefix` Setting this to `true` will prefix the `name` of all the members (dimensions and measures) of this model with the model `name` (e.g. turning `created_at` in `products` into `products_created_at`).  This is quite useful as it avoids conflicts where two models have members with the same name (e.g. `customers` and `products` may both have a measure named `count`).  You can also solve this conflict problem by defining an `alias`.  Learn more [here](/data-modeling/writing-data-models/views#alias-and-title).
 - `includes` this lists the members (dimensions and measures) that you want to include in the View.  `"*"` means **include all**.  Below we show how to explicitly include specific members.
 
 ### Includes
@@ -201,7 +201,7 @@ In this example:
 - All members of the `orders` cube must include a direct join from `customers` , even if no members from the customers cube are requested.
 - All members of the `products` cube must include a join from `customers` via `orders` even if only members of the products cube are requested.
 
-E.g a query requesting just the `product_count` would generate the following SQL: 
+E.g a query requesting just the `products_count` would generate the following SQL: 
 
 ```sql
 SELECT
@@ -260,6 +260,6 @@ views:
               values: ["{ securityContext.user_id }"]
 ```
 
-The above `access_policy`, for example, gives every end-user with the “default” role, access to **all** members of the `customers_view` view, but it restricts them to only access the rows whose `customers_id` is equal to a given `user_id` in the `securityContext`.
+The above `access_policy`, for example, gives every end-user with the “default” role, access to **all** members of the `customer_view` view, but it restricts them to only access the rows whose `customers_id` is equal to a given `user_id` in the `securityContext`.
 
 Learn more [here](/data-modeling/row-level-security/access-policies).

@@ -39,7 +39,7 @@ Pre-aggregations can currently only be defined in code, not in the in-platform *
 
 To set up a pre-aggregation you need to do three simple steps:
 
-1. define any pre-aggegregations directly in your model files (see example below)
+1. define any pre-aggregations directly in your model files (see example below)
 
 2. define a refresh schedule using the **refresh_key** within your pre-aggregation. Learn more about refreshing pre-aggregations [here](/data-modeling/caching/level-2-cache/pre-aggregations#refreshing-pre-aggregations).
 
@@ -107,7 +107,7 @@ Now that a pre-aggregation exists, any incoming data requests from your componen
 
 So, the following query, from, say, a dropdown component, that wants to show a list of countries, can certainly use the above pre-aggregation, so it will 👍 (and thus it won’t hit your database).
 
-```sql
+```json
 {
     "query": {
         "dimensions": [
@@ -122,7 +122,7 @@ So, the following query, from, say, a dropdown component, that wants to show a l
 
 Whereas the below query is asking for the same data (`customers.country`), but it wants to filter by the `signed_up_at` dimension.  That dimension **is not** in the pre-aggregation, so there is **not** enough information in the pre-aggregation to serve this query, thus the query will not use the pre-aggregation and will instead go directly to your database.
 
-```sql
+```json
 {
     "query": {
         "dimensions": [
@@ -157,7 +157,7 @@ p565c35d4728de3a1d2942475fe26095d2b0b7224de.user_actions_total_daily_action_coun
 
 ### In the Data Playground
 
-In the **Embeddable [Data Playground](https://docs.embeddable.com/data-modeling/testing-models)**, the generated SQL preview will show the pre-aggregation table name in the `FROM` clause. This confirms that your query is using the pre-aggregated table.
+In the **Embeddable [Data Playground](/data-modeling/testing-models)**, the generated SQL preview will show the pre-aggregation table name in the `FROM` clause. This confirms that your query is using the pre-aggregated table.
 
 <ImageGrid images={["/img/dataplayground_preaggregation-min.png"]}/>
 
@@ -175,7 +175,7 @@ In the video below, you’ll see that the **TableChart** we created shows the sa
 
 ## Why do queries sometimes not use my pre-aggregations?
 
-Importantly, if you want a query to use pre-aggregations, rather than hit your database, it must match **exactly one pre-aggregation** (even if you have defined multiple in your models)**.** A query **cannot** combine the results of multiple pre-aggregations, or combine a pre-aggregation with data from your database.  Any given query must be fully answerable from a **single** pre-aggregation, otherwise the query will always skip pre-aggregations and go straight to your database (you can see detailed docs on the matching algorithm [here](https://cube.dev/docs/product/caching/matching-pre-aggregations)).
+Importantly, if you want a query to use pre-aggregations, rather than hit your database, it must match **exactly one pre-aggregation** (even if you have defined multiple in your models)**.** A query **cannot** combine the results of multiple pre-aggregations (except with [`rollup_join`](/data-modeling/caching/level-2-cache/advanced-pre-aggregations#rollup_join)), or combine a pre-aggregation with data from your database.  Any given query must be fully answerable from a **single** pre-aggregation, otherwise the query will always skip pre-aggregations and go straight to your database (you can see detailed docs on the matching algorithm [here](https://cube.dev/docs/product/caching/matching-pre-aggregations)).
 
 Let’s look at some common examples where people get tripped up:
 
@@ -337,7 +337,7 @@ For example this query:
 {
     "query": {
         "dimensions": [
-            "customers.id"
+            "customers.id",
             "customers.country"
         ],
         "measures": []
@@ -347,7 +347,7 @@ For example this query:
 
 is asking for the “id” and “country” dimensions.  This “country” dimension is in our pre-aggregation, but the “id” dimension is not. Cube will therefore go to your database instead to serve this query:
 
-```json
+```sql
 SELECT
   "customers".id "customers__id",
   "customers".country "customers__country"
@@ -621,7 +621,7 @@ You can also combine SQL with your specific time interval. This lets Cube check 
           sql: SELECT MAX(created_at) FROM public.customers
 ```
 
-In this example the query every hour. If the result has changed since the last run, the pre-aggregation is refreshed.
+In this example Cube runs the query every hour. If the result has changed since the last run, the pre-aggregation is refreshed.
 
 <Callout emoji="💡">
 You can’t combine a CRON string with `sql` in the same refresh key. Doing so will cause a compilation error.

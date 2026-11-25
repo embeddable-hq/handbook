@@ -154,7 +154,7 @@ The `POST` request above represents a `CREATE` action, but all `CRUD` operations
 To preview environments **before** publishing, you can create or update your `src/embeddable.com/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)) with entries specifying the `environment`:
    ```yaml
    - name: Example customer 1
-     environment: production
+     environment: prod
      securityContext:
        country: United States
 
@@ -164,7 +164,7 @@ To preview environments **before** publishing, you can create or update your `sr
        country: Germany
    ```
 
-In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **production** data.
+In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **prod** data.
 
 <ImageGrid images={["/img/security-context-preset.png"]}/>
 

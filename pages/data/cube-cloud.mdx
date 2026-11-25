@@ -26,7 +26,7 @@ To connect Cube Cloud, you’ll need to provide your `REST API Endpoint` and `AP
     <ImageGrid images={["/img/cube-api-credentials-min.png"]}/>
 
 2. **API Secret**  
-   - Under **Settings** → **Environment Variables** in Cube Cloud, look for **CUBEJS_API_Secret**.  
+   - Under **Settings** → **Environment Variables** in Cube Cloud, look for **CUBEJS_API_SECRET**.  
 
    <ImageGrid images={["/img/cube-env-min.png"]}/>
 
@@ -88,7 +88,7 @@ and you can [embed your dashboard](/deployment/embedding) by calling the [Tokens
 
 ```bash
 POST /api/v1/security-token
-  embbeddableId: '...',
+  embeddableId: '...',
   securityContext: { /* ... */ },
   #
   # other fields...

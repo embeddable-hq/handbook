@@ -60,7 +60,7 @@ How the field is compared to the values.
 | `set` | Member is **NOT NULL** (omit `values`). |
 | `notSet` | Member is **NULL** (omit `values`). |
 
-Authoritative list of operators is [here](https://github.com/cube-js/cube/blob/master/packages/cubejs-schema-compiler/src/compiler/CubeValidator.ts#L894-L917).
+Authoritative list of operators is [here](https://github.com/cube-js/cube/blob/v1.3.35/packages/cubejs-api-gateway/src/query.js#L117-L142).
 
 **`values`**
 
@@ -83,7 +83,7 @@ Examples:
 
 ## Testing your security filters
 
-To try out different filter configurations in the no-code builder, define presets in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
+To try out different filter configurations in the no-code builder, define presets in any `*.sc.yml` file under `src/` in your repo, e.g. `src/embeddable.com/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
 
 ```yaml
 - name: Nike

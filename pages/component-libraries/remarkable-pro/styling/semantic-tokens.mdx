@@ -4,7 +4,7 @@ description: "Apply your brand with semantic CSS tokens that describe a value's 
 
 # CSS Tokens – Semantic
 
-Semantic tokens form the *main theming layer* for Remarkable. They’re where most teams start when applying their brand**. 
+Semantic tokens form the *main theming layer* for Remarkable. They’re where most teams start when applying their brand. 
 
 Instead of focusing on raw colours, semantic tokens describe **what a value is used for** - such as default background, muted text, or error status.
 
@@ -107,7 +107,6 @@ Modifiers always use double-dash `--` and define nuance, state, or palette steps
 - **Used for primary interactive and hover surfaces**.  
 - Including:
   - Card background
-  - GhostButton background--hover
   - SelectField item-background--hover
   - SelectField trigger-background--hover
   - TableChart cell-background--hover
@@ -121,7 +120,7 @@ Modifiers always use double-dash `--` and define nuance, state, or palette steps
   - DateRangePicker accent-color
   - SelectField item-background--selected
   - SelectField trigger-background--filled
-  - Switch background--off
+  - Switch background--on
 
 `--em-sem-background--light`  
 - **Used for light emphasis and secondary surfaces**.  
@@ -135,7 +134,7 @@ Modifiers always use double-dash `--` and define nuance, state, or palette steps
   - Chart grid-label-color--light
   - Chart grid-line-color--light
   - DateRangePicker day-range-background
-  - GhostButton background--active
+  - GhostButton background--hover
   - SelectField item-background--active
   - SelectField trigger-background--active
   - Switch thumb-background--disabled
@@ -169,9 +168,10 @@ Modifiers always use double-dash `--` and define nuance, state, or palette steps
   - ActionIcon background--hover
   - Button background--secondary--hover
   - ButtonIcon background--secondary--hover
+  - GhostButton background--active
   - SelectField category-background
   - Switch background--disabled
-  - Switch background--on
+  - Switch background--off
   - TextField background--active
 
 ### Status

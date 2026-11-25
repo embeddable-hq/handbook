@@ -6,7 +6,7 @@ description: "Add a ready-made chat widget that lets end users ask questions in 
 
 Let your end-users ask questions of their data in natural language — and get back both **text explanations and live charts**, without ever leaving your product.
 
-The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain HTML, React, Vue, Angular, or any other framework. End users type a question; the AI queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas) on their behalf.
+The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain HTML, React, Vue, Angular, or any other framework. End users type a question; the AI queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas/introduction) on their behalf.
 
 <ImageGrid width="100%" images={["/img/chatbot-example1.png"]} />
 
@@ -41,9 +41,9 @@ Response streamed back → text + rendered charts
 
 ## Prerequisites
 
-The chatbot gets its **data access** and its **chart vocabulary** from [Custom Canvas](/self-serve/custom-canvas). Before adding it, you need a dashboard with:
+The chatbot gets its **data access** and its **chart vocabulary** from [Custom Canvas](/self-serve/custom-canvas/introduction). Before adding it, you need a dashboard with:
 
-1. **[Custom Canvas](/self-serve/custom-canvas) enabled** — toggle it on beneath your main canvas in the builder.
+1. **[Custom Canvas](/self-serve/custom-canvas/introduction) enabled** — toggle it on beneath your main canvas in the builder.
 2. **At least one dataset enabled** for Custom Canvas — these are the only datasets the AI can query. Without them, it can't answer data questions.
 3. **At least one chart template** in the Template Library — these are the only chart types the AI can render. Without them, it can answer in text but can't show charts. The more templates you define (and the more open you leave their inputs), the more the AI can do.
 4. **The dashboard published** — the chatbot reads the published configuration, not your draft.
@@ -78,7 +78,7 @@ curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
 
 | Field                | Type    | Required | Description                                                                                                                                                                      |
 | -------------------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provider`           | string  | Yes      | One of: `anthropic`, `openai`, `google`, `openrouter`, `mistralai`, `bedrock`, `ollama`                                                                                          |
+| `provider`           | string  | Yes      | One of: `anthropic`, `openai`, `google`, `bedrock`                                                                                                                               |
 | `model`              | string  | Yes      | A model ID supported by your chosen provider, e.g. `claude-sonnet-4-5`. If you pass an unsupported model, the API returns a `400` listing the accepted models for that provider. |
 | `apiKey`             | string  | Yes      | Your LLM provider API key. Stored encrypted; never returned in full.                                                                                                             |
 | `temperature`        | number  | No       | Sampling temperature. Higher values produce more varied output. Provider default when omitted.                                                                                   |
@@ -87,6 +87,8 @@ curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
 | `userCreditsEnabled` | boolean | No       | Turns on per-user spending limits. Default `false`. See [User credits](#user-credits).                                                                                           |
 
 To check the current config, call `GET /api/v1/llm-config` (the API key is masked in the response). It returns `404` if none is set.
+
+To remove the config, call `DELETE /api/v1/llm-config`. To see the AI chat usage (cost and tokens per user) for the current month, call `GET /api/v1/ai-chat/usage`. You can filter it with the optional `embeddable` and `user` query parameters.
 
 <Callout emoji="💡">
   Authenticate with your **Embeddable API key** (not an end-user security
@@ -180,6 +182,7 @@ In this setup, we recommend making the canvas **read-only** so the AI doesn't mo
 {
   "embeddableId": "<your-embeddable-id>",
   "user": "user-123",
+  "expiryInSeconds": 3600,
   "securityContext": { "userId": "user-123" },
   "customCanvasReadOnly": true
 }
@@ -427,7 +430,7 @@ export default defineConfig({
 
 ## Related
 
-- [Custom Canvas](/self-serve/custom-canvas) — where you configure the datasets and chart templates the AI can use
+- [Custom Canvas](/self-serve/custom-canvas/introduction) — where you configure the datasets and chart templates the AI can use
 - [AI Endpoints](/self-serve/ai-endpoints) — power your own chat UI instead of using the ready-made component
 - [Tokens API](/deployment/tokens-api) — how to generate the security tokens the chatbot relies on
 - [Row-level security](/data-modeling/row-level-security/introduction) — how per-user data access is enforced

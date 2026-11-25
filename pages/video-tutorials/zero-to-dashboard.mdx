@@ -33,11 +33,11 @@ We’re going to use Embeddable’s handy **Command Line Tool** to set up and po
 
 <ImageGrid width='100%' images={["/img/tutorials/zero-to-dashboard/zero-to-dashboard-1.png"]}/>
 
-You’ll need [**Node.js**](https://nodejs.com) installed on your computer to run the command line tool. We recommend the latest Long Term Stable version, but you’ll need **at least version 22** to run our build tools.
+You’ll need [**Node.js**](https://nodejs.org) installed on your computer to run the command line tool. We recommend the latest Long Term Stable version, but you’ll need **at least version 22** to run our build tools.
 
 Open a terminal or command prompt. `cd` to wherever it is you keep your code repositories, and type `npx @embeddable.com/init` and hit enter. You’ll be prompted to install the latest version of our init package, so answer yes, and then give it permission to create a new folder. The next step is naming the folder. For this tutorial we’re going with `sample-project` but you should use something relevant to your particular application.
 
-The next thing it needs is an **API key**. You can find that on your workspace’s main page. Copy and paste it in. Then confirm your region. This will kick off the build process, which will copy our boilerplate into the folder you specified, build it, and publish it to your workspace. As you’ll see from the success message, this also pushes our default chart library ([Remarkable Pro](https://docs.embeddable.com/component-libraries/remarkable-pro/introduction)) and sample models to the workspace, and will **create two sample dashboards** as well (you can see those if you refresh the workspace).
+The next thing it needs is an **API key**. You can find that on your workspace’s main page. Copy and paste it in. Then confirm your region. This will kick off the build process, which will copy our boilerplate into the folder you specified, build it, and publish it to your workspace. As you’ll see from the success message, this also pushes our default chart library ([Remarkable Pro](/component-libraries/remarkable-pro/introduction)) and sample models to the workspace, and will **create two sample dashboards** as well (you can see those if you refresh the workspace).
 
 <ImageGrid width='100%' images={["/img/tutorials/zero-to-dashboard/zero-to-dashboard-2.png"]}/>
 
@@ -134,7 +134,7 @@ create table public.usage_events_daily (
 
 Here you can see the generated model:
 
-```sql
+```yaml
 cubes:
   - name: usage_events_daily
     data_source: default
@@ -246,7 +246,7 @@ We recommend giving your dashboard a name right away so you don’t end up with 
 
 ### Datasets
 
-The first thing we want to do is create a dataset. We’ve got an [entire video and tutorial](https://docs.embeddable.com/video-tutorials/quick-hits/datasets) explaining those, but in brief, a dataset is an instance of your model. You can have multiple datasets in the same dashboard, and even have multiple datasets that reference the same model … which means you can filter one dataset differently than the other without having to change the underlying data model!
+The first thing we want to do is create a dataset. We’ve got an [entire video and tutorial](/video-tutorials/quick-hits/datasets) explaining those, but in brief, a dataset is an instance of your model. You can have multiple datasets in the same dashboard, and even have multiple datasets that reference the same model … which means you can filter one dataset differently than the other without having to change the underlying data model!
 
 We’re going to name our dataset “Usage Events Daily” and choose the model we just added, the `usage_events_daily` model. In general it’s a good idea to use dataset names that are similar to the model names, such as “Orders” or “Orders - Only EU”, or similar. Save the dataset and you’ll see it appear in the right-hand console, ready for use. You can click it to explore more options, but for now we’re going to use it as-is.
 
@@ -254,13 +254,13 @@ We’re going to name our dataset “Usage Events Daily” and choose the model 
 
 ### Charts
 
-Next up, we’ll click the **Add Component** button in the top right, next to the console. This will bring up a list of component previews. By default, Embeddable comes stocked with plenty of components from our **Remarkable Pro** library, but you can also build your own. That’s another tutorial, though! For now, let’s scroll down a bit and choose **KPI Chart - Number**.
+Next up, we’ll click the **Add Component** button in the top right, next to the console. This will bring up a list of component previews. By default, Embeddable comes stocked with plenty of components from our **Remarkable Pro** library, but you can also build your own. That’s another tutorial, though! For now, let’s scroll down a bit and choose **Kpi Chart - Number**.
 
 For the Dataset, well, it’s an easy choice - we’ve only created one! So we’ll choose “Usage Events Daily.” For our measure, we’re going to select `# of records`. We’ll add a title of “Total Events” and in the Description field we’ll add “Last 30 days”. We can leave the tooltip and the font size inputs blank.
 
 But how can we be sure we’re only showing the last 30 days of data? Well, let’s add a filter. Click the “filter” button, choose `event_date`, choose “in date range”, and choose “Last 30 Days.” Once we’ve done that, we’re good to go, so we can click the **Add to dashboard** button. This will, unsurprisingly, add the component to our dashboard. You may notice that it’s rather large by default. Just click and drag at the bottom right corner of the component to resize it to something a little less aggressive.
 
-Next we’ll click **Add Component** again, and this time we’ll choose **KPI Chart - Comparison**. We’ve only got one measure at the moment, `count`, so we’ll do our comparison against that, but this time we’ll do current month vs. previous month. Select the same dataset and the same measure. For the time property, choose `event_date`, and for the primary date range, choose “this month.” For the comparison period, choose “previous period” which will see that the primary date range is set to the current month and automatically choose the previous month. Note that “this month” will very often be much lower than “last month” because “this month” **only counts the days of the current month**, not the last thirty days. So the previous month has an entire month’s worth of data, but this month might only have a week.
+Next we’ll click **Add Component** again, and this time we’ll choose **Kpi Chart - Number Comparison**. We’ve only got one measure at the moment, `count`, so we’ll do our comparison against that, but this time we’ll do current month vs. previous month. Select the same dataset and the same measure. For the time property, choose `event_date`, and for the primary date range, choose “this month.” For the comparison period, choose “previous period” which will see that the primary date range is set to the current month and automatically choose the previous month. Note that “this month” will very often be much lower than “last month” because “this month” **only counts the days of the current month**, not the last thirty days. So the previous month has an entire month’s worth of data, but this month might only have a week.
 
 For the title we’ll put “Monthly Events” and for the description we’ll put “This Month vs. Last Month”. We’ll leave the rest of the inputs at their default settings. Click **Add to dashboard** and we’ve got another component ready to go. Well, pending a resize.
 
@@ -284,13 +284,13 @@ We’ve got a dashboard that’s ready to go! Let’s get it into our applicatio
 
 To embed you dashboard, you’ll need to do two things. The first is add a call to our **Tokens API** somewhere in your back-end. The second is to add a few pieces of code to your client app that will allow your Embeddable to display. We’ll show you how to do both. For this demo, we’ll be using a simple React application I’ve set up, but Embeddable works just fine in Angular, Vue, or even plain HTML and JavaScript.
 
-The first thing we’ll need to do is publish our Embeddable. Until we do that, no changes we’ve made in the builder are accessible to our end users. You need to do this step whenever you’re satisfied with your changes and ready to roll them out to your clients. First, click the “Save Version” button in the top menu. Then add version text and click “Save.” Once you’ve done that, you’ll see a “Publish” button appear at the bottom of the modal. We’re going to go ahead and publish to all three environments, development, staging, and production, as our application doesn’t differentiate between the three (you can learn more about these environments and how to use them in our documentation). Once we’ve published, we can check the publishing instructions to get information we’ll need, including our API key and Dashboard ID.
+The first thing we’ll need to do is publish our Embeddable. Until we do that, no changes we’ve made in the builder are accessible to our end users. You need to do this step whenever you’re satisfied with your changes and ready to roll them out to your clients. First, click the “Save Version” button in the top menu. Then add version text and click “Save.” Once you’ve done that, you’ll see a “Publish” button appear at the bottom of the modal. We’re going to go ahead and publish with all three tags, development, staging, and production, as our application doesn’t differentiate between the three (you can learn more about these [publish tags](/deployment/versions) and how to use them in our documentation). Once we’ve published, we can check the publishing instructions to get information we’ll need, including our API key and Dashboard ID.
 
 The next thing we need is a token. Let’s move over to a code editor. I’m going to do something in this video you absolutely **should not do** in your production application, which is use front-end code to get the token. The reason I’m doing this is so I don’t need to show you a full back-end API setup, but in your application, you **need to generate the token on the back-end** in order to keep your security contexts, API key, and other values secure. If you have any questions about this, please reach out to Customer Success. We’re happy to help explain it!
 
 What we’ve got here is a very simple React application. We’re going to do almost everything we need in one file, but the first thing we need to do is incorporate Embeddable’s front-end scripts. To do that, we’ll open `index.html` and add a standard HTML script tag like this:
 
-```bash
+```html
 <script
       type="module"
       src="https://embed.embeddable.com/js/v1/?region=eu"
@@ -326,7 +326,7 @@ const getToken = async () => {
         client_id: 12,
       },
       user: USER_KEY, // unique key representing current user
-      savedVersion: 'v1',
+      savedVersion: 'production',
     }),
   });
 
@@ -399,4 +399,4 @@ I’m going to add my details into the constants at the top off screen, save the
 
 Let’s switch back to our code for moment, to show again how **Row Level Security** works. Change the `client_id` value of `12` to `13` and save the file. Our React application should’ve hot-reloaded, so let’s go take a look. As you can see, we have new values in our charts. This is because we’ve changed which client’s data we’re looking at!
 
-There’s so much more we could go into, but we don’t want to overwhelm you, so let’s wrap up here. We invite you to [explore our documentation](https://docs.embeddable.com/) and [join our Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA). Thanks for checking out Embeddable, and we hope this has helped you get started. See you next time!
+There’s so much more we could go into, but we don’t want to overwhelm you, so let’s wrap up here. We invite you to [explore our documentation](/) and [join our Community Slack](https://join.slack.com/t/embeddablecommunity/shared_invite/zt-20b4f6s10-gULqO6riqutJcbUi_FJmZA). Thanks for checking out Embeddable, and we hope this has helped you get started. See you next time!

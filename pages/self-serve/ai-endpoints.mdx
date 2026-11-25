@@ -6,7 +6,7 @@ description: "Connect your own AI agent or chat UI to your users' data and dashb
 
 Embeddable exposes a set of API endpoints under `/ai/v1/*` that allow you to connect an AI agent to your users' data and dashboards. The agent can query data models, inspect the charts already on a user's canvas, and create or modify charts on their behalf — without the user having to build anything manually.
 
-This is useful when you want to enable conversational insights (i.e. ask questions about the data without building charts) or allow end users to describe what they want in natural language — *"show me sales performance this quarter"* — and have your AI translate that into fully rendered charts on their [Custom Canvas](/self-serve/custom-canvas).
+This is useful when you want to enable conversational insights (i.e. ask questions about the data without building charts) or allow end users to describe what they want in natural language — *"show me sales performance this quarter"* — and have your AI translate that into fully rendered charts on their [Custom Canvas](/self-serve/custom-canvas/introduction).
 
 <Callout emoji="💡">
 **End users** in this context are your customers — the people using the product you've built on top of Embeddable.
@@ -19,7 +19,7 @@ Getting started with the AI endpoints is straightforward but requires the follow
 <Steps>
 ### Enable Custom Canvas in the builder
 
-Simply toggle the "Custom Canvas" option in your dashboard's settings. This allows your end users to create and manage their own charts.
+Simply toggle the "Custom Canvas" option beneath your main canvas. This allows your end users to create and manage their own charts.
 
 <ImageGrid width='100%' images={["/img/custom-canvas/custom-canvas-button.png"]}/>
 
@@ -74,7 +74,7 @@ Authorization: Bearer <security-token-jwt>
 
 The token encodes:
 - Which data models the user is allowed to see (via [row-level security](/data-modeling/row-level-security/introduction))
-- Which [Custom Canvas](/self-serve/custom-canvas) chart types are available to the user
+- Which [Custom Canvas](/self-serve/custom-canvas/introduction) chart types are available to the user
 - The embeddable context the token is scoped to
 
 Generate a token server-side for the end user and pass it to your AI agent. Every response is automatically scoped to that user's security context.
@@ -286,6 +286,7 @@ Executes a structured data query against a dataset. Returns raw rows and an opti
 | `offset` | long | ☐ | Rows to skip (for pagination) |
 | `timezone` | string | ☐ | IANA timezone, e.g. `"America/New_York"` |
 | `countRows` | boolean | ☐ | If `true`, include total row count in response. Default: `false` |
+| `variableValues` | object | ☐ | Map of variable UUID to variable value, for datasets that use variables |
 
 **Filter object**
 
@@ -356,7 +357,7 @@ Executes a structured data query against a dataset. Returns raw rows and an opti
 
 ### GET /ai/v1/custom-canvas/request-state
 
-Returns the current state of the end user's [Custom Canvas](/self-serve/custom-canvas) — all widgets currently placed, including their positions, sizes, configurations, and applied filters. This is per-user, scoped to the security token.
+Returns the current state of the end user's [Custom Canvas](/self-serve/custom-canvas/introduction) — all widgets currently placed, including their positions, sizes, configurations, and applied filters. This is per-user, scoped to the security token.
 
 Key notes:
 - `version` increments on every mutation — use it to detect stale reads
@@ -404,13 +405,9 @@ Key notes:
 
 ## Custom Canvas mutation endpoints
 
-These endpoints let your AI agent create, update, and manage charts on the end user's [Custom Canvas](/self-serve/custom-canvas). Charts created via the API appear in the same place as manually built charts.
+These endpoints let your AI agent create, update, and manage charts on the end user's [Custom Canvas](/self-serve/custom-canvas/introduction). Charts created via the API appear in the same place as manually built charts.
 
 All mutation endpoints require a `requestId` — a client-assigned UUID used as an idempotency key.
-
-<Callout emoji="⚠️">
-**Documentation gap:** It is not yet documented how the frontend is notified when the AI agent mutates the Custom Canvas, so that the embedded dashboard re-renders to show new or updated charts.
-</Callout>
 
 ### POST /ai/v1/custom-canvas/create
 

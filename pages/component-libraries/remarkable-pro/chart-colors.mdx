@@ -17,8 +17,10 @@ It’s common to use both - explicitly mapping important or frequently used valu
 ```tsx
 // embeddable.theme.ts
 
-backgroundColors?: string[]; // used for fills: bars, areas, pie/donut segments, etc.
-borderColors?: string[]; // used for strokes: bar/area outlines, line strokes, segment borders
+type ThemeCharts = {
+  backgroundColors?: string[]; // used for fills: bars, areas, pie/donut segments, etc.
+  borderColors?: string[]; // used for strokes: bar/area outlines, line strokes, segment borders
+};
 
 const myTheme = {
   charts: {
