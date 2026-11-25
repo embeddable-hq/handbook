@@ -206,12 +206,12 @@ cubes:
           sql: created_at
           type: time
           
-      measures:
+    measures:
         - name: count
           type: count
           title: "Number of Customers"
    
-      pre_aggregations:
+    pre_aggregations:
         - name: count_by_countries
           measures:
             - CUBE.count
@@ -536,7 +536,7 @@ There are a few workarounds:
           - name: count
             type: count
           - name: average_price
-            sql: {total_price} / {count}
+            sql: "{total_price} / {count}"
             type: number
      
         pre_aggregations:

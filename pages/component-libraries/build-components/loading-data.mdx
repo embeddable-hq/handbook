@@ -143,7 +143,14 @@ OFFSET <offset>
   select: [
     inputs.groupBy, // one or more dimensions
     inputs.count, // one or more measures
-    // example of a time dimension
+    inputs.xAxis // a time dimension with a granularity sub-input
+  ]
+  ```
+
+  If a `time` dimension has a `granularity` [sub-input](/component-libraries/build-components/define-component-function#subinputmeta-definition) value (`inputs.xAxis.inputs.granularity`), `loadData` uses it as a time dimension automatically. You can also build the time dimension manually:
+
+  ```ts
+  select: [
     {
       dimension: inputs.xAxis?.name, // pass just the dimension name (e.g. 'orders.created_at')
       granularity: inputs.granularity // e.g. 'week'
@@ -160,7 +167,7 @@ OFFSET <offset>
     }
   ]
   ```
-- `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. This is also available as a native input in the no-code builder.  
+- `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. It cannot exceed your workspace row limit (10,000 by default). This is also available as a native input in the no-code builder.  
 
 - `offset` is a number specifying how many rows to skip, e.g. for [pagination](/component-libraries/build-components/loading-data#1-pagination-example). Defaults to 0.
 
@@ -544,13 +551,14 @@ Then in your React component:
 import { useEmbeddableState } from '@embeddable.com/react';
 
 export default function DynamicLoader(props) {
-  const [localState, setLocalState] = useEmbeddableState({ filter: {} });
-  
+  const [localState, setLocalState] = useEmbeddableState({});
+  const { data } = props.results;
+
   const applyFilter = (value) => {
     setLocalState((prev) => ({
       ...prev,
       filter: {
-        property: { name: customers.country }, // some dimension, hard-coded or dynamically passed in via props
+        property: props.columns[0], // a dimension passed in via props
         operator: 'equals',
         value
       }

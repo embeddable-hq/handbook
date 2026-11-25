@@ -80,7 +80,7 @@ import Component from './index';
 - **`label`**: A user-facing name shown in the builder.
 - **`classNames`**: CSS class names for styling the container.
 - **`inputs`**: Input fields users configure (e.g. `strings`, `numbers`, `datasets`, as well as [custom types](/component-libraries/build-components/custom-types)).
-- **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid).
+- **`defaultWidth` / `defaultHeight`**: Initial size in the builder (in pixels, snapped to a grid). If you set one, you must also set the other.
 - **`autoHeight`**: Declares that this component renders its whole content with no scroll area of its own, so a dashboard embedded with `height-mode="auto"` may let the widget grow past its designed height. Learn more about [auto height](/component-libraries/build-components/auto-height).
 - **`events`**: Specifies **events** the component can trigger (e.g. `onChange`, `onClick`), which is key to interactivity. Learn more about events [here](/component-libraries/build-components/interactivity). 
 - **`variables`**: Auto-creates **variables** in the no-code Builder when the component is used, which are key to interactivity. Learn more about variables [here](/component-libraries/build-components/interactivity).
@@ -131,13 +131,13 @@ export const meta: EmbeddedComponentMeta = {
 - **`name`**: A unique identifier for this input (within the component).
 - **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](#native-input-types).
 - **`label`**: User-facing label in the builder.
-- **`description`**: A helpful reference, not currently displayed in the builder.
+- **`description`**: Shown as a help tooltip next to the input label in the builder.
 - **`defaultValue`**: The initial value for the input.
 - **`category`**: Assigns an optional grouping for this input in the builder UI. Inputs sharing the same category appear together.
 - **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. A common use-case includes specifying the dataset for `dimension` or `measure` inputs and limiting the options that display based on their type.
 - **`array`**: Allows users in the builder to **select or add multiple values**. Applies to inputs of type `dimension`, `measure`, and `string`. 
-- **`inputs`**: allows you to define sub-inputs for a given input.  Can **only** be applied to inputs of `type` "dimension", "measure", or "dimensionOrMeasure".  And only if `array` is set to `true`. Learn more [below](#subinputmeta-definition).
+- **`inputs`**: allows you to define sub-inputs for a given input.  Can **only** be applied to inputs of `type` "dimension", "measure", or "dimensionOrMeasure". Learn more [below](#subinputmeta-definition).
 
 #### `SubInputMeta` definition
 
@@ -203,7 +203,7 @@ export const meta: EmbeddedComponentMeta = {
 - **`name`**: A unique identifier for this sub input (within the component).
 - **`type`**: Determines the UI control (e.g., `string`, `dimension`, or custom). Native types are described [below](#native-input-types).
 - **`label`**: User-facing label in the builder.
-- **`description`**: A helpful reference, not currently displayed in the builder.
+- **`description`**: Shown as a help tooltip next to the input label in the builder.
 - **`defaultValue`**: The initial value for the sub input.
 - **`required`**: Tells Embeddable that a value must be provided for this input in order to use this component.  Defaults to `false`.
 - **`config`**: An arbitrary JS object that is type-specific. The `config` object is passed to the no-code editor to enable custom behavior. 
@@ -222,6 +222,31 @@ And here's the same table using the sub inputs defined in the screenshot of the 
 <ImageGrid images={["/img/subinputs-table-after.png"]} />
 
 Notice that multiple column headers have been adjusted, an "Orders" suffix has been added to values in the first column, and the date format has been changed to something much more readable.
+
+##### The automatic `granularity` sub-input
+
+The builder adds a `granularity` sub-input to every `dimension` and `dimensionOrMeasure` input. It applies to `time` dimensions only, and its default value is `day`.
+
+- To remove it, set `config.hideGranularity: true` on the input.
+- To change it, define your own sub-input named `granularity`. It must have `type: 'granularity'` and `supportedTypes: ['time']`, and it can only set `label` and `defaultValue`.
+
+```ts
+{
+  name: 'xAxis',
+  type: 'dimension',
+  label: 'X-axis',
+  config: { dataset: 'ds' },
+  inputs: [
+    {
+      name: 'granularity',
+      type: 'granularity',
+      label: 'Group by',
+      defaultValue: 'month',
+      supportedTypes: ['time']
+    }
+  ]
+}
+```
 
 
 #### Native Input Types

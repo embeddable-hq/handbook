@@ -96,7 +96,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/dashboard-exports', {
     // optional
     //
     viewport: {
-      width: 1280,  // render width in px (defaults to 1280)
+      width: 1280,  // render width in px (required if you pass viewport)
       height: 800,  // optional; acts as a minimum height (see below)
     },
     variables: {          // override the dashboard's variables
@@ -134,7 +134,7 @@ The API responds with **`202 Accepted`** and a `Retry-After` header — the job 
 - **`token`** _(required)_ — a [security token](/deployment/tokens-api) created with **`export: true`**. It determines which dashboard and saved version is exported, and applies all [row-level security](/data-modeling/row-level-security/introduction), filters and roles.
 - **`format`** _(required)_ — the output format. Currently only **`"PDF"`** is supported.
 - **`viewport`** _(optional)_ — the size the dashboard is rendered at:
-  - **`width`** — render width in pixels. Defaults to `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
+  - **`width`** _(required if you pass `viewport`)_ — render width in pixels. If you omit `viewport`, the width is `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
   - **`height`** _(optional)_ — a **minimum** height in pixels. A short dashboard is padded up to it; a taller dashboard extends past it. If omitted, the PDF is exactly as tall as the dashboard's content.
 - **`variables`** _(optional)_ — values that override the dashboard's [variables](/deployment/interactivity#pass-in-and-update-variables) (for example a date range or a selected filter), so you can export a specific view.
 - **`clientContext`** _(optional)_ — the same [client context](/component-libraries/client-context) object you pass when embedding (e.g. theme, language, timezone).

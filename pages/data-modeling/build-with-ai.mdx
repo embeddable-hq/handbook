@@ -22,7 +22,7 @@ When it runs, the agent:
 2. **Interviews you for business context** — the things a schema can't tell it: what each entity means, which measures matter, what encoded values like `status = 1/2/3` stand for, which columns to hide from dashboard authors, and what business-friendly names to use.
 3. **Offers exploratory queries** — when live data can answer a question (say, the distinct values of a `status` column), it offers to run a quick query instead of asking you. It always asks permission first, one query at a time.
 4. **Writes the YAML** under `src/embeddable.com/models/` — one cube per table, plus a starter [view](/data-modeling/writing-data-models/views) that joins the domain into a single surface for dashboard authors — with a primary key on every cube and [joins](/data-modeling/writing-data-models/joins) declared on the fact side.
-5. **Remembers what it learned** — modeling decisions and business context are saved to gitignored notes in `.claude/notes/cube-models/`, so your next session picks up where this one left off.
+5. **Remembers what it learned** — modeling decisions and business context are saved to notes in `.claude/notes/cube-models/`, so your next session picks up where this one left off. The boilerplate does not gitignore these notes. To keep them out of your repository, add `/.claude/notes/` to your `.gitignore`.
 
 Everything it produces is the same [`*.cube.yml`](/data-modeling/writing-data-models/defining-models) you'd write yourself — fully reviewable in a normal code diff.
 

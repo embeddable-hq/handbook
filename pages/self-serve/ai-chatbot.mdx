@@ -118,7 +118,7 @@ Add this script to your page — no build step required:
 ```html
 <script
   type="module"
-  src="https://unpkg.com/@embeddable.com/ai-chat@0.2.1/dist/ai-chat/ai-chat.esm.js"
+  src="https://unpkg.com/@embeddable.com/ai-chat@0.3.4/dist/ai-chat/ai-chat.esm.js"
 ></script>
 ```
 
@@ -336,9 +336,10 @@ Provide any subset of the keys below; omitted keys fall back to the defaults.
 | `newConversation`                | `"New conversation"`                                                                                     | Label for the button/action that starts a new conversation                                           |
 | `ratePositive`                   | `"Rate this positive"`                                                                                   | Accessible label for the thumbs-up rating button                                                     |
 | `rateNegative`                   | `"Rate this negative"`                                                                                   | Accessible label for the thumbs-down rating button                                                   |
-| `toolCallsThinking`              | `"Thinking"`                                                                                             | Status text shown while tool calls are in progress                                                   |
-| `toolCallsRanStepsSingular`      | `"Ran {count} step"`                                                                                     | Summary text for a single completed tool call step (`{count}` is substituted)                        |
-| `toolCallsRanStepsPlural`        | `"Ran {count} steps"`                                                                                    | Summary text for multiple completed tool call steps (`{count}` is substituted)                       |
+| `thinking`                       | `"Thinking"`                                                                                             | Status text shown while the assistant is working                                                     |
+| `queryResultToggle`              | `"{count} rows"`                                                                                         | Label of the button that shows or hides a query result table (`{count}` is substituted)              |
+| `queryResultTruncatedNotice`     | `"Showing first {shown} of {total} rows"`                                                                | Notice shown above a truncated query result table (`{shown}` and `{total}` are substituted)          |
+| `toolActivity`                   | _(see description)_                                                                                      | Object with the status text for each tool step: `readingDashboard` (`"Reading the dashboard"`), `queryingData` (`"Getting the latest data"`), `previewingChart` (`"Generating chart preview"`), `updatingDashboard` (`"Updating the dashboard"`). A key you leave out shows the server's text |
 | `addToDashboardMessageWithTitle` | `'Add the chart "{title}" to the dashboard'`                                                             | User-message text sent when clicking "Add to dashboard" on a titled chart (`{title}` is substituted) |
 | `addToDashboardMessage`          | `"Add the chart to the dashboard"`                                                                       | User-message text sent when clicking "Add to dashboard" on a chart without a title                   |
 | `conversationTooLongError`       | `"This conversation has become too long to continue. Please start a new conversation to keep chatting."` | Shown when the conversation transcript grows too large to continue                                   |

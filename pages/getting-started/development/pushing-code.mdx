@@ -1,12 +1,12 @@
 ---
-description: "Push data models and components to your workspace with the push command, control what gets pushed, and use an API key."
+description: "Push data models, components and dashboards as code to your workspace with the push command, control what gets pushed, and use an API key."
 ---
 
 # Pushing code to your workspace
 
 To make your [data models](/data-modeling/writing-data-models/defining-models) and [components](/component-libraries/build-components/defining-components) available in the dashboard builder, you need to push them to your Embeddable Workspace.
 
-You can do this by running the [**push command**](/getting-started/development/pushing-code#push-command), which, by default, pushes both data models and components. 
+You can do this by running the [**push command**](/getting-started/development/pushing-code#push-command), which, by default, pushes data models, components and [dashboards as code](/dashboards/dashboards-as-code). 
 
 ## Controlling what gets pushed
 
@@ -17,6 +17,7 @@ In your component repo, in `embeddable.config`, simply set the following:
 ```tsx
 pushModels: false,
 pushComponents: true,
+pushEmbeddables: true,
 ```
 
 And, in your models repo, set the opposite:
@@ -24,13 +25,15 @@ And, in your models repo, set the opposite:
 ```tsx
 pushModels: true,
 pushComponents: false,
+pushEmbeddables: false,
 ```
 
 During a push:
 
-- Both values default to true if not set.
+- All three values default to true if not set. At least one must be true.
 - If **`pushModels`** is true, model files (including `security-context.sc.yml`) are pushed.
 - If **`pushComponents`** is true, all other component files (including `client-contexts.cc.yml`, custom types, and editors) are pushed.
+- If **`pushEmbeddables`** is true, dashboards as code (`.embeddable.yml` files) are pushed.
 
 ### Running embeddable:dev
 
@@ -66,7 +69,7 @@ If you have multiple workspaces, you will be prompted to select which workspace 
 
 ## Pushing using your API Key
 
-You can also push your models and components using your API key, which is especially useful for integrating into your **CI/CD pipeline**. You can also pass an email explicitly, and attach a push message that cen be seen in your Embeddable Workspace.
+You can also push your models and components using your API key, which is especially useful for integrating into your **CI/CD pipeline**. When you push with an API key, you must also pass `--email`. The `--message` flag is optional. It attaches a push message that can be seen in your Embeddable Workspace.
 
 ```bash
 npm run embeddable:push -- --api-key <API Key> --email <Email> --message <Message>

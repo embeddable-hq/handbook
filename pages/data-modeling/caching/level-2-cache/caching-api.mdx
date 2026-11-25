@@ -6,6 +6,8 @@ description: "Tell Embeddable which security contexts to refresh for pre-aggrega
 
 Use Embeddable’s Caching API to tell Embeddable which security contexts need refreshing. The refresh frequency comes from the [refresh_key](/data-modeling/caching/level-2-cache/pre-aggregations#refreshing-pre-aggregations) you set in your [pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations) within the data model.
 
+The Caching API is available on Premium workspaces only. Each request must include at least one of `scheduledRefreshContexts`, `embeddables` or `roles`.
+
 <Bruno/>
    
 ```javascript
@@ -20,7 +22,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/caching/refresh-contexts', {
     embeddables: [
       {
         embeddableId: "4beec55e-11f5-489a-8417-eb77c6a3c6c3",
-        savedVersions: ["production"]  // If not provided, the latest saved version will be used by default
+        savedVersions: ["production"]  // If not provided, the version tagged "production" is used
       }
     ],
     scheduledRefreshContexts: [
@@ -62,12 +64,12 @@ Status 204 (No Content)
 
    - `region`: your deployment region ([learn more](/deployment/deployment-regions)). 
    - `apiKey`: your [API key](/getting-started/development/pushing-code#pushing-using-your-api-key)
-    - `embeddables`: (required) a list of Embeddables to refresh. Each object must contain:
-      - `id`: the unique identifier of the Embeddable dashboard.
-      - `savedVersions`: (optional) an array of saved versions to refresh. If not provided, the latest saved version will be used by default.
-   - `securityContext`: a JSON object [passed to your data models](/data-modeling/row-level-security/sql-based-security) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
+    - `embeddables`: (optional) a list of Embeddables to refresh. Each object contains:
+      - `embeddableId`: (required) the unique identifier of the Embeddable dashboard.
+      - `savedVersions`: (optional) an array of saved versions to refresh. If not provided, the version tagged `production` is used.
+   - `securityContext`: (required) a JSON object [passed to your data models](/data-modeling/row-level-security/sql-based-security) to enforce row-level security. When setting up scheduled refreshes for pre-aggregations, provide a list of securityContext objects to the scheduledRefreshContexts array in the API. This ensures Cube can generate the required security contexts before running the refresh. Learn more [here](https://cube.dev/docs/product/configuration/reference/config#scheduled_refresh_contexts).
    - `filters`: optional. An array of filter objects (each with `member`, `operator`, and `values`) matching those passed to the [Tokens API](/deployment/tokens-api). Ensures the cache is built with the correct filters applied for that security context.
-   - `environment`: the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
+   - `environment`: (required) the environment (e.g. staging / prod, or a specific database for a single-tenant set up), pre-defined using our [Environments API](/data/environments).
    - `timezone` is the timezone you want the pre-aggregation to be built for.  When your components call [loadData](/component-libraries/build-components/loading-data), they can **only** use pre-aggregations that match their `timezone`.  Timezone must be a string in [tz database format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. 'America/Los_Angeles', 'Europe/Paris', 'Australia/Sydney', 'UTC', etc. Defaults to 'UTC' if omitted.
 
 If you load a dashboard using a security token containing a security context that has not been configured via the Caching API, no cache will be available for that dashboard.  Cube will therefore build the requested pre-aggregation on-demand, which may take some time.

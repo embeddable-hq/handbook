@@ -6,7 +6,7 @@ description: "Deprecated. Control Vanilla Components styling through a single Ty
 # Theming
 
 <Callout emoji="‼️">
-  Vanilla Components are now deprecated in favor of [Remarkable Pro](/component-libraries/remarkable-pro). We recommend using Remarkable Pro for all new projects, but if you have an existing implementation with Vanilla Components, you can continue to use and maintain it as needed.
+  Vanilla Components are deprecated and no longer supported by Embeddable, and the repository will be archived. Use [Remarkable Pro](/component-libraries/remarkable-pro/introduction) instead. If you need help to upgrade, contact Embeddable Customer Success.
 </Callout>
 
 Theming Vanilla Components is a straightforward approach to styling your dashboard that allows you to control a large number of values in a single TypeScript object.
@@ -40,7 +40,7 @@ That would apply the Inter font across the entire site and change all of the cha
 
 ### Single Theme
 
-If you just want to have a single theme, it’s a very straightforward process! You’ll need to find `embeddable.theme.ts` at the root level of the [Boilerplate Repo](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/embeddable.theme.ts). Here you’ll see that we’ve added a couple of values to get you started, but also that we’re importing `Theme` from the Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
+If you just want to have a single theme, it’s a very straightforward process! Create `embeddable.theme.ts` at the root of your repo (or edit it, if it already exists). The example below adds a couple of values to get you started, and imports `Theme` from Vanilla Components, which will give you full type definitions for the entire theme object if you want to dig in! The file looks like this:
 
 ```tsx
 import { defineTheme } from '@embeddable.com/core';

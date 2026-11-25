@@ -31,26 +31,29 @@ Learn more about `region` [here](/deployment/deployment-regions).
   "embeddables": [
     {
       "id": "1e01b46f-809c-45d5-8c33-2b5f5d7502bc",
+      "embeddableId": "1e01b46f-809c-45d5-8c33-2b5f5d7502bc",
       "name": "Marketing dash",
-      "tags": ["Marketing"],
       "lastPublishedAt": {
-        "latest": "2024-02-11T18:53:03.527633Z",
-        "production": undefined, // hasn't yet been published to production
+        "default": "2024-02-12T09:20:41.112054Z",
+        "production": "2024-02-12T09:20:41.112054Z",
         "staging": "2024-02-11T18:53:03.527633Z",
-        "development": "2024-02-10T12:55:03.563273Z",
-      }
+        "development": "2024-02-10T12:55:03.563273Z"
+      },
+      "type": "NO_CODE"
     },
     {
-      "id": "d36785d6-6ef2-4d8a-bfce-ad09fbb97064",
+      "id": "product-kpis",
+      "embeddableId": "d36785d6-6ef2-4d8a-bfce-ad09fbb97064",
       "name": "Product KPIs",
-      "tags": ["OKRs", "Product"],
-      "lastPublishedAt": {} // this hasn't yet been saved
+      "lastPublishedAt": {}, // this hasn't yet been saved
+      "type": "CODE"
     }
   ]
 }
 ```
 
-- **`id`**: A unique identifier for the Embeddable (a dashboard).  
+- **`id`**: A unique identifier for the Embeddable (a dashboard). For [dashboards as code](/dashboards/dashboards-as-code), this is the dashboard name.  
+- **`embeddableId`**: The UUID of the Embeddable.  
 - **`name`**: The display name your team set in the no-code builder.  
-- **`tags`**: Optional labels for categorization or searching (support for `tags` is coming soon).
-- **`lastPublishedAt`**: Shows timestamps for each environment (e.g. `production`) indicating when the dashboard was last published. If empty, it hasn't been published in that environment yet.
+- **`lastPublishedAt`**: Shows timestamps for each publish tag (e.g. `production`) indicating when the dashboard was last published. `default` is the same as `production` (kept for backward compatibility). A tag has no timestamp until you publish the dashboard to it. If the object is empty, the dashboard hasn't been saved yet.
+- **`type`**: `NO_CODE` for dashboards built in the no-code builder, `CODE` for [dashboards as code](/dashboards/dashboards-as-code).

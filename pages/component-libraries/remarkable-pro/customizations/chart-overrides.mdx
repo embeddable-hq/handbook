@@ -15,6 +15,32 @@ Embeddable’s charts use **Chart.js** behind the scenes. Each chart type expose
 
 You can override these options per chart-variant directly through the theme.
 
+## Override keys
+
+Each key below takes an `options` object for one chart variant:
+
+| Key | Chart.js type |
+|---|---|
+| `pieChartPro` | `pie` |
+| `donutChartPro` | `pie` |
+| `donutLabelChartPro` | `pie` |
+| `barChartDefaultPro` | `bar` |
+| `barChartDefaultHorizontalPro` | `bar` |
+| `barChartGroupedPro` | `bar` |
+| `barChartGroupedHorizontalPro` | `bar` |
+| `barChartStackedPro` | `bar` |
+| `barChartStackedHorizontalPro` | `bar` |
+| `lineChartDefaultPro` | `line` |
+| `lineChartGroupedPro` | `line` |
+| `lineChartComparisonDefaultPro` | `line` |
+| `barLineChartPro` | `bar` |
+| `areaChartPro` | `line` |
+| `scatterChartPro` | `scatter` |
+| `bubbleChartPro` | `bubble` |
+| `funnelChartPro` | `funnel` |
+
+To set the legend position for all charts at once, use `theme.charts.legendPosition` (`'top'`, `'right'`, `'bottom'` or `'left'`). The default is `'bottom'`.
+
 ## Example: hide data points on line charts
 
 ```ts

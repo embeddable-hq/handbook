@@ -162,7 +162,7 @@ Let’s extend the example from the [indexes](/data-modeling/caching/level-2-cac
             columns:
               - id
         refresh_key:
-	        every: 1 hour
+          every: 1 hour
 ```
 
 The new orders model from MotherDuck data source will be added to show how to run analytics across databases.
@@ -214,7 +214,7 @@ cubes:
             columns:
               - product_id
         refresh_key:
-	        every: 1 hour
+          every: 1 hour
 
       - name: orders_with_products_rollup
         type: rollup_join

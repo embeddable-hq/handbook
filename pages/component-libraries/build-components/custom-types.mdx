@@ -34,7 +34,8 @@ E.g. to define a `Color` type, create a file named `Color.type.emb.ts` (file mus
 import { defineType } from '@embeddable.com/core';
 
 const ColorType = defineType('color', {
-  label: 'Color'
+  label: 'Color',
+  optionLabel: (color) => color.name
 });
 
 export default ColorType;
@@ -56,7 +57,7 @@ The **second parameter** is an object that takes the following properties:
 | **Property**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `label` | string | Yes |
-| `optionLabel`      | (object) => string  | No |
+| `optionLabel`      | (object) => string  | Yes |
 | `cast`    | \{ [type]: (object) => any \}  | No   |
 | `toNativeDataType`    | \{ [type]: (object) => object \}  | No   |
 
@@ -111,18 +112,17 @@ Also notice the `optionLabel`, on the `defineType` function, in the example abov
 
 ## Extending native types with additional properties
 
-You can also use `defineOption` to add options to native types, which can be useful if you want to extend a native type with additional properties. The process is the same as for custom types, but instead of passing a custom type as the first argument, you pass a native type (e.g. `string`, `number`, etc.). This can include more complex native types like `time` and `timeRange` too.
+You can also use `defineOption` to add options to native types, which can be useful if you want to extend a native type with additional properties. The process is the same as for custom types, but instead of passing a custom type as the first argument, you pass one of the native types `time`, `timeRange` or `granularity`.
 
-As an example, if you wanted to add `Last Three Weeks` as an option to the native `timeRange` type, you could do it like so:
+As an example, if you wanted to add `Last three weeks` as an option to the native `timeRange` type, you could do it like so:
 
 ```ts
 // timeRangeOptions.type.emb.ts
 import { defineOption } from '@embeddable.com/core';
 
 defineOption('timeRange', {
-  name: 'Last Three Weeks',
-  from: 'now-3w',
-  to: 'now'
+  relativeTimeString: 'last 3 weeks',
+  name: 'Last three weeks'
 });
 ```
 
@@ -430,7 +430,8 @@ export default defineEditor(Component, meta, {
       value,
       onChange: (val) => setter(Value.of(val)),
     });
-  }
+  },
+  events: {}
 });
 ```
 
@@ -463,15 +464,17 @@ It takes the following parameters:
 - **`label`** is not currently used, but may be used in the future if we add support for multiple editors per type.
 - **`type`** tells Embeddable which **custom type** that this editor should be an **editor** for.
 
-**Inputs** contains only one property:
+**Inputs** contains the following properties:
 
 | **Property**   | **Type**  | **Required** |
 | ----------- | --------- | ------------ |
 | `inputs` | (value, setter) => object | Yes |
+| `events` | object | Yes |
 
 - Whatever `inputs` returns is what will be passed as the `props` to our React component.
 - The `setter` is the function that must be called to **update** the value of the custom type (the value passed to it must match the shape expected by the type, e.g. `setter(Value.of({ r: 97, g: 153, b: 243 }))`)
 - The `value` tells us the current value of our custom type.
+- `events` is required by the `defineEditor` type. Pass an empty object (`{}`).
 
 We should now be able to use our custom editor like so:
 <ImageGrid width='60%' images={["/img/component-color-editor.png"]} />

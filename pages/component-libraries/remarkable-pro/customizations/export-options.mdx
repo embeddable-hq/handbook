@@ -11,6 +11,7 @@ Every Remarkable Pro chart includes a **card menu** (the ⋮ icon in the top-rig
 - `Download CSV`
 - `Download XLSX`
 - `Download PNG`
+- `Maximize`
 
 These default options are defined inside Remarkable’s theme, but you can easily override them to:
 
@@ -31,7 +32,14 @@ type ChartCardMenuOption = {
   value: string;      // e.g. 'csv' - identifies the option
   labelKey: string;   // translation key, e.g. 'charts.menuOptions.downloadCSV'
   iconSrc?: string;   // optional SVG icon shown next to the label
+  isInstantAction?: boolean; // runs at once, with no loading state (used by 'maximize')
+  options?: ChartCardMenuOptionSettings; // passed to onClick as `options`
   onClick: (props: ChartCardMenuOptionOnClickProps) => void; // performs the export
+};
+
+type ChartCardMenuOptionSettings = {
+  pngBackgroundColor?: string; // PNG only: any CSS color. Transparent when not set
+  captureFullCard?: boolean;   // PNG only: export the full card (title and description included)
 };
 ```
 
@@ -43,7 +51,10 @@ type ChartCardMenuOptionOnClickProps = {
   data?: DataResponse['data'];  // the rows currently loaded in the chart
   dimensionsAndMeasures?: (Dimension | Measure)[]; // the fields shown in the chart
   containerRef?: React.RefObject<HTMLDivElement | null>; // the chart's DOM element (useful for image exports)
+  cardRef?: React.RefObject<HTMLDivElement | null>;      // the full card's DOM element
   theme: Theme;                 // the active theme
+  options?: ChartCardMenuOptionSettings; // the option's `options`
+  onCustomDownload?: (props: (props: ChartCardMenuOptionOnClickProps) => void) => void; // set by tables to export all rows
 };
 ```
 
@@ -95,6 +106,28 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     }
     return option;
   });
+
+  return defineTheme(parentTheme, {
+    defaults: {
+      chartMenuOptions: myOptions,
+    },
+  });
+};
+```
+
+### Example: set PNG export settings
+
+Here’s how you might give PNG exports a white background and include the card title and description:
+
+```ts
+// embeddable.theme.ts
+
+const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
+  const myOptions = parentTheme.defaults.chartMenuOptions.map((option) =>
+    option.value === 'png'
+      ? { ...option, options: { pngBackgroundColor: '#ffffff', captureFullCard: true } }
+      : option,
+  );
 
   return defineTheme(parentTheme, {
     defaults: {
@@ -157,7 +190,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
 
 Each Remarkable Pro chart has a **Menu options** input (under **Component Settings**) in Embeddable’s Builder. This lets dashboard builders choose which export options appear on that specific chart:
 
-- The input lists option **values** (`csv`, `xlsx`, `png` by default).
+- The input lists option **values** (`csv`, `xlsx`, `png`, `maximize` by default).
 - The chart only shows theme options whose `value` is selected.
 - Deselect all values to hide the menu on that chart.
 

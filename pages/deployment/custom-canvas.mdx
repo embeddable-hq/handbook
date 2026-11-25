@@ -37,7 +37,7 @@ In Embeddable there is a difference between how **your team** build dashboards a
 
 The **default behaviour** for Custom Canvas is that each **end-user** (defined by the unique id that you pass to the `user` key in [Tokens API](/deployment/tokens-api)) is assigned one **custom dashboard** in the **Custom Canvas State**.
 
-When a user first opens an **Embeddable dashboard**, they’ll see a blank canvas. As they add charts, tables, or other components, Embeddable saves those changes in the **Custom Canvas State** under their `user` ID.
+When a user first opens an **Embeddable dashboard**, they’ll see a blank canvas, or your [Starter Canvas](/self-serve/custom-canvas/building-it#set-up-a-starter-canvas-optional) if you set one up. As they add charts, tables, or other components, Embeddable saves those changes in the **Custom Canvas State** under their `user` ID.
 
 The next time the user opens the same Embeddable dashboard, Embeddable retrieves their saved **state** and restores their **custom dashboard** exactly as they left it last.
 
@@ -76,7 +76,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
 
 The `customCanvasState` is a string key that acts like a named save slot for a **custom dashboard**. Any changes an end-user makes to the canvas are automatically persisted on the Embeddable backend under this key. If `customCanvasState` is omitted from the [Tokens API](/deployment/tokens-api) call, the `user` value will be used as the key instead.
 
-When the dashboard loads, Embeddable looks up the saved state for the provided `customCanvasState` value and renders it. If you pass a key that Embeddable hasn’t seen before, that’s not an error — Embeddable simply treats it as a new **custom dashboard** and starts with a blank canvas.
+When the dashboard loads, Embeddable looks up the saved state for the provided `customCanvasState` value and renders it. If you pass a key that Embeddable hasn’t seen before, that’s not an error — Embeddable simply treats it as a new **custom dashboard** and starts with a blank canvas, or your [Starter Canvas](/self-serve/custom-canvas/building-it#set-up-a-starter-canvas-optional) if you set one up.
 
 This means you can create a new **custom dashboard** at any time by providing a new, unique `customCanvasState` string (unique per `embeddableId`). From that point forward, any edits the **end-user** makes will be saved under that key automatically.
 
@@ -101,7 +101,7 @@ This is where you want each customer, who may have multiple end-users, to see th
 This is a popular use case whereby you want to allow end-users to build as many **custom dashboards** as they like.  A typical flow might be:
 
 1. Users are presented with an **"Add new dashboard"** button.  
-2. When they click the button, they can name the dashboard, and a new, empty dashboard (blank custom canvas) is presented to them. 
+2. When they click the button, they can name the dashboard, and a new dashboard is presented to them. It starts as a blank custom canvas, or your [Starter Canvas](/self-serve/custom-canvas/building-it#set-up-a-starter-canvas-optional) if you set one up. 
 3. They can then add charts/tables/etc to it.  
 4. When they next return, the **custom dashboard** they created is available for them to open, edit or even delete. 
 5. Alternatively, they can click **"Add new dashboard"** again to create a new one.

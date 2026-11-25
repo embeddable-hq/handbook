@@ -81,11 +81,14 @@ Because Client Context is arbitrary JSON, theme data can be sent directly in the
 
 ```tsx
 // Front-end code
-<em-beddable token={{securityToken}} clientContext={{
-  theme: {
-    // Various theme values as described in the Remarkable Pro theming docs
-  }
-}} />
+<em-beddable
+  token={securityToken}
+  client-context={JSON.stringify({
+    theme: {
+      // Various theme values as described in the Remarkable Pro theming docs
+    }
+  })}
+/>
 ```
 
 ```tsx
