@@ -10,7 +10,9 @@ export function middleware(req: NextRequest) {
     res.headers.set('Vary', 'Accept')
     return res
   }
-  return NextResponse.next()
+  const res = NextResponse.next()
+  if (!pathname.includes('.')) res.headers.set('Vary', 'Accept')
+  return res
 }
 
-export const config = { matcher: ['/((?!_next|img|video|api).*)'] }
+export const config = { matcher: ['/((?!(?:_next|img|video|api)(?:/|$)).*)'] }

@@ -17,6 +17,8 @@ Two things have to agree before a widget grows:
 1. the **host** asks for it — [`height-mode="auto"`](/deployment/embedding#letting-widgets-grow-to-their-content) when embedding, or [`layout.heightMode: "auto"`](/deployment/dashboard-export#exporting-in-auto-height) when exporting.
 2. the **component** declares it can do it — `meta.autoHeight: true`.
 
+Auto height needs [minimum SDK versions](/deployment/dashboard-export#minimum-sdk-versions-for-auto-height).
+
 A component that doesn't declare `autoHeight` keeps its designed height even on an auto-height dashboard, so turning the mode on never disturbs the widgets that aren't built for it.
 
 ## Declaring that your component can grow

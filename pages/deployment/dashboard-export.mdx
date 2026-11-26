@@ -96,7 +96,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/dashboard-exports', {
     // optional
     //
     viewport: {
-      width: 1280,  // render width in px (defaults to 1280)
+      width: 1280,  // render width in px (required if you pass viewport)
       height: 800,  // optional; acts as a minimum height (see below)
     },
     variables: {          // override the dashboard's variables
@@ -134,7 +134,7 @@ The API responds with **`202 Accepted`** and a `Retry-After` header — the job 
 - **`token`** _(required)_ — a [security token](/deployment/tokens-api) created with **`export: true`**. It determines which dashboard and saved version is exported, and applies all [row-level security](/data-modeling/row-level-security/introduction), filters and roles.
 - **`format`** _(required)_ — the output format. Currently only **`"PDF"`** is supported.
 - **`viewport`** _(optional)_ — the size the dashboard is rendered at:
-  - **`width`** — render width in pixels. Defaults to `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
+  - **`width`** _(required if you pass `viewport`)_ — render width in pixels. If you omit `viewport`, the width is `1280`. This is the layout width, so it controls how the responsive dashboard arranges itself.
   - **`height`** _(optional)_ — a **minimum** height in pixels. A short dashboard is padded up to it; a taller dashboard extends past it. If omitted, the PDF is exactly as tall as the dashboard's content.
 - **`variables`** _(optional)_ — values that override the dashboard's [variables](/deployment/interactivity#pass-in-and-update-variables) (for example a date range or a selected filter), so you can export a specific view.
 - **`clientContext`** _(optional)_ — the same [client context](/component-libraries/client-context) object you pass when embedding (e.g. theme, language, timezone).
@@ -297,9 +297,10 @@ A few things to know when you're generating many PDFs — for example, one repor
 |--------|---------|
 | `202 Accepted` | The export job was created. The body contains the `jobId`. |
 | `400 Bad Request` | Invalid request — e.g. missing `token` or `format`, a non-positive viewport width, or too many `styles`. Also returned when the token was **not** created with `export: true`, when the security token is invalid, when the dashboard's components are below the [minimum SDK versions](#sdk-versions), or when a `heightMode: "auto"` request is made against components below the [auto-height minimums](#minimum-sdk-versions-for-auto-height). |
-| `403 Forbidden` | An `export: true` token was used somewhere other than this API. Export tokens can only be used with the Dashboard Export API. |
 | `404 Not Found` | No job with that `jobId` exists in your workspace. |
 | `429 Too Many Requests` | The workspace has too many exports in flight. Retry after the delay in the `Retry-After` header. |
+
+If you use an `export: true` token in your `<em-beddable>` element, the request fails with `403 Forbidden`. Export tokens can only be used with the Dashboard Export API.
 
 ## Full example — start, poll, download
 

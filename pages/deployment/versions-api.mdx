@@ -4,7 +4,7 @@ description: "Manage dashboards and deployments programmatically."
 
 # Versions API
 
-The **Versions API** lets you programmatically manage saved versions of a dashboard (Embeddable) in your workspace. You can list the last thirty saved versions of a specific dashboard (Embeddable) in your workspace, and fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of any saved version. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow. You can also publish a specific version to an environment tag (`development`, `staging`, or `production`). This is the foundation for fully automated, CI/CD-driven deployment workflows.
+The **Versions API** lets you programmatically manage saved versions of a dashboard (Embeddable) in your workspace. You can list all saved versions of a specific dashboard (Embeddable) in your workspace, and fetch the full [Dashboard as Code](/dashboards/dashboards-as-code) definition of any saved version. This is useful for managing deployments, rolling back changes, or promoting versions through your development workflow. You can also publish a specific version to an environment tag (`development`, `staging`, or `production`). This is the foundation for fully automated, CI/CD-driven deployment workflows.
 
 <Bruno/>
 
@@ -39,38 +39,38 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
 ```json
 {
   "tags": {
-    "development": { "version": "v3", "updated-at": "2025-06-27T09:32:10.004Z" },
-    "production": { "version": "v2", "updated-at": "2025-06-21T16:12:53.542Z" }
+    "development": { "version": "v3", "updatedAt": "2025-06-27T09:32:10.004Z" },
+    "production": { "version": "v2", "updatedAt": "2025-06-21T16:12:53.542Z" }
   },
-  "saved-versions": [
+  "savedVersions": [
     {
       "version": "v1",
-      "saved-by": "sina@embeddable.com",
+      "savedBy": "sina@embeddable.com",
       "description": "Our first publish!!",
-      "saved-at": "2025-06-19T09:01:03.023523Z",
-      "components-version": "2025-02-11T18:53:03.527633Z",
-      "models-version": "2025-02-11T18:53:03.527633Z", // cube-internal only
-      "cube-version": "1.3.22" // cube-internal only
+      "savedAt": "2025-06-19T09:01:03.023523Z",
+      "componentsVersion": "2025-02-11T18:53:03.527633Z",
+      "modelsVersion": "2025-02-11T18:53:03.527633Z", // cube-internal only
+      "cubeVersion": "1.3.22" // cube-internal only
     }
-    // ... up to last 30
+    // ... one entry per saved version
   ]
 }
 ```
 
 ### Field Reference
 
-- **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updated-at` is when the tag last changed.
-- **`saved-versions[]`**: Each saved version, newest first.
+- **`tags.development / staging / production`**: Present only if the embeddable has been published to that tag. `updatedAt` is when the tag last changed.
+- **`savedVersions[]`**: Each saved version, oldest first.
   - **`version`**: The generated version label (v1, v2, ...).
-  - **`saved-by`**: Email of the user who saved it.
+  - **`savedBy`**: Email of the user who saved it.
   - **`description`**: The Save version note. Also appears in the builder and publish modal.
-  - **`saved-at`**: When the snapshot was taken.
-  - **`components-version / models-version / cube-version`**: The underlying versions that this saved version references.
+  - **`savedAt`**: When the snapshot was taken.
+  - **`componentsVersion / modelsVersion / cubeVersion`**: The underlying versions that this saved version references.
 
 ### Notes
 
 - Version values are **per embeddable** and are not shared across different dashboards.
-- The API returns the last 30 saved versions, ordered by the `saved-at` timestamp.
+- The API returns all saved versions, ordered by the `savedAt` timestamp (oldest first).
 
 ---
 
@@ -85,7 +85,7 @@ POST https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/saved
 ```
 
 - **`{version}`** — the saved version number to publish, e.g. `v3`. Must be a version number, not a tag name.
-- **`{embeddableId}`** — the UUID of the dashboard.
+- **`{embeddableId}`** — the UUID of the dashboard, or the dashboard name for [dashboards as code](/dashboards/dashboards-as-code).
 
 ### Request Body
 
@@ -136,6 +136,7 @@ Returns the updated tag map for the dashboard:
 | HTTP | Error Code | Cause |
 |------|-----------|-------|
 | `400` | `BUILDER-172` | `{version}` is a tag name (e.g. `production`) instead of a version number (e.g. `v3`). |
+| `400` | `BUILDER-119` | One or more values in `tags` are disabled environment tags for this workspace. |
 | `400` | `BUILDER-996` | `tags` array is empty or missing. |
 | `404` | `BUILDER-117` | One or more values in `tags` are not valid environment tags for this workspace. |
 | `404` | `BUILDER-120` | The saved version number does not exist for this dashboard. |
@@ -191,7 +192,7 @@ fetch('https://api.<region>.embeddable.com/api/v1/embeddables/{embeddableId}/sav
   .then(console.log);
 ```
 
-`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`).
+`{version}` is one of the version labels returned by the [list saved versions](#list-saved-versions) endpoint (e.g. `v1`), or a tag such as `production`. `{embeddableId}` is the UUID of the dashboard, or the dashboard name for [dashboards as code](/dashboards/dashboards-as-code).
 
 ### Example Response
 
@@ -229,5 +230,5 @@ Returns the dashboard's definition in the same JSON shape as its YAML [dashboard
 ## Related Topics
 
 - **[Token Targeting](/deployment/tokens-api)**: How to use saved versions in your Embeddable tokens.
-- **[Promotion Strategies](/deployment/versions#savedversion-strategies)**: Best practices for managing and promoting dashboard
+- **[Promotion Strategies](/deployment/versions#saved-versions-via-the-api)**: Best practices for managing and promoting dashboard versions.
 

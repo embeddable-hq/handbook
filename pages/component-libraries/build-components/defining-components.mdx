@@ -181,14 +181,14 @@ export default defineComponent(Component, meta, {
       ...inputs, // the inputs are passed through to the component as props
       results: loadData({ // fetches data from your database and passes it to your component
         from: inputs.ds,
-        measures: [inputs.metric], 
+        select: [inputs.metric], 
       })
     };
   }
 });
 ```
 
-The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](./define-component-function) and [loadData](/component-libraries/build-components/loading-data).
+The `defineComponent` and `loadData` functions used above are two of the **most powerful** parts of the Embeddable SDK. You can learn more about them here: [defineComponent](/component-libraries/build-components/define-component-function) and [loadData](/component-libraries/build-components/loading-data).
 
 ## Adding Component Previews
 
@@ -212,10 +212,10 @@ const dimensionGroupName = 'category';
 const measureName = 'sales';
 
 const sampleData = {
-  dimension: mockDimension(dimensionName, 'string', { title: 'Country' });
+  dimension: mockDimension(dimensionName, 'string', { title: 'Country' }),
   dimensionGroup: mockDimension(dimensionGroupName, 'string', { title: 'Category' }),
   measure: mockMeasure(measureName, 'number', { title: 'Sales' }),
-  const results1Measure2Dimensions = mockDataResponse(
+  results1Measure2Dimensions: mockDataResponse(
     [dimensionName, dimensionGroupName, measureName],
     [
       ['US', 'Cat 1', 120],
@@ -233,7 +233,7 @@ const sampleData = {
       ['SPA', 'Cat 1', 55],
       ['SPA', 'Cat 2', 35],
     ],
-  );
+  ),
 };
 ```
 

@@ -154,7 +154,7 @@ The `POST` request above represents a `CREATE` action, but all `CRUD` operations
 To preview environments **before** publishing, you can create or update your `src/embeddable.com/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)) with entries specifying the `environment`:
    ```yaml
    - name: Example customer 1
-     environment: production
+     environment: prod
      securityContext:
        country: United States
 
@@ -164,7 +164,7 @@ To preview environments **before** publishing, you can create or update your `sr
        country: Germany
    ```
 
-In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **production** data.
+In the builder UI, you can then choose **“View as”** → “Example customer 2” to load the **staging** environment, verifying your data and filters. Switch back to **“Example customer 1”** to confirm **prod** data.
 
 <ImageGrid images={["/img/security-context-preset.png"]}/>
 
@@ -172,11 +172,13 @@ In the builder UI, you can then choose **“View as”** → “Example customer
 
 ## Deploying Versions
 
-Once you have set up your environments, you can **deploy versions** of your dashboard to each environment tag (`development`, `staging`, `production`). This allows you to test changes safely before promoting them to production.
+You can **deploy versions** of your dashboard to publish tags (for example `development`, `staging`, `production`). This allows you to test changes safely before promoting them to production.
+
+Publish tags are not the same as data Environments. A token selects the dashboard version with [`savedVersion`](/deployment/tokens-api#parameters) and the data Environment with [`environment`](/deployment/tokens-api#parameters).
 
 You can do this in two ways:
 
-- **In the builder UI** — open the **Saved Versions** panel and click **Publish** next to the version you want to deploy.
-- **Via the API** — use the [Versions API](/deployment/versions-api#publish-a-version-to-an-environment) to assign a saved version to one or more environment tags programmatically. This is the recommended approach for CI/CD pipelines, allowing you to promote versions automatically without any manual steps in the UI.
+- **In the builder UI** — click **Publish** in the header, choose the saved version, select the publish tags, and confirm.
+- **Via the API** — use the [Versions API](/deployment/versions-api#publish-a-version-to-an-environment) to assign a saved version to one or more publish tags programmatically. This is the recommended approach for CI/CD pipelines, allowing you to promote versions automatically without any manual steps in the UI.
 
 [Learn more about managing dashboard versions →](/deployment/versions)

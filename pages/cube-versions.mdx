@@ -1,5 +1,5 @@
 ---
-description: "Check which Cube versions Embeddable's cloud platform supports, their status and end-of-support dates, with links to changelogs."
+description: "Check which Cube versions Embeddable's cloud platform supports, their status, with links to changelogs."
 ---
 
 # Supported Cube Versions
@@ -16,6 +16,10 @@ Use this information to find out what [Cube](https://github.com/cube-js/cube) ve
 | Cube version   | Status | Announcement | Changelog |
 | :----- | :---- | :--- | :--- |
 | v1.8.21  | 🔵 experimental | [v1.8](https://cube.dev/blog/cube-core-v1-8-mistake-proof-defaults-performance) | [v1.8.21](https://github.com/cube-js/cube/blob/master/CHANGELOG.md#1821-2026-11-09) |
-| v1.3.35  | 🟢 supported  | [v1.3](https://cube.dev/blog/cube-core-v1-3-performance-improvements-and-upgrades) | [v1.3.35](https://github.com/cube-js/cube/blob/master/CHANGELOG.md#1335-2025-07-09) |
-| v1.3.24  | 🟡 deprecated  | [v1.3](https://cube.dev/blog/cube-core-v1-3-performance-improvements-and-upgrades) | [v1.3.24](https://github.com/cube-js/cube/blob/master/CHANGELOG.md#1324-2025-06-24) |
-| v0.35.34 | 🟡 deprecated  | [v0.35](https://cube.dev/blog/cube-core-v0-35-updates-to-data-modeling-and-data-sources) | [v0.35.34](https://github.com/cube-js/cube/blob/master/CHANGELOG.md#03534-2024-05-15) |
+| v1.3.35  | 🟢 supported (default) | [v1.3](https://cube.dev/blog/cube-core-v1-3-performance-improvements-and-upgrades) | [v1.3.35](https://github.com/cube-js/cube/blob/master/CHANGELOG.md#1335-2025-07-09) |
+
+<Callout emoji="⚠️">
+  **Differences on v1.8.21:**
+  - [Access policies](/data-modeling/row-level-security/access-policies) use `group:` instead of `role:`.
+  - The Elasticsearch driver is not available.
+</Callout>

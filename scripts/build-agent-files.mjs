@@ -49,28 +49,32 @@ async function sidebarInfo(route) {
   return { order, title, external }
 }
 
-const absolute = (text) =>
-  text.replace(/\]\(\/(?!\/)/g, `](${SITE}/`).replace(/(src|href)="\/(?!\/)/g, `$1="${SITE}/`)
+const absolute = (text, route) =>
+  text
+    .replace(/\]\(\/(?!\/)/g, `](${SITE}/`)
+    .replace(/(src|href)="\/(?!\/)/g, `$1="${SITE}/`)
+    .replace(/\]\((?![a-z][a-z0-9+.-]*:|#|\/)([^)\s]+)\)/gi, (_, href) => `](${new URL(href, SITE + route).href})`)
 
 // MDX to plain Markdown. Code fences are left exactly as they are.
-async function toMarkdown(content) {
+async function toMarkdown(content, route) {
   const faqs = (await readJson('pages/faqs.json')).faqs ?? []
   const changelog = await readJson('pages/component-libraries/remarkable-pro/changelog.json')
-  const segments = content.split(/(^```[\s\S]*?^```[^\n]*$)/m)
+  const expanded = content
+    .replace(/<FaqPaginated\s*\/>/g, () =>
+      faqs.map((f) => `## ${f.question}\n\n${f.answer}`).join('\n\n'),
+    )
+    .replace(/<ChangelogPaginated\s*\/>/g, () =>
+      (Array.isArray(changelog) ? changelog : [])
+        .map((c) => `### ${c.version} (${c.date})\n\n${(c.notes ?? []).map((n) => `- ${n}`).join('\n')}`)
+        .join('\n\n'),
+    )
+  const segments = expanded.split(/(^[ \t]*```[\s\S]*?^[ \t]*```[^\n]*$)/m)
   const out = segments.map((segment, i) => {
     if (i % 2 === 1) return segment // a code fence
     let s = segment
     const inline = [] // inline code is restored untouched, like fences
     s = s.replace(/`[^`\n]+`/g, (code) => `\u0000${inline.push(code) - 1}\u0000`)
     s = s.replace(/^(import|export)\s.*$/gm, '')
-    s = s.replace(/<FaqPaginated\s*\/>/g, () =>
-      faqs.map((f) => `## ${f.question}\n\n${f.answer}`).join('\n\n'),
-    )
-    s = s.replace(/<ChangelogPaginated\s*\/>/g, () =>
-      (Array.isArray(changelog) ? changelog : [])
-        .map((c) => `### ${c.version} (${c.date})\n\n${(c.notes ?? []).map((n) => `- ${n}`).join('\n')}`)
-        .join('\n\n'),
-    )
     s = s.replace(
       /^[ \t]*<LinkCard\b([^>]*)>([\s\S]*?)<\/LinkCard>/gm,
       (_, attrs, text) => {
@@ -94,7 +98,7 @@ async function toMarkdown(content) {
     s = s.replace(/<[A-Z][A-Za-z]*\b[^<]*?\/>/g, '') // other self-closing components, e.g. ImageGrid
     s = s.replace(/<\/?[A-Z][A-Za-z]*\b[^>]*>/g, '') // wrappers such as Steps, CardGrid: keep their text
     s = s.replace(/<br\s*\/?>/g, '')
-    return absolute(s).replace(/\u0000(\d+)\u0000/g, (_, i) => inline[i])
+    return absolute(s, route).replace(/\u0000(\d+)\u0000/g, (_, i) => inline[i])
   })
   return out.join('').replace(/\n{3,}/g, '\n\n').trim()
 }
@@ -112,7 +116,7 @@ for (const file of await globby('pages/**/*.{md,mdx}')) {
     order,
     title: data.title && data.title !== 'Home' ? data.title : h1 ?? title ?? route,
     description: data.description ?? '',
-    body: await toMarkdown(content),
+    body: await toMarkdown(content, route),
   })
 }
 pages.sort((a, b) => {

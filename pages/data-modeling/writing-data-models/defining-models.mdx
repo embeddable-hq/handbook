@@ -23,7 +23,7 @@ If you start in the **Data Model Editor**, you can always export them as YAML to
 Whether you're defining your models in the **Data Model Editor** or directly **in code**, in the end you're effectively creating a model file that looks something like this:
 
 ```yaml
-# src/models/customers.cube.yml
+# src/embeddable.com/models/customers.cube.yml
 
 cubes:
   - name: customers # A unique identifier
@@ -71,7 +71,7 @@ cubes:
 ```
 
 Important:
-- Embeddable **only** recognizes files ending in `.cube.yml` or `.cube.js`.
+- Embeddable **only** recognizes files ending in `.cube.yml`, `.cube.yaml` or `.cube.js`.
 - Each model file begins with the `cubes:` keyword.
 - YAML is sensitive to indentation. Use an online YAML validator like [YAML Lint](https://www.yamllint.com/) to check your formatting.
 - If you use the Data Model Editor, you need not worry about any of this, as the Editor handles that all for you 😎
@@ -110,7 +110,7 @@ You can see more data model examples inside [your repo](https://github.com/embed
 
 ## Other Parameters
 
-You can also define other parameters, including [joins](./joins) between models and [pre-aggregations](./caching/pre-aggregations) to optimize performance.
+You can also define other parameters, including [joins](./joins) between models and [pre-aggregations](/data-modeling/caching/level-2-cache/pre-aggregations) to optimize performance.
 
 - `joins`: Defines how to [link models](/data-modeling/writing-data-models/joins) and handle join relationships.
 
@@ -118,6 +118,6 @@ You can also define other parameters, including [joins](./joins) between models 
 
 - `pre_aggregations`: Optional configurations for creating and managing materialized views or rollups. This helps improve performance by caching common aggregations [learn more](/data-modeling/caching/level-2-cache/pre-aggregations). Note that pre-aggregations are **not** currently supported in the **Data Model Editor**.  To use them, please export your data models and add them to your code repository (learn more [here](/data-modeling/getting-setup#defining-models-in-code)).
 
- - `views`: Views are very useful if you want to create different subsets of your cube models for different use-cases, or if you want fine-grained control of which join path should be used when.  Learn more [here](https://cube.dev/docs/product/data-modeling/concepts#views).
+ - `views`: Views are very useful if you want to create different subsets of your cube models for different use-cases, or if you want fine-grained control of which join path should be used when.  Learn more [here](/data-modeling/writing-data-models/views).
 
 These parameters allow you to tailor each data model to match your analytics needs, whether you’re simply mapping a table or performing advanced transformations and aggregations.

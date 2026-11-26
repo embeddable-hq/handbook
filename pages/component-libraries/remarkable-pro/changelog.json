@@ -14,7 +14,7 @@
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.15.1",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.15.1",
     "notes": [
-      "Weekly charts now correctly display data when the database week starts on a day other than Monday (e.g. Snowflake `WEEK_START = 7`). A new `weekStartsOn` theme setting (`theme.defaults.weekStartsOn`, where `0` is Sunday) lets you align the chart's week boundaries with the database — the default remains Monday so existing charts are unaffected. Week click-to-filter now covers exactly 7 days from the clicked bucket, regardless of which day the week starts on."
+      "Weekly charts now correctly display data when the database week starts on a day other than Monday (e.g. Snowflake `WEEK_START = 7`). The week start is taken automatically from the returned data, so you do not need to set anything. Week click-to-filter now covers exactly 7 days from the clicked bucket, regardless of which day the week starts on."
     ]
   },
   {
@@ -387,7 +387,7 @@
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.11",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.11",
     "notes": [
-      "Added an `ignoreEmptyData` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
+      "Added an `ignoreEmptyDate` boolean sub-input to time dimensions across all time-series chart components (bar, line, area, combo, heatmap, and pivot table charts). When enabled, dates with no data are omitted from the chart rather than being gap-filled with empty data points — useful for sparse datasets where gap-filling would produce misleading zero-value intervals."
     ]
   },
   {

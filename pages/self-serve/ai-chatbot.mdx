@@ -6,7 +6,7 @@ description: "Add a ready-made chat widget that lets end users ask questions in 
 
 Let your end-users ask questions of their data in natural language — and get back both **text explanations and live charts**, without ever leaving your product.
 
-The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain HTML, React, Vue, Angular, or any other framework. End users type a question; the AI queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas) on their behalf.
+The AI Chatbot is a ready-made chat widget, `<em-ai-chat>`, that works in plain HTML, React, Vue, Angular, or any other framework. End users type a question; the AI queries their data, renders charts, and can even **add, edit, resize, or reorder charts** on their [Custom Canvas](/self-serve/custom-canvas/introduction) on their behalf.
 
 <ImageGrid width="100%" images={["/img/chatbot-example1.png"]} />
 
@@ -41,9 +41,9 @@ Response streamed back → text + rendered charts
 
 ## Prerequisites
 
-The chatbot gets its **data access** and its **chart vocabulary** from [Custom Canvas](/self-serve/custom-canvas). Before adding it, you need a dashboard with:
+The chatbot gets its **data access** and its **chart vocabulary** from [Custom Canvas](/self-serve/custom-canvas/introduction). Before adding it, you need a dashboard with:
 
-1. **[Custom Canvas](/self-serve/custom-canvas) enabled** — toggle it on beneath your main canvas in the builder.
+1. **[Custom Canvas](/self-serve/custom-canvas/introduction) enabled** — toggle it on beneath your main canvas in the builder.
 2. **At least one dataset enabled** for Custom Canvas — these are the only datasets the AI can query. Without them, it can't answer data questions.
 3. **At least one chart template** in the Template Library — these are the only chart types the AI can render. Without them, it can answer in text but can't show charts. The more templates you define (and the more open you leave their inputs), the more the AI can do.
 4. **The dashboard published** — the chatbot reads the published configuration, not your draft.
@@ -78,7 +78,7 @@ curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
 
 | Field                | Type    | Required | Description                                                                                                                                                                      |
 | -------------------- | ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provider`           | string  | Yes      | One of: `anthropic`, `openai`, `google`, `openrouter`, `mistralai`, `bedrock`, `ollama`                                                                                          |
+| `provider`           | string  | Yes      | One of: `anthropic`, `openai`, `google`, `bedrock`                                                                                                                               |
 | `model`              | string  | Yes      | A model ID supported by your chosen provider, e.g. `claude-sonnet-4-5`. If you pass an unsupported model, the API returns a `400` listing the accepted models for that provider. |
 | `apiKey`             | string  | Yes      | Your LLM provider API key. Stored encrypted; never returned in full.                                                                                                             |
 | `temperature`        | number  | No       | Sampling temperature. Higher values produce more varied output. Provider default when omitted.                                                                                   |
@@ -87,6 +87,8 @@ curl -X POST https://api.<region>.embeddable.com/api/v1/llm-config \
 | `userCreditsEnabled` | boolean | No       | Turns on per-user spending limits. Default `false`. See [User credits](#user-credits).                                                                                           |
 
 To check the current config, call `GET /api/v1/llm-config` (the API key is masked in the response). It returns `404` if none is set.
+
+To remove the config, call `DELETE /api/v1/llm-config`. To see the AI chat usage (cost and tokens per user) for the current month, call `GET /api/v1/ai-chat/usage`. You can filter it with the optional `embeddable` and `user` query parameters.
 
 <Callout emoji="💡">
   Authenticate with your **Embeddable API key** (not an end-user security
@@ -118,7 +120,7 @@ Add this script to your page — no build step required:
 ```html
 <script
   type="module"
-  src="https://unpkg.com/@embeddable.com/ai-chat@0.2.1/dist/ai-chat/ai-chat.esm.js"
+  src="https://unpkg.com/@embeddable.com/ai-chat@0.3.4/dist/ai-chat/ai-chat.esm.js"
 ></script>
 ```
 
@@ -153,10 +155,10 @@ Choose between **inline** (fills its container) and **modal** (a floating panel 
 </em-ai-chat>
 ```
 
-`embeddable-tokens` takes a **JSON-encoded array** of security tokens — the same tokens you pass to `<em-beddable>`. The tokens define what the AI can see: include a token for each embeddable you want it to answer questions about (and extend, where Custom Canvas is enabled). The first token is used as the credential for the chat connection.
+`embeddable-tokens` takes a **JSON-encoded array** that must contain **exactly one** security token — the same token you pass to `<em-beddable>`. The token defines what the AI can see: the embeddable it can answer questions about (and extend, where Custom Canvas is enabled). If the array contains more than one token, the chat returns an error.
 
 <Callout emoji="💡">
-  **Match tokens with an on-page dashboard.** If the same page also renders one or more `<em-beddable>` dashboards, pass those **same token(s)** to `embeddable-tokens`. The chat only inspects `<em-beddable>` elements whose token matches one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
+  **Match tokens with an on-page dashboard.** If the same page also renders an `<em-beddable>` dashboard, pass that dashboard's **same token** to `embeddable-tokens`. The chat only inspects the `<em-beddable>` element whose token matches the one it was given — and that match is what unlocks the extra, dashboard-aware behavior: it can read the dashboard currently on screen (its widgets, queries, and data) and the Custom Canvas's current layout (e.g. how many columns are available), so it can size and position charts it adds sensibly.
 
 The chat still works with a different or standalone token — it can add a chart to the canvas — but without a match it can't see the on-page dashboard's data or layout, so it can't position or resize what it adds effectively. This requirement is **temporary**; a future release will remove the need for the tokens to match.
 
@@ -180,6 +182,7 @@ In this setup, we recommend making the canvas **read-only** so the AI doesn't mo
 {
   "embeddableId": "<your-embeddable-id>",
   "user": "user-123",
+  "expiryInSeconds": 3600,
   "securityContext": { "userId": "user-123" },
   "customCanvasReadOnly": true
 }
@@ -298,7 +301,7 @@ Canvas editing requires a token without `customCanvasReadOnly` — with a read-o
 | Attribute                 | Type                                                           | Default       | Description                                                                                                                                |
 | ------------------------- | -------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | `orchestrator-url`        | string                                                         | —             | WebSocket URL of the AI orchestrator: `wss://api.<region>.embeddable.com/ws`                                                               |
-| `embeddable-tokens`       | string                                                         | —             | JSON-encoded array of security tokens. The first token is used as the credential for the connection.                                       |
+| `embeddable-tokens`       | string                                                         | —             | JSON-encoded array with exactly one security token, used as the credential for the connection.                                            |
 | `client-context`          | string                                                         | —             | JSON-encoded client context — the same object you pass to your embeddables. Its `timezone` resolves dates consistently with the dashboard. |
 | `mode`                    | `"inline"` or `"modal"`                                        | `"inline"`    | `inline` fills its container; `modal` opens a floating, draggable panel from the trigger element                                           |
 | `placement`               | `"bottom-right"`, `"bottom-left"`, `"top-right"`, `"top-left"` | `"top-right"` | Where the modal panel appears relative to the trigger element                                                                              |
@@ -336,9 +339,10 @@ Provide any subset of the keys below; omitted keys fall back to the defaults.
 | `newConversation`                | `"New conversation"`                                                                                     | Label for the button/action that starts a new conversation                                           |
 | `ratePositive`                   | `"Rate this positive"`                                                                                   | Accessible label for the thumbs-up rating button                                                     |
 | `rateNegative`                   | `"Rate this negative"`                                                                                   | Accessible label for the thumbs-down rating button                                                   |
-| `toolCallsThinking`              | `"Thinking"`                                                                                             | Status text shown while tool calls are in progress                                                   |
-| `toolCallsRanStepsSingular`      | `"Ran {count} step"`                                                                                     | Summary text for a single completed tool call step (`{count}` is substituted)                        |
-| `toolCallsRanStepsPlural`        | `"Ran {count} steps"`                                                                                    | Summary text for multiple completed tool call steps (`{count}` is substituted)                       |
+| `thinking`                       | `"Thinking"`                                                                                             | Status text shown while the assistant is working                                                     |
+| `queryResultToggle`              | `"{count} rows"`                                                                                         | Label of the button that shows or hides a query result table (`{count}` is substituted)              |
+| `queryResultTruncatedNotice`     | `"Showing first {shown} of {total} rows"`                                                                | Notice shown above a truncated query result table (`{shown}` and `{total}` are substituted)          |
+| `toolActivity`                   | _(see description)_                                                                                      | Object with the status text for each tool step: `readingDashboard` (`"Reading the dashboard"`), `queryingData` (`"Getting the latest data"`), `previewingChart` (`"Generating chart preview"`), `updatingDashboard` (`"Updating the dashboard"`). A key you leave out shows the server's text |
 | `addToDashboardMessageWithTitle` | `'Add the chart "{title}" to the dashboard'`                                                             | User-message text sent when clicking "Add to dashboard" on a titled chart (`{title}` is substituted) |
 | `addToDashboardMessage`          | `"Add the chart to the dashboard"`                                                                       | User-message text sent when clicking "Add to dashboard" on a chart without a title                   |
 | `conversationTooLongError`       | `"This conversation has become too long to continue. Please start a new conversation to keep chatting."` | Shown when the conversation transcript grows too large to continue                                   |
@@ -426,7 +430,7 @@ export default defineConfig({
 
 ## Related
 
-- [Custom Canvas](/self-serve/custom-canvas) — where you configure the datasets and chart templates the AI can use
+- [Custom Canvas](/self-serve/custom-canvas/introduction) — where you configure the datasets and chart templates the AI can use
 - [AI Endpoints](/self-serve/ai-endpoints) — power your own chat UI instead of using the ready-made component
 - [Tokens API](/deployment/tokens-api) — how to generate the security tokens the chatbot relies on
 - [Row-level security](/data-modeling/row-level-security/introduction) — how per-user data access is enforced

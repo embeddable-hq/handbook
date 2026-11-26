@@ -30,7 +30,7 @@ Here's a simple example of an access policy defined on a [view](/data-modeling/w
 
 **Token security context:**
 
-You can specify `roles` in your `security-context.sc.yml` ([learn more](/data-modeling/row-level-security/access-policies#testing-your-access-policies)) like so:
+You can specify `roles` in your `security-contexts.sc.yml` ([learn more](/data-modeling/row-level-security/access-policies#testing-your-access-policies)) like so:
 
 ```yaml
 - name: Customer
@@ -212,7 +212,7 @@ access_policy:
 
 ## Testing your Access Policies
 
-Define presets in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)) and switch between them in the **"View as"** dropdown to test how roles affect visibility.
+Define presets in any `*.sc.yml` file under `src/` in your repo, e.g. `src/embeddable.com/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)) and switch between them in the **"View as"** dropdown to test how roles affect visibility.
 
 **Example 1: Admin**
 

@@ -13,7 +13,7 @@ This is the recommended approach when you want a **single source of truth** for 
 <ImageGrid width='100%' images={["/img/dashboards-as-code/in-code-editor.png"]}/>
 
 <Callout emoji="💡">
-To use dashboards as code, you must be on the latest Embeddable SDKs. To update, you can run `npm run embeddable:upgrade` and then `npm i` in your project, and it will install the latest versions of all Embeddable packages. If you have any issues or questions during the upgrade process, please reach out to the Embeddable team for support.
+To use dashboards as code, you must be on the latest Embeddable SDKs. To update, you can run `npm run embeddable:upgrade` and then `npm i` in your project, and it will install the latest versions of all Embeddable packages. If you have any issues or questions during the upgrade process, please reach out to the Embeddable team for support. Editing visually in the local builder needs `@embeddable.com/sdk-core` 4.8.0 or later.
 </Callout>
 
 You can [find a complete introductory tutorial here](/video-tutorials/quick-hits/dashboards-as-code), including both video and text. Below is a more detailed reference for the feature.
@@ -32,11 +32,11 @@ You can [find a complete introductory tutorial here](/video-tutorials/quick-hits
 
 ### Define your dashboard in a `<dashboard-name>.embeddable.yml` file
 
-Add a file like `my-dashboard.embeddable.yml` anywhere in your repo. The root key is `embeddables`, and each entry defines one dashboard:
+Add a file like `my-dashboard.embeddable.yml` anywhere under your `src/` folder. The root key is `embeddables`, and each entry defines one dashboard:
 
 ```yaml
 embeddables:
-  - name: my-embeddable # Cannot contains spaces
+  - name: my-embeddable # Cannot contain spaces
     title: My Embeddable # Can contain spaces, shown in the workspace
     variables:
       - name: date-range
@@ -51,7 +51,7 @@ embeddables:
             value: date-range
             valueType: VARIABLE
     widgets:
-      - component: BarChart
+      - component: BarChartDefaultPro
         position:
           x: 0
           y: 0
@@ -59,13 +59,19 @@ embeddables:
           width: 12
           height: 6
         inputs:
-          - input: metric
-            inputType: measure
-            value: daily_listens.count
-            valueType: VALUE
-          - input: ds
+          - input: dataset
             inputType: dataset
             value: filtered-data
+            valueType: VALUE
+          - input: measures
+            inputType: measure
+            array: true
+            value:
+              - daily_listens.count
+            valueType: VALUE
+          - input: dimension
+            inputType: dimension
+            value: daily_listens.date
             valueType: VALUE
 ```
 
@@ -100,9 +106,12 @@ embeddables:
 ```yaml
 variables:
   - name: date-range
-    type: timeRange       # text | number | timeRange | dimension | measure | ...
+    type: timeRange       # string | number | boolean | time | timeRange | granularity | filters | dimension | measure | ...
     array: false
     defaultValue: { from: '2024-01-01', to: '2024-12-31' }
+  - name: selected-age-groups
+    type: string
+    array: true
 ```
 
 ### Datasets
@@ -114,7 +123,7 @@ datasets:
     filters:
       - member: daily_listens.age_group   # fully qualified dimension or measure
         operator: equals
-        value: date-range
+        value: selected-age-groups
         valueType: VARIABLE     # VALUE | VARIABLE
 ```
 
@@ -136,7 +145,7 @@ widgets:
         inputType: string
         value: 'Age Group'
         valueType: VALUE
-      - input: ds
+      - input: dataset
         inputType: dataset
         value: filtered-data
         valueType: VALUE
@@ -150,7 +159,7 @@ widgets:
           order:
             - member: daily_listens.age_group
               direction: asc
-      - input: dim
+      - input: dimension
         inputType: dimension
         value: daily_listens.age_group
         valueType: VALUE
@@ -158,7 +167,7 @@ widgets:
       - event: onChange
         action: SET_VARIABLE
         config:
-          variable: date-range
+          variable: selected-age-groups
           sourceType: EVENT_PROPERTY    # EVENT_PROPERTY | VARIABLE
           sourceValue: value
 ```
@@ -199,18 +208,21 @@ customCanvas:
     - dataset: filtered-data
     - dataset: other-dataset
   templates:
-    - name: My Bar Chart
-      component: BarChart
+    - key: my-bar-chart
+      name: My Bar Chart
+      component: BarChartDefaultPro
       description: Standard bar chart
       icon: stairs
       inputs:
-        - input: metric
+        - input: measures
           inputType: measure
+          array: true
           valueType: VALUE
-          value: daily_listens.count
+          value:
+            - daily_listens.count
   starterCanvas:
     widgets:
-      - template: My Bar Chart
+      - template: my-bar-chart
         dimensions:
           width: 7
           height: 3
@@ -221,16 +233,21 @@ customCanvas:
             value: filtered-data
 ```
 
+Each template needs a `key` and a `name`:
+
+- `key` (required): the stable ID of the template. `starterCanvas` widgets refer to it with `template:`. If you change a `key`, end-user widgets made from that template are deleted.
+- `name` (required): the label that users see in the Custom Canvas.
+
 ## Build validation
 
 The build will fail if your `<dashboard-name>.embeddable.yml` files contain any of the following:
 
 - Unrecognized keys or invalid YAML structure
-- References to components, inputs, events, variables, datasets, or templates that don't exist in your repo or dependencies
-- Duplicate names within a file
+- References to variables, datasets, or template `key`s that don't exist
+- Duplicate dashboard names or duplicate template `key`s
+- Widgets that overlap on the canvas
 - Invalid `sourceType`, `action`, or `valueType` values
 - Config content that doesn't match the expected shape for a given input type
-- An `inputType` that doesn't match the type declared on the component's input
 
 This strict validation means errors are caught at build time, not at runtime.
 
@@ -270,7 +287,7 @@ export default defineConfig({
 
 ## Constraints
 
-- Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable UI](/component-libraries/remarkable-pro)). They cannot reference models or dashboards defined only in the platform.
+- Coded dashboards can only reference models, components, and Embeddables that are defined in your code repo or in a dependency (e.g. [Remarkable Pro](/component-libraries/remarkable-pro/introduction)). They cannot reference models or dashboards defined only in the platform.
 - Once pushed, coded dashboards can't be edited in the **workspace** builder — the code stays the source of truth. To change one, edit its `<dashboard-name>.embeddable.yml` (directly, or visually in the local builder — see [Editing locally](#editing-locally)) and push again.
 - Coded dashboards can't be **deleted** from the workspace builder either — remove the dashboard from its `<dashboard-name>.embeddable.yml` file (or delete the file) in your repo and push again.
 
@@ -403,7 +420,8 @@ embeddables:
       datasets:
         - dataset: Daily Listens
       templates:
-        - name: donut-with-dataset
+        - key: donut-with-dataset
+          name: Donut with dataset
           component: DonutChartPro
           description: Donut chart with preset dataset
           icon: circular
@@ -412,7 +430,8 @@ embeddables:
               inputType: dataset
               value: Daily Listens
               valueType: VALUE
-        - name: donut-blank
+        - key: donut-blank
+          name: Blank donut
           component: DonutChartPro
           description: Blank donut chart
           icon: chart-pie2

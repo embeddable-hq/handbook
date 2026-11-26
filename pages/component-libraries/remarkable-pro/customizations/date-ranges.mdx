@@ -32,15 +32,16 @@ Each option has the following shape:
 
 ```ts
 type TimeRange = {
-  from?: Date; // UTC
-  to?: Date;   // UTC
-};
+  from: Date | undefined;
+  to: Date | undefined;
+  relativeTimeString: string | undefined;
+} | undefined;
 
 type DateRangeOption = {
   value: string;              // e.g. 'Yesterday'
-  label: string;              // e.g. 'defaults.dateRangesOptions.yesterday | Yesterday'
+  label: string;              // e.g. 'defaults.dateRangeOptions.yesterday | Yesterday'
   dateFormat: string;         // e.g. 'MMM DD'
-  getRange: () => TimeRange;  // return a UTC-based TimeRange
+  getRange: (timezone?: string) => TimeRange; // timezone: the viewer's timezone, if set
 };
 ```
 
@@ -49,6 +50,7 @@ You typically start from the defaults in `parentTheme.defaults.dateRangesOptions
 **Things to notice**
 
 - The default list is a plain array of `DateRangeOption`, so you can manipulate it using normal array operations (`filter`, `map`, `concat`, etc.).
+- `getRange` receives the viewer's timezone from `clientContext.timezone`. The default options calculate their bounds in this timezone, or in UTC if no timezone is set. Use the `timezone` parameter in your own options too.
 - To find the exact `value` of each default option (to filter or replace it), see the [default date range options](https://github.com/embeddable-hq/remarkable-pro/blob/main/src/theme/defaults/defaults.DateRanges.constants.ts) in the Remarkable Pro library.
 
 ### Example: remove options
@@ -88,9 +90,9 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
     if (option.value === 'Week to date') {
       return {
         ...option,
-        label: 'defaults.dateRangesOptions.weekSoFar | Week so far',
-        getRange: () => {
-          // your custom function returning a UTC TimeRange
+        label: 'defaults.dateRangeOptions.weekSoFar | Week so far',
+        getRange: (timezone) => {
+          // your custom function returning a TimeRange in the given timezone
         },
       };
     }
@@ -124,7 +126,7 @@ const themeProvider = (clientContext: any, parentTheme: Theme): Theme => {
       value: 'Month to date',
       label: 'customOptions.monthToDate | Month to date',
       dateFormat: 'MMM DD',
-      getRange: () => myCustomRangeFunction(), // must return a UTC-based TimeRange
+      getRange: (timezone) => myCustomRangeFunction(timezone), // use timezone, or UTC if it is not set
     },
   ];
 

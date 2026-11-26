@@ -6,7 +6,7 @@ description: "Connect your own AI agent or chat UI to your users' data and dashb
 
 Embeddable exposes a set of API endpoints under `/ai/v1/*` that allow you to connect an AI agent to your users' data and dashboards. The agent can query data models, inspect the charts already on a user's canvas, and create or modify charts on their behalf — without the user having to build anything manually.
 
-This is useful when you want to enable conversational insights (i.e. ask questions about the data without building charts) or allow end users to describe what they want in natural language — *"show me sales performance this quarter"* — and have your AI translate that into fully rendered charts on their [Custom Canvas](/self-serve/custom-canvas).
+This is useful when you want to enable conversational insights (i.e. ask questions about the data without building charts) or allow end users to describe what they want in natural language — *"show me sales performance this quarter"* — and have your AI translate that into fully rendered charts on their [Custom Canvas](/self-serve/custom-canvas/introduction).
 
 <Callout emoji="💡">
 **End users** in this context are your customers — the people using the product you've built on top of Embeddable.
@@ -19,7 +19,7 @@ Getting started with the AI endpoints is straightforward but requires the follow
 <Steps>
 ### Enable Custom Canvas in the builder
 
-Simply toggle the "Custom Canvas" option in your dashboard's settings. This allows your end users to create and manage their own charts.
+Simply toggle the "Custom Canvas" option beneath your main canvas. This allows your end users to create and manage their own charts.
 
 <ImageGrid width='100%' images={["/img/custom-canvas/custom-canvas-button.png"]}/>
 
@@ -74,7 +74,7 @@ Authorization: Bearer <security-token-jwt>
 
 The token encodes:
 - Which data models the user is allowed to see (via [row-level security](/data-modeling/row-level-security/introduction))
-- Which [Custom Canvas](/self-serve/custom-canvas) chart types are available to the user
+- Which [Custom Canvas](/self-serve/custom-canvas/introduction) chart types are available to the user
 - The embeddable context the token is scoped to
 
 Generate a token server-side for the end user and pass it to your AI agent. Every response is automatically scoped to that user's security context.
@@ -162,7 +162,7 @@ Key relationships:
   "widgets": [
     {
       "id": "<uuid>",
-      "name": "string",
+      "componentName": "string",
       "inputConfiguration": { "<inputName>": "<value>" }
     }
   ],
@@ -170,7 +170,10 @@ Key relationships:
   "templateWidgets": [
     {
       "id": "<uuid>",
-      "name": "string",
+      "componentName": "string",
+      "templateName": "string",
+      "description": "string",
+      "iconName": "string",
       "inputConfiguration": { "..." }
     }
   ],
@@ -195,7 +198,11 @@ Key relationships:
       "array": false
     }
   ],
-  "variableListeners": { "<variableId>": ["<dependentVariableId>"] },
+  "variableListeners": {
+    "valueProducers": { "<widgetId>": [ { "..." } ] },
+    "datasetListeners": { "<variableId>": ["<datasetId>"] },
+    "datasetsToVariables": { "<datasetId>": ["<variableId>"] }
+  },
   "dashboardParams": { "..." },
   "datasets": [
     {
@@ -279,6 +286,7 @@ Executes a structured data query against a dataset. Returns raw rows and an opti
 | `offset` | long | ☐ | Rows to skip (for pagination) |
 | `timezone` | string | ☐ | IANA timezone, e.g. `"America/New_York"` |
 | `countRows` | boolean | ☐ | If `true`, include total row count in response. Default: `false` |
+| `variableValues` | object | ☐ | Map of variable UUID to variable value, for datasets that use variables |
 
 **Filter object**
 
@@ -349,7 +357,7 @@ Executes a structured data query against a dataset. Returns raw rows and an opti
 
 ### GET /ai/v1/custom-canvas/request-state
 
-Returns the current state of the end user's [Custom Canvas](/self-serve/custom-canvas) — all widgets currently placed, including their positions, sizes, configurations, and applied filters. This is per-user, scoped to the security token.
+Returns the current state of the end user's [Custom Canvas](/self-serve/custom-canvas/introduction) — all widgets currently placed, including their positions, sizes, configurations, and applied filters. This is per-user, scoped to the security token.
 
 Key notes:
 - `version` increments on every mutation — use it to detect stale reads
@@ -371,7 +379,7 @@ Key notes:
         }
       },
       "filters": {
-        "<datasetName>": [
+        "<datasetInputName>": [
           {
             "member": "model.field",
             "operator": "equals",
@@ -381,8 +389,8 @@ Key notes:
           }
         ]
       },
-      "limit": { "<datasetName>": 100 },
-      "order": { "<datasetName>": ["model.field asc"] },
+      "limit": { "<datasetInputName>": 100 },
+      "order": { "<datasetInputName>": ["model.field asc"] },
       "w": 4,
       "h": 3,
       "heightResolution": null,
@@ -397,13 +405,9 @@ Key notes:
 
 ## Custom Canvas mutation endpoints
 
-These endpoints let your AI agent create, update, and manage charts on the end user's [Custom Canvas](/self-serve/custom-canvas). Charts created via the API appear in the same place as manually built charts.
+These endpoints let your AI agent create, update, and manage charts on the end user's [Custom Canvas](/self-serve/custom-canvas/introduction). Charts created via the API appear in the same place as manually built charts.
 
 All mutation endpoints require a `requestId` — a client-assigned UUID used as an idempotency key.
-
-<Callout emoji="⚠️">
-**Documentation gap:** It is not yet documented how the frontend is notified when the AI agent mutates the Custom Canvas, so that the embedded dashboard re-renders to show new or updated charts.
-</Callout>
 
 ### POST /ai/v1/custom-canvas/create
 
@@ -416,15 +420,15 @@ Add a new widget to the custom canvas.
 | `id` | UUID | ✅ | — | Client-assigned UUID for the new widget instance |
 | `templateId` | UUID | ✅ | — | UUID of a template widget (from `templateWidgets` in metadata) |
 | `requestId` | UUID | ✅ | — | Idempotency key |
-| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name. Key names come from the template's definition — check `templateWidgets[].inputConfiguration` in the metadata response. Member values (dimensions, measures) must be full member objects, not plain strings (see example below). |
+| `inputConfiguration` | Map\<string, any\> | ✅ | — | Input values keyed by input name. Key names come from the template's definition — check `templateWidgets[].inputConfiguration` in the metadata response. Member values (dimensions, measures) must be full member objects, not plain strings (see example below). To set a dataset, use the template's dataset input name as the key: `"<datasetInputName>": { "datasetId": "<uuid>" }`. The dataset must be available in Custom Canvas (`availableInCustomCanvas: true`). If you leave a dataset input out, the template's own dataset is used. |
 | `subInputConfiguration` | Map\<string, Map\<string, Map\<string, any\>\>\> | ☐ | — | Nested per-value input overrides |
-| `filters` | Map\<string, Filter[]\> | ☐ | — | Per-dataset filter overrides |
-| `limit` | Map\<string, int\> | ☐ | — | Per-dataset row limit |
-| `order` | Map\<string, string[]\> | ☐ | — | Per-dataset sort order |
+| `filters` | Map\<string, Filter[]\> | ☐ | — | Filter overrides, keyed by the template's dataset input name |
+| `limit` | Map\<string, int\> | ☐ | — | Row limit, keyed by the template's dataset input name |
+| `order` | Map\<string, string[]\> | ☐ | — | Sort order, keyed by the template's dataset input name |
 | `w` | integer | ☐ | 1–16 | Width in grid columns. Default: `1` |
 | `h` | integer | ☐ | 1–12 | Height in grid rows. Default: `1` |
-| `heightResolution` | integer | ☐ | 1–4 | Height resolution multiplier |
-| `widthResolution` | integer | ☐ | 1–2 | Width resolution multiplier |
+| `heightResolution` | integer | ☐ | 1–4 | Grid resolution for `h`. Send `4` (the value the built-in [AI chatbot](/self-serve/ai-chatbot) uses) |
+| `widthResolution` | integer | ☐ | 1–2 | Grid resolution for `w`. Send `2` (the value the built-in [AI chatbot](/self-serve/ai-chatbot) uses) |
 
 The `inputConfiguration` key for a measure input varies by chart type — for example `"measure"` (KPI, Donut) or `"measures"` (Bar Chart, Line Chart). Check the template's definition in `GET /ai/v1/embeddable/metadata` to confirm the correct key for your chart type. Member values must be full member objects as returned by `GET /ai/v1/models`, not plain `"model.field"` strings.
 
@@ -436,7 +440,7 @@ The `inputConfiguration` key for a measure input varies by chart type — for ex
   "templateId": "<uuid>",
   "requestId": "<uuid>",
   "inputConfiguration": {
-    "datasetId": "<uuid>",
+    "dataset": { "datasetId": "<uuid>" },
     "measure": {
       "name": "orders.count",
       "title": "Count",
@@ -450,11 +454,15 @@ The `inputConfiguration` key for a measure input varies by chart type — for ex
   "limit": {},
   "order": {},
   "w": 4,
-  "h": 3
+  "h": 3,
+  "heightResolution": 4,
+  "widthResolution": 2
 }
 ```
 
 **Response `201 Created`** — empty body
+
+**Errors:** `400` if an input is not valid (for example a `filters` key that is not a dataset input of the template, or a dataset that is not available in Custom Canvas). `403` if the token has `customCanvasReadOnly: true`. `404` if the template does not exist. `409` if a widget with this `id` already exists.
 
 ---
 
@@ -470,9 +478,9 @@ Replace the configuration of an existing canvas widget. All supplied fields over
 | `requestId` | UUID | ✅ | Idempotency key |
 | `inputConfiguration` | Map\<string, any\> | ✅ | Full replacement input configuration |
 | `subInputConfiguration` | Map\<string, Map\<string, Map\<string, any\>\>\> | ☐ | Full replacement sub-input configuration |
-| `filters` | Map\<string, Filter[]\> | ☐ | Full replacement per-dataset filters |
-| `limit` | Map\<string, int\> | ☐ | Full replacement per-dataset limits |
-| `order` | Map\<string, string[]\> | ☐ | Full replacement per-dataset sort orders |
+| `filters` | Map\<string, Filter[]\> | ☐ | Full replacement filters, keyed by the template's dataset input name |
+| `limit` | Map\<string, int\> | ☐ | Full replacement row limits, keyed by the template's dataset input name |
+| `order` | Map\<string, string[]\> | ☐ | Full replacement sort orders, keyed by the template's dataset input name |
 
 **Example request**
 
@@ -481,7 +489,7 @@ Replace the configuration of an existing canvas widget. All supplied fields over
   "id": "<uuid>",
   "requestId": "<uuid>",
   "inputConfiguration": {
-    "datasetId": "<uuid>",
+    "dataset": { "datasetId": "<uuid>" },
     "measure": {
       "name": "orders.revenue",
       "title": "Revenue",
@@ -498,6 +506,8 @@ Replace the configuration of an existing canvas widget. All supplied fields over
 ```
 
 **Response `204 No Content`**
+
+**Errors:** `400` if an input is not valid. `403` if the token has `customCanvasReadOnly: true`. `404` if the widget does not exist.
 
 ---
 
@@ -522,6 +532,8 @@ Remove a widget from the canvas.
 ```
 
 **Response `204 No Content`**
+
+**Errors:** `403` if the token has `customCanvasReadOnly: true`. `404` if the widget does not exist.
 
 ---
 
@@ -550,6 +562,8 @@ Change the display order of widgets on the canvas.
 
 **Response `204 No Content`**
 
+**Errors:** `403` if the token has `customCanvasReadOnly: true`. `404` if one or more widgets do not exist.
+
 ---
 
 ### POST /ai/v1/custom-canvas/resize
@@ -564,8 +578,8 @@ Change the dimensions of a canvas widget within the grid.
 | `requestId` | UUID | ✅ | — | Idempotency key |
 | `w` | integer | ✅ | 1–16 | New width in grid columns |
 | `h` | integer | ✅ | 1–12 | New height in grid rows |
-| `heightResolution` | integer | ☐ | 1–4 | Height resolution multiplier |
-| `widthResolution` | integer | ☐ | 1–2 | Width resolution multiplier |
+| `heightResolution` | integer | ☐ | 1–4 | Grid resolution for `h`. Send `4` (the value the built-in [AI chatbot](/self-serve/ai-chatbot) uses) |
+| `widthResolution` | integer | ☐ | 1–2 | Grid resolution for `w`. Send `2` (the value the built-in [AI chatbot](/self-serve/ai-chatbot) uses) |
 
 **Example request**
 
@@ -574,25 +588,56 @@ Change the dimensions of a canvas widget within the grid.
   "id": "<uuid>",
   "requestId": "<uuid>",
   "w": 8,
-  "h": 4
+  "h": 4,
+  "heightResolution": 4,
+  "widthResolution": 2
 }
 ```
 
 **Response `204 No Content`**
 
+**Errors:** `400` if `w` or `h` is out of range. `403` if the token has `customCanvasReadOnly: true`. `404` if the widget does not exist.
+
 ---
 
 ## Error handling
 
-All errors return `400 Bad Request` with the following body:
+Errors use the [RFC 7807](https://www.rfc-editor.org/rfc/rfc7807) format, with the content type `application/problem+json`:
 
 ```json
 {
-  "errorType": "PROBLEM_LOADING_DATA",
-  "message": "...",
-  "retryMessage": "Try again later"
+  "type": "about:blank",
+  "title": "Validation failed",
+  "status": 400,
+  "detail": "...",
+  "instance": "/api/v1/...",
+  "code": "ai.validation_failed",
+  "errors": [
+    { "field": "prompt", "rule": "NotBlank", "expected": "...", "received": "..." }
+  ],
+  "traceId": "<uuid>",
+  "retryable": false
 }
 ```
+
+- **`code`**: a stable error code. Use it in your error handling (see the table below).
+- **`errors`**: only for validation errors. Each entry gives the `field`, the failed `rule`, and, if available, the `expected` and `received` values.
+- **`traceId`**: give this value to Embeddable support when you report a problem.
+- **`retryable`** and **`retryAfter`**: when present, tell you whether and when to try again. A `202` response also has a `Retry-After` header.
+
+| `code` | HTTP status | Meaning |
+|---|---|---|
+| `ai.validation_failed` | 400 | A field in the request is not valid |
+| `ai.malformed_request` | 400 | The request body cannot be read |
+| `ai.access_denied` | 403 | The API key or token does not give access |
+| `ai.not_found` | 404 | The resource does not exist |
+| `ai.method_not_allowed` | 405 | The HTTP method is not supported |
+| `ai.not_acceptable` | 406 | The `Accept` header is not supported |
+| `ai.conflict` | 409 | The request conflicts with the current state |
+| `ai.unsupported_media_type` | 415 | The `Content-Type` is not supported |
+| `ai.not_ready` | 202 | The result is not ready yet. Try again after `Retry-After` seconds |
+| `ai.service_unavailable` | 503 | The service is temporarily unavailable |
+| `ai.internal_error` | 500 | An unexpected error occurred |
 
 ---
 
@@ -770,9 +815,9 @@ def get_canvas_state() -> str:
         - id (UUID), templateId (UUID), key (string)
         - inputConfiguration: Map<string, any> of input values
         - subInputConfiguration: nested per-value input overrides
-        - filters: Map<datasetName, list of filters> where each filter has member, operator, value, valueType, nativeDataType
-        - limit: Map<datasetName, int>
-        - order: Map<datasetName, list of strings>
+        - filters: Map<datasetInputName, list of filters> where each filter has member, operator, value, valueType, nativeDataType
+        - limit: Map<datasetInputName, int>
+        - order: Map<datasetInputName, list of strings>
         - w (1-16), h (1-12), heightResolution (1-4), widthResolution (1-2)
     - version: canvas version number
     """
@@ -794,8 +839,8 @@ def create_canvas_widget(
     order: dict | None = None,
     w: int = 1,
     h: int = 1,
-    height_resolution: int | None = None,
-    width_resolution: int | None = None,
+    height_resolution: int = 4,
+    width_resolution: int = 2,
 ) -> str:
     """
     Add a new widget to the custom canvas.
@@ -806,13 +851,13 @@ def create_canvas_widget(
     input_configuration: Map of input name -> value. Key names come from the template definition (e.g. "measure" for KPI/Donut, "measures" for Bar/Line). Member values must be full member objects: {"name": "model.field", "title": "...", "nativeType": "...", "__type__": "measure"}.
     sub_input_configuration: Optional nested per-value input overrides. Key is parent input name (e.g. "columns"),
         value is Map<parentValue, Map<inputName, any>>.
-    filters: Optional Map<datasetName, list of filters>. Each filter: {"member": "model.field", "operator": "equals", "value": "x", "valueType": "...", "nativeDataType": "..."}.
-    limit: Optional Map<datasetName, int> row limits per dataset.
-    order: Optional Map<datasetName, list of strings> sort order per dataset.
+    filters: Optional Map<datasetInputName, list of filters>. Each filter: {"member": "model.field", "operator": "equals", "value": "x", "valueType": "...", "nativeDataType": "..."}.
+    limit: Optional Map<datasetInputName, int> row limits per dataset input.
+    order: Optional Map<datasetInputName, list of strings> sort order per dataset input.
     w: Width in grid columns (1-16, default 1).
     h: Height in grid rows (1-12, default 1).
-    height_resolution: Optional height resolution multiplier (1-4).
-    width_resolution: Optional width resolution multiplier (1-2).
+    height_resolution: Grid resolution for h (1-4). Use 4.
+    width_resolution: Grid resolution for w (1-2). Use 2.
     """
     body = {k: v for k, v in {
         "id": id,
@@ -851,9 +896,9 @@ def update_canvas_widget(
     request_id: Unique UUID for this request (for idempotency).
     input_configuration: Full replacement Map of input name -> value.
     sub_input_configuration: Optional nested per-value input overrides (replaces existing).
-    filters: Optional Map<datasetName, list of filters> (replaces existing).
-    limit: Optional Map<datasetName, int> (replaces existing).
-    order: Optional Map<datasetName, list of strings> (replaces existing).
+    filters: Optional Map<datasetInputName, list of filters> (replaces existing).
+    limit: Optional Map<datasetInputName, int> (replaces existing).
+    order: Optional Map<datasetInputName, list of strings> (replaces existing).
     """
     body = {k: v for k, v in {
         "id": id,
@@ -867,7 +912,7 @@ def update_canvas_widget(
     with httpx.Client() as client:
         response = client.put(f"{BASE_URL}/ai/v1/custom-canvas/update", headers=headers(), json=body)
         response.raise_for_status()
-        return json.dumps(response.json(), indent=2)
+        return "Updated successfully"
 
 
 @mcp.tool()
@@ -906,8 +951,8 @@ def resize_canvas_widget(
     request_id: str,
     w: int,
     h: int,
-    height_resolution: int | None = None,
-    width_resolution: int | None = None,
+    height_resolution: int = 4,
+    width_resolution: int = 2,
 ) -> str:
     """
     Resize a widget on the custom canvas.
@@ -916,8 +961,8 @@ def resize_canvas_widget(
     request_id: Unique UUID for this request (for idempotency).
     w: New width in grid columns (1-16).
     h: New height in grid rows (1-12).
-    height_resolution: Optional height resolution multiplier (1-4).
-    width_resolution: Optional width resolution multiplier (1-2).
+    height_resolution: Grid resolution for h (1-4). Use 4.
+    width_resolution: Grid resolution for w (1-2). Use 2.
     """
     body = {k: v for k, v in {
         "id": id,

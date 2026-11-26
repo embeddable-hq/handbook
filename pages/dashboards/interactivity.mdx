@@ -44,11 +44,11 @@ Here's how to create a simple search input that filters a dataset like so:
 
 <Steps>
 
-### Add a Text Input component
+### Add a Text Field component
 
-- Optionally, in the Text Input's Edit panel, set a **placeholder** text like “Type here to search.”
+- Optionally, in the Text Field's Edit panel, set a **placeholder** text like “Type here to search.”
 
-### A "Text Value" variable is created automatically
+### A "text value" variable is created automatically
 
 - Each time the user types, the component fires an event that updates this variable.
 
@@ -143,8 +143,8 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 ### Add a granularity picker component
 
-    - Drop the **Daterange Picker** onto your canvas. You could also add the **Granularity Picker**.
-    - A "granularity" variable is created automatically. Each time the user selects a granularity, it will update the **granularity** variable. 
+    - Drop the **Granularity Select Field** onto your canvas.
+    - A "granularity value" variable is created automatically. Each time the user selects a granularity, it will update the **granularity value** variable. 
 
 <VideoComponent
     src="/video/add-granularity-picker.mp4"
@@ -156,7 +156,7 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 - In your time-series chart, you'll find a **granularity** input.  
 - This should already have a value selected in the dropdown (e.g. "week").
-- Click the link icon on the right, select your **granularity** variable, and click **Done**. 
+- Click the link icon on the right, select your **granularity value** variable, and click **Done**. 
 
 <VideoComponent
     src="/video/hook-up-granularity.mp4"
@@ -175,7 +175,7 @@ Here's how to let viewers toggle a chart between **daily**, **weekly**, or **mon
 
 You can also use **dimensions** and **measures** as variables. This is useful for components that need to filter data based on user selections, like a dropdown that lets users pick a dimension or measure to display.
 
-In order to facilitate this behavior, we provide six predefined picker components in [our starter library](/component-libraries/remarkable-pro/introduction) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
+In order to facilitate this behavior, we provide four predefined picker components in [our starter library](/component-libraries/remarkable-pro/introduction) that can be accessed in the no-code builder. These components automatically create variables, allowing users to select dimensions or measures that can be used to filter datasets or drive other components.
 
 Dimensions and measures as variables are powerful because they let users dynamically change the data being displayed in charts or tables without needing to write any code. This adds a significant level of interactivity to your dashboards without requiring additional code on your part.
 
@@ -189,7 +189,7 @@ Dimensions and measures as variables are powerful because they let users dynamic
 
 ### Add a Measure Picker Component
 
-- Drop the **Measures single select** component onto your canvas. This will create a variable called **Measure choice**. You can also choose which measures you want to include from the **Choices** multiselect dropdown.
+- Drop the **Measure Single Select Field** component onto your canvas. This will create a variable called **measure single-select value**. You can also choose which measures you want to include from the **Measure options** multiselect dropdown.
 - In the right-hand panel, you can set the **default value** to one of your measures (e.g. "Orders"). This will be the initial measure displayed in the pie chart.
 
 <VideoComponent
@@ -201,8 +201,8 @@ Dimensions and measures as variables are powerful because they let users dynamic
 ### Add a Pie Chart and Connect it to the Picker Variable
 
 - Add a **Pie Chart** component to your canvas.
-- Set your **Slice** value to whatever dimension you want to group by (e.g. "Country of Origin").
-- For the **Metric**, click the link icon and select the **Measure choice** variable you created earlier. This will allow the pie chart to dynamically change based on the user's selection in the picker.
+- Set your **Dimension** value to whatever dimension you want to group by (e.g. "Country of Origin").
+- For the **Measure**, click the link icon and select the **measure single-select value** variable you created earlier. This will allow the pie chart to dynamically change based on the user's selection in the picker.
 - Save your changes.
 
 <VideoComponent
@@ -215,7 +215,7 @@ Dimensions and measures as variables are powerful because they let users dynamic
 
 - Switch to **Preview** mode.
 - Note that by default the pie chart will show the measure you set as the default in the picker (e.g. "# of Orders").
-- Click the dropdown in the **Measure choice** picker and select a different measure (e.g "# of Customers").
+- Click the dropdown in the **Measure Single Select Field** picker and select a different measure (e.g "# of Customers").
 - Watch the pie chart update to reflect the new measure, showing the number of customers by country instead of orders.
 
 <VideoComponent
@@ -225,7 +225,7 @@ Dimensions and measures as variables are powerful because they let users dynamic
 />
 
 <Callout emoji="🚨">
-  It's important to make sure that you use a picker component that matches the type of value your chart is expecting. For example, the Bar Chart's "metric" input expects an array of measures (a list of measures), as it can support displaying multiple measures at once. This means you should use the **MultiSelectorMeasure** component to select measures for a Bar Chart, rather than the **SelectorMeasure** which only allows single selections (and may cause errors).
+  It's important to make sure that you use a picker component that matches the type of value your chart is expecting. For example, the Bar Chart's "Measures" input expects an array of measures (a list of measures), as it can support displaying multiple measures at once. This means you should use the **Measure Multi Select Field** component to select measures for a Bar Chart, rather than the **Measure Single Select Field** which only allows single selections (and may cause errors).
 </Callout>
 
 </Steps>
@@ -244,7 +244,7 @@ Dimensions and measures as variables are powerful because they let users dynamic
 
 ### Add a Dimension Picker Component
 
-- Drop the **Dimensions select** component onto your canvas. This will create a variable called **Dimension choice**. You can also choose which dimensions you want to include from the **Choices** multiselect dropdown.
+- Drop the **Dimension Single Select Field** component onto your canvas. This will create a variable called **dimension single-select value**. You can also choose which dimensions you want to include from the **Dimension options** multiselect dropdown.
 - In the right-hand panel, you can set the **default value** to one of your dimensions (e.g. "Country of Origin"). This will be the initial dimension displayed in the bar chart.
 
 <VideoComponent
@@ -255,9 +255,9 @@ Dimensions and measures as variables are powerful because they let users dynamic
 
 ### Add a Bar Chart and Connect it to the Picker Variable
 
-- Add a **Bar Chart** component to your canvas.
-- For the **x-Axis**, click the link icon and select the **Dimension choice** variable you created earlier. This will allow the bar chart to dynamically change based on the user's selection in the picker.
-- For the **metric**, choose a measure (e.g. "# of Orders") that you want to display.
+- Add a **Bar Chart - Default** component to your canvas.
+- For the **X-axis**, click the link icon and select the **dimension single-select value** variable you created earlier. This will allow the bar chart to dynamically change based on the user's selection in the picker.
+- For the **Measures**, choose a measure (e.g. "# of Orders") that you want to display.
 - Save your changes.
 
 <VideoComponent
@@ -270,7 +270,7 @@ Dimensions and measures as variables are powerful because they let users dynamic
 
 - Switch to **Preview** mode.
 - Note that by default the bar chart will show the dimension you set as the default in the picker (e.g. "Country of Origin").
-- Click the dropdown in the **Dimension choice** picker and select a different dimension (e.g "Product Name").
+- Click the dropdown in the **Dimension Single Select Field** picker and select a different dimension (e.g "Product Name").
 - Watch the bar chart update to reflect the new dimension, showing the number of orders by product instead of country.
 
 <VideoComponent

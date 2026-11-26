@@ -52,12 +52,29 @@ You can also use Cube's local Data Playground to test and debug your models.
 
 <Steps>
 
-### Create a `.env` file:  
-   Ensure your `.env` file is in the same directory as `cube-playground.yml` ([this directory](https://github.com/embeddable-hq/vanilla-components/tree/main/src)).
+### Create a `cube-playground.yml` file
 
-### Populate the `.env` file: 
+   In your repo, create `src/embeddable.com/cube-playground.yml` (the folder that contains your `models` folder):
 
-   Populate the `.env` file with the correct database credentials for your database as per the [Cube's documentation](https://cube.dev/docs/product/configuration/data-sources).
+   ```yaml
+   services:
+     cube:
+       image: cubejs/cube:v1.3.35
+       ports:
+         - 4000:4000
+       env_file: .env
+       environment:
+         - CUBEJS_DEV_MODE=true
+         - CUBEJS_SCHEMA_PATH=models
+       volumes:
+         - .:/cube/conf
+   ```
+
+   The image version matches the Cube version that Embeddable uses (v1.3.35).
+
+### Create a `.env` file
+
+   Create a `.env` file in the same folder as `cube-playground.yml`. Add the credentials for your database, as given in [Cube's documentation](https://cube.dev/docs/product/configuration/data-sources):
 
     ```env
     CUBEJS_DB_TYPE=postgres
@@ -67,14 +84,16 @@ You can also use Cube's local Data Playground to test and debug your models.
     CUBEJS_DB_PASS=your_password
     ```
 
+    The `.env` file contains secrets. Add it to your `.gitignore` so that you do not commit it.
+
     You may need to add:
     ```env
     CUBEJS_DB_SSL=true
-    ````
+    ```
 
-    You can also add set the **desired level of logging detail**, which can be useful for debugging and monitoring:
+    You can also set the **desired level of logging detail**, which can be useful for debugging and monitoring:
     ```env
-    CUBEJS_DB_SSL=warn 
+    CUBEJS_LOG_LEVEL=warn
     ```
     **Possible values**:  
     `warn` *(default value)*: Logs warnings in addition to errors.  
@@ -91,20 +110,19 @@ You can also use Cube's local Data Playground to test and debug your models.
 
 
 ### Run the Playground  
-   Execute the following command to start Cube's data playground:
+   From `src/embeddable.com`, run:
    ```bash
-   npm run cube:playground
-   ```
-
-   You can also use docker compose:
-   ```bash
-   docker compose -f ./src/cube-playground.yml up
+   docker compose -f cube-playground.yml up
    ```
 
 ### Access the Playground 
    Open your browser and navigate to [localhost:4000](http://localhost:4000) to use Cube Playground.
 
 </Steps>
+
+<Callout emoji="⚠️">
+  The local Playground does not use your Embeddable security contexts or client contexts. To test those, use the methods above.
+</Callout>
 
 ### Still Need Help?
 

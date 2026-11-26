@@ -106,7 +106,7 @@ This approach lets **no-code users** decide **which data to load**, while your c
 
 ## Parameters
 
-Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/component-libraries/build-components/defining-components#inputmeta-definition) in your `.emb.ts` file.
+Below are the main parameters relevant to `loadData(...)`, with examples. For each type, you can prompt the user to select it by defining the appropriate [inputs](/component-libraries/build-components/define-component-function#inputmeta-definition) in your `.emb.ts` file.
 
 | **Param**        | **Type**               | **Required**                                    | **Default Value** |
 | ---------------- | ---------------------- | ----------------------------------------------- | ----------------- |
@@ -137,13 +137,20 @@ OFFSET <offset>
 - `from` is a `Dataset` which is defined in the no-code builder.  It defines which [data model](/data-modeling/writing-data-models/defining-models) to use, as well as any filters that should be applied to the query.
 
 
-- `select` is an array of [dimensions](/data-modeling/writing-data-models/dimensions-and-measures#dimensions), [measures](/data-modeling/writing-data-models/dimensions-and-measures#dimensions) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
+- `select` is an array of [dimensions](/data-modeling/writing-data-models/dimensions-and-measures#dimensions), [measures](/data-modeling/writing-data-models/dimensions-and-measures#measures) and *time dimensions* (time-based dimensions, often paired with a **granularity**).
 
   ```ts
   select: [
     inputs.groupBy, // one or more dimensions
     inputs.count, // one or more measures
-    // example of a time dimension
+    inputs.xAxis // a time dimension with a granularity sub-input
+  ]
+  ```
+
+  If a `time` dimension has a `granularity` [sub-input](/component-libraries/build-components/define-component-function#subinputmeta-definition) value (`inputs.xAxis.inputs.granularity`), `loadData` uses it as a time dimension automatically. You can also build the time dimension manually:
+
+  ```ts
+  select: [
     {
       dimension: inputs.xAxis?.name, // pass just the dimension name (e.g. 'orders.created_at')
       granularity: inputs.granularity // e.g. 'week'
@@ -160,7 +167,7 @@ OFFSET <offset>
     }
   ]
   ```
-- `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. This is also available as a native input in the no-code builder.  
+- `limit` is a number restricting how many rows are returned, e.g. for pagination. It defaults to 100 if not provided. It cannot exceed your workspace row limit (10,000 by default). This is also available as a native input in the no-code builder.  
 
 - `offset` is a number specifying how many rows to skip, e.g. for [pagination](/component-libraries/build-components/loading-data#1-pagination-example). Defaults to 0.
 
@@ -235,6 +242,10 @@ Depending on whether a filter applies to a dimension or measure, Embeddable tran
     value: ["2025-01-01"] // an array of one element in YYYY-MM-DD format
   }
   ```
+
+<Callout emoji="⚠️">
+The SDK `FilterOperator` type does not include `set`, `notSet`, `onTheDate`, `beforeOrOnDate` and `afterOrOnDate`, so TypeScript reports an error for them. They work at runtime. To use them, cast the operator, for example `operator: 'set' as any`.
+</Callout>
 
 ## A Full Example
 
@@ -405,7 +416,7 @@ Here, `mainResults` and `secondaryResults` each return their own `isLoading`, `e
 
 ## Loading Data Dynamically
 
-Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/component-libraries/build-components/defining-components#definecomponent-config-reference). 
+Sometimes you need to fetch new data triggered by an action or event fired from within your React component. You can achieve using [**Embeddable State**](/component-libraries/build-components/define-component-function#3-config). 
 
 ### 1. Pagination Example
 
@@ -544,13 +555,14 @@ Then in your React component:
 import { useEmbeddableState } from '@embeddable.com/react';
 
 export default function DynamicLoader(props) {
-  const [localState, setLocalState] = useEmbeddableState({ filter: {} });
-  
+  const [localState, setLocalState] = useEmbeddableState({});
+  const { data } = props.results;
+
   const applyFilter = (value) => {
     setLocalState((prev) => ({
       ...prev,
       filter: {
-        property: { name: customers.country }, // some dimension, hard-coded or dynamically passed in via props
+        property: props.columns[0], // a dimension passed in via props
         operator: 'equals',
         value
       }

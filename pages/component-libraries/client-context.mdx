@@ -25,13 +25,13 @@ You include a `client-context` attribute on your `<em-beddable>` [web component]
     ```js
     <em-beddable
       token="${json.token}"
-      client-context="${JSON.stringify({ 
+      client-context='${JSON.stringify({ 
         currency: 'dollar',
         currencySymbol: '$',
         flag: '🇺🇸',
         language: 'english',
         name: 'United States'
-      })}"
+      })}'
     ></em-beddable>
     ```
 
@@ -52,7 +52,7 @@ Learn how to generate a `securityToken` [here](/deployment/tokens-api).
 
 ### **Receive it in `defineComponent`**  
     
-    In your `.emb.ts` file, the third argument of the `props` function within [`config`](/component-libraries/build-components/defining-components#3-config) is `clientContext`:
+    In your `.emb.ts` file, the third argument of the `props` function within [`config`](/component-libraries/build-components/define-component-function#3-config) is `clientContext`:
    
    ```ts
    props: (inputs, [state, setState], clientContext) => ({
@@ -184,7 +184,7 @@ For larger, more complex localization needs, consider libraries like **react-int
 
 ## Example Use Case: Time Zones
 
-Another common use-case is handling **time zones**. You might pass a user’s time zone in `clientContext.timezone` and then use that to display dates/times in their local time. By default, all [Remarkable Pro](/component-libraries/remarkable-pro) components support this behavior. If you pass a `timezone` in the `clientContext`, Remarkable Pro automatically converts any date/time values to that time zone before rendering (otherwise, it defaults to UTC).
+Another common use-case is handling **time zones**. You might pass a user’s time zone in `clientContext.timezone` and then use that to display dates/times in their local time. By default, all [Remarkable Pro](/component-libraries/remarkable-pro/introduction) components support this behavior. If you pass a `timezone` in the `clientContext`, Remarkable Pro automatically converts any date/time values to that time zone before rendering (otherwise, it defaults to UTC).
 
 For example, if you pass `clientContext.timezone = 'America/New_York'`, all dates/times in your dashboard will show in Eastern Time. If you switch to `clientContext.timezone = 'Europe/Paris'`, they’ll show in Central European Time instead.
 

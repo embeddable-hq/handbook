@@ -6,10 +6,10 @@ description: "Deprecated. Read the NPM release patch notes for Vanilla Component
 # Patch Notes - Vanilla Components v1
 
 <Callout emoji="‼️">
-  Vanilla Components are now deprecated in favor of [Remarkable Pro](/component-libraries/remarkable-pro). We recommend using Remarkable Pro for all new projects, but if you have an existing implementation with Vanilla Components, you can continue to use and maintain it as needed.
+  Vanilla Components are deprecated and no longer supported by Embeddable, and the repository will be archived. Use [Remarkable Pro](/component-libraries/remarkable-pro/introduction) instead. If you need help to upgrade, contact Embeddable Customer Success.
 </Callout>
 
-Version 1 of Vanilla Components introduced components as an NPM package, and is the new standard for Embeddable development that this documentation references. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
+Version 1 of Vanilla Components introduced components as an NPM package. This page contains patch notes for each NPM release of Vanilla Components, including bug fixes, new features, and breaking changes (if any).
 
 ## Version 1.3.4 - Patch Vulnerability, Update Dependencies
 
@@ -26,7 +26,7 @@ Version 1 of Vanilla Components introduced components as an NPM package, and is 
 
 ## Version 1.3.1 - Style Custom Canvas UI
 
-- Added a new, optional theme property that allows users to customize the appearance of the Custom Canvas UI using CSS variabales. This includes colors, fonts, and other visual aspects of the UI. For more information, please see [Styling Custom Canvas in Vanilla Components](/legacy/vanilla-components/styling-custom-canvas).
+- Added a new, optional theme property that allows users to customize the appearance of the Custom Canvas UI using CSS variables. This includes colors, fonts, and other visual aspects of the UI. For more information, please see [Styling Custom Canvas in Vanilla Components](/legacy/vanilla-components/styling-custom-canvas).
 
 ## Version 1.3.0 - Final Major Release
 
@@ -58,7 +58,7 @@ This release includes the following changes, fixes, and improvements:
 ## Version 1.1.15 - CSV Download Fix
   - Ensured that CSV downloads for table data are sorted by column header order, regardless of what page you're on.
 
-## Version 1.1.4 - Minor Improvements
+## Version 1.1.14 - Minor Improvements
   - Added option in Table and Pivot Table to choose whether numbers are rounded to a decimal place (and how many decimal places), similar to other charts and graphs
   - Fixed dropdown menu chevrons opening on click but not closing on click
   - Fixed an issue where empty datasets on the Comparison Line Chart would cause the download CSV button to spin forever
@@ -119,7 +119,7 @@ This release includes the following changes, fixes, and improvements:
 ## Version 1.1.0 - Automatic Granularity
   - Updates components to work with the new automatic granularity feature in the Embeddable SDK, which recognizes when time dimensions are used and automatically adds a granularity picker just below them. In order to keep this release backwards-compatible with existing dashboards, any components (such as Time Series Bar Chart) that previously used a dedicated granularity picker will continue to do so. However, new components and any components that did not previously include a granularity picker will use the automatic granularity picker by default.
 
-## Version 1.022 - Dropdown sort
+## Version 1.0.22 - Dropdown sort
   - Adds the ability to sort the Dropdown and Multi-Select Dropdown components
 
 ## Version 1.0.21 - Download Menu

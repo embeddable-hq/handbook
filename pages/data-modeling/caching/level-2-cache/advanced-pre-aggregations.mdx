@@ -133,7 +133,7 @@ Learn more about indexes [here](https://cube.dev/docs/product/data-modeling/refe
 
 ## Rollup_join
 
-- Cube can run SQL joins across different data sources. For example, you might have products in [PostgreSQL](/data/credentials#postgres) and orders in [MotherDuck](/data/credentials#motherduck).
+- Cube cannot join cubes from different data sources in SQL. Use `rollup_join` to join their pre-aggregations in Cube Store. For example, you might have products in [PostgreSQL](/data/credentials#postgres) and orders in [MotherDuck](/data/credentials#motherduck).
 
 - All pre-aggregations so far have been of type rollup (which is the default pre-aggregation type). Cube also supports `rollup_join`, which combines data from two or more rollups coming from different data sources.
 
@@ -162,7 +162,7 @@ Let’s extend the example from the [indexes](/data-modeling/caching/level-2-cac
             columns:
               - id
         refresh_key:
-	        every: 1 hour
+          every: 1 hour
 ```
 
 The new orders model from MotherDuck data source will be added to show how to run analytics across databases.
@@ -214,7 +214,7 @@ cubes:
             columns:
               - product_id
         refresh_key:
-	        every: 1 hour
+          every: 1 hour
 
       - name: orders_with_products_rollup
         type: rollup_join

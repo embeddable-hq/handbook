@@ -18,11 +18,11 @@ fetch('https://api.<region>.embeddable.com/api/v1/security-token', {
   },
   body: JSON.stringify({
     // ...
-    securityContext: [{
+    securityContext: {
       userId: 45,
-      orgIg: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
+      orgId: "9sZSJ9LHsiYXR0cmlidXRlIjoiZ2VvaXBf",
       countries: ["us-east", "eu-west"],
-    }],
+    },
     // ...
   })
 })
@@ -118,7 +118,7 @@ WHERE country IN ('United States', 'Canada', 'Mexico')
 
 ## Testing your SQL-based security
 
-To try out different security contexts in the no-code builder, define presets in your repo at `src/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
+To try out different security contexts in the no-code builder, define presets in any `*.sc.yml` file under `src/` in your repo, e.g. `src/embeddable.com/presets/security-contexts.sc.yml` ([here](https://github.com/embeddable-hq/remarkable-pro-boilerplate/blob/main/src/embeddable.com/presets/security-contexts.sc.yml)):
 
 ```yaml
 - name: Acme Corp
