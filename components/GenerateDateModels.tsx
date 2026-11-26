@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "nextra-theme-docs";
 import {
   InkeepEmbeddedChat,
   type InkeepEmbeddedChatProps,
