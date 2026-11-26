@@ -5,7 +5,7 @@
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.15.2",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.15.2",
     "notes": [
-      "Fixed a browser freeze on grouped line charts when the data contains an outlier date far in the future. Gap filling is now skipped when it would create more than 20,000 buckets, and per-group value lookups are faster."
+      "Fixed a browser freeze on grouped line charts when the data contains an outlier date far in the future. Gap filling is now skipped when it would generate more than 20,000 buckets, and per-group value lookups are indexed instead of scanned."
     ]
   },
   {
@@ -451,7 +451,7 @@
   },
   {
     "version": "v0.3.3",
-    "date": "2026-05-29",
+    "date": "2026-06-09",
     "git": "https://github.com/embeddable-hq/remarkable-pro/releases/tag/v0.3.3",
     "npm": "https://www.npmjs.com/package/@embeddable.com/remarkable-pro/v/0.3.3",
     "notes": [
